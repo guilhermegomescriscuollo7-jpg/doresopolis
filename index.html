@@ -47,7 +47,6 @@
             <div class="flex-grow flex flex-col justify-center px-8">
                 
                 <div class="text-center mb-8">
-                    <!-- LOGO ADICIONADA AQUI -->
                     <img src="https://cdn.tecconcursos.com.br/figuras/7528d9ce-3894-4606-a0ed-7b57ef6cb7ed" alt="Brasão de Doresópolis" class="w-24 h-24 mx-auto object-contain mb-4 drop-shadow-sm">
                     <h1 class="text-2xl font-black text-gray-800 tracking-tight uppercase">Doresópolis</h1>
                     <p class="text-gray-500 text-sm mt-1">Portal Digital do Cidadão</p>
@@ -129,39 +128,44 @@
                     <div class="space-y-3 p-3 bg-gray-50 rounded-xl border border-gray-100">
                         <label class="block text-xs font-bold text-gray-700">Seu Endereço</label>
                         
-                        <!-- Campo Rua com Auto-completar e Todas as Ruas -->
+                        <!-- Campo Rua: Alterado para SELECT (Menu Suspenso) -->
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <i class="fa-solid fa-road text-gray-400"></i>
                             </div>
-                            <input list="ruas-doresopolis" type="text" id="cad-rua" required placeholder="Nome da Rua" class="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-doresopolis-green text-sm">
                             
-                            <!-- LISTA AMPLIADA DE RUAS DE DORESÓPOLIS -->
-                            <datalist id="ruas-doresopolis">
-                                <option value="Avenida Gonçalves de Melo"></option>
-                                <option value="Praça da Matriz"></option>
-                                <option value="Praça Tiradentes"></option>
-                                <option value="Rua Alberto Mourão"></option>
-                                <option value="Rua Bela Vista"></option>
-                                <option value="Rua Farnésio Paim Pamplona"></option>
-                                <option value="Rua Higino Pinto Vidal"></option>
-                                <option value="Rua Joaquim Murtinho"></option>
-                                <option value="Rua João Batista Veloso"></option>
-                                <option value="Rua João Lourenço Gomide"></option>
-                                <option value="Rua Padre José Venâncio"></option>
-                                <option value="Rua Pedro da Costa Lopes"></option>
-                                <option value="Rua Piumhi"></option>
-                                <option value="Travessa Afonso Goulart"></option>
-                                <option value="Travessa Doresópolis"></option>
-                            </datalist>
+                            <!-- appearance-none remove o estilo padrão do navegador para criarmos um menu mais bonito -->
+                            <select id="cad-rua" required class="w-full pl-10 pr-10 py-3 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-doresopolis-green text-sm appearance-none text-gray-700">
+                                <option value="" disabled selected>Selecione a rua...</option>
+                                <option value="Avenida Gonçalves de Melo">Avenida Gonçalves de Melo</option>
+                                <option value="Praça da Matriz">Praça da Matriz</option>
+                                <option value="Praça Tiradentes">Praça Tiradentes</option>
+                                <option value="Rua Alberto Mourão">Rua Alberto Mourão</option>
+                                <option value="Rua Bela Vista">Rua Bela Vista</option>
+                                <option value="Rua Farnésio Paim Pamplona">Rua Farnésio Paim Pamplona</option>
+                                <option value="Rua Higino Pinto Vidal">Rua Higino Pinto Vidal</option>
+                                <option value="Rua Joaquim Murtinho">Rua Joaquim Murtinho</option>
+                                <option value="Rua João Batista Veloso">Rua João Batista Veloso</option>
+                                <option value="Rua João Lourenço Gomide">Rua João Lourenço Gomide</option>
+                                <option value="Rua Padre José Venâncio">Rua Padre José Venâncio</option>
+                                <option value="Rua Pedro da Costa Lopes">Rua Pedro da Costa Lopes</option>
+                                <option value="Rua Piumhi">Rua Piumhi</option>
+                                <option value="Travessa Afonso Goulart">Travessa Afonso Goulart</option>
+                                <option value="Travessa Doresópolis">Travessa Doresópolis</option>
+                            </select>
+                            
+                            <!-- Seta visual para indicar que é um menu -->
+                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                <i class="fa-solid fa-chevron-down text-gray-400 text-xs"></i>
+                            </div>
                         </div>
 
                         <!-- Número e Bairro lado a lado -->
                         <div class="flex gap-2">
-                            <div class="w-1/3">
+                            <div class="w-1/3 relative">
                                 <input type="text" id="cad-numero" required placeholder="Nº" class="w-full px-3 py-3 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-doresopolis-green text-sm">
                             </div>
-                            <div class="w-2/3">
+                            <div class="w-2/3 relative">
                                 <input type="text" id="cad-bairro" required placeholder="Bairro" class="w-full px-3 py-3 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-doresopolis-green text-sm">
                             </div>
                         </div>
@@ -323,7 +327,7 @@
             
             const nome = document.getElementById('cad-nome').value;
             const telefone = document.getElementById('cad-telefone').value;
-            const rua = document.getElementById('cad-rua').value;
+            const rua = document.getElementById('cad-rua').value; // Agora pega o valor do Select
             const numero = document.getElementById('cad-numero').value;
             const bairro = document.getElementById('cad-bairro').value;
             const senha = document.getElementById('cad-senha').value;
