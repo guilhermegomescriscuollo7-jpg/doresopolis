@@ -132,6 +132,17 @@
                             <input type="tel" id="cad-telefone" required placeholder="(00) 00000-0000" class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-doresopolis-green focus:bg-white text-sm">
                         </div>
                     </div>
+                    
+                    <!-- NOVO CAMPO: EMAIL -->
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">E-mail (Opcional)</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fa-regular fa-envelope text-gray-400"></i>
+                            </div>
+                            <input type="email" id="cad-email" placeholder="seu@email.com" class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-doresopolis-green focus:bg-white text-sm">
+                        </div>
+                    </div>
 
                     <div class="space-y-3 p-3 bg-gray-50 rounded-xl border border-gray-100">
                         <label class="block text-xs font-bold text-gray-700">Seu Endereço</label>
@@ -205,137 +216,198 @@
                             <h1 class="text-xl font-black text-gray-700 tracking-tight uppercase leading-none mt-1">Doresópolis</h1>
                         </div>
                     </div>
-                    <button onclick="fazerLogout()" class="text-red-400 hover:text-red-600 ml-2" title="Sair da conta">
-                        <i class="fa-solid fa-right-from-bracket text-xl"></i>
-                    </button>
                 </div>
             </header>
 
-            <!-- CONTEÚDO PRINCIPAL -->
             <main class="flex-grow overflow-y-auto overflow-x-hidden p-4 pb-24 scroll-smooth">
                 
-                <div class="flex justify-between items-center mb-6 mt-1">
-                    <div>
-                        <h2 class="text-xl font-bold text-gray-800">Olá, <span id="nome-usuario-logado" class="text-doresopolis-green"></span>!</h2>
-                        <p class="text-gray-500 mt-0.5 text-xs">O que você precisa hoje?</p>
+                <!-- CONTEÚDO 1: ABA INÍCIO -->
+                <div id="aba-inicio" class="block">
+                    <div class="flex justify-between items-center mb-6 mt-1">
+                        <div>
+                            <h2 class="text-xl font-bold text-gray-800">Olá, <span id="nome-usuario-logado" class="text-doresopolis-green"></span>!</h2>
+                            <p class="text-gray-500 mt-0.5 text-xs">O que você precisa hoje?</p>
+                        </div>
                     </div>
-                    <!-- Widget de Clima removido -->
-                </div>
 
-                <!-- MURAL DE AVISOS OFICIAIS DINÂMICO -->
-                <div class="mb-6">
-                    <div class="flex items-center justify-between mb-3">
-                        <h3 class="font-bold text-gray-800 text-sm border-l-4 border-doresopolis-green pl-2">
-                            <i class="fa-solid fa-bullhorn text-doresopolis-green mr-1"></i> Mural de Avisos
-                        </h3>
-                        <span class="text-[10px] text-gray-400 flex items-center"><i class="fa-solid fa-arrow-left-long mr-1"></i> Arraste <i class="fa-solid fa-arrow-right-long ml-1"></i></span>
+                    <!-- MURAL DE AVISOS OFICIAIS DINÂMICO -->
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="font-bold text-gray-800 text-sm border-l-4 border-doresopolis-green pl-2">
+                                <i class="fa-solid fa-bullhorn text-doresopolis-green mr-1"></i> Mural de Avisos
+                            </h3>
+                            <span class="text-[10px] text-gray-400 flex items-center"><i class="fa-solid fa-arrow-left-long mr-1"></i> Arraste <i class="fa-solid fa-arrow-right-long ml-1"></i></span>
+                        </div>
+                        
+                        <div id="mural-avisos-conteudo" class="flex overflow-x-auto gap-3 pb-2 snap-x hide-scrollbar">
+                            <div class="w-full text-center py-6 text-gray-400 text-xs">
+                                <i class="fa-solid fa-spinner fa-spin mr-2"></i> Carregando avisos recentes...
+                            </div>
+                        </div>
                     </div>
-                    
-                    <!-- O CONTEÚDO AQUI AGORA SERÁ PREENCHIDO PELO JAVASCRIPT DO FIREBASE -->
-                    <div id="mural-avisos-conteudo" class="flex overflow-x-auto gap-3 pb-2 snap-x hide-scrollbar">
-                        <div class="w-full text-center py-6 text-gray-400 text-xs">
-                            <i class="fa-solid fa-spinner fa-spin mr-2"></i> Carregando avisos recentes...
+
+                    <!-- SECRETARIAS -->
+                    <div class="mb-8">
+                        <h3 class="font-bold text-gray-800 text-sm mb-3 border-l-4 border-blue-500 pl-2">Serviços por Secretaria</h3>
+                        <div class="flex flex-col gap-3">
+                            <button onclick="navegarPara('saude')" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 active:bg-gray-50 active:scale-[0.98] transition-all text-left">
+                                <div class="p-3 bg-red-50 text-red-600 rounded-lg"><i class="fa-solid fa-heart-pulse text-lg w-5 text-center"></i></div>
+                                <div class="ml-4 flex-grow"><h3 class="font-bold text-gray-800 text-sm">Saúde</h3><p class="text-[10px] text-gray-500 mt-0.5">Consultas, vacinas e remédios</p></div>
+                                <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
+                            </button>
+                            <button onclick="navegarPara('educacao')" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 active:bg-gray-50 active:scale-[0.98] transition-all text-left">
+                                <div class="p-3 bg-blue-50 text-blue-600 rounded-lg"><i class="fa-solid fa-graduation-cap text-lg w-5 text-center"></i></div>
+                                <div class="ml-4 flex-grow"><h3 class="font-bold text-gray-800 text-sm">Educação</h3><p class="text-[10px] text-gray-500 mt-0.5">Matrículas e transporte escolar</p></div>
+                                <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
+                            </button>
+                            <button onclick="navegarPara('tributos')" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 active:bg-gray-50 active:scale-[0.98] transition-all text-left">
+                                <div class="p-3 bg-green-50 text-green-600 rounded-lg"><i class="fa-solid fa-file-invoice-dollar text-lg w-5 text-center"></i></div>
+                                <div class="ml-4 flex-grow"><h3 class="font-bold text-gray-800 text-sm">Tributos</h3><p class="text-[10px] text-gray-500 mt-0.5">Emissão de IPTU e taxas</p></div>
+                                <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
+                            </button>
+                            <!-- OBRAS LINKADO PARA obras.html -->
+                            <button onclick="window.location.href='obras.html'" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 active:bg-gray-50 active:scale-[0.98] transition-all text-left">
+                                <div class="p-3 bg-amber-50 text-amber-600 rounded-lg"><i class="fa-solid fa-helmet-safety text-lg w-5 text-center"></i></div>
+                                <div class="ml-4 flex-grow"><h3 class="font-bold text-gray-800 text-sm">Obras</h3><p class="text-[10px] text-gray-500 mt-0.5">Iluminação e manutenção</p></div>
+                                <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
+                            </button>
+                            <button onclick="navegarPara('transporte')" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 active:bg-gray-50 active:scale-[0.98] transition-all text-left">
+                                <div class="p-3 bg-purple-50 text-purple-600 rounded-lg"><i class="fa-solid fa-bus text-lg w-5 text-center"></i></div>
+                                <div class="ml-4 flex-grow"><h3 class="font-bold text-gray-800 text-sm">Transporte</h3><p class="text-[10px] text-gray-500 mt-0.5">Horários e estradas rurais</p></div>
+                                <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- TELEFONES ÚTEIS E EMERGÊNCIA -->
+                    <div class="mb-4">
+                        <h3 class="font-bold text-gray-800 text-sm mb-3 border-l-4 border-red-500 pl-2">Telefones Úteis e Emergência</h3>
+                        <div class="grid grid-cols-2 gap-3">
+                            <a href="tel:190" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 hover:border-red-300 active:bg-red-50 transition-all">
+                                <div class="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center mr-3 shrink-0">
+                                    <i class="fa-solid fa-shield-halved text-sm"></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-gray-800 text-xs leading-tight">Polícia</p>
+                                    <p class="text-[10px] text-red-600 font-bold">Ligar 190</p>
+                                </div>
+                            </a>
+                            <a href="tel:192" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 hover:border-red-300 active:bg-red-50 transition-all">
+                                <div class="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center mr-3 shrink-0">
+                                    <i class="fa-solid fa-truck-medical text-sm"></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-gray-800 text-xs leading-tight">Ambulância</p>
+                                    <p class="text-[10px] text-red-600 font-bold">Ligar 192</p>
+                                </div>
+                            </a>
+                            <a href="tel:3733561212" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 hover:border-blue-300 active:bg-blue-50 transition-all">
+                                <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mr-3 shrink-0">
+                                    <i class="fa-solid fa-house-medical text-sm"></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-gray-800 text-xs leading-tight">Posto Saúde</p>
+                                    <p class="text-[9px] text-gray-500 font-medium">3356-1212</p>
+                                </div>
+                            </a>
+                            <a href="tel:3733561221" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 hover:border-doresopolis-green active:bg-green-50 transition-all">
+                                <div class="w-8 h-8 rounded-full bg-green-100 text-doresopolis-green flex items-center justify-center mr-3 shrink-0">
+                                    <i class="fa-solid fa-building-user text-sm"></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-gray-800 text-xs leading-tight">Prefeitura</p>
+                                    <p class="text-[9px] text-gray-500 font-medium">3356-1221</p>
+                                </div>
+                            </a>
                         </div>
                     </div>
                 </div>
 
-                <!-- SECRETARIAS -->
-                <div class="mb-8">
-                    <h3 class="font-bold text-gray-800 text-sm mb-3 border-l-4 border-blue-500 pl-2">Serviços por Secretaria</h3>
-                    <div class="flex flex-col gap-3">
-                        <button onclick="navegarPara('saude')" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 active:bg-gray-50 active:scale-[0.98] transition-all text-left">
-                            <div class="p-3 bg-red-50 text-red-600 rounded-lg"><i class="fa-solid fa-heart-pulse text-lg w-5 text-center"></i></div>
-                            <div class="ml-4 flex-grow"><h3 class="font-bold text-gray-800 text-sm">Saúde</h3><p class="text-[10px] text-gray-500 mt-0.5">Consultas, vacinas e remédios</p></div>
-                            <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
-                        </button>
-                        <button onclick="navegarPara('educacao')" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 active:bg-gray-50 active:scale-[0.98] transition-all text-left">
-                            <div class="p-3 bg-blue-50 text-blue-600 rounded-lg"><i class="fa-solid fa-graduation-cap text-lg w-5 text-center"></i></div>
-                            <div class="ml-4 flex-grow"><h3 class="font-bold text-gray-800 text-sm">Educação</h3><p class="text-[10px] text-gray-500 mt-0.5">Matrículas e transporte escolar</p></div>
-                            <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
-                        </button>
-                        <button onclick="navegarPara('tributos')" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 active:bg-gray-50 active:scale-[0.98] transition-all text-left">
-                            <div class="p-3 bg-green-50 text-green-600 rounded-lg"><i class="fa-solid fa-file-invoice-dollar text-lg w-5 text-center"></i></div>
-                            <div class="ml-4 flex-grow"><h3 class="font-bold text-gray-800 text-sm">Tributos</h3><p class="text-[10px] text-gray-500 mt-0.5">Emissão de IPTU e taxas</p></div>
-                            <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
-                        </button>
-                        <!-- OBRAS LINKADO PARA obras.html -->
-                        <button onclick="window.location.href='obras.html'" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 active:bg-gray-50 active:scale-[0.98] transition-all text-left">
-                            <div class="p-3 bg-amber-50 text-amber-600 rounded-lg"><i class="fa-solid fa-helmet-safety text-lg w-5 text-center"></i></div>
-                            <div class="ml-4 flex-grow"><h3 class="font-bold text-gray-800 text-sm">Obras</h3><p class="text-[10px] text-gray-500 mt-0.5">Iluminação e manutenção</p></div>
-                            <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
-                        </button>
-                        <button onclick="navegarPara('transporte')" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 active:bg-gray-50 active:scale-[0.98] transition-all text-left">
-                            <div class="p-3 bg-purple-50 text-purple-600 rounded-lg"><i class="fa-solid fa-bus text-lg w-5 text-center"></i></div>
-                            <div class="ml-4 flex-grow"><h3 class="font-bold text-gray-800 text-sm">Transporte</h3><p class="text-[10px] text-gray-500 mt-0.5">Horários e estradas rurais</p></div>
-                            <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
-                        </button>
+                <!-- CONTEÚDO 2: ABA PERFIL -->
+                <div id="aba-perfil" class="hidden">
+                    <div class="mb-6 mt-1 flex items-center justify-between">
+                        <div>
+                            <h2 class="text-xl font-bold text-gray-800">Meu Perfil</h2>
+                            <p class="text-gray-500 mt-0.5 text-xs">Atualize seus dados de cadastro</p>
+                        </div>
+                        <div class="w-12 h-12 rounded-full bg-doresopolis-green text-white flex items-center justify-center text-xl font-bold shadow-md">
+                            <i class="fa-regular fa-user"></i>
+                        </div>
                     </div>
-                </div>
 
-                <!-- TELEFONES ÚTEIS E EMERGÊNCIA -->
-                <div class="mb-4">
-                    <h3 class="font-bold text-gray-800 text-sm mb-3 border-l-4 border-red-500 pl-2">Telefones Úteis e Emergência</h3>
-                    <div class="grid grid-cols-2 gap-3">
-                        <a href="tel:190" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 hover:border-red-300 active:bg-red-50 transition-all">
-                            <div class="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center mr-3 shrink-0">
-                                <i class="fa-solid fa-shield-halved text-sm"></i>
+                    <!-- Formulário de Edição de Perfil -->
+                    <form onsubmit="salvarPerfil(event)" class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 space-y-4">
+                        <input type="hidden" id="perfil-doc-id">
+
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Nome Completo</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fa-regular fa-user text-gray-400"></i></div>
+                                <input type="text" id="perfil-nome" required class="w-full pl-10 pr-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-doresopolis-green text-sm">
                             </div>
-                            <div>
-                                <p class="font-bold text-gray-800 text-xs leading-tight">Polícia</p>
-                                <p class="text-[10px] text-red-600 font-bold">Ligar 190</p>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Telefone / Celular</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fa-solid fa-phone text-gray-400"></i></div>
+                                <input type="tel" id="perfil-telefone" required class="w-full pl-10 pr-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-doresopolis-green text-sm">
                             </div>
-                        </a>
-                        <a href="tel:192" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 hover:border-red-300 active:bg-red-50 transition-all">
-                            <div class="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center mr-3 shrink-0">
-                                <i class="fa-solid fa-truck-medical text-sm"></i>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">E-mail</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fa-regular fa-envelope text-gray-400"></i></div>
+                                <input type="email" id="perfil-email" placeholder="seu@email.com" class="w-full pl-10 pr-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-doresopolis-green text-sm">
                             </div>
-                            <div>
-                                <p class="font-bold text-gray-800 text-xs leading-tight">Ambulância</p>
-                                <p class="text-[10px] text-red-600 font-bold">Ligar 192</p>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Endereço Completo</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fa-solid fa-location-dot text-gray-400"></i></div>
+                                <input type="text" id="perfil-endereco" required placeholder="Ex: Rua, Número, Bairro" class="w-full pl-10 pr-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-doresopolis-green text-sm">
                             </div>
-                        </a>
-                        <a href="tel:3733561212" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 hover:border-blue-300 active:bg-blue-50 transition-all">
-                            <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mr-3 shrink-0">
-                                <i class="fa-solid fa-house-medical text-sm"></i>
+                        </div>
+
+                        <div class="pt-2 border-t border-gray-100">
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Nova Senha (Opcional)</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fa-solid fa-lock text-gray-400"></i></div>
+                                <input type="password" id="perfil-senha" placeholder="Deixe em branco para não alterar" class="w-full pl-10 pr-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-doresopolis-green text-sm">
                             </div>
-                            <div>
-                                <p class="font-bold text-gray-800 text-xs leading-tight">Posto Saúde</p>
-                                <p class="text-[9px] text-gray-500 font-medium">3356-1212</p>
-                            </div>
-                        </a>
-                        <a href="tel:3733561221" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 hover:border-doresopolis-green active:bg-green-50 transition-all">
-                            <div class="w-8 h-8 rounded-full bg-green-100 text-doresopolis-green flex items-center justify-center mr-3 shrink-0">
-                                <i class="fa-solid fa-building-user text-sm"></i>
-                            </div>
-                            <div>
-                                <p class="font-bold text-gray-800 text-xs leading-tight">Prefeitura</p>
-                                <p class="text-[9px] text-gray-500 font-medium">3356-1221</p>
-                            </div>
-                        </a>
-                    </div>
+                        </div>
+
+                        <button type="submit" id="btn-salvar-perfil" class="w-full bg-doresopolis-green text-white font-bold py-3 rounded-lg shadow-md hover:bg-green-800 active:scale-[0.98] transition-all mt-2 flex justify-center items-center gap-2">
+                            <i class="fa-solid fa-floppy-disk"></i> Salvar Alterações
+                        </button>
+                    </form>
+
+                    <!-- Botão de Sair no Perfil -->
+                    <button onclick="fazerLogout()" class="w-full bg-red-50 text-red-600 font-bold py-3 rounded-lg border border-red-100 hover:bg-red-100 active:scale-[0.98] transition-all mt-4 flex justify-center items-center gap-2">
+                        <i class="fa-solid fa-right-from-bracket"></i> Sair da Conta
+                    </button>
                 </div>
 
             </main>
 
-            <!-- BARRA DE NAVEGAÇÃO INFERIOR ATUALIZADA -->
+            <!-- BARRA DE NAVEGAÇÃO INFERIOR ATUALIZADA (3 BOTÕES) -->
             <nav class="absolute bottom-0 w-full bg-white border-t border-gray-200 z-50 pb-safe">
                 <div class="flex justify-around items-center h-16">
-                    <a href="#" onclick="event.preventDefault(); mostrarTela('tela-principal');" class="flex flex-col items-center justify-center w-full h-full text-doresopolis-green">
+                    
+                    <a href="#" onclick="event.preventDefault(); mudarAbaPrincipal('inicio');" id="nav-inicio" class="flex flex-col items-center justify-center w-full h-full text-doresopolis-green transition-colors">
                         <i class="fa-solid fa-house text-lg mb-1"></i><span class="text-[10px] font-medium">Início</span>
                     </a>
-                    
-                    <a href="https://www.doresopolis.mg.gov.br/portal/servicos/1001/historia/" target="_blank" rel="noopener noreferrer" class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-doresopolis-green transition-colors">
-                        <i class="fa-solid fa-map-location-dot text-lg mb-1"></i><span class="text-[10px] font-medium">A Cidade</span>
-                    </a>
 
-                    <!-- Botão Solicitações -->
                     <a href="solicitacoes.html" class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-doresopolis-green transition-colors">
                         <i class="fa-solid fa-list-check text-lg mb-1"></i><span class="text-[10px] font-medium">Solicitações</span>
                     </a>
-                    
-                    <a href="https://ilai.memory.com.br/#/public/inicio" target="_blank" rel="noopener noreferrer" class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-doresopolis-green transition-colors">
-                        <i class="fa-solid fa-chart-pie text-lg mb-1"></i><span class="text-[10px] font-medium">Transparência</span>
+
+                    <a href="#" onclick="event.preventDefault(); mudarAbaPrincipal('perfil');" id="nav-perfil" class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-doresopolis-green transition-colors">
+                        <i class="fa-solid fa-user text-lg mb-1"></i><span class="text-[10px] font-medium">Perfil</span>
                     </a>
+
                 </div>
             </nav>
         </div>
@@ -347,8 +419,8 @@
     <!-- ========================================== -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        // Importando o "orderBy" e o "limit" para organizar as notícias da mais nova para a mais velha
-        import { getFirestore, collection, addDoc, query, where, getDocs, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        // Importando funções para atualizar perfil: doc, updateDoc
+        import { getFirestore, collection, addDoc, query, where, getDocs, orderBy, limit, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCpaNuC1IUkteO4fHzFPiNS7s580EyTleU",
@@ -404,11 +476,35 @@
             }
         };
 
-        // --- FUNÇÃO PARA BUSCAR E RENDERIZAR O MURAL DE AVISOS ---
+        // --- SISTEMA DE NAVEGAÇÃO ENTRE INÍCIO E PERFIL ---
+        window.mudarAbaPrincipal = function(aba) {
+            const abaInicio = document.getElementById('aba-inicio');
+            const abaPerfil = document.getElementById('aba-perfil');
+            const navInicio = document.getElementById('nav-inicio');
+            const navPerfil = document.getElementById('nav-perfil');
+
+            if (aba === 'inicio') {
+                abaInicio.classList.replace('hidden', 'block');
+                abaPerfil.classList.replace('block', 'hidden');
+                
+                navInicio.classList.replace('text-gray-400', 'text-doresopolis-green');
+                navPerfil.classList.replace('text-doresopolis-green', 'text-gray-400');
+            } else {
+                abaPerfil.classList.replace('hidden', 'block');
+                abaInicio.classList.replace('block', 'hidden');
+                
+                navPerfil.classList.replace('text-gray-400', 'text-doresopolis-green');
+                navInicio.classList.replace('text-doresopolis-green', 'text-gray-400');
+                
+                // Sempre que clicar em Perfil, busca os dados reais no banco
+                carregarDadosPerfil();
+            }
+        };
+
+        // --- CARREGAR AVISOS ---
         window.carregarAvisos = async function() {
             const container = document.getElementById('mural-avisos-conteudo');
             try {
-                // Busca na coleção "avisos", ordenando pela data mais recente e pegando no máximo os últimos 5
                 const q = query(collection(db, "avisos"), orderBy("dataPublicacao", "desc"), limit(5));
                 const snapshot = await getDocs(q);
 
@@ -417,12 +513,10 @@
                     return;
                 }
 
-                container.innerHTML = ''; // Remove a mensagem de carregamento
+                container.innerHTML = ''; 
                 
                 snapshot.forEach((doc) => {
                     const aviso = doc.data();
-                    
-                    // Define a cor da etiqueta baseada no nome da secretaria
                     let corBg = 'bg-gray-500';
                     const sec = aviso.secretaria.toUpperCase();
                     if(sec === 'SAÚDE') corBg = 'bg-red-500';
@@ -432,11 +526,9 @@
                     if(sec === 'TRANSPORTE') corBg = 'bg-purple-500';
                     if(sec === 'ESPORTE') corBg = 'bg-orange-500';
 
-                    // Formatação simples de data
                     const dataObj = new Date(aviso.dataPublicacao);
                     const dataFormatada = dataObj.toLocaleDateString('pt-BR');
 
-                    // Monta o Card em HTML
                     const cardHTML = `
                         <div class="snap-center shrink-0 w-64 bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex flex-col justify-between">
                             <div>
@@ -455,22 +547,28 @@
             }
         };
 
+        // --- VERIFICAÇÃO INICIAL E PROTEÇÃO DE SESSÃO ---
         document.addEventListener('DOMContentLoaded', () => {
             const sessaoSalva = localStorage.getItem('usuarioDoresopolis');
+            const telefoneSalvo = localStorage.getItem('userTelefone');
+
             if (sessaoSalva) {
-                if (sessaoSalva === 'Cidadão') {
+                // Se o usuário logou em uma versão anterior do app (sem o Telefone salvo), force o relogin para vincular o perfil
+                if (sessaoSalva === 'Cidadão' || !telefoneSalvo) {
                     localStorage.removeItem('usuarioDoresopolis');
+                    localStorage.removeItem('userTelefone');
                     mostrarTela('tela-login');
                 } else {
                     document.getElementById('nome-usuario-logado').innerText = sessaoSalva;
                     mostrarTela('tela-principal');
-                    carregarAvisos(); // Carrega os avisos se o usuário já estiver logado
+                    carregarAvisos();
                 }
             } else {
                 mostrarTela('tela-login');
             }
         });
 
+        // --- CADASTRO ---
         window.realizarCadastro = async function(event) {
             event.preventDefault(); 
             
@@ -480,6 +578,7 @@
 
             const nome = document.getElementById('cad-nome').value;
             const telefone = document.getElementById('cad-telefone').value;
+            const email = document.getElementById('cad-email').value; // Novo campo de email
             const rua = document.getElementById('cad-rua').value; 
             const numero = document.getElementById('cad-numero').value;
             const bairro = document.getElementById('cad-bairro').value;
@@ -514,17 +613,20 @@
                 await addDoc(usuariosRef, {
                     nomeCompleto: nome,
                     telefone: telefone,
+                    email: email, // Salvando o e-mail no Firebase
                     endereco: enderecoCompleto,
                     senha: senha, 
                     dataRegistro: new Date().toISOString()
                 });
                 
                 localStorage.setItem('usuarioDoresopolis', primeiroNome);
+                localStorage.setItem('userTelefone', telefone); // Salva o telefone para o sistema de Perfil
+                
                 document.getElementById('nome-usuario-logado').innerText = primeiroNome; 
                 mostrarTela('tela-principal');
                 mostrarAviso(`Bem-vindo, ${primeiroNome}!`, 'sucesso');
                 
-                carregarAvisos(); // Chama a função do mural
+                carregarAvisos();
 
             } catch (error) {
                 console.error("Erro ao salvar: ", error);
@@ -537,6 +639,7 @@
             }
         };
 
+        // --- LOGIN ---
         window.realizarLogin = async function(event) {
             event.preventDefault();
             
@@ -560,12 +663,13 @@
                     const primeiroNome = usuarioData.nomeCompleto.split(' ')[0];
                     
                     localStorage.setItem('usuarioDoresopolis', primeiroNome);
+                    localStorage.setItem('userTelefone', telefone); // Salva o telefone p/ edição de perfil
                     
                     document.getElementById('nome-usuario-logado').innerText = primeiroNome;
                     mostrarTela('tela-principal');
                     mostrarAviso(`Bem-vindo de volta, ${primeiroNome}!`, 'sucesso');
                     
-                    carregarAvisos(); // Chama a função do mural
+                    carregarAvisos(); 
                 }
             } catch (error) {
                 console.error("Erro ao tentar fazer login: ", error);
@@ -576,9 +680,93 @@
             }
         };
 
+        // --- CARREGAR DADOS DO PERFIL ---
+        window.carregarDadosPerfil = async function() {
+            const telefoneAtual = localStorage.getItem('userTelefone');
+            if(!telefoneAtual) return;
+
+            try {
+                const q = query(collection(db, "usuarios"), where("telefone", "==", telefoneAtual));
+                const snapshot = await getDocs(q);
+
+                if (!snapshot.empty) {
+                    const docUsuario = snapshot.docs[0];
+                    const dados = docUsuario.data();
+
+                    // Preenche os campos do formulário
+                    document.getElementById('perfil-doc-id').value = docUsuario.id;
+                    document.getElementById('perfil-nome').value = dados.nomeCompleto || '';
+                    document.getElementById('perfil-telefone').value = dados.telefone || '';
+                    document.getElementById('perfil-email').value = dados.email || '';
+                    document.getElementById('perfil-endereco').value = dados.endereco || '';
+                }
+            } catch (error) {
+                console.error("Erro ao carregar perfil: ", error);
+                mostrarAviso("Erro ao carregar dados do perfil.", "erro");
+            }
+        };
+
+        // --- ATUALIZAR DADOS DO PERFIL ---
+        window.salvarPerfil = async function(event) {
+            event.preventDefault();
+            
+            const btn = document.getElementById('btn-salvar-perfil');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Salvando...';
+
+            const idDocumento = document.getElementById('perfil-doc-id').value;
+            const nome = document.getElementById('perfil-nome').value;
+            const telefone = document.getElementById('perfil-telefone').value;
+            const email = document.getElementById('perfil-email').value;
+            const endereco = document.getElementById('perfil-endereco').value;
+            const senha = document.getElementById('perfil-senha').value;
+
+            // Monta objeto de atualização
+            const dadosAtualizados = {
+                nomeCompleto: nome,
+                telefone: telefone,
+                email: email,
+                endereco: endereco
+            };
+            
+            // Se o usuário digitou uma nova senha, envia junto para o banco
+            if(senha.trim() !== "") {
+                dadosAtualizados.senha = senha;
+            }
+
+            try {
+                // Atualiza o documento no Firestore
+                const userRef = doc(db, "usuarios", idDocumento);
+                await updateDoc(userRef, dadosAtualizados);
+                
+                // Atualiza também os nomes salvos na memória do celular
+                const primeiroNome = nome.split(' ')[0];
+                localStorage.setItem('usuarioDoresopolis', primeiroNome);
+                localStorage.setItem('userTelefone', telefone);
+                document.getElementById('nome-usuario-logado').innerText = primeiroNome;
+
+                // Limpa o campo de senha
+                document.getElementById('perfil-senha').value = '';
+
+                mostrarAviso("Dados atualizados com sucesso!", "sucesso");
+            } catch (error) {
+                console.error("Erro ao atualizar perfil: ", error);
+                mostrarAviso("Erro ao salvar as alterações.", "erro");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-floppy-disk mr-1"></i> Salvar Alterações';
+            }
+        };
+
+        // --- SAIR DA CONTA ---
         window.fazerLogout = function() {
             if(confirm("Deseja realmente sair da sua conta?")) {
                 localStorage.removeItem('usuarioDoresopolis');
+                localStorage.removeItem('userTelefone');
+                
+                // Retorna os botões de aba pro estado inicial
+                mudarAbaPrincipal('inicio');
+
                 mostrarTela('tela-login');
                 document.getElementById('login-telefone').value = '';
                 document.getElementById('login-senha').value = '';
@@ -588,26 +776,6 @@
         window.navegarPara = function(secretaria) {
             if (navigator.vibrate) navigator.vibrate(50);
             mostrarAviso(`Acessando serviços de: ${secretaria.toUpperCase()}`, 'info');
-        };
-
-        // ==============================================================================
-        // [ ÁREA PREPARADA PARA AS FUTURAS PÁGINAS DAS SECRETARIAS ]
-        // Quando criar o painel das secretarias, basta importar e disparar essa função.
-        // ==============================================================================
-        window.publicarNovoAvisoBD = async function(nomeSecretaria, tituloAviso, descricaoAviso) {
-            try {
-                await addDoc(collection(db, "avisos"), {
-                    secretaria: nomeSecretaria,
-                    titulo: tituloAviso,
-                    descricao: descricaoAviso,
-                    dataPublicacao: new Date().toISOString()
-                });
-                console.log("Aviso publicado com sucesso no banco de dados!");
-                // Se a pessoa estiver na tela principal, o mural recarregará sozinho:
-                carregarAvisos(); 
-            } catch(e) {
-                console.error("Erro ao publicar aviso: ", e);
-            }
         };
     </script>
 
