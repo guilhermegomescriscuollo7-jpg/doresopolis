@@ -33,7 +33,6 @@
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        /* Toggle Switch Customizado */
         .toggle-checkbox:checked { right: 0; border-color: #3b82f6; }
         .toggle-checkbox:checked + .toggle-label { background-color: #3b82f6; }
         .toggle-checkbox { right: 0; z-index: 1; border-color: #e2e8f0; transition: all 0.3s; }
@@ -69,14 +68,17 @@
             </div>
 
             <div class="flex bg-slate-800 border-t border-slate-700">
-                <button onclick="mudarAbaTi('usuarios')" id="aba-btn-usuarios" class="flex-1 py-3 text-[10px] font-bold uppercase tracking-wider text-blue-400 border-b-2 border-blue-500 transition-all flex flex-col items-center gap-1">
-                    <i class="fa-solid fa-users text-sm"></i> Usuários
+                <button onclick="mudarAbaTi('usuarios')" id="aba-btn-usuarios" class="flex-1 py-2 text-[9px] font-bold uppercase tracking-wider text-blue-400 border-b-2 border-blue-500 transition-all flex flex-col items-center">
+                    <i class="fa-solid fa-users text-sm mb-1 mt-1"></i> Usuários
                 </button>
-                <button onclick="mudarAbaTi('sistema')" id="aba-btn-sistema" class="flex-1 py-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 border-b-2 border-transparent transition-all flex flex-col items-center gap-1">
-                    <i class="fa-solid fa-gears text-sm"></i> Sistema
+                <button onclick="mudarAbaTi('sistema')" id="aba-btn-sistema" class="flex-1 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-400 border-b-2 border-transparent transition-all flex flex-col items-center">
+                    <i class="fa-solid fa-gears text-sm mb-1 mt-1"></i> Sistema
                 </button>
-                <button onclick="mudarAbaTi('auditoria')" id="aba-btn-auditoria" class="flex-1 py-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 border-b-2 border-transparent transition-all flex flex-col items-center gap-1">
-                    <i class="fa-solid fa-clock-rotate-left text-sm"></i> Auditoria
+                <button onclick="mudarAbaTi('relatorios')" id="aba-btn-relatorios" class="flex-1 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-400 border-b-2 border-transparent transition-all flex flex-col items-center">
+                    <i class="fa-solid fa-chart-pie text-sm mb-1 mt-1"></i> Relatórios
+                </button>
+                <button onclick="mudarAbaTi('auditoria')" id="aba-btn-auditoria" class="flex-1 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-400 border-b-2 border-transparent transition-all flex flex-col items-center">
+                    <i class="fa-solid fa-clock-rotate-left text-sm mb-1 mt-1"></i> Auditoria
                 </button>
             </div>
         </header>
@@ -159,8 +161,81 @@
                     <input type="text" id="sys-nova-rua" placeholder="Nome da nova rua..." class="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:border-blue-400">
                     <button onclick="adicionarRua()" class="bg-slate-800 text-white px-3 py-2 rounded-lg text-sm font-bold"><i class="fa-solid fa-plus"></i></button>
                 </div>
-                <div id="lista-ruas" class="space-y-2 max-h-40 overflow-y-auto pr-1 hide-scrollbar">
+                <div id="lista-ruas" class="space-y-2 max-h-56 overflow-y-auto pr-1 hide-scrollbar">
                     <div class="text-center py-4 text-xs text-slate-400">Carregando vias...</div>
+                </div>
+            </div>
+
+        </main>
+
+        <main id="aba-relatorios" class="flex-grow overflow-y-auto p-4 pb-6 scroll-smooth hidden bg-slate-50">
+            
+            <div class="mb-5">
+                <h2 class="text-lg font-black text-slate-800">Relatórios de Atendimento</h2>
+                <p class="text-slate-500 text-[10px] uppercase font-bold tracking-wider mt-0.5">Desempenho das Secretarias</p>
+            </div>
+
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 mb-4 relative overflow-hidden">
+                <div class="absolute left-0 top-0 bottom-0 w-1 bg-amber-500"></div>
+
+                <div class="flex items-center gap-2 mb-3 border-b border-slate-50 pb-3">
+                    <div class="w-8 h-8 rounded-md bg-amber-50 text-amber-600 flex items-center justify-center">
+                        <i class="fa-solid fa-helmet-safety"></i>
+                    </div>
+                    <h3 class="font-black text-slate-800 text-sm uppercase tracking-tight">Sec. de Obras</h3>
+                </div>
+
+                <div class="grid grid-cols-4 gap-2 mb-4">
+                    <div class="bg-slate-50 py-2 rounded-lg border border-slate-100 text-center">
+                        <p id="rel-obras-total" class="text-lg font-black text-slate-800">0</p>
+                        <p class="text-[8px] text-slate-500 font-bold uppercase mt-0.5">Total</p>
+                    </div>
+                    <div class="bg-slate-50 py-2 rounded-lg border border-slate-100 text-center">
+                        <p id="rel-obras-pendentes" class="text-lg font-black text-slate-600">0</p>
+                        <p class="text-[8px] text-slate-500 font-bold uppercase mt-0.5">Pendente</p>
+                    </div>
+                    <div class="bg-blue-50 py-2 rounded-lg border border-blue-100 text-center">
+                        <p id="rel-obras-andamento" class="text-lg font-black text-blue-700">0</p>
+                        <p class="text-[8px] text-blue-600 font-bold uppercase mt-0.5">Andamento</p>
+                    </div>
+                    <div class="bg-green-50 py-2 rounded-lg border border-green-100 text-center">
+                        <p id="rel-obras-concluidos" class="text-lg font-black text-green-700">0</p>
+                        <p class="text-[8px] text-green-600 font-bold uppercase mt-0.5">Concluído</p>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex justify-between items-end mb-1">
+                        <span class="text-[10px] font-bold text-slate-500 uppercase">Taxa de Conclusão</span>
+                        <span class="text-xs font-black text-slate-800"><span id="rel-obras-taxa">0</span>%</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden flex">
+                        <div id="rel-obras-bar-concluido" class="bg-green-500 h-full transition-all duration-500" style="width: 0%"></div>
+                        <div id="rel-obras-bar-andamento" class="bg-blue-400 h-full transition-all duration-500" style="width: 0%"></div>
+                        <div id="rel-obras-bar-pendente" class="bg-slate-300 h-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 mb-4 relative overflow-hidden opacity-60 grayscale-[50%]">
+                <div class="absolute left-0 top-0 bottom-0 w-1 bg-red-500"></div>
+                <div class="flex items-center gap-2 mb-2 pb-2">
+                    <div class="w-8 h-8 rounded-md bg-red-50 text-red-600 flex items-center justify-center">
+                        <i class="fa-solid fa-heart-pulse"></i>
+                    </div>
+                    <h3 class="font-black text-slate-800 text-sm uppercase tracking-tight">Sec. de Saúde</h3>
+                    <span class="ml-auto text-[8px] bg-slate-200 text-slate-600 px-2 py-0.5 rounded font-bold uppercase">Em Breve</span>
+                </div>
+            </div>
+
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 relative overflow-hidden opacity-60 grayscale-[50%]">
+                <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-500"></div>
+                <div class="flex items-center gap-2 mb-2 pb-2">
+                    <div class="w-8 h-8 rounded-md bg-blue-50 text-blue-600 flex items-center justify-center">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <h3 class="font-black text-slate-800 text-sm uppercase tracking-tight">Sec. Educação</h3>
+                    <span class="ml-auto text-[8px] bg-slate-200 text-slate-600 px-2 py-0.5 rounded font-bold uppercase">Em Breve</span>
                 </div>
             </div>
 
@@ -193,7 +268,7 @@
                     
                     <div class="flex items-center gap-4">
                         <div id="modal-user-avatar" class="w-14 h-14 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center border border-blue-100 shadow-sm shrink-0 text-2xl font-bold">
-                            </div>
+                        </div>
                         <div class="overflow-hidden">
                             <h4 id="modal-user-nome" class="font-bold text-slate-800 text-base truncate">Nome</h4>
                             <p id="modal-user-telefone" class="text-xs text-slate-500 truncate mt-0.5 font-medium">Telefone</p>
@@ -263,11 +338,10 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app); 
 
-        // Dados globais da TI
         window.todosUsuarios = [];
+        window.ruasAtuais = [];
         window.adminLogado = localStorage.getItem('usuarioDoresopolis') || "Super Admin";
 
-        // --- FUNÇÕES DE INTERFACE BÁSICA ---
         window.mostrarAviso = function(mensagem, tipo = 'sucesso') {
             const toast = document.getElementById('toast-aviso');
             const icone = document.getElementById('toast-icone');
@@ -291,7 +365,7 @@
         };
 
         window.mudarAbaTi = function(aba) {
-            ['usuarios', 'sistema', 'auditoria'].forEach(nome => {
+            ['usuarios', 'sistema', 'relatorios', 'auditoria'].forEach(nome => {
                 const docAba = document.getElementById(`aba-${nome}`);
                 const docBtn = document.getElementById(`aba-btn-${nome}`);
                 if(nome === aba) {
@@ -312,7 +386,6 @@
             }
         };
 
-        // --- SISTEMA DE LOGS DE AUDITORIA ---
         window.registrarLog = async function(acaoDetalhada) {
             try {
                 await addDoc(collection(db, "logs"), {
@@ -323,7 +396,6 @@
             } catch(e) { console.error("Erro ao gerar log", e); }
         };
 
-        // Escuta os Logs para a Aba Auditoria
         const qLogs = query(collection(db, "logs"), orderBy("data", "desc"), limit(20));
         onSnapshot(qLogs, (snapshot) => {
             const container = document.getElementById("lista-logs");
@@ -354,7 +426,39 @@
             });
         });
 
-        // --- GESTÃO DE USUÁRIOS (REAL-TIME) ---
+        // --- SISTEMA DE RELATÓRIOS (NOVO) ---
+        const solicitacoesObrasRef = collection(db, "solicitacoes_obras");
+        onSnapshot(solicitacoesObrasRef, (snapshot) => {
+            let total = 0, concluidos = 0, andamento = 0, pendentes = 0;
+            
+            snapshot.forEach(doc => {
+                total++;
+                const status = doc.data().status;
+                if(status === 'CONCLUÍDO') concluidos++;
+                else if(status === 'EM ANDAMENTO') andamento++;
+                else pendentes++;
+            });
+
+            document.getElementById('rel-obras-total').innerText = total;
+            document.getElementById('rel-obras-concluidos').innerText = concluidos;
+            document.getElementById('rel-obras-andamento').innerText = andamento;
+            document.getElementById('rel-obras-pendentes').innerText = pendentes;
+
+            let taxa = total > 0 ? Math.round((concluidos / total) * 100) : 0;
+            document.getElementById('rel-obras-taxa').innerText = taxa;
+
+            if(total > 0) {
+                // Preenche as barras baseadas na porcentagem de cada status
+                document.getElementById('rel-obras-bar-concluido').style.width = (concluidos/total*100) + '%';
+                document.getElementById('rel-obras-bar-andamento').style.width = (andamento/total*100) + '%';
+                document.getElementById('rel-obras-bar-pendente').style.width = (pendentes/total*100) + '%';
+            } else {
+                document.getElementById('rel-obras-bar-concluido').style.width = '0%';
+                document.getElementById('rel-obras-bar-andamento').style.width = '0%';
+                document.getElementById('rel-obras-bar-pendente').style.width = '100%';
+            }
+        });
+
         const usuariosRef = collection(db, "usuarios");
         const qUsuarios = query(usuariosRef, orderBy("nomeCompleto", "asc"));
 
@@ -430,7 +534,6 @@
             renderizarLista(usuariosFiltrados);
         };
 
-        // --- LÓGICA DO MODAL (GERENCIAR USUÁRIO) ---
         let userSendoEditado = null;
 
         window.abrirModal = function(id) {
@@ -445,7 +548,6 @@
             
             document.getElementById('modal-user-avatar').innerText = user.nome.charAt(0).toUpperCase();
 
-            // Ajustes visuais se bloqueado
             const statusSpan = document.getElementById('modal-user-status');
             const btnBloquear = document.getElementById('btn-bloquear');
             if(user.bloqueado) {
@@ -486,7 +588,6 @@
             }, 300); 
         };
 
-        // Salvar Acesso
         window.salvarNovaPermissao = async function(event) {
             event.preventDefault();
             const btn = document.getElementById('btn-salvar-acesso');
@@ -507,7 +608,6 @@
             }
         };
 
-        // Bloquear/Desbloquear
         window.bloquearUsuario = async function() {
             if(!userSendoEditado) return;
             const novoEstado = !userSendoEditado.bloqueado;
@@ -523,7 +623,6 @@
             }
         };
 
-        // Resetar Senha
         window.resetarSenha = async function() {
             if(!userSendoEditado) return;
             if(confirm(`Tem certeza que deseja redefinir a senha de ${userSendoEditado.nome} para '123456'?`)) {
@@ -536,7 +635,6 @@
             }
         };
 
-        // Excluir
         window.excluirUsuario = async function() {
             if(!userSendoEditado) return;
             const digitado = prompt(`Atenção: Isso é irreversível. Digite EXCLUIR para apagar ${userSendoEditado.nome}:`);
@@ -552,38 +650,46 @@
             }
         };
 
-        // --- SISTEMA E CONFIGURAÇÕES GLOBAIS ---
-
-        // Puxa as configurações iniciais
         const configRef = doc(db, "config", "app");
         const alertaRef = doc(db, "config", "alerta");
         
-        // Garante que o documento config/app exista
+        const ruasIniciais = [
+            "Avenida Gonçalves de Melo", "Praça da Matriz", "Praça Tiradentes",
+            "Rua Alberto Mourão", "Rua Bela Vista", "Rua Farnésio Paim Pamplona",
+            "Rua Higino Pinto Vidal", "Rua Joaquim Murtinho", "Rua João Batista Veloso",
+            "Rua João Lourenço Gomide", "Rua Padre José Venâncio", "Rua Pedro da Costa Lopes",
+            "Rua Piumhi", "Travessa Afonso Goulart", "Travessa Doresópolis"
+        ];
+
         getDoc(configRef).then(async snap => {
             if(!snap.exists()) {
-                await setDoc(configRef, { manutencao: false, ruas: [] });
+                await setDoc(configRef, { manutencao: false, ruas: ruasIniciais });
             }
         });
 
-        // Escuta configurações do App em tempo real
         onSnapshot(configRef, (docSnap) => {
             if(docSnap.exists()) {
                 const data = docSnap.data();
-                // Manutenção
+                
                 document.getElementById('toggle-manutencao').checked = data.manutencao || false;
                 
-                // Renderizar Ruas
-                const ruas = data.ruas || [];
+                window.ruasAtuais = data.ruas || [];
                 const listaRuas = document.getElementById('lista-ruas');
-                if(ruas.length === 0) {
+                
+                if(window.ruasAtuais.length === 0) {
                     listaRuas.innerHTML = `<div class="text-center py-2 text-xs text-slate-400 border border-dashed border-slate-200 rounded">Nenhuma via cadastrada.</div>`;
                 } else {
-                    listaRuas.innerHTML = ruas.sort().map(rua => `
+                    listaRuas.innerHTML = [...window.ruasAtuais].sort().map(rua => {
+                        const ruaFormatada = rua.replace(/'/g, "\\'"); 
+                        return `
                         <div class="flex justify-between items-center bg-white border border-slate-200 p-2 rounded text-xs font-medium text-slate-700">
-                            ${rua}
-                            <button onclick="removerRua('${rua}')" class="text-red-400 hover:text-red-600"><i class="fa-solid fa-trash"></i></button>
+                            <span class="truncate pr-2">${rua}</span>
+                            <div class="shrink-0 flex gap-2">
+                                <button onclick="editarRua('${ruaFormatada}')" class="text-blue-500 hover:text-blue-700" title="Editar"><i class="fa-solid fa-pen"></i></button>
+                                <button onclick="removerRua('${ruaFormatada}')" class="text-red-400 hover:text-red-600" title="Excluir"><i class="fa-solid fa-trash"></i></button>
+                            </div>
                         </div>
-                    `).join('');
+                    `}).join('');
                 }
             }
         });
@@ -595,7 +701,6 @@
             }
         });
 
-        // Ações de Sistema
         window.salvarConfigApp = async function(event) {
             const manutencaoAtiva = event.target.checked;
             try {
@@ -629,6 +734,22 @@
                 input.value = '';
                 registrarLog(`Adicionou a rua '${nomeRua}' no sistema.`);
             } catch(e) { alert("Erro ao adicionar via."); }
+        };
+
+        window.editarRua = async function(nomeAntigo) {
+            const novoNome = prompt("Editar nome da rua:", nomeAntigo);
+            if(novoNome && novoNome.trim() !== "" && novoNome !== nomeAntigo) {
+                try {
+                    const novoArray = window.ruasAtuais.filter(r => r !== nomeAntigo);
+                    novoArray.push(novoNome.trim());
+                    
+                    await updateDoc(configRef, { ruas: novoArray });
+                    registrarLog(`Editou a rua '${nomeAntigo}' para '${novoNome.trim()}'.`);
+                    mostrarAviso("Rua editada com sucesso!");
+                } catch(e) { 
+                    alert("Erro ao editar via."); 
+                }
+            }
         };
 
         window.removerRua = async function(nomeRua) {
