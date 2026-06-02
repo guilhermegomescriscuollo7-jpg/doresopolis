@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0b5c3b">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <title>Minhas Solicitações - Doresópolis</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        doresopolis: {
+                            green: '#0b5c3b',
+                            dark: '#3f3f46',
+                            light: '#f8fafc'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-gray-200 font-sans text-gray-800 flex justify-center items-center min-h-screen">
+
+    <div class="bg-gray-50 w-full max-w-md h-[100dvh] flex flex-col relative shadow-2xl overflow-hidden sm:rounded-xl sm:h-[95vh] sm:border sm:border-gray-300">
+        
+        <!-- HEADER -->
+        <header class="bg-white shadow-sm border-b border-gray-200 z-10 flex-shrink-0">
+            <div class="bg-doresopolis-green h-2 w-full"></div>
+            <div class="px-4 py-3 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-full bg-blue-50 text-doresopolis-green flex items-center justify-center shrink-0 shadow-inner">
+                        <i class="fa-solid fa-folder-open text-lg"></i>
+                    </div>
+                    <div>
+                        <p class="text-[9px] tracking-[0.1em] text-gray-500 uppercase font-semibold leading-none">Central do Cidadão</p>
+                        <h1 class="text-xl font-black text-gray-700 tracking-tight uppercase leading-none mt-1">Solicitações</h1>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- CONTEÚDO PRINCIPAL -->
+        <main class="flex-grow overflow-y-auto p-4 pb-24 scroll-smooth">
+            
+            <div class="mb-5">
+                <h2 class="text-lg font-bold text-gray-800">Meu Histórico</h2>
+                <p class="text-gray-500 mt-1 text-xs leading-snug">Acompanhe todos os pedidos e requerimentos que você fez nas diversas secretarias da prefeitura.</p>
+            </div>
+
+            <!-- FILTRO RÁPIDO (Apenas visual por enquanto) -->
+            <div class="flex gap-2 overflow-x-auto pb-2 mb-4 hide-scrollbar">
+                <button class="bg-doresopolis-dark text-white px-4 py-1.5 rounded-full text-[10px] font-bold shrink-0 shadow-sm">Todos</button>
+                <button class="bg-white border border-gray-200 text-gray-600 px-4 py-1.5 rounded-full text-[10px] font-bold shrink-0 shadow-sm">Pendente</button>
+                <button class="bg-white border border-gray-200 text-gray-600 px-4 py-1.5 rounded-full text-[10px] font-bold shrink-0 shadow-sm">Em Andamento</button>
+                <button class="bg-white border border-gray-200 text-gray-600 px-4 py-1.5 rounded-full text-[10px] font-bold shrink-0 shadow-sm">Concluído</button>
+            </div>
+
+            <!-- LISTA DE SOLICITAÇÕES -->
+            <div id="lista-todas-solicitacoes" class="flex flex-col gap-4">
+                <div class="text-center py-10 bg-white rounded-xl shadow-sm border border-gray-200">
+                    <i class="fa-solid fa-spinner fa-spin text-2xl text-gray-400 mb-3"></i>
+                    <p class="text-xs text-gray-500 font-medium">Buscando seu histórico no sistema...</p>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- BARRA DE NAVEGAÇÃO INFERIOR ATUALIZADA (3 BOTÕES) -->
+        <nav class="absolute bottom-0 w-full bg-white border-t border-gray-200 z-50 pb-safe">
+            <div class="flex justify-around items-center h-16">
+                
+                <!-- Início -->
+                <a href="index.html" class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-doresopolis-green transition-colors">
+                    <i class="fa-solid fa-house text-lg mb-1"></i><span class="text-[10px] font-medium">Início</span>
+                </a>
+
+                <!-- Solicitações (Ativo) -->
+                <a href="#" onclick="event.preventDefault();" class="flex flex-col items-center justify-center w-full h-full text-doresopolis-green transition-colors">
+                    <i class="fa-solid fa-list-check text-lg mb-1"></i><span class="text-[10px] font-medium">Solicitações</span>
+                </a>
+
+                <!-- Perfil (Leva pro index.html avisando que lá ele acessa o perfil) -->
+                <a href="index.html" onclick="alert('Para acessar o Perfil, clique na aba Perfil na página de Início.');" class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-doresopolis-green transition-colors">
+                    <i class="fa-solid fa-user text-lg mb-1"></i><span class="text-[10px] font-medium">Perfil</span>
+                </a>
+
+            </div>
+        </nav>
+    </div>
+
+    <!-- SCRIPT DE LÓGICA E FIREBASE -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getFirestore, collection, query, orderBy, onSnapshot, getDocs, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCpaNuC1IUkteO4fHzFPiNS7s580EyTleU",
+            authDomain: "doresopolis.firebaseapp.com",
+            projectId: "doresopolis",
+            storageBucket: "doresopolis.firebasestorage.app",
+            messagingSenderId: "465119846468",
+            appId: "1:465119846468:web:8b292481fec10132cf9c11",
+            measurementId: "G-WXWGXEWY53"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app); 
+
+        let usuarioNomePrimeiro = "";
+        let usuarioNomeCompleto = "";
+
+        // Autenticação e busca de nome do usuário logado
+        document.addEventListener('DOMContentLoaded', async () => {
+            usuarioNomePrimeiro = localStorage.getItem('usuarioDoresopolis');
+            const telefoneSalvo = localStorage.getItem('userTelefone');
+
+            if (usuarioNomePrimeiro && telefoneSalvo) {
+                try {
+                    const qUser = query(collection(db, "usuarios"), where("telefone", "==", telefoneSalvo));
+                    const snapUser = await getDocs(qUser);
+                    
+                    if(!snapUser.empty) {
+                        usuarioNomeCompleto = snapUser.docs[0].data().nomeCompleto;
+                    } else {
+                        usuarioNomeCompleto = usuarioNomePrimeiro;
+                    }
+                } catch(e) {
+                    console.error(e);
+                    usuarioNomeCompleto = usuarioNomePrimeiro;
+                }
+
+                carregarHistoricoGeral(); 
+            } else {
+                alert("Você precisa estar logado para ver suas solicitações.");
+                window.location.href = "index.html";
+            }
+        });
+
+        // Função para carregar todas as solicitações do usuário
+        function carregarHistoricoGeral() {
+            const container = document.getElementById("lista-todas-solicitacoes");
+
+            // No futuro, podemos criar um array com várias coleções (Saúde, Tributos, etc) 
+            // e mesclar tudo aqui. Por enquanto, lemos a de Obras.
+            const solicitacoesObrasRef = collection(db, "solicitacoes_obras");
+            const qObras = query(solicitacoesObrasRef, orderBy("dataRegistro", "desc"));
+
+            onSnapshot(qObras, (snapshot) => {
+                if (snapshot.empty) {
+                    container.innerHTML = `
+                        <div class="text-center py-10 bg-white rounded-xl shadow-sm border border-gray-200">
+                            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <i class="fa-solid fa-box-open text-2xl text-gray-400"></i>
+                            </div>
+                            <p class="text-sm font-bold text-gray-700">Nenhum chamado encontrado</p>
+                            <p class="text-[11px] text-gray-500 mt-1">Você ainda não possui solicitações registradas.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = "";
+                let encontrouChamados = false;
+
+                snapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    
+                    // Filtra apenas as solicitações DESTE cidadão
+                    if(data.nomeCidadao !== usuarioNomeCompleto && data.nomeCidadao !== usuarioNomePrimeiro) return;
+                    
+                    encontrouChamados = true;
+                    
+                    const dataFormatada = new Date(data.dataRegistro).toLocaleDateString('pt-BR', {day:'2-digit', month:'2-digit', year:'numeric'});
+                    const horaFormatada = new Date(data.dataRegistro).toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+                    const protocoloTexto = data.protocolo ? `#${data.protocolo}` : 'Pendente';
+
+                    // Estilo dinâmico do Status
+                    let statusBadge = '';
+                    if(data.status === 'EM ANDAMENTO') {
+                        statusBadge = `<span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-[10px] font-black uppercase"><i class="fa-solid fa-person-digging mr-1"></i> Andamento</span>`;
+                    } else if(data.status === 'CONCLUÍDO') {
+                        statusBadge = `<span class="bg-green-100 text-green-700 px-2 py-0.5 rounded text-[10px] font-black uppercase"><i class="fa-solid fa-check mr-1"></i> Concluído</span>`;
+                    } else {
+                        statusBadge = `<span class="bg-gray-100 text-gray-600 px-2 py-0.5 rounded text-[10px] font-black uppercase border border-gray-200"><i class="fa-regular fa-clock mr-1"></i> Pendente</span>`;
+                    }
+
+                    // Card da Solicitação
+                    const card = `
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden relative">
+                            <!-- Cabeçalho do Card (Identifica a Secretaria) -->
+                            <div class="bg-amber-50 px-3 py-2 border-b border-amber-100 flex justify-between items-center">
+                                <div class="flex items-center gap-1.5">
+                                    <i class="fa-solid fa-helmet-safety text-amber-500 text-xs"></i>
+                                    <span class="text-[10px] font-black text-amber-700 uppercase tracking-wider">Sec. Obras</span>
+                                </div>
+                                <span class="text-[10px] font-black text-amber-600 bg-white px-2 py-0.5 rounded-md shadow-sm">${protocoloTexto}</span>
+                            </div>
+                            
+                            <!-- Corpo do Card -->
+                            <div class="p-3">
+                                <div class="flex justify-between items-start mb-2 gap-2">
+                                    <h3 class="font-bold text-gray-800 text-sm leading-tight">${data.tipoServico}</h3>
+                                    <div class="shrink-0 mt-0.5">${statusBadge}</div>
+                                </div>
+                                
+                                <p class="text-xs text-gray-500 mt-1 mb-2 line-clamp-1"><i class="fa-solid fa-location-dot text-red-400 w-3 text-center mr-1"></i> ${data.endereco}</p>
+                                
+                                <div class="flex justify-between items-center pt-3 border-t border-gray-50 mt-1">
+                                    <span class="text-[10px] text-gray-400 font-medium"><i class="fa-regular fa-calendar mr-1"></i> ${dataFormatada} às ${horaFormatada}</span>
+                                    <button onclick="alert('Função de detalhes e interação com a prefeitura em desenvolvimento.')" class="text-[10px] font-bold text-doresopolis-green hover:underline flex items-center">
+                                        Ver detalhes <i class="fa-solid fa-chevron-right ml-1 text-[8px]"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    container.innerHTML += card;
+                });
+
+                if(!encontrouChamados) {
+                    container.innerHTML = `
+                        <div class="text-center py-10 bg-white rounded-xl shadow-sm border border-gray-200">
+                            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <i class="fa-solid fa-box-open text-2xl text-gray-400"></i>
+                            </div>
+                            <p class="text-sm font-bold text-gray-700">Nenhum chamado encontrado</p>
+                            <p class="text-[11px] text-gray-500 mt-1">Você ainda não possui solicitações registradas.</p>
+                        </div>
+                    `;
+                }
+            }, (error) => {
+                console.error("Erro ao puxar chamados:", error);
+                document.getElementById("lista-todas-solicitacoes").innerHTML = `<div class="text-center py-8 text-red-500 text-sm bg-white rounded-xl shadow-sm border border-gray-200">Erro de conexão ao buscar chamados.</div>`;
+            });
+        }
+    </script>
+</body>
+</html>
