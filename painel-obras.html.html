@@ -26,12 +26,14 @@
 </head>
 <body class="bg-gray-100 font-sans text-gray-800 flex min-h-screen">
 
+    <!-- NOTIFICAÇÃO (TOAST) -->
     <div id="toast-aviso" class="fixed top-4 right-4 z-[100] bg-green-600 text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-3 transition-all duration-300 opacity-0 pointer-events-none translate-y-[-20px] max-w-sm">
         <i id="toast-icone" class="fa-solid fa-circle-check text-lg"></i>
         <span id="toast-mensagem" class="text-sm font-medium leading-snug"></span>
     </div>
 
-    <aside class="w-64 bg-doresopolis-dark text-white hidden md:flex flex-col shadow-xl">
+    <!-- MENU LATERAL (SIDEBAR) -->
+    <aside class="w-64 bg-doresopolis-dark text-white hidden md:flex flex-col shadow-xl flex-shrink-0">
         <div class="p-6 border-b border-gray-600 text-center">
             <img src="https://cdn.tecconcursos.com.br/figuras/7528d9ce-3894-4606-a0ed-7b57ef6cb7ed" alt="Brasão" class="w-16 h-16 mx-auto object-contain mb-3 brightness-0 invert opacity-90">
             <h1 class="text-lg font-black tracking-wider uppercase">Doresópolis</h1>
@@ -55,9 +57,11 @@
         </div>
     </aside>
 
+    <!-- ÁREA PRINCIPAL -->
     <main class="flex-grow flex flex-col h-screen overflow-hidden">
         
-        <header class="bg-white shadow-sm border-b border-gray-200 px-6 py-4 flex justify-between items-center z-10">
+        <!-- CABEÇALHO MOBILE / TOPO DESKTOP -->
+        <header class="bg-white shadow-sm border-b border-gray-200 px-6 py-4 flex justify-between items-center z-10 flex-shrink-0">
             <div class="flex items-center gap-4">
                 <button class="md:hidden text-gray-500 hover:text-doresopolis-green text-xl">
                     <i class="fa-solid fa-bars"></i>
@@ -72,18 +76,21 @@
             </div>
         </header>
 
-        <div class="flex-grow p-6 overflow-y-auto">
+        <!-- CONTEÚDO ROLÁVEL -->
+        <div class="flex-grow p-4 md:p-6 overflow-y-auto">
             
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
                 
-                <div class="lg:col-span-2 space-y-6">
+                <!-- COLUNA ESQUERDA: ESTATÍSTICAS E CHAMADOS -->
+                <div class="xl:col-span-2 space-y-6">
                     
+                    <!-- CARDS DE RESUMO -->
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm border-t-4 border-t-red-500">
                             <p class="text-xs text-gray-500 font-bold uppercase mb-1">Pendentes</p>
                             <h3 class="text-3xl font-black text-gray-800">14</h3>
                         </div>
-                        <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm border-t-4 border-t-amber-500">
+                        <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm border-t-4 border-t-blue-500">
                             <p class="text-xs text-gray-500 font-bold uppercase mb-1">Em Andamento</p>
                             <h3 class="text-3xl font-black text-gray-800">08</h3>
                         </div>
@@ -93,40 +100,110 @@
                         </div>
                     </div>
 
+                    <!-- TABELA DE ÚLTIMOS CHAMADOS COM NOVOS CAMPOS -->
                     <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
                         <div class="px-6 py-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
-                            <h3 class="font-bold text-gray-800"><i class="fa-solid fa-list-check text-amber-500 mr-2"></i> Últimas Solicitações do App</h3>
+                            <h3 class="font-bold text-gray-800"><i class="fa-solid fa-list-check text-amber-500 mr-2"></i> Solicitações Recentes</h3>
                             <button class="text-xs font-bold text-doresopolis-green hover:underline">Ver todas</button>
                         </div>
+                        
+                        <!-- Wrapper para rolagem horizontal em telas pequenas -->
                         <div class="overflow-x-auto">
-                            <table class="w-full text-sm text-left">
+                            <table class="w-full text-sm text-left whitespace-nowrap">
                                 <thead class="text-xs text-gray-500 uppercase bg-white border-b border-gray-100">
                                     <tr>
-                                        <th class="px-6 py-3">Cidadão / Endereço</th>
+                                        <th class="px-6 py-3 w-16">Foto</th>
+                                        <th class="px-6 py-3">Cidadão / Local</th>
                                         <th class="px-6 py-3">Serviço</th>
-                                        <th class="px-6 py-3">Status</th>
-                                        <th class="px-6 py-3 text-right">Ação</th>
+                                        <th class="px-6 py-3 text-center">Urgência</th>
+                                        <th class="px-6 py-3 text-center">Status</th>
+                                        <th class="px-6 py-3 text-right">Ações</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr class="bg-white border-b border-gray-50 hover:bg-gray-50">
-                                        <td class="px-6 py-4">
-                                            <p class="font-bold text-gray-800">Carlos Silva</p>
-                                            <p class="text-xs text-gray-500">Rua Piumhi, 120</p>
+                                    
+                                    <!-- Solicitação 1 (Urgência Alta) -->
+                                    <tr class="bg-white border-b border-gray-50 hover:bg-gray-50 transition-colors">
+                                        <!-- Foto do problema -->
+                                        <td class="px-6 py-3">
+                                            <div class="w-12 h-12 rounded-lg bg-gray-200 border border-gray-300 overflow-hidden flex items-center justify-center shadow-sm">
+                                                <img src="https://placehold.co/150x150/e2e8f0/64748b?text=Foto" alt="Anexo do serviço" class="w-full h-full object-cover">
+                                            </div>
                                         </td>
-                                        <td class="px-6 py-4 font-medium text-gray-600">Troca de Lâmpada</td>
-                                        <td class="px-6 py-4"><span class="bg-red-100 text-red-600 px-2 py-1 rounded text-[10px] font-bold">PENDENTE</span></td>
-                                        <td class="px-6 py-4 text-right"><button class="text-blue-500 hover:text-blue-700"><i class="fa-solid fa-eye"></i></button></td>
-                                    </tr>
-                                    <tr class="bg-white border-b border-gray-50 hover:bg-gray-50">
-                                        <td class="px-6 py-4">
-                                            <p class="font-bold text-gray-800">Maria Oliveira</p>
-                                            <p class="text-xs text-gray-500">Praça da Matriz, S/N</p>
+                                        <!-- Cidadão e Local -->
+                                        <td class="px-6 py-3">
+                                            <p class="font-bold text-gray-800"><i class="fa-regular fa-user text-gray-400 mr-1"></i> Carlos Silva</p>
+                                            <p class="text-xs text-gray-500 mt-0.5"><i class="fa-solid fa-location-dot text-red-400 mr-1"></i> Rua Piumhi, 120</p>
                                         </td>
-                                        <td class="px-6 py-4 font-medium text-gray-600">Tapa-Buraco</td>
-                                        <td class="px-6 py-4"><span class="bg-amber-100 text-amber-600 px-2 py-1 rounded text-[10px] font-bold">EM ANDAMENTO</span></td>
-                                        <td class="px-6 py-4 text-right"><button class="text-blue-500 hover:text-blue-700"><i class="fa-solid fa-eye"></i></button></td>
+                                        <!-- Tipo de Serviço -->
+                                        <td class="px-6 py-3 font-medium text-gray-700">Tapa-Buraco</td>
+                                        <!-- Nível de Urgência -->
+                                        <td class="px-6 py-3 text-center">
+                                            <span class="bg-red-100 text-red-700 border border-red-200 px-2.5 py-1 rounded-md text-[10px] font-black tracking-wider">ALTA</span>
+                                        </td>
+                                        <!-- Status -->
+                                        <td class="px-6 py-3 text-center">
+                                            <span class="bg-gray-100 text-gray-600 border border-gray-200 px-2.5 py-1 rounded-full text-[10px] font-bold"><i class="fa-regular fa-clock mr-1"></i> PENDENTE</span>
+                                        </td>
+                                        <!-- Ações -->
+                                        <td class="px-6 py-3 text-right">
+                                            <button class="text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 p-2 rounded-lg transition-colors" title="Ver detalhes completos">
+                                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                            </button>
+                                        </td>
                                     </tr>
+
+                                    <!-- Solicitação 2 (Urgência Média) -->
+                                    <tr class="bg-white border-b border-gray-50 hover:bg-gray-50 transition-colors">
+                                        <td class="px-6 py-3">
+                                            <div class="w-12 h-12 rounded-lg bg-gray-200 border border-gray-300 overflow-hidden flex items-center justify-center shadow-sm">
+                                                <!-- Ícone genérico caso o cidadão não envie foto -->
+                                                <i class="fa-solid fa-image text-gray-400 text-xl"></i>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-3">
+                                            <p class="font-bold text-gray-800"><i class="fa-regular fa-user text-gray-400 mr-1"></i> Maria Oliveira</p>
+                                            <p class="text-xs text-gray-500 mt-0.5"><i class="fa-solid fa-location-dot text-red-400 mr-1"></i> Praça da Matriz, S/N</p>
+                                        </td>
+                                        <td class="px-6 py-3 font-medium text-gray-700">Troca de Lâmpada</td>
+                                        <td class="px-6 py-3 text-center">
+                                            <span class="bg-amber-100 text-amber-700 border border-amber-200 px-2.5 py-1 rounded-md text-[10px] font-black tracking-wider">MÉDIA</span>
+                                        </td>
+                                        <td class="px-6 py-3 text-center">
+                                            <span class="bg-blue-100 text-blue-700 border border-blue-200 px-2.5 py-1 rounded-full text-[10px] font-bold"><i class="fa-solid fa-person-digging mr-1"></i> EM ANDAMENTO</span>
+                                        </td>
+                                        <td class="px-6 py-3 text-right">
+                                            <button class="text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 p-2 rounded-lg transition-colors" title="Ver detalhes completos">
+                                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    
+                                    <!-- Solicitação 3 (Urgência Baixa) -->
+                                    <tr class="bg-white hover:bg-gray-50 transition-colors">
+                                        <td class="px-6 py-3">
+                                            <div class="w-12 h-12 rounded-lg bg-gray-200 border border-gray-300 overflow-hidden flex items-center justify-center shadow-sm">
+                                                <img src="https://placehold.co/150x150/e2e8f0/64748b?text=Foto" alt="Anexo do serviço" class="w-full h-full object-cover grayscale opacity-75">
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-3">
+                                            <p class="font-bold text-gray-800"><i class="fa-regular fa-user text-gray-400 mr-1"></i> João Batista</p>
+                                            <p class="text-xs text-gray-500 mt-0.5"><i class="fa-solid fa-location-dot text-red-400 mr-1"></i> Rua Bela Vista, 45</p>
+                                        </td>
+                                        <td class="px-6 py-3 font-medium text-gray-700">Limpeza de Bueiro</td>
+                                        <td class="px-6 py-3 text-center">
+                                            <span class="bg-green-100 text-green-700 border border-green-200 px-2.5 py-1 rounded-md text-[10px] font-black tracking-wider">BAIXA</span>
+                                        </td>
+                                        <td class="px-6 py-3 text-center">
+                                            <span class="bg-green-100 text-green-700 border border-green-200 px-2.5 py-1 rounded-full text-[10px] font-bold"><i class="fa-solid fa-check mr-1"></i> CONCLUÍDO</span>
+                                        </td>
+                                        <td class="px-6 py-3 text-right">
+                                            <button class="text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 p-2 rounded-lg transition-colors" title="Ver detalhes completos">
+                                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    
                                 </tbody>
                             </table>
                         </div>
@@ -134,8 +211,10 @@
 
                 </div>
 
-                <div class="lg:col-span-1">
+                <!-- COLUNA DIREITA: MURAL DE AVISOS -->
+                <div class="xl:col-span-1">
                     
+                    <!-- FORMULÁRIO PARA PUBLICAR NO APP DO CIDADÃO -->
                     <div class="bg-gradient-to-br from-amber-50 to-white rounded-xl border border-amber-100 shadow-sm overflow-hidden mb-6">
                         <div class="px-6 py-4 bg-amber-500 text-white flex items-center gap-3">
                             <i class="fa-solid fa-mobile-screen text-xl"></i>
@@ -168,6 +247,7 @@
         </div>
     </main>
 
+    <!-- SCRIPT DO FIREBASE PARA SALVAR O AVISO -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
