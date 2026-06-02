@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Gestão - Secretaria de Obras | Doresópolis</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        doresopolis: {
+                            green: '#0b5c3b',
+                            dark: '#3f3f46',
+                            light: '#f8fafc'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100 font-sans text-gray-800 flex min-h-screen">
+
+    <div id="toast-aviso" class="fixed top-4 right-4 z-[100] bg-green-600 text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-3 transition-all duration-300 opacity-0 pointer-events-none translate-y-[-20px] max-w-sm">
+        <i id="toast-icone" class="fa-solid fa-circle-check text-lg"></i>
+        <span id="toast-mensagem" class="text-sm font-medium leading-snug"></span>
+    </div>
+
+    <aside class="w-64 bg-doresopolis-dark text-white hidden md:flex flex-col shadow-xl">
+        <div class="p-6 border-b border-gray-600 text-center">
+            <img src="https://cdn.tecconcursos.com.br/figuras/7528d9ce-3894-4606-a0ed-7b57ef6cb7ed" alt="Brasão" class="w-16 h-16 mx-auto object-contain mb-3 brightness-0 invert opacity-90">
+            <h1 class="text-lg font-black tracking-wider uppercase">Doresópolis</h1>
+            <p class="text-xs text-amber-400 font-bold mt-1">SECRETARIA DE OBRAS</p>
+        </div>
+        <nav class="flex-grow p-4 space-y-2">
+            <a href="#" class="flex items-center gap-3 px-4 py-3 bg-amber-500 text-white rounded-lg shadow-sm font-medium transition-colors">
+                <i class="fa-solid fa-chart-line w-5"></i> Dashboard
+            </a>
+            <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-700 text-gray-300 hover:text-white rounded-lg font-medium transition-colors">
+                <i class="fa-solid fa-helmet-safety w-5"></i> Solicitações
+            </a>
+            <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-700 text-gray-300 hover:text-white rounded-lg font-medium transition-colors">
+                <i class="fa-solid fa-map-location-dot w-5"></i> Projetos
+            </a>
+        </nav>
+        <div class="p-4 border-t border-gray-600">
+            <button class="flex items-center gap-3 px-4 py-2 w-full text-left hover:bg-red-600 text-gray-300 hover:text-white rounded-lg font-medium transition-colors">
+                <i class="fa-solid fa-right-from-bracket w-5"></i> Sair do Painel
+            </button>
+        </div>
+    </aside>
+
+    <main class="flex-grow flex flex-col h-screen overflow-hidden">
+        
+        <header class="bg-white shadow-sm border-b border-gray-200 px-6 py-4 flex justify-between items-center z-10">
+            <div class="flex items-center gap-4">
+                <button class="md:hidden text-gray-500 hover:text-doresopolis-green text-xl">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <h2 class="text-xl font-bold text-gray-800">Visão Geral</h2>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="text-sm font-medium text-gray-600 hidden sm:block"><i class="fa-regular fa-user mr-1"></i> Admin Obras</span>
+                <div class="w-10 h-10 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center font-bold">
+                    OB
+                </div>
+            </div>
+        </header>
+
+        <div class="flex-grow p-6 overflow-y-auto">
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                <div class="lg:col-span-2 space-y-6">
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm border-t-4 border-t-red-500">
+                            <p class="text-xs text-gray-500 font-bold uppercase mb-1">Pendentes</p>
+                            <h3 class="text-3xl font-black text-gray-800">14</h3>
+                        </div>
+                        <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm border-t-4 border-t-amber-500">
+                            <p class="text-xs text-gray-500 font-bold uppercase mb-1">Em Andamento</p>
+                            <h3 class="text-3xl font-black text-gray-800">08</h3>
+                        </div>
+                        <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm border-t-4 border-t-green-500">
+                            <p class="text-xs text-gray-500 font-bold uppercase mb-1">Concluídos (Mês)</p>
+                            <h3 class="text-3xl font-black text-gray-800">42</h3>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                        <div class="px-6 py-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
+                            <h3 class="font-bold text-gray-800"><i class="fa-solid fa-list-check text-amber-500 mr-2"></i> Últimas Solicitações do App</h3>
+                            <button class="text-xs font-bold text-doresopolis-green hover:underline">Ver todas</button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-left">
+                                <thead class="text-xs text-gray-500 uppercase bg-white border-b border-gray-100">
+                                    <tr>
+                                        <th class="px-6 py-3">Cidadão / Endereço</th>
+                                        <th class="px-6 py-3">Serviço</th>
+                                        <th class="px-6 py-3">Status</th>
+                                        <th class="px-6 py-3 text-right">Ação</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="bg-white border-b border-gray-50 hover:bg-gray-50">
+                                        <td class="px-6 py-4">
+                                            <p class="font-bold text-gray-800">Carlos Silva</p>
+                                            <p class="text-xs text-gray-500">Rua Piumhi, 120</p>
+                                        </td>
+                                        <td class="px-6 py-4 font-medium text-gray-600">Troca de Lâmpada</td>
+                                        <td class="px-6 py-4"><span class="bg-red-100 text-red-600 px-2 py-1 rounded text-[10px] font-bold">PENDENTE</span></td>
+                                        <td class="px-6 py-4 text-right"><button class="text-blue-500 hover:text-blue-700"><i class="fa-solid fa-eye"></i></button></td>
+                                    </tr>
+                                    <tr class="bg-white border-b border-gray-50 hover:bg-gray-50">
+                                        <td class="px-6 py-4">
+                                            <p class="font-bold text-gray-800">Maria Oliveira</p>
+                                            <p class="text-xs text-gray-500">Praça da Matriz, S/N</p>
+                                        </td>
+                                        <td class="px-6 py-4 font-medium text-gray-600">Tapa-Buraco</td>
+                                        <td class="px-6 py-4"><span class="bg-amber-100 text-amber-600 px-2 py-1 rounded text-[10px] font-bold">EM ANDAMENTO</span></td>
+                                        <td class="px-6 py-4 text-right"><button class="text-blue-500 hover:text-blue-700"><i class="fa-solid fa-eye"></i></button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="lg:col-span-1">
+                    
+                    <div class="bg-gradient-to-br from-amber-50 to-white rounded-xl border border-amber-100 shadow-sm overflow-hidden mb-6">
+                        <div class="px-6 py-4 bg-amber-500 text-white flex items-center gap-3">
+                            <i class="fa-solid fa-mobile-screen text-xl"></i>
+                            <div>
+                                <h3 class="font-bold leading-tight">Publicar no App</h3>
+                                <p class="text-[10px] text-amber-100">Envia direto para o Mural do Cidadão</p>
+                            </div>
+                        </div>
+                        
+                        <form onsubmit="publicarAviso(event)" class="p-5 space-y-4">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">Título do Aviso</label>
+                                <input type="text" id="aviso-titulo" required placeholder="Ex: Interdição de Rua" class="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">Mensagem (Detalhes)</label>
+                                <textarea id="aviso-descricao" required rows="3" placeholder="A Rua X estará interditada amanhã..." class="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm resize-none"></textarea>
+                            </div>
+
+                            <button type="submit" id="btn-publicar" class="w-full bg-amber-500 text-white font-bold py-2.5 rounded-lg shadow-sm hover:bg-amber-600 active:scale-[0.98] transition-all flex justify-center items-center gap-2">
+                                <i class="fa-solid fa-paper-plane"></i> Publicar Aviso
+                            </button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+            
+        </div>
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCpaNuC1IUkteO4fHzFPiNS7s580EyTleU",
+            authDomain: "doresopolis.firebaseapp.com",
+            projectId: "doresopolis",
+            storageBucket: "doresopolis.firebasestorage.app",
+            messagingSenderId: "465119846468",
+            appId: "1:465119846468:web:8b292481fec10132cf9c11",
+            measurementId: "G-WXWGXEWY53"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app); 
+
+        // Função de Notificação (Toast)
+        window.mostrarAviso = function(mensagem, tipo = 'sucesso') {
+            const toast = document.getElementById('toast-aviso');
+            const icone = document.getElementById('toast-icone');
+            document.getElementById('toast-mensagem').innerText = mensagem;
+
+            if(tipo === 'sucesso') {
+                toast.classList.remove('bg-red-600');
+                toast.classList.add('bg-green-600');
+                icone.className = 'fa-solid fa-circle-check text-lg';
+            } else {
+                toast.classList.remove('bg-green-600');
+                toast.classList.add('bg-red-600');
+                icone.className = 'fa-solid fa-circle-exclamation text-lg';
+            }
+
+            toast.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-[-20px]');
+            toast.classList.add('opacity-100', 'translate-y-0');
+
+            setTimeout(() => {
+                toast.classList.remove('opacity-100', 'translate-y-0');
+                toast.classList.add('opacity-0', 'pointer-events-none', 'translate-y-[-20px]');
+            }, 4000);
+        };
+
+        // Função para Publicar o Aviso no Banco de Dados
+        window.publicarAviso = async function(event) {
+            event.preventDefault();
+
+            const btn = document.getElementById('btn-publicar');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Publicando...';
+
+            const titulo = document.getElementById('aviso-titulo').value;
+            const descricao = document.getElementById('aviso-descricao').value;
+
+            try {
+                await addDoc(collection(db, "avisos"), {
+                    secretaria: "Obras", // Nome fixo da secretaria
+                    titulo: titulo,
+                    descricao: descricao,
+                    dataPublicacao: new Date().toISOString()
+                });
+                
+                mostrarAviso("Aviso publicado no app do cidadão com sucesso!", "sucesso");
+                
+                // Limpa os campos após publicar
+                document.getElementById('aviso-titulo').value = '';
+                document.getElementById('aviso-descricao').value = '';
+
+            } catch (error) {
+                console.error("Erro ao publicar: ", error);
+                mostrarAviso("Erro ao conectar ao servidor. Tente novamente.", "erro");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Publicar Aviso';
+            }
+        };
+    </script>
+</body>
+</html>
