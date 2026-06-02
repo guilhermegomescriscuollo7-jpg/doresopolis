@@ -29,6 +29,17 @@
             }
         }
     </script>
+    
+    <style>
+        /* Oculta a barra de rolagem no carrossel de notícias, mas mantém a função de rolar/arrastar */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
 </head>
 
 <body class="bg-gray-200 font-sans text-gray-800 flex justify-center items-center min-h-screen">
@@ -184,6 +195,7 @@
         <!-- TELA 3: PAINEL PRINCIPAL (APP INTERNO)     -->
         <!-- ========================================== -->
         <div id="tela-principal" class="hidden flex-col h-full w-full z-10">
+            <!-- HEADER -->
             <header class="bg-white shadow-sm border-b border-gray-200 z-10 flex-shrink-0">
                 <div class="bg-doresopolis-green h-2 w-full"></div>
                 <div class="px-4 py-3 flex items-center justify-between">
@@ -198,54 +210,149 @@
                         <i class="fa-solid fa-right-from-bracket text-xl"></i>
                     </button>
                 </div>
-                <div class="px-4 pb-3">
-                    <div class="relative text-gray-400 focus-within:text-doresopolis-green">
-                        <input type="text" placeholder="Buscar serviços..." class="w-full bg-gray-100 border-none rounded-full py-2 pl-4 pr-10 focus:outline-none focus:ring-2 focus:ring-doresopolis-green text-sm transition-colors">
-                        <button class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">
-                            <i class="fa-solid fa-magnifying-glass"></i>
+            </header>
+
+            <!-- CONTEÚDO PRINCIPAL -->
+            <main class="flex-grow overflow-y-auto overflow-x-hidden p-4 pb-24 scroll-smooth">
+                
+                <!-- Saudação e Widget de Clima -->
+                <div class="flex justify-between items-center mb-6 mt-1">
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-800">Olá, <span id="nome-usuario-logado" class="text-doresopolis-green">Cidadão</span>!</h2>
+                        <p class="text-gray-500 mt-0.5 text-xs">O que você precisa hoje?</p>
+                    </div>
+                    <!-- WIDGET DE CLIMA/TEMPO -->
+                    <div class="flex items-center bg-blue-50 text-blue-800 px-3 py-1.5 rounded-lg border border-blue-100 shadow-sm shrink-0">
+                        <i class="fa-solid fa-cloud-sun text-lg mr-2 text-yellow-500"></i>
+                        <div class="text-right">
+                            <p class="font-black leading-none text-sm">26°C</p>
+                            <p class="text-[9px] text-blue-600 font-medium">Bom Tempo</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MURAL DE AVISOS OFICIAIS (CARROSSEL) -->
+                <div class="mb-6">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="font-bold text-gray-800 text-sm border-l-4 border-doresopolis-green pl-2">
+                            <i class="fa-solid fa-bullhorn text-doresopolis-green mr-1"></i> Mural de Avisos
+                        </h3>
+                        <span class="text-[10px] text-gray-400 flex items-center"><i class="fa-solid fa-arrow-left-long mr-1"></i> Arraste <i class="fa-solid fa-arrow-right-long ml-1"></i></span>
+                    </div>
+                    
+                    <div class="flex overflow-x-auto gap-3 pb-2 snap-x hide-scrollbar">
+                        <!-- Card 1 -->
+                        <div class="snap-center shrink-0 w-64 bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex flex-col justify-between">
+                            <div>
+                                <span class="text-[9px] font-bold text-white bg-red-500 px-2 py-0.5 rounded-full mb-2 inline-block shadow-sm">SAÚDE</span>
+                                <h4 class="font-bold text-gray-800 text-sm leading-tight">Campanha de Vacinação</h4>
+                                <p class="text-[11px] text-gray-500 mt-1.5 line-clamp-2">Neste sábado, o posto central estará aberto das 08h às 16h para vacinação contra a gripe.</p>
+                            </div>
+                            <span class="text-[9px] font-medium text-gray-400 mt-3 block"><i class="fa-regular fa-clock"></i> Publicado hoje às 08:00</span>
+                        </div>
+                        
+                        <!-- Card 2 -->
+                        <div class="snap-center shrink-0 w-64 bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex flex-col justify-between">
+                            <div>
+                                <span class="text-[9px] font-bold text-white bg-blue-500 px-2 py-0.5 rounded-full mb-2 inline-block shadow-sm">EDUCAÇÃO</span>
+                                <h4 class="font-bold text-gray-800 text-sm leading-tight">Período de Matrículas</h4>
+                                <p class="text-[11px] text-gray-500 mt-1.5 line-clamp-2">Atenção pais e responsáveis, o prazo para renovação de matrículas se encerra dia 15.</p>
+                            </div>
+                            <span class="text-[9px] font-medium text-gray-400 mt-3 block"><i class="fa-regular fa-clock"></i> Ontem</span>
+                        </div>
+
+                        <!-- Card 3 -->
+                        <div class="snap-center shrink-0 w-64 bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex flex-col justify-between">
+                            <div>
+                                <span class="text-[9px] font-bold text-white bg-green-500 px-2 py-0.5 rounded-full mb-2 inline-block shadow-sm">TRIBUTOS</span>
+                                <h4 class="font-bold text-gray-800 text-sm leading-tight">Vencimento do IPTU</h4>
+                                <p class="text-[11px] text-gray-500 mt-1.5 line-clamp-2">Aproveite o desconto de 10% pagando a cota única até o final do mês. Emita sua guia pelo app.</p>
+                            </div>
+                            <span class="text-[9px] font-medium text-gray-400 mt-3 block"><i class="fa-regular fa-clock"></i> Há 2 dias</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECRETARIAS -->
+                <div class="mb-8">
+                    <h3 class="font-bold text-gray-800 text-sm mb-3 border-l-4 border-blue-500 pl-2">Serviços por Secretaria</h3>
+                    <div class="flex flex-col gap-3">
+                        <button onclick="navegarPara('saude')" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 active:bg-gray-50 active:scale-[0.98] transition-all text-left">
+                            <div class="p-3 bg-red-50 text-red-600 rounded-lg"><i class="fa-solid fa-heart-pulse text-lg w-5 text-center"></i></div>
+                            <div class="ml-4 flex-grow"><h3 class="font-bold text-gray-800 text-sm">Saúde</h3><p class="text-[10px] text-gray-500 mt-0.5">Consultas, vacinas e remédios</p></div>
+                            <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
+                        </button>
+                        <button onclick="navegarPara('educacao')" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 active:bg-gray-50 active:scale-[0.98] transition-all text-left">
+                            <div class="p-3 bg-blue-50 text-blue-600 rounded-lg"><i class="fa-solid fa-graduation-cap text-lg w-5 text-center"></i></div>
+                            <div class="ml-4 flex-grow"><h3 class="font-bold text-gray-800 text-sm">Educação</h3><p class="text-[10px] text-gray-500 mt-0.5">Matrículas e transporte escolar</p></div>
+                            <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
+                        </button>
+                        <button onclick="navegarPara('tributos')" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 active:bg-gray-50 active:scale-[0.98] transition-all text-left">
+                            <div class="p-3 bg-green-50 text-green-600 rounded-lg"><i class="fa-solid fa-file-invoice-dollar text-lg w-5 text-center"></i></div>
+                            <div class="ml-4 flex-grow"><h3 class="font-bold text-gray-800 text-sm">Tributos</h3><p class="text-[10px] text-gray-500 mt-0.5">Emissão de IPTU e taxas</p></div>
+                            <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
+                        </button>
+                        <button onclick="navegarPara('obras')" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 active:bg-gray-50 active:scale-[0.98] transition-all text-left">
+                            <div class="p-3 bg-amber-50 text-amber-600 rounded-lg"><i class="fa-solid fa-helmet-safety text-lg w-5 text-center"></i></div>
+                            <div class="ml-4 flex-grow"><h3 class="font-bold text-gray-800 text-sm">Obras</h3><p class="text-[10px] text-gray-500 mt-0.5">Iluminação e manutenção</p></div>
+                            <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
+                        </button>
+                        <button onclick="navegarPara('transporte')" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 active:bg-gray-50 active:scale-[0.98] transition-all text-left">
+                            <div class="p-3 bg-purple-50 text-purple-600 rounded-lg"><i class="fa-solid fa-bus text-lg w-5 text-center"></i></div>
+                            <div class="ml-4 flex-grow"><h3 class="font-bold text-gray-800 text-sm">Transporte</h3><p class="text-[10px] text-gray-500 mt-0.5">Horários e estradas rurais</p></div>
+                            <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
                         </button>
                     </div>
                 </div>
-            </header>
 
-            <main class="flex-grow overflow-y-auto overflow-x-hidden p-4 pb-24 scroll-smooth">
-                <div class="mb-6 mt-2">
-                    <h2 class="text-xl font-bold text-gray-800">Olá, <span id="nome-usuario-logado" class="text-doresopolis-green">Cidadão</span>!</h2>
-                    <p class="text-gray-500 mt-1 text-sm leading-snug">Selecione uma secretaria abaixo para solicitar serviços.</p>
+                <!-- TELEFONES ÚTEIS E EMERGÊNCIA -->
+                <div class="mb-4">
+                    <h3 class="font-bold text-gray-800 text-sm mb-3 border-l-4 border-red-500 pl-2">Telefones Úteis e Emergência</h3>
+                    <!-- Grade de 2 colunas para botões menores e práticos -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <!-- Botão ligar Polícia -->
+                        <a href="tel:190" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 hover:border-red-300 active:bg-red-50 transition-all">
+                            <div class="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center mr-3 shrink-0">
+                                <i class="fa-solid fa-shield-halved text-sm"></i>
+                            </div>
+                            <div>
+                                <p class="font-bold text-gray-800 text-xs leading-tight">Polícia</p>
+                                <p class="text-[10px] text-red-600 font-bold">Ligar 190</p>
+                            </div>
+                        </a>
+                        <!-- Botão ligar Ambulância -->
+                        <a href="tel:192" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 hover:border-red-300 active:bg-red-50 transition-all">
+                            <div class="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center mr-3 shrink-0">
+                                <i class="fa-solid fa-truck-medical text-sm"></i>
+                            </div>
+                            <div>
+                                <p class="font-bold text-gray-800 text-xs leading-tight">Ambulância</p>
+                                <p class="text-[10px] text-red-600 font-bold">Ligar 192</p>
+                            </div>
+                        </a>
+                        <!-- Botão Saúde Local -->
+                        <a href="tel:3733561212" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 hover:border-blue-300 active:bg-blue-50 transition-all">
+                            <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mr-3 shrink-0">
+                                <i class="fa-solid fa-house-medical text-sm"></i>
+                            </div>
+                            <div>
+                                <p class="font-bold text-gray-800 text-xs leading-tight">Posto Saúde</p>
+                                <p class="text-[9px] text-gray-500 font-medium">3356-1212</p>
+                            </div>
+                        </a>
+                        <!-- Botão Prefeitura -->
+                        <a href="tel:3733561221" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 hover:border-doresopolis-green active:bg-green-50 transition-all">
+                            <div class="w-8 h-8 rounded-full bg-green-100 text-doresopolis-green flex items-center justify-center mr-3 shrink-0">
+                                <i class="fa-solid fa-building-user text-sm"></i>
+                            </div>
+                            <div>
+                                <p class="font-bold text-gray-800 text-xs leading-tight">Prefeitura</p>
+                                <p class="text-[9px] text-gray-500 font-medium">3356-1221</p>
+                            </div>
+                        </a>
+                    </div>
                 </div>
 
-                <div class="flex flex-col gap-3">
-                    <button onclick="navegarPara('saude')" class="flex items-center p-4 bg-white rounded-xl shadow-sm border border-gray-100 active:bg-gray-50 active:scale-[0.98] transition-all text-left">
-                        <div class="p-3 bg-red-50 text-red-600 rounded-lg"><i class="fa-solid fa-heart-pulse text-lg w-5 text-center"></i></div>
-                        <div class="ml-4 flex-grow"><h3 class="font-bold text-gray-800 text-sm">Saúde</h3><p class="text-[11px] text-gray-500 mt-0.5">Consultas, vacinas e remédios</p></div>
-                        <i class="fa-solid fa-chevron-right text-gray-300 text-sm"></i>
-                    </button>
-                    <button onclick="navegarPara('educacao')" class="flex items-center p-4 bg-white rounded-xl shadow-sm border border-gray-100 active:bg-gray-50 active:scale-[0.98] transition-all text-left">
-                        <div class="p-3 bg-blue-50 text-blue-600 rounded-lg"><i class="fa-solid fa-graduation-cap text-lg w-5 text-center"></i></div>
-                        <div class="ml-4 flex-grow"><h3 class="font-bold text-gray-800 text-sm">Educação</h3><p class="text-[11px] text-gray-500 mt-0.5">Matrículas e transporte escolar</p></div>
-                        <i class="fa-solid fa-chevron-right text-gray-300 text-sm"></i>
-                    </button>
-                    <button onclick="navegarPara('tributos')" class="flex items-center p-4 bg-white rounded-xl shadow-sm border border-gray-100 active:bg-gray-50 active:scale-[0.98] transition-all text-left">
-                        <div class="p-3 bg-green-50 text-green-600 rounded-lg"><i class="fa-solid fa-file-invoice-dollar text-lg w-5 text-center"></i></div>
-                        <div class="ml-4 flex-grow"><h3 class="font-bold text-gray-800 text-sm">Tributos</h3><p class="text-[11px] text-gray-500 mt-0.5">Emissão de IPTU e taxas</p></div>
-                        <i class="fa-solid fa-chevron-right text-gray-300 text-sm"></i>
-                    </button>
-                    <button onclick="navegarPara('obras')" class="flex items-center p-4 bg-white rounded-xl shadow-sm border border-gray-100 active:bg-gray-50 active:scale-[0.98] transition-all text-left">
-                        <div class="p-3 bg-amber-50 text-amber-600 rounded-lg"><i class="fa-solid fa-helmet-safety text-lg w-5 text-center"></i></div>
-                        <div class="ml-4 flex-grow"><h3 class="font-bold text-gray-800 text-sm">Obras</h3><p class="text-[11px] text-gray-500 mt-0.5">Iluminação e manutenção</p></div>
-                        <i class="fa-solid fa-chevron-right text-gray-300 text-sm"></i>
-                    </button>
-                    <button onclick="navegarPara('transporte')" class="flex items-center p-4 bg-white rounded-xl shadow-sm border border-gray-100 active:bg-gray-50 active:scale-[0.98] transition-all text-left">
-                        <div class="p-3 bg-purple-50 text-purple-600 rounded-lg"><i class="fa-solid fa-bus text-lg w-5 text-center"></i></div>
-                        <div class="ml-4 flex-grow"><h3 class="font-bold text-gray-800 text-sm">Transporte</h3><p class="text-[11px] text-gray-500 mt-0.5">Horários e estradas rurais</p></div>
-                        <i class="fa-solid fa-chevron-right text-gray-300 text-sm"></i>
-                    </button>
-                    <button onclick="navegarPara('esporte')" class="flex items-center p-4 bg-white rounded-xl shadow-sm border border-gray-100 active:bg-gray-50 active:scale-[0.98] transition-all text-left">
-                        <div class="p-3 bg-orange-50 text-orange-600 rounded-lg"><i class="fa-solid fa-trophy text-lg w-5 text-center"></i></div>
-                        <div class="ml-4 flex-grow"><h3 class="font-bold text-gray-800 text-sm">Esporte</h3><p class="text-[11px] text-gray-500 mt-0.5">Inscrições e campeonatos</p></div>
-                        <i class="fa-solid fa-chevron-right text-gray-300 text-sm"></i>
-                    </button>
-                </div>
             </main>
 
             <!-- BARRA DE NAVEGAÇÃO INFERIOR -->
@@ -296,7 +403,6 @@
             const icone = document.getElementById('toast-icone');
             document.getElementById('toast-mensagem').innerText = mensagem;
 
-            // Define as cores com base no tipo
             if(tipo === 'sucesso') {
                 toast.classList.remove('bg-red-600');
                 toast.classList.add('bg-green-600');
@@ -306,17 +412,14 @@
                 toast.classList.add('bg-blue-600');
                 icone.className = 'fa-solid fa-circle-info text-lg';
             } else {
-                // erro padrão
                 toast.classList.remove('bg-green-600', 'bg-blue-600');
                 toast.classList.add('bg-red-600');
                 icone.className = 'fa-solid fa-circle-exclamation text-lg';
             }
 
-            // Mostra o Toast
             toast.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-[-20px]');
             toast.classList.add('opacity-100', 'translate-y-0');
 
-            // Esconde após 4 segundos
             setTimeout(() => {
                 toast.classList.remove('opacity-100', 'translate-y-0');
                 toast.classList.add('opacity-0', 'pointer-events-none', 'translate-y-[-20px]');
@@ -337,7 +440,6 @@
             }
         };
 
-        // Verifica se o usuário já estava logado antes de atualizar a página
         document.addEventListener('DOMContentLoaded', () => {
             const sessaoSalva = localStorage.getItem('usuarioDoresopolis');
             if (sessaoSalva) {
@@ -348,7 +450,7 @@
             }
         });
 
-        // --- LÓGICA DE CADASTRO COM VERIFICAÇÃO ---
+        // --- LÓGICA DE CADASTRO ---
         window.realizarCadastro = async function(event) {
             event.preventDefault(); 
             
@@ -369,7 +471,6 @@
             try {
                 const usuariosRef = collection(db, "usuarios");
 
-                // 1. Verificando Telefone
                 const qTelefone = query(usuariosRef, where("telefone", "==", telefone));
                 const snapshotTelefone = await getDocs(qTelefone);
                 
@@ -380,7 +481,6 @@
                     return; 
                 }
 
-                // 2. Verificando Nome
                 const qNome = query(usuariosRef, where("nomeCompleto", "==", nome));
                 const snapshotNome = await getDocs(qNome);
                 
@@ -391,7 +491,6 @@
                     return; 
                 }
 
-                // 3. Salva o novo cadastro
                 await addDoc(usuariosRef, {
                     nomeCompleto: nome,
                     telefone: telefone,
@@ -400,7 +499,6 @@
                     dataRegistro: new Date().toISOString()
                 });
                 
-                // Salva a sessão para não deslogar
                 localStorage.setItem('usuarioDoresopolis', primeiroNome);
                 
                 document.getElementById('nome-usuario-logado').innerText = primeiroNome; 
@@ -421,10 +519,8 @@
         // --- LÓGICA DE LOGIN ---
         window.realizarLogin = function(event) {
             event.preventDefault();
-            // Apenas simulação de login por enquanto. No futuro, você pode checar a senha no Firebase.
             const telefone = document.getElementById('login-telefone').value;
             
-            // Salva a sessão para não deslogar
             localStorage.setItem('usuarioDoresopolis', 'Cidadão');
             
             document.getElementById('nome-usuario-logado').innerText = "Cidadão";
@@ -435,9 +531,7 @@
         // --- LOGOUT E NAVEGAÇÃO ---
         window.fazerLogout = function() {
             if(confirm("Deseja realmente sair da sua conta?")) {
-                // Remove a sessão salva no celular
                 localStorage.removeItem('usuarioDoresopolis');
-                
                 mostrarTela('tela-login');
                 document.getElementById('login-telefone').value = '';
                 document.getElementById('login-senha').value = '';
