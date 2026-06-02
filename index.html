@@ -214,7 +214,6 @@
             <!-- CONTEÚDO PRINCIPAL -->
             <main class="flex-grow overflow-y-auto overflow-x-hidden p-4 pb-24 scroll-smooth">
                 
-                <!-- Saudação Dinâmica e Widget de Clima -->
                 <div class="flex justify-between items-center mb-6 mt-1">
                     <div>
                         <h2 class="text-xl font-bold text-gray-800">Olá, <span id="nome-usuario-logado" class="text-doresopolis-green"></span>!</h2>
@@ -230,7 +229,7 @@
                     </div>
                 </div>
 
-                <!-- MURAL DE AVISOS OFICIAIS (CARROSSEL) -->
+                <!-- MURAL DE AVISOS OFICIAIS DINÂMICO -->
                 <div class="mb-6">
                     <div class="flex items-center justify-between mb-3">
                         <h3 class="font-bold text-gray-800 text-sm border-l-4 border-doresopolis-green pl-2">
@@ -239,35 +238,10 @@
                         <span class="text-[10px] text-gray-400 flex items-center"><i class="fa-solid fa-arrow-left-long mr-1"></i> Arraste <i class="fa-solid fa-arrow-right-long ml-1"></i></span>
                     </div>
                     
-                    <div class="flex overflow-x-auto gap-3 pb-2 snap-x hide-scrollbar">
-                        <!-- Card 1 -->
-                        <div class="snap-center shrink-0 w-64 bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex flex-col justify-between">
-                            <div>
-                                <span class="text-[9px] font-bold text-white bg-red-500 px-2 py-0.5 rounded-full mb-2 inline-block shadow-sm">SAÚDE</span>
-                                <h4 class="font-bold text-gray-800 text-sm leading-tight">Campanha de Vacinação</h4>
-                                <p class="text-[11px] text-gray-500 mt-1.5 line-clamp-2">Neste sábado, o posto central estará aberto das 08h às 16h para vacinação contra a gripe.</p>
-                            </div>
-                            <span class="text-[9px] font-medium text-gray-400 mt-3 block"><i class="fa-regular fa-clock"></i> Publicado hoje às 08:00</span>
-                        </div>
-                        
-                        <!-- Card 2 -->
-                        <div class="snap-center shrink-0 w-64 bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex flex-col justify-between">
-                            <div>
-                                <span class="text-[9px] font-bold text-white bg-blue-500 px-2 py-0.5 rounded-full mb-2 inline-block shadow-sm">EDUCAÇÃO</span>
-                                <h4 class="font-bold text-gray-800 text-sm leading-tight">Período de Matrículas</h4>
-                                <p class="text-[11px] text-gray-500 mt-1.5 line-clamp-2">Atenção pais e responsáveis, o prazo para renovação de matrículas se encerra dia 15.</p>
-                            </div>
-                            <span class="text-[9px] font-medium text-gray-400 mt-3 block"><i class="fa-regular fa-clock"></i> Ontem</span>
-                        </div>
-
-                        <!-- Card 3 -->
-                        <div class="snap-center shrink-0 w-64 bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex flex-col justify-between">
-                            <div>
-                                <span class="text-[9px] font-bold text-white bg-green-500 px-2 py-0.5 rounded-full mb-2 inline-block shadow-sm">TRIBUTOS</span>
-                                <h4 class="font-bold text-gray-800 text-sm leading-tight">Vencimento do IPTU</h4>
-                                <p class="text-[11px] text-gray-500 mt-1.5 line-clamp-2">Aproveite o desconto de 10% pagando a cota única até o final do mês. Emita sua guia pelo app.</p>
-                            </div>
-                            <span class="text-[9px] font-medium text-gray-400 mt-3 block"><i class="fa-regular fa-clock"></i> Há 2 dias</span>
+                    <!-- O CONTEÚDO AQUI AGORA SERÁ PREENCHIDO PELO JAVASCRIPT DO FIREBASE -->
+                    <div id="mural-avisos-conteudo" class="flex overflow-x-auto gap-3 pb-2 snap-x hide-scrollbar">
+                        <div class="w-full text-center py-6 text-gray-400 text-xs">
+                            <i class="fa-solid fa-spinner fa-spin mr-2"></i> Carregando avisos recentes...
                         </div>
                     </div>
                 </div>
@@ -376,7 +350,8 @@
     <!-- ========================================== -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        // Importando o "orderBy" e o "limit" para organizar as notícias da mais nova para a mais velha
+        import { getFirestore, collection, addDoc, query, where, getDocs, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCpaNuC1IUkteO4fHzFPiNS7s580EyTleU",
@@ -391,7 +366,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app); 
 
-        // --- SISTEMA DE AVISOS INTERNOS (TOAST) ---
         window.mostrarAviso = function(mensagem, tipo = 'erro') {
             const toast = document.getElementById('toast-aviso');
             const icone = document.getElementById('toast-icone');
@@ -420,7 +394,6 @@
             }, 4000);
         };
 
-        // --- GERENCIAMENTO DE TELAS E SESSÃO ---
         window.mostrarTela = function(telaId) {
             document.getElementById('tela-login').classList.add('hidden');
             document.getElementById('tela-cadastro').classList.add('hidden');
@@ -434,24 +407,73 @@
             }
         };
 
-        // Verifica o cache do navegador e remove lixo de versões antigas do app
+        // --- FUNÇÃO PARA BUSCAR E RENDERIZAR O MURAL DE AVISOS ---
+        window.carregarAvisos = async function() {
+            const container = document.getElementById('mural-avisos-conteudo');
+            try {
+                // Busca na coleção "avisos", ordenando pela data mais recente e pegando no máximo os últimos 5
+                const q = query(collection(db, "avisos"), orderBy("dataPublicacao", "desc"), limit(5));
+                const snapshot = await getDocs(q);
+
+                if (snapshot.empty) {
+                    container.innerHTML = '<p class="text-xs text-gray-400 w-full text-center my-4">Nenhum aviso no momento.</p>';
+                    return;
+                }
+
+                container.innerHTML = ''; // Remove a mensagem de carregamento
+                
+                snapshot.forEach((doc) => {
+                    const aviso = doc.data();
+                    
+                    // Define a cor da etiqueta baseada no nome da secretaria
+                    let corBg = 'bg-gray-500';
+                    const sec = aviso.secretaria.toUpperCase();
+                    if(sec === 'SAÚDE') corBg = 'bg-red-500';
+                    if(sec === 'EDUCAÇÃO') corBg = 'bg-blue-500';
+                    if(sec === 'TRIBUTOS') corBg = 'bg-green-500';
+                    if(sec === 'OBRAS') corBg = 'bg-amber-500';
+                    if(sec === 'TRANSPORTE') corBg = 'bg-purple-500';
+                    if(sec === 'ESPORTE') corBg = 'bg-orange-500';
+
+                    // Formatação simples de data
+                    const dataObj = new Date(aviso.dataPublicacao);
+                    const dataFormatada = dataObj.toLocaleDateString('pt-BR');
+
+                    // Monta o Card em HTML
+                    const cardHTML = `
+                        <div class="snap-center shrink-0 w-64 bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex flex-col justify-between">
+                            <div>
+                                <span class="text-[9px] font-bold text-white ${corBg} px-2 py-0.5 rounded-full mb-2 inline-block shadow-sm">${sec}</span>
+                                <h4 class="font-bold text-gray-800 text-sm leading-tight">${aviso.titulo}</h4>
+                                <p class="text-[11px] text-gray-500 mt-1.5 line-clamp-2">${aviso.descricao}</p>
+                            </div>
+                            <span class="text-[9px] font-medium text-gray-400 mt-3 block"><i class="fa-regular fa-clock"></i> ${dataFormatada}</span>
+                        </div>
+                    `;
+                    container.innerHTML += cardHTML;
+                });
+            } catch (error) {
+                console.error("Erro ao carregar avisos: ", error);
+                container.innerHTML = '<p class="text-xs text-red-400 w-full text-center my-4">Não foi possível carregar os avisos.</p>';
+            }
+        };
+
         document.addEventListener('DOMContentLoaded', () => {
             const sessaoSalva = localStorage.getItem('usuarioDoresopolis');
             if (sessaoSalva) {
-                // TRAVA DE SEGURANÇA: Se o cache tiver guardado o texto antigo "Cidadão", ele limpa e força o logout
                 if (sessaoSalva === 'Cidadão') {
                     localStorage.removeItem('usuarioDoresopolis');
                     mostrarTela('tela-login');
                 } else {
                     document.getElementById('nome-usuario-logado').innerText = sessaoSalva;
                     mostrarTela('tela-principal');
+                    carregarAvisos(); // Carrega os avisos se o usuário já estiver logado
                 }
             } else {
                 mostrarTela('tela-login');
             }
         });
 
-        // --- LÓGICA DE CADASTRO ---
         window.realizarCadastro = async function(event) {
             event.preventDefault(); 
             
@@ -504,6 +526,8 @@
                 document.getElementById('nome-usuario-logado').innerText = primeiroNome; 
                 mostrarTela('tela-principal');
                 mostrarAviso(`Bem-vindo, ${primeiroNome}!`, 'sucesso');
+                
+                carregarAvisos(); // Chama a função do mural
 
             } catch (error) {
                 console.error("Erro ao salvar: ", error);
@@ -516,7 +540,6 @@
             }
         };
 
-        // --- LÓGICA DE LOGIN COM BUSCA REAL NO BANCO DE DADOS ---
         window.realizarLogin = async function(event) {
             event.preventDefault();
             
@@ -530,25 +553,22 @@
             try {
                 const usuariosRef = collection(db, "usuarios");
                 
-                // Busca um documento que combine exatamente o telefone E a senha
                 const qLogin = query(usuariosRef, where("telefone", "==", telefone), where("senha", "==", senha));
                 const snapshot = await getDocs(qLogin);
                 
                 if (snapshot.empty) {
-                    // Se não encontrou, a senha está errada ou o telefone não existe
                     mostrarAviso("Telefone ou senha incorretos.");
                 } else {
-                    // Se encontrou, pega os dados do usuário para extrair o primeiro nome
                     const usuarioData = snapshot.docs[0].data();
                     const primeiroNome = usuarioData.nomeCompleto.split(' ')[0];
                     
-                    // Salva a sessão no celular do usuário
                     localStorage.setItem('usuarioDoresopolis', primeiroNome);
                     
-                    // Atualiza a interface com o nome real
                     document.getElementById('nome-usuario-logado').innerText = primeiroNome;
                     mostrarTela('tela-principal');
                     mostrarAviso(`Bem-vindo de volta, ${primeiroNome}!`, 'sucesso');
+                    
+                    carregarAvisos(); // Chama a função do mural
                 }
             } catch (error) {
                 console.error("Erro ao tentar fazer login: ", error);
@@ -559,7 +579,6 @@
             }
         };
 
-        // --- LOGOUT E NAVEGAÇÃO ---
         window.fazerLogout = function() {
             if(confirm("Deseja realmente sair da sua conta?")) {
                 localStorage.removeItem('usuarioDoresopolis');
@@ -572,6 +591,26 @@
         window.navegarPara = function(secretaria) {
             if (navigator.vibrate) navigator.vibrate(50);
             mostrarAviso(`Acessando serviços de: ${secretaria.toUpperCase()}`, 'info');
+        };
+
+        // ==============================================================================
+        // [ ÁREA PREPARADA PARA AS FUTURAS PÁGINAS DAS SECRETARIAS ]
+        // Quando criar o painel das secretarias, basta importar e disparar essa função.
+        // ==============================================================================
+        window.publicarNovoAvisoBD = async function(nomeSecretaria, tituloAviso, descricaoAviso) {
+            try {
+                await addDoc(collection(db, "avisos"), {
+                    secretaria: nomeSecretaria,
+                    titulo: tituloAviso,
+                    descricao: descricaoAviso,
+                    dataPublicacao: new Date().toISOString()
+                });
+                console.log("Aviso publicado com sucesso no banco de dados!");
+                // Se a pessoa estiver na tela principal, o mural recarregará sozinho:
+                carregarAvisos(); 
+            } catch(e) {
+                console.error("Erro ao publicar aviso: ", e);
+            }
         };
     </script>
 
