@@ -43,10 +43,9 @@
     <div class="bg-gray-50 w-full max-w-md h-[100dvh] flex flex-col relative shadow-2xl overflow-hidden sm:rounded-xl sm:h-[95vh] sm:border sm:border-gray-300">
         
         <!-- HEADER COM BOTÃO VOLTAR -->
-        <header class="bg-white shadow-sm border-b border-gray-200 z-10 flex-shrink-0">
-            <div class="bg-amber-500 h-2 w-full"></div> <!-- Destaque laranja para Obras -->
-            <div class="px-4 py-3 flex items-center gap-4">
-                <!-- Botão Voltar para o Index -->
+        <header class="bg-white shadow-sm z-10 flex-shrink-0">
+            <div class="bg-amber-500 h-2 w-full"></div>
+            <div class="px-4 py-3 flex items-center gap-4 border-b border-gray-100">
                 <button onclick="window.location.href='index.html'" class="text-gray-500 hover:text-amber-500 text-xl w-8 h-8 flex items-center justify-center rounded-full active:bg-gray-100 transition-colors">
                     <i class="fa-solid fa-arrow-left"></i>
                 </button>
@@ -55,24 +54,35 @@
                         <i class="fa-solid fa-helmet-safety text-lg"></i>
                     </div>
                     <div>
-                        <p class="text-[9px] tracking-[0.1em] text-gray-500 uppercase font-semibold leading-none">Solicitação de Serviços</p>
+                        <p class="text-[9px] tracking-[0.1em] text-gray-500 uppercase font-semibold leading-none">Serviços e Manutenção</p>
                         <h1 class="text-xl font-black text-gray-700 tracking-tight uppercase leading-none mt-1">Sec. Obras</h1>
                     </div>
                 </div>
             </div>
+
+            <!-- ABAS DE NAVEGAÇÃO SUPERIOR -->
+            <div class="flex border-b border-gray-200">
+                <button onclick="trocarAbaObras('nova')" id="btn-aba-nova" class="flex-1 py-3 text-xs font-bold text-amber-600 border-b-2 border-amber-500 transition-all">
+                    Novo Chamado
+                </button>
+                <button onclick="trocarAbaObras('acompanhar')" id="btn-aba-acompanhar" class="flex-1 py-3 text-xs font-bold text-gray-400 border-b-2 border-transparent transition-all">
+                    Acompanhar
+                </button>
+            </div>
         </header>
 
-        <!-- CONTEÚDO PRINCIPAL (FORMULÁRIO) -->
-        <main class="flex-grow overflow-y-auto p-4 pb-24 scroll-smooth">
+        <!-- ========================================== -->
+        <!-- ABA 1: NOVO CHAMADO (FORMULÁRIO)           -->
+        <!-- ========================================== -->
+        <main id="aba-nova" class="flex-grow overflow-y-auto p-4 pb-24 scroll-smooth block">
             
             <div class="mb-5">
-                <h2 class="text-lg font-bold text-gray-800">Novo Chamado</h2>
-                <p class="text-gray-500 mt-1 text-xs leading-snug">Preencha os dados abaixo para enviar uma solicitação diretamente para a equipe de obras da prefeitura.</p>
+                <h2 class="text-lg font-bold text-gray-800">Solicitar Reparo</h2>
+                <p class="text-gray-500 mt-1 text-xs leading-snug">Preencha os dados abaixo para enviar uma solicitação diretamente para a equipe de obras.</p>
             </div>
 
-            <form onsubmit="enviarSolicitacao(event)" class="space-y-4">
+            <form id="form-solicitacao" onsubmit="enviarSolicitacao(event)" class="space-y-4">
                 
-                <!-- Nome do Cidadão (Oculto visualmente, mas usado no envio) -->
                 <input type="hidden" id="solicitante-nome">
 
                 <!-- 1. Tipo de Serviço -->
@@ -98,9 +108,7 @@
                 <!-- 2. Localização -->
                 <div class="bg-white p-3 rounded-xl border border-gray-200 shadow-sm space-y-3">
                     <label class="block text-xs font-bold text-gray-700"><i class="fa-solid fa-location-dot text-red-500 mr-1"></i> Onde é o local?</label>
-                    
                     <input type="text" id="form-endereco" required placeholder="Ex: Rua Piumhi, Próximo ao nº 150" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm">
-                    
                     <input type="text" id="form-referencia" placeholder="Ponto de referência (Opcional)" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm">
                 </div>
 
@@ -108,24 +116,17 @@
                 <div class="bg-white p-3 rounded-xl border border-gray-200 shadow-sm">
                     <label class="block text-xs font-bold text-gray-700 mb-2"><i class="fa-solid fa-gauge-high text-blue-500 mr-1"></i> Nível de Urgência</label>
                     <div class="grid grid-cols-3 gap-2">
-                        <!-- Botões de rádio estilizados -->
                         <label class="cursor-pointer">
                             <input type="radio" name="urgencia" value="BAIXA" class="peer sr-only" required>
-                            <div class="text-center px-2 py-2 rounded-lg border border-gray-200 peer-checked:bg-green-100 peer-checked:border-green-500 peer-checked:text-green-700 text-gray-500 text-xs font-bold transition-all">
-                                Baixa
-                            </div>
+                            <div class="text-center px-2 py-2 rounded-lg border border-gray-200 peer-checked:bg-green-100 peer-checked:border-green-500 peer-checked:text-green-700 text-gray-500 text-xs font-bold transition-all">Baixa</div>
                         </label>
                         <label class="cursor-pointer">
                             <input type="radio" name="urgencia" value="MÉDIA" class="peer sr-only">
-                            <div class="text-center px-2 py-2 rounded-lg border border-gray-200 peer-checked:bg-amber-100 peer-checked:border-amber-500 peer-checked:text-amber-700 text-gray-500 text-xs font-bold transition-all">
-                                Média
-                            </div>
+                            <div class="text-center px-2 py-2 rounded-lg border border-gray-200 peer-checked:bg-amber-100 peer-checked:border-amber-500 peer-checked:text-amber-700 text-gray-500 text-xs font-bold transition-all">Média</div>
                         </label>
                         <label class="cursor-pointer">
                             <input type="radio" name="urgencia" value="ALTA" class="peer sr-only">
-                            <div class="text-center px-2 py-2 rounded-lg border border-gray-200 peer-checked:bg-red-100 peer-checked:border-red-500 peer-checked:text-red-700 text-gray-500 text-xs font-bold transition-all">
-                                Alta
-                            </div>
+                            <div class="text-center px-2 py-2 rounded-lg border border-gray-200 peer-checked:bg-red-100 peer-checked:border-red-500 peer-checked:text-red-700 text-gray-500 text-xs font-bold transition-all">Alta</div>
                         </label>
                     </div>
                     <p class="text-[9px] text-gray-400 mt-2 italic">* Use "Alta" apenas para situações de risco à comunidade.</p>
@@ -135,7 +136,6 @@
                 <div class="bg-white p-3 rounded-xl border border-gray-200 shadow-sm">
                     <label class="block text-xs font-bold text-gray-700 mb-2"><i class="fa-solid fa-camera text-gray-500 mr-1"></i> Anexar Foto (Recomendado)</label>
                     
-                    <!-- Preview da Imagem -->
                     <div id="preview-container" class="hidden mb-3 relative rounded-lg overflow-hidden border border-gray-200 h-40 bg-gray-100">
                         <img id="imagem-preview" src="" alt="Sua foto" class="w-full h-full object-cover">
                         <button type="button" onclick="removerFoto()" class="absolute top-2 right-2 bg-red-600 text-white w-8 h-8 rounded-full flex items-center justify-center shadow-md active:scale-95">
@@ -143,7 +143,6 @@
                         </button>
                     </div>
 
-                    <!-- Botão de Upload -->
                     <label id="upload-label" class="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
                         <div class="flex flex-col items-center justify-center pt-5 pb-6">
                             <i class="fa-solid fa-cloud-arrow-up text-2xl text-gray-400 mb-1"></i>
@@ -151,28 +150,42 @@
                         </div>
                         <input id="form-foto" type="file" accept="image/*" capture="environment" class="hidden" onchange="processarFoto(event)" />
                     </label>
-                    <!-- Campo invisível que guardará a imagem em formato texto comprimido -->
                     <input type="hidden" id="foto-base64">
                 </div>
 
-                <!-- 5. Descrição Detalhada -->
+                <!-- 5. Descrição -->
                 <div class="bg-white p-3 rounded-xl border border-gray-200 shadow-sm">
                     <label class="block text-xs font-bold text-gray-700 mb-2"><i class="fa-solid fa-comment-dots text-gray-500 mr-1"></i> Detalhes Adicionais</label>
                     <textarea id="form-descricao" rows="3" placeholder="Descreva mais detalhes que possam ajudar a equipe..." class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm resize-none"></textarea>
                 </div>
 
-                <!-- Botão Enviar -->
                 <button type="submit" id="btn-enviar" class="w-full bg-amber-500 text-white font-bold py-3.5 rounded-xl shadow-md hover:bg-amber-600 active:scale-[0.98] transition-all flex justify-center items-center gap-2 mt-6">
                     <i class="fa-solid fa-paper-plane"></i> Enviar Solicitação
                 </button>
-
             </form>
+        </main>
+
+        <!-- ========================================== -->
+        <!-- ABA 2: ACOMPANHAR CHAMADOS                 -->
+        <!-- ========================================== -->
+        <main id="aba-acompanhar" class="flex-grow overflow-y-auto p-4 pb-24 scroll-smooth hidden bg-gray-100">
+            <div class="mb-5">
+                <h2 class="text-lg font-bold text-gray-800">Meus Chamados</h2>
+                <p class="text-gray-500 mt-1 text-xs leading-snug">Acompanhe o status em tempo real das solicitações que você enviou.</p>
+            </div>
+
+            <!-- Lista onde os cards de acompanhamento aparecerão -->
+            <div id="lista-meus-chamados" class="flex flex-col gap-4">
+                <div class="text-center py-8 text-gray-400 text-sm">
+                    <i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i><br>
+                    Buscando seu histórico...
+                </div>
+            </div>
         </main>
 
         <!-- BARRA DE NAVEGAÇÃO INFERIOR -->
         <nav class="absolute bottom-0 w-full bg-white border-t border-gray-200 z-50 pb-safe">
             <div class="flex justify-around items-center h-16">
-                <!-- O botão Início volta para o index.html -->
                 <a href="index.html" class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-doresopolis-green transition-colors">
                     <i class="fa-solid fa-house text-lg mb-1"></i><span class="text-[10px] font-medium">Início</span>
                 </a>
@@ -192,7 +205,8 @@
     <!-- SCRIPT DE LÓGICA E FIREBASE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        // Importando o onSnapshot para o acompanhamento em tempo real
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCpaNuC1IUkteO4fHzFPiNS7s580EyTleU",
@@ -207,14 +221,41 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app); 
 
-        // Notificações em Tela
+        // Controle de Abas
+        window.trocarAbaObras = function(aba) {
+            const abaNova = document.getElementById('aba-nova');
+            const abaAcompanhar = document.getElementById('aba-acompanhar');
+            const btnNova = document.getElementById('btn-aba-nova');
+            const btnAcompanhar = document.getElementById('btn-aba-acompanhar');
+
+            if (aba === 'nova') {
+                abaNova.classList.remove('hidden');
+                abaAcompanhar.classList.add('hidden');
+                
+                btnNova.classList.replace('text-gray-400', 'text-amber-600');
+                btnNova.classList.replace('border-transparent', 'border-amber-500');
+                
+                btnAcompanhar.classList.replace('text-amber-600', 'text-gray-400');
+                btnAcompanhar.classList.replace('border-amber-500', 'border-transparent');
+            } else {
+                abaAcompanhar.classList.remove('hidden');
+                abaNova.classList.add('hidden');
+                
+                btnAcompanhar.classList.replace('text-gray-400', 'text-amber-600');
+                btnAcompanhar.classList.replace('border-transparent', 'border-amber-500');
+                
+                btnNova.classList.replace('text-amber-600', 'text-gray-400');
+                btnNova.classList.replace('border-amber-500', 'border-transparent');
+            }
+        };
+
         window.mostrarAviso = function(mensagem, tipo = 'sucesso') {
             const toast = document.getElementById('toast-aviso');
             const icone = document.getElementById('toast-icone');
             document.getElementById('toast-mensagem').innerText = mensagem;
 
             if(tipo === 'sucesso') {
-                toast.classList.remove('bg-red-600');
+                toast.classList.remove('bg-red-600', 'bg-amber-500');
                 toast.classList.add('bg-green-600');
                 icone.className = 'fa-solid fa-circle-check text-lg';
             } else if (tipo === 'info') {
@@ -236,25 +277,89 @@
             }, 4000);
         };
 
-        // Verifica o usuário logado ao abrir a tela
+        let usuarioLogado = "";
+
         document.addEventListener('DOMContentLoaded', () => {
             const sessaoSalva = localStorage.getItem('usuarioDoresopolis');
             if (sessaoSalva) {
+                usuarioLogado = sessaoSalva;
                 document.getElementById('solicitante-nome').value = sessaoSalva;
+                carregarMeusChamados(); // Dispara o carregamento do histórico
             } else {
-                // Se não estiver logado, redireciona para a tela inicial
                 alert("Você precisa estar logado para abrir um chamado.");
                 window.location.href = "index.html";
             }
         });
 
-        // --- SISTEMA DE COMPRESSÃO DE FOTOS ---
-        // Pega a foto gigante do celular e comprime para caber no banco de dados sem travar
+        // --- SISTEMA DE ACOMPANHAMENTO REAL-TIME ---
+        function carregarMeusChamados() {
+            const solicitacoesRef = collection(db, "solicitacoes_obras");
+            const qSolicitacoes = query(solicitacoesRef, orderBy("dataRegistro", "desc"));
+
+            onSnapshot(qSolicitacoes, (snapshot) => {
+                const container = document.getElementById("lista-meus-chamados");
+                
+                if (snapshot.empty) {
+                    container.innerHTML = `<div class="text-center py-8 text-gray-500 text-sm">Você ainda não possui solicitações abertas.</div>`;
+                    return;
+                }
+
+                container.innerHTML = "";
+                let encontrouChamados = false;
+
+                snapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    
+                    // O filtro é feito no JavaScript para exibir apenas os chamados desta pessoa
+                    if(data.nomeCidadao !== usuarioLogado) return;
+                    
+                    encontrouChamados = true;
+                    
+                    // Formata Data
+                    const dataFormatada = new Date(data.dataRegistro).toLocaleDateString('pt-BR', {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit'});
+
+                    // Estiliza Status
+                    let statusHtml = '';
+                    if(data.status === 'EM ANDAMENTO') {
+                        statusHtml = `<span class="bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-[10px] font-black"><i class="fa-solid fa-person-digging mr-1"></i> ANDAMENTO</span>`;
+                    } else if(data.status === 'CONCLUÍDO') {
+                        statusHtml = `<span class="bg-green-100 text-green-700 px-2 py-1 rounded-full text-[10px] font-black"><i class="fa-solid fa-check mr-1"></i> CONCLUÍDO</span>`;
+                    } else {
+                        statusHtml = `<span class="bg-gray-200 text-gray-600 px-2 py-1 rounded-full text-[10px] font-black"><i class="fa-regular fa-clock mr-1"></i> PENDENTE</span>`;
+                    }
+
+                    const card = `
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 relative overflow-hidden">
+                            <!-- Faixa colorida lateral baseada na urgência -->
+                            <div class="absolute left-0 top-0 bottom-0 w-1 ${data.urgencia === 'ALTA' ? 'bg-red-500' : (data.urgencia === 'MÉDIA' ? 'bg-amber-500' : 'bg-green-500')}"></div>
+                            
+                            <div class="flex justify-between items-start mb-2 pl-2">
+                                <h3 class="font-bold text-gray-800 text-sm w-2/3 leading-tight">${data.tipoServico}</h3>
+                                ${statusHtml}
+                            </div>
+                            
+                            <div class="pl-2 space-y-1">
+                                <p class="text-xs text-gray-500 truncate"><i class="fa-solid fa-location-dot text-red-400 w-4"></i> ${data.endereco}</p>
+                                <p class="text-[10px] text-gray-400"><i class="fa-regular fa-calendar w-4"></i> Enviado em ${dataFormatada}</p>
+                            </div>
+                        </div>
+                    `;
+                    container.innerHTML += card;
+                });
+
+                if(!encontrouChamados) {
+                    container.innerHTML = `<div class="text-center py-8 text-gray-500 text-sm">Você ainda não enviou nenhuma solicitação.</div>`;
+                }
+            }, (error) => {
+                console.error("Erro ao puxar chamados:", error);
+                document.getElementById("lista-meus-chamados").innerHTML = `<div class="text-center py-8 text-red-500 text-sm">Erro de conexão ao buscar chamados.</div>`;
+            });
+        }
+
         window.processarFoto = function(event) {
             const file = event.target.files[0];
             if (!file) return;
 
-            // Mostra o botão carregando
             mostrarAviso("Processando imagem...", "info");
 
             const reader = new FileReader();
@@ -264,11 +369,9 @@
                 img.src = e.target.result;
                 img.onload = function() {
                     const canvas = document.createElement('canvas');
-                    // Reduz para no máximo 800px de largura
                     const MAX_WIDTH = 800;
                     const scaleSize = MAX_WIDTH / img.width;
                     
-                    // Se a imagem já for menor que 800px, mantém o tamanho original
                     if(scaleSize < 1) {
                         canvas.width = MAX_WIDTH;
                         canvas.height = img.height * scaleSize;
@@ -280,10 +383,8 @@
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                     
-                    // Converte para JPG qualidade média/baixa (0.6) para ficar super leve
                     const fotoComprimida = canvas.toDataURL('image/jpeg', 0.6);
                     
-                    // Salva no input invisível e mostra na tela
                     document.getElementById('foto-base64').value = fotoComprimida;
                     document.getElementById('imagem-preview').src = fotoComprimida;
                     
@@ -293,7 +394,6 @@
             };
         };
 
-        // Função para apagar a foto anexada
         window.removerFoto = function() {
             document.getElementById('foto-base64').value = '';
             document.getElementById('form-foto').value = '';
@@ -302,7 +402,6 @@
             document.getElementById('upload-label').classList.add('flex');
         };
 
-        // --- ENVIAR SOLICITAÇÃO PARA O BANCO DE DADOS ---
         window.enviarSolicitacao = async function(event) {
             event.preventDefault();
 
@@ -318,35 +417,37 @@
             const fotoBase64 = document.getElementById('foto-base64').value;
             const descricao = document.getElementById('form-descricao').value;
 
-            // Formata o endereço final
             let enderecoFinal = endereco;
             if (referencia) {
                 enderecoFinal += ` (Ref: ${referencia})`;
             }
 
             try {
-                // Salva na coleção "solicitacoes_obras" (A mesma que o painel do Admin lê)
                 await addDoc(collection(db, "solicitacoes_obras"), {
                     nomeCidadao: nome,
                     tipoServico: servico,
                     endereco: enderecoFinal,
                     urgencia: urgencia,
-                    fotoUrl: fotoBase64, // Salva o código da foto
+                    fotoUrl: fotoBase64, 
                     descricao: descricao,
-                    status: "PENDENTE", // Status inicial padrão
+                    status: "PENDENTE", 
                     dataRegistro: new Date().toISOString()
                 });
                 
-                mostrarAviso("Sua solicitação foi enviada para a Secretaria de Obras com sucesso!", "sucesso");
+                mostrarAviso("Sua solicitação foi enviada com sucesso!", "sucesso");
                 
-                // Reseta o formulário após 2 segundos e leva a pessoa pro início
+                // Limpa o formulário, remove a foto e pula para a tela de acompanhamento
                 setTimeout(() => {
-                    window.location.href = "index.html";
-                }, 2500);
+                    document.getElementById('form-solicitacao').reset();
+                    removerFoto();
+                    trocarAbaObras('acompanhar');
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Enviar Solicitação';
+                }, 1500);
 
             } catch (error) {
                 console.error("Erro ao enviar chamado: ", error);
-                mostrarAviso("Ocorreu um erro ao enviar. Verifique a conexão com a internet.", "erro");
+                mostrarAviso("Ocorreu um erro ao enviar. Verifique a internet.", "erro");
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Enviar Solicitação';
             }
