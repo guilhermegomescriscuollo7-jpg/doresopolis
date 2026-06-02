@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
-    <!-- Meta tags para comportamento de WebApp Nativo (PWA) -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#0b5c3b">
@@ -12,12 +11,9 @@
     
     <title>App Doresópolis</title>
     
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome para os ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Configuração de cores personalizadas do Tailwind -->
     <script>
         tailwind.config = {
             theme: {
@@ -37,12 +33,8 @@
 
 <body class="bg-gray-200 font-sans text-gray-800 flex justify-center items-center min-h-screen">
 
-    <!-- CONTAINER PRINCIPAL DO APP -->
     <div class="bg-gray-50 w-full max-w-md h-[100dvh] flex flex-col relative shadow-2xl overflow-hidden sm:rounded-xl sm:h-[95vh] sm:border sm:border-gray-300">
         
-        <!-- ========================================== -->
-        <!-- TELA 1: LOGIN                              -->
-        <!-- ========================================== -->
         <div id="tela-login" class="flex flex-col h-full w-full bg-white z-20 absolute inset-0 transition-opacity duration-300">
             <div class="flex-grow flex flex-col justify-center px-8">
                 
@@ -87,9 +79,6 @@
             </div>
         </div>
 
-        <!-- ========================================== -->
-        <!-- TELA 2: CADASTRO                           -->
-        <!-- ========================================== -->
         <div id="tela-cadastro" class="flex flex-col h-full w-full bg-white z-30 absolute inset-0 hidden overflow-y-auto transition-opacity duration-300">
             <div class="p-6">
                 <button onclick="mostrarTela('tela-login')" class="text-gray-500 hover:text-doresopolis-green flex items-center mb-6">
@@ -102,7 +91,6 @@
                 </div>
 
                 <form onsubmit="realizarCadastro(event)" class="space-y-4">
-                    <!-- Nome Completo -->
                     <div>
                         <label class="block text-xs font-bold text-gray-700 mb-1">Nome Completo</label>
                         <div class="relative">
@@ -113,7 +101,6 @@
                         </div>
                     </div>
 
-                    <!-- Telefone -->
                     <div>
                         <label class="block text-xs font-bold text-gray-700 mb-1">Telefone (Celular)</label>
                         <div class="relative">
@@ -124,17 +111,14 @@
                         </div>
                     </div>
 
-                    <!-- Bloco de Endereço Inteligente -->
                     <div class="space-y-3 p-3 bg-gray-50 rounded-xl border border-gray-100">
                         <label class="block text-xs font-bold text-gray-700">Seu Endereço</label>
                         
-                        <!-- Campo Rua: Alterado para SELECT (Menu Suspenso) -->
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <i class="fa-solid fa-road text-gray-400"></i>
                             </div>
                             
-                            <!-- appearance-none remove o estilo padrão do navegador para criarmos um menu mais bonito -->
                             <select id="cad-rua" required class="w-full pl-10 pr-10 py-3 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-doresopolis-green text-sm appearance-none text-gray-700">
                                 <option value="" disabled selected>Selecione a rua...</option>
                                 <option value="Avenida Gonçalves de Melo">Avenida Gonçalves de Melo</option>
@@ -154,13 +138,11 @@
                                 <option value="Travessa Doresópolis">Travessa Doresópolis</option>
                             </select>
                             
-                            <!-- Seta visual para indicar que é um menu -->
                             <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                                 <i class="fa-solid fa-chevron-down text-gray-400 text-xs"></i>
                             </div>
                         </div>
 
-                        <!-- Número e Bairro lado a lado -->
                         <div class="flex gap-2">
                             <div class="w-1/3 relative">
                                 <input type="text" id="cad-numero" required placeholder="Nº" class="w-full px-3 py-3 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-doresopolis-green text-sm">
@@ -171,7 +153,6 @@
                         </div>
                     </div>
                     
-                    <!-- Senha -->
                     <div>
                         <label class="block text-xs font-bold text-gray-700 mb-1">Criar Senha</label>
                         <div class="relative">
@@ -189,11 +170,7 @@
             </div>
         </div>
 
-        <!-- ========================================== -->
-        <!-- TELA 3: PAINEL PRINCIPAL (APP INTERNO)     -->
-        <!-- ========================================== -->
         <div id="tela-principal" class="hidden flex-col h-full w-full z-10">
-            <!-- HEADER -->
             <header class="bg-white shadow-sm border-b border-gray-200 z-10 flex-shrink-0">
                 <div class="bg-doresopolis-green h-2 w-full"></div>
                 <div class="px-4 py-3 flex items-center justify-between">
@@ -208,7 +185,6 @@
                         <i class="fa-solid fa-right-from-bracket text-xl"></i>
                     </button>
                 </div>
-                <!-- Busca -->
                 <div class="px-4 pb-3">
                     <div class="relative text-gray-400 focus-within:text-doresopolis-green">
                         <input type="text" placeholder="Buscar serviços..." class="w-full bg-gray-100 border-none rounded-full py-2 pl-4 pr-10 focus:outline-none focus:ring-2 focus:ring-doresopolis-green text-sm transition-colors">
@@ -219,45 +195,38 @@
                 </div>
             </header>
 
-            <!-- CONTEÚDO -->
             <main class="flex-grow overflow-y-auto overflow-x-hidden p-4 pb-24 scroll-smooth">
                 <div class="mb-6 mt-2">
                     <h2 class="text-xl font-bold text-gray-800">Olá, <span id="nome-usuario-logado" class="text-doresopolis-green">Cidadão</span>!</h2>
                     <p class="text-gray-500 mt-1 text-sm leading-snug">Selecione uma secretaria abaixo para solicitar serviços.</p>
                 </div>
 
-                <!-- Botoes Secretarias -->
                 <div class="flex flex-col gap-3">
                     <button onclick="navegarPara('saude')" class="flex items-center p-4 bg-white rounded-xl shadow-sm border border-gray-100 active:bg-gray-50 active:scale-[0.98] transition-all text-left">
                         <div class="p-3 bg-red-50 text-red-600 rounded-lg"><i class="fa-solid fa-heart-pulse text-lg w-5 text-center"></i></div>
                         <div class="ml-4 flex-grow"><h3 class="font-bold text-gray-800 text-sm">Saúde</h3><p class="text-[11px] text-gray-500 mt-0.5">Consultas, vacinas e remédios</p></div>
                         <i class="fa-solid fa-chevron-right text-gray-300 text-sm"></i>
                     </button>
-
                     <button onclick="navegarPara('educacao')" class="flex items-center p-4 bg-white rounded-xl shadow-sm border border-gray-100 active:bg-gray-50 active:scale-[0.98] transition-all text-left">
                         <div class="p-3 bg-blue-50 text-blue-600 rounded-lg"><i class="fa-solid fa-graduation-cap text-lg w-5 text-center"></i></div>
                         <div class="ml-4 flex-grow"><h3 class="font-bold text-gray-800 text-sm">Educação</h3><p class="text-[11px] text-gray-500 mt-0.5">Matrículas e transporte escolar</p></div>
                         <i class="fa-solid fa-chevron-right text-gray-300 text-sm"></i>
                     </button>
-
                     <button onclick="navegarPara('tributos')" class="flex items-center p-4 bg-white rounded-xl shadow-sm border border-gray-100 active:bg-gray-50 active:scale-[0.98] transition-all text-left">
                         <div class="p-3 bg-green-50 text-green-600 rounded-lg"><i class="fa-solid fa-file-invoice-dollar text-lg w-5 text-center"></i></div>
                         <div class="ml-4 flex-grow"><h3 class="font-bold text-gray-800 text-sm">Tributos</h3><p class="text-[11px] text-gray-500 mt-0.5">Emissão de IPTU e taxas</p></div>
                         <i class="fa-solid fa-chevron-right text-gray-300 text-sm"></i>
                     </button>
-
                     <button onclick="navegarPara('obras')" class="flex items-center p-4 bg-white rounded-xl shadow-sm border border-gray-100 active:bg-gray-50 active:scale-[0.98] transition-all text-left">
                         <div class="p-3 bg-amber-50 text-amber-600 rounded-lg"><i class="fa-solid fa-helmet-safety text-lg w-5 text-center"></i></div>
                         <div class="ml-4 flex-grow"><h3 class="font-bold text-gray-800 text-sm">Obras</h3><p class="text-[11px] text-gray-500 mt-0.5">Iluminação e manutenção</p></div>
                         <i class="fa-solid fa-chevron-right text-gray-300 text-sm"></i>
                     </button>
-
                     <button onclick="navegarPara('transporte')" class="flex items-center p-4 bg-white rounded-xl shadow-sm border border-gray-100 active:bg-gray-50 active:scale-[0.98] transition-all text-left">
                         <div class="p-3 bg-purple-50 text-purple-600 rounded-lg"><i class="fa-solid fa-bus text-lg w-5 text-center"></i></div>
                         <div class="ml-4 flex-grow"><h3 class="font-bold text-gray-800 text-sm">Transporte</h3><p class="text-[11px] text-gray-500 mt-0.5">Horários e estradas rurais</p></div>
                         <i class="fa-solid fa-chevron-right text-gray-300 text-sm"></i>
                     </button>
-
                     <button onclick="navegarPara('esporte')" class="flex items-center p-4 bg-white rounded-xl shadow-sm border border-gray-100 active:bg-gray-50 active:scale-[0.98] transition-all text-left">
                         <div class="p-3 bg-orange-50 text-orange-600 rounded-lg"><i class="fa-solid fa-trophy text-lg w-5 text-center"></i></div>
                         <div class="ml-4 flex-grow"><h3 class="font-bold text-gray-800 text-sm">Esporte</h3><p class="text-[11px] text-gray-500 mt-0.5">Inscrições e campeonatos</p></div>
@@ -266,30 +235,47 @@
                 </div>
             </main>
 
-            <!-- BARRA DE NAVEGAÇÃO INFERIOR -->
             <nav class="absolute bottom-0 w-full bg-white border-t border-gray-200 z-50 pb-safe">
                 <div class="flex justify-around items-center h-16">
-                    <a href="#" class="flex flex-col items-center justify-center w-full h-full text-doresopolis-green">
+                    <a href="#" onclick="event.preventDefault(); mostrarTela('tela-principal');" class="flex flex-col items-center justify-center w-full h-full text-doresopolis-green">
                         <i class="fa-solid fa-house text-lg mb-1"></i><span class="text-[10px] font-medium">Início</span>
                     </a>
-                    <a href="https://www.doresopolis.mg.gov.br/portal/servicos/1001/historia/" target="_blank" class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-doresopolis-green transition-colors">
+                    <a href="#" onclick="event.preventDefault(); abrirIframe('https://www.doresopolis.mg.gov.br/portal/servicos/1001/historia/', 'A Cidade');" class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-doresopolis-green transition-colors">
                         <i class="fa-solid fa-map-location-dot text-lg mb-1"></i><span class="text-[10px] font-medium">A Cidade</span>
                     </a>
-                    <a href="https://www.doresopolis.mg.gov.br/portal/ouvidoria" target="_blank" class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-doresopolis-green transition-colors">
+                    <a href="#" onclick="event.preventDefault(); abrirIframe('https://www.doresopolis.mg.gov.br/portal/ouvidoria', 'Ouvidoria');" class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-doresopolis-green transition-colors">
                         <i class="fa-solid fa-bullhorn text-lg mb-1"></i><span class="text-[10px] font-medium">Ouvidoria</span>
                     </a>
-                    <a href="https://ilai.memory.com.br/#/public/inicio" target="_blank" class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-doresopolis-green transition-colors">
+                    <a href="#" onclick="event.preventDefault(); abrirIframe('https://ilai.memory.com.br/#/public/inicio', 'Transparência');" class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-doresopolis-green transition-colors">
                         <i class="fa-solid fa-chart-pie text-lg mb-1"></i><span class="text-[10px] font-medium">Transparência</span>
                     </a>
                 </div>
             </nav>
         </div>
 
+        <div id="tela-iframe" class="hidden flex-col h-full w-full bg-white z-40 absolute inset-0">
+            <header class="bg-doresopolis-green text-white shadow-md flex-shrink-0 z-10">
+                <div class="px-4 py-3 flex items-center">
+                    <button onclick="fecharIframe()" class="mr-4 hover:text-gray-200 active:scale-95 transition-transform">
+                        <i class="fa-solid fa-arrow-left text-xl"></i>
+                    </button>
+                    <div>
+                        <h1 id="iframe-titulo" class="font-bold text-lg leading-tight">Prefeitura</h1>
+                        <p class="text-[10px] text-green-200">Navegador Interno Seguro</p>
+                    </div>
+                </div>
+            </header>
+            
+            <div class="flex-grow w-full bg-gray-100 relative">
+                <div class="absolute inset-0 flex items-center justify-center -z-10">
+                    <i class="fa-solid fa-circle-notch fa-spin text-gray-300 text-3xl"></i>
+                </div>
+                <iframe id="app-iframe" src="" class="w-full h-full border-none z-10 relative bg-white"></iframe>
+            </div>
+        </div>
+
     </div>
 
-    <!-- ========================================== -->
-    <!-- SCRIPT DE LÓGICA E FIREBASE                -->
-    <!-- ========================================== -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
@@ -311,14 +297,30 @@
         window.mostrarTela = function(telaId) {
             document.getElementById('tela-login').classList.add('hidden');
             document.getElementById('tela-cadastro').classList.add('hidden');
+            
             document.getElementById('tela-principal').classList.remove('flex');
             document.getElementById('tela-principal').classList.add('hidden');
+            
+            document.getElementById('tela-iframe').classList.remove('flex');
+            document.getElementById('tela-iframe').classList.add('hidden');
 
             const tela = document.getElementById(telaId);
             tela.classList.remove('hidden');
-            if(telaId === 'tela-principal') {
+            if(telaId === 'tela-principal' || telaId === 'tela-iframe') {
                 tela.classList.add('flex');
             }
+        };
+
+        // --- NAVEGADOR INTERNO (IFRAME) ---
+        window.abrirIframe = function(url, titulo) {
+            document.getElementById('iframe-titulo').innerText = titulo;
+            document.getElementById('app-iframe').src = url;
+            mostrarTela('tela-iframe');
+        };
+
+        window.fecharIframe = function() {
+            document.getElementById('app-iframe').src = ''; // Limpa o iframe para economizar memória e interromper carregamentos
+            mostrarTela('tela-principal');
         };
 
         // --- LÓGICA DE CADASTRO ---
@@ -327,7 +329,7 @@
             
             const nome = document.getElementById('cad-nome').value;
             const telefone = document.getElementById('cad-telefone').value;
-            const rua = document.getElementById('cad-rua').value; // Agora pega o valor do Select
+            const rua = document.getElementById('cad-rua').value; 
             const numero = document.getElementById('cad-numero').value;
             const bairro = document.getElementById('cad-bairro').value;
             const senha = document.getElementById('cad-senha').value;
@@ -349,7 +351,7 @@
             mostrarTela('tela-principal');
         };
 
-        // --- LOGOUT E NAVEGAÇÃO ---
+        // --- LOGOUT E NAVEGAÇÃO INTERNA ---
         window.fazerLogout = function() {
             if(confirm("Deseja realmente sair da sua conta?")) {
                 mostrarTela('tela-login');
