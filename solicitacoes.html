@@ -77,27 +77,91 @@
 
         </main>
 
-        <!-- BARRA DE NAVEGAÇÃO INFERIOR ATUALIZADA (3 BOTÕES) -->
+        <!-- BARRA DE NAVEGAÇÃO INFERIOR -->
         <nav class="absolute bottom-0 w-full bg-white border-t border-gray-200 z-50 pb-safe">
             <div class="flex justify-around items-center h-16">
                 
-                <!-- Início -->
                 <a href="index.html" class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-doresopolis-green transition-colors">
                     <i class="fa-solid fa-house text-lg mb-1"></i><span class="text-[10px] font-medium">Início</span>
                 </a>
 
-                <!-- Solicitações (Ativo) -->
                 <a href="#" onclick="event.preventDefault();" class="flex flex-col items-center justify-center w-full h-full text-doresopolis-green transition-colors">
                     <i class="fa-solid fa-list-check text-lg mb-1"></i><span class="text-[10px] font-medium">Solicitações</span>
                 </a>
 
-                <!-- Perfil (Leva pro index.html avisando que lá ele acessa o perfil) -->
                 <a href="index.html" onclick="alert('Para acessar o Perfil, clique na aba Perfil na página de Início.');" class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-doresopolis-green transition-colors">
                     <i class="fa-solid fa-user text-lg mb-1"></i><span class="text-[10px] font-medium">Perfil</span>
                 </a>
 
             </div>
         </nav>
+
+        <!-- ========================================== -->
+        <!-- MODAL DE DETALHES DA SOLICITAÇÃO           -->
+        <!-- ========================================== -->
+        <div id="modal-detalhes" class="absolute inset-0 z-[150] hidden flex-col justify-end">
+            <div id="modal-overlay" class="absolute inset-0 bg-black bg-opacity-0 transition-opacity duration-300" onclick="fecharDetalhes()"></div>
+            
+            <div id="modal-content" class="bg-white rounded-t-3xl max-h-[85vh] overflow-y-auto w-full relative z-10 transform translate-y-full transition-transform duration-300 flex flex-col shadow-[0_-10px_40px_rgba(0,0,0,0.2)]">
+                
+                <div class="sticky top-0 bg-white px-5 py-4 border-b border-gray-100 flex justify-between items-center z-20">
+                    <h3 class="font-black text-gray-800 text-lg">Detalhes do Chamado</h3>
+                    <button onclick="fecharDetalhes()" class="w-8 h-8 bg-gray-100 text-gray-600 rounded-full hover:bg-gray-200 flex items-center justify-center transition-colors">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                
+                <div class="p-5 space-y-5 pb-10">
+                    
+                    <!-- Protocolo e Status -->
+                    <div class="flex justify-between items-center bg-gray-50 p-3 rounded-xl border border-gray-200">
+                        <div class="flex flex-col">
+                            <span class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-0.5"><i class="fa-solid fa-hashtag mr-1"></i> Protocolo</span>
+                            <span id="detalhe-protocolo" class="font-black text-amber-600 text-sm"></span>
+                        </div>
+                        <div id="detalhe-status" class="shrink-0"></div>
+                    </div>
+
+                    <!-- Imagem Visualmente Destacada -->
+                    <div id="detalhe-imagem-container" class="w-full h-52 bg-gray-100 rounded-xl overflow-hidden border border-gray-200 shadow-inner">
+                        <!-- Imagem injetada via JS -->
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <!-- Secretaria -->
+                            <div class="bg-gray-50 p-3 rounded-lg border border-gray-100">
+                                <p class="text-[9px] text-gray-400 font-bold uppercase mb-0.5"><i class="fa-solid fa-building mr-1"></i> Departamento</p>
+                                <p id="detalhe-secretaria" class="text-xs font-bold text-gray-800 leading-tight">Sec. Obras</p>
+                            </div>
+                            <!-- Data -->
+                            <div class="bg-gray-50 p-3 rounded-lg border border-gray-100">
+                                <p class="text-[9px] text-gray-400 font-bold uppercase mb-0.5"><i class="fa-regular fa-calendar mr-1"></i> Enviado em</p>
+                                <p id="detalhe-data" class="text-xs font-bold text-gray-800 leading-tight"></p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <p class="text-[9px] text-gray-400 font-bold uppercase mb-1 ml-1">Serviço Solicitado</p>
+                            <p id="detalhe-servico" class="text-sm font-bold text-gray-800 bg-gray-50 p-3 rounded-lg border border-gray-100"></p>
+                        </div>
+                        
+                        <div>
+                            <p class="text-[9px] text-gray-400 font-bold uppercase mb-1 ml-1"><i class="fa-solid fa-location-dot mr-1"></i> Endereço / Referência</p>
+                            <p id="detalhe-endereco" class="text-sm font-bold text-gray-800 bg-gray-50 p-3 rounded-lg border border-gray-100"></p>
+                        </div>
+
+                        <div>
+                            <p class="text-[9px] text-gray-400 font-bold uppercase mb-1 ml-1"><i class="fa-solid fa-comment-dots mr-1"></i> Minha Descrição</p>
+                            <div class="bg-blue-50 p-3 rounded-lg border border-blue-100">
+                                <p id="detalhe-descricao" class="text-xs text-blue-800 italic"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <!-- SCRIPT DE LÓGICA E FIREBASE -->
@@ -118,10 +182,12 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app); 
 
+        // Memória para guardar os dados e exibir rapidamente no Modal
+        window.dadosHistorico = {};
+        
         let usuarioNomePrimeiro = "";
         let usuarioNomeCompleto = "";
 
-        // Autenticação e busca de nome do usuário logado
         document.addEventListener('DOMContentLoaded', async () => {
             usuarioNomePrimeiro = localStorage.getItem('usuarioDoresopolis');
             const telefoneSalvo = localStorage.getItem('userTelefone');
@@ -148,12 +214,9 @@
             }
         });
 
-        // Função para carregar todas as solicitações do usuário
         function carregarHistoricoGeral() {
             const container = document.getElementById("lista-todas-solicitacoes");
 
-            // No futuro, podemos criar um array com várias coleções (Saúde, Tributos, etc) 
-            // e mesclar tudo aqui. Por enquanto, lemos a de Obras.
             const solicitacoesObrasRef = collection(db, "solicitacoes_obras");
             const qObras = query(solicitacoesObrasRef, orderBy("dataRegistro", "desc"));
 
@@ -176,17 +239,17 @@
 
                 snapshot.forEach((docSnap) => {
                     const data = docSnap.data();
+                    const id = docSnap.id;
                     
-                    // Filtra apenas as solicitações DESTE cidadão
                     if(data.nomeCidadao !== usuarioNomeCompleto && data.nomeCidadao !== usuarioNomePrimeiro) return;
                     
                     encontrouChamados = true;
+                    window.dadosHistorico[id] = data; // Guarda as informações para o Modal
                     
                     const dataFormatada = new Date(data.dataRegistro).toLocaleDateString('pt-BR', {day:'2-digit', month:'2-digit', year:'numeric'});
                     const horaFormatada = new Date(data.dataRegistro).toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
-                    const protocoloTexto = data.protocolo ? `#${data.protocolo}` : 'Pendente';
+                    const protocoloTexto = data.protocolo ? `#${data.protocolo}` : 'Sem Protocolo';
 
-                    // Estilo dinâmico do Status
                     let statusBadge = '';
                     if(data.status === 'EM ANDAMENTO') {
                         statusBadge = `<span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-[10px] font-black uppercase"><i class="fa-solid fa-person-digging mr-1"></i> Andamento</span>`;
@@ -196,19 +259,16 @@
                         statusBadge = `<span class="bg-gray-100 text-gray-600 px-2 py-0.5 rounded text-[10px] font-black uppercase border border-gray-200"><i class="fa-regular fa-clock mr-1"></i> Pendente</span>`;
                     }
 
-                    // Card da Solicitação
                     const card = `
                         <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden relative">
-                            <!-- Cabeçalho do Card (Identifica a Secretaria) -->
                             <div class="bg-amber-50 px-3 py-2 border-b border-amber-100 flex justify-between items-center">
                                 <div class="flex items-center gap-1.5">
                                     <i class="fa-solid fa-helmet-safety text-amber-500 text-xs"></i>
                                     <span class="text-[10px] font-black text-amber-700 uppercase tracking-wider">Sec. Obras</span>
                                 </div>
-                                <span class="text-[10px] font-black text-amber-600 bg-white px-2 py-0.5 rounded-md shadow-sm">${protocoloTexto}</span>
+                                <span class="text-[10px] font-black text-amber-600 bg-white px-2 py-0.5 rounded-md shadow-sm border border-amber-100">${protocoloTexto}</span>
                             </div>
                             
-                            <!-- Corpo do Card -->
                             <div class="p-3">
                                 <div class="flex justify-between items-start mb-2 gap-2">
                                     <h3 class="font-bold text-gray-800 text-sm leading-tight">${data.tipoServico}</h3>
@@ -219,7 +279,7 @@
                                 
                                 <div class="flex justify-between items-center pt-3 border-t border-gray-50 mt-1">
                                     <span class="text-[10px] text-gray-400 font-medium"><i class="fa-regular fa-calendar mr-1"></i> ${dataFormatada} às ${horaFormatada}</span>
-                                    <button onclick="alert('Função de detalhes e interação com a prefeitura em desenvolvimento.')" class="text-[10px] font-bold text-doresopolis-green hover:underline flex items-center">
+                                    <button onclick="abrirDetalhes('${id}')" class="text-[10px] font-bold text-doresopolis-green hover:underline flex items-center bg-green-50 px-2 py-1 rounded-md">
                                         Ver detalhes <i class="fa-solid fa-chevron-right ml-1 text-[8px]"></i>
                                     </button>
                                 </div>
@@ -245,6 +305,73 @@
                 document.getElementById("lista-todas-solicitacoes").innerHTML = `<div class="text-center py-8 text-red-500 text-sm bg-white rounded-xl shadow-sm border border-gray-200">Erro de conexão ao buscar chamados.</div>`;
             });
         }
+
+        // --- LÓGICA DO MODAL DE DETALHES ---
+        window.abrirDetalhes = function(id) {
+            const data = window.dadosHistorico[id];
+            if(!data) return;
+
+            document.getElementById('detalhe-protocolo').innerText = data.protocolo ? `#${data.protocolo}` : 'Pendente';
+            
+            const dataFormatada = new Date(data.dataRegistro).toLocaleDateString('pt-BR', {day:'2-digit', month:'2-digit', year:'numeric'});
+            const horaFormatada = new Date(data.dataRegistro).toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+            document.getElementById('detalhe-data').innerText = `${dataFormatada} às ${horaFormatada}`;
+            
+            document.getElementById('detalhe-servico').innerText = data.tipoServico || 'Não informado';
+            document.getElementById('detalhe-endereco').innerText = data.endereco || 'Não informado';
+            
+            const desc = document.getElementById('detalhe-descricao');
+            if(data.descricao && data.descricao.trim() !== '') {
+                desc.innerText = `"${data.descricao}"`;
+                desc.classList.remove('text-gray-400');
+            } else {
+                desc.innerText = "Nenhuma descrição adicional foi fornecida.";
+                desc.classList.add('text-gray-400');
+            }
+
+            let statusHtml = '';
+            if(data.status === 'EM ANDAMENTO') {
+                statusHtml = `<span class="bg-blue-100 text-blue-700 px-3 py-1.5 rounded-md text-[10px] font-black uppercase"><i class="fa-solid fa-person-digging mr-1"></i> Andamento</span>`;
+            } else if(data.status === 'CONCLUÍDO') {
+                statusHtml = `<span class="bg-green-100 text-green-700 px-3 py-1.5 rounded-md text-[10px] font-black uppercase"><i class="fa-solid fa-check mr-1"></i> Concluído</span>`;
+            } else {
+                statusHtml = `<span class="bg-gray-100 text-gray-600 px-3 py-1.5 rounded-md text-[10px] font-black uppercase border border-gray-200"><i class="fa-regular fa-clock mr-1"></i> Pendente</span>`;
+            }
+            document.getElementById('detalhe-status').innerHTML = statusHtml;
+
+            const imgContainer = document.getElementById('detalhe-imagem-container');
+            if(data.fotoUrl) {
+                imgContainer.innerHTML = `<img src="${data.fotoUrl}" class="w-full h-full object-cover">`;
+            } else {
+                imgContainer.innerHTML = `<div class="w-full h-full flex flex-col items-center justify-center text-gray-400 bg-gray-100"><i class="fa-solid fa-image text-4xl mb-2"></i><span class="text-xs font-medium mt-1">Nenhuma foto enviada</span></div>`;
+            }
+
+            const modal = document.getElementById('modal-detalhes');
+            const overlay = document.getElementById('modal-overlay');
+            const content = document.getElementById('modal-content');
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            
+            void modal.offsetWidth;
+
+            overlay.classList.replace('bg-opacity-0', 'bg-opacity-60');
+            content.classList.remove('translate-y-full');
+        };
+
+        window.fecharDetalhes = function() {
+            const modal = document.getElementById('modal-detalhes');
+            const overlay = document.getElementById('modal-overlay');
+            const content = document.getElementById('modal-content');
+
+            overlay.classList.replace('bg-opacity-60', 'bg-opacity-0');
+            content.classList.add('translate-y-full');
+
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300); 
+        };
     </script>
 </body>
 </html>
