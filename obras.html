@@ -33,59 +33,47 @@
 
 <body class="bg-gray-200 font-sans text-gray-800 flex justify-center items-center min-h-screen">
 
-    <!-- NOTIFICAÇÃO NO APP (TOAST) -->
     <div id="toast-aviso" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-[100] bg-green-600 text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-3 transition-all duration-300 opacity-0 pointer-events-none translate-y-[-20px] w-11/12 max-w-sm">
         <i id="toast-icone" class="fa-solid fa-circle-check text-lg"></i>
         <span id="toast-mensagem" class="text-sm font-medium leading-snug"></span>
     </div>
 
-    <!-- CONTAINER PRINCIPAL DO APP -->
     <div class="bg-gray-50 w-full max-w-md h-[100dvh] flex flex-col relative shadow-2xl overflow-hidden sm:rounded-xl sm:h-[95vh] sm:border sm:border-gray-300">
         
-        <!-- HEADER COMPLETO COM ABAS -->
         <header class="bg-white shadow-sm z-10 flex-shrink-0">
             <div class="bg-amber-500 h-2 w-full"></div> 
             
-            <!-- Título -->
-            <div class="px-4 py-3 flex items-center gap-4">
-                <!-- Botão Voltar -->
-                <button onclick="window.location.href='index.html'" class="text-gray-500 hover:text-amber-500 text-xl w-8 h-8 flex items-center justify-center rounded-full active:bg-gray-100 transition-colors shrink-0">
-                    <i class="fa-solid fa-arrow-left"></i>
-                </button>
+            <div class="px-4 py-3 flex items-center justify-center bg-white relative">
                 <div class="flex items-center space-x-3">
                     <div class="w-10 h-10 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center shrink-0 shadow-inner">
                         <i class="fa-solid fa-helmet-safety text-lg"></i>
                     </div>
                     <div>
-                        <p class="text-[9px] tracking-[0.1em] text-gray-500 uppercase font-semibold leading-none">Solicitação de Serviços</p>
+                        <p class="text-[9px] tracking-[0.1em] text-gray-500 uppercase font-semibold leading-none">Serviços e Manutenção</p>
                         <h1 class="text-xl font-black text-gray-700 tracking-tight uppercase leading-none mt-1">Sec. Obras</h1>
                     </div>
                 </div>
             </div>
 
-            <!-- MENU DE NAVEGAÇÃO NO TOPO (ABAS) -->
-            <div class="flex border-t border-b border-gray-200 bg-white">
+            <div class="flex border-t border-b border-gray-200 bg-gray-100">
+                <a href="index.html" class="flex-1 py-2 flex flex-col items-center justify-center text-gray-500 hover:text-doresopolis-green transition-colors border-r border-gray-200">
+                    <i class="fa-solid fa-house text-lg mb-0.5"></i>
+                    <span class="text-[10px] font-bold uppercase">Início</span>
+                </a>
                 
-                
-                <!-- Botão Novo Chamado (Ativo Padrão) -->
-                <button onclick="trocarAbaObras('nova')" id="btn-aba-nova" class="flex-1 py-2 flex flex-col items-center justify-center text-amber-600 bg-amber-50 border-b-2 border-amber-500 transition-all border-r border-gray-200">
-                    <i class="fa-solid fa-circle-plus text-base mb-1"></i>
+                <button onclick="trocarAbaObras('nova')" id="btn-aba-nova" class="flex-1 py-2 flex flex-col items-center justify-center text-amber-600 bg-white border-b-2 border-amber-500 transition-all border-r border-gray-200">
+                    <i class="fa-solid fa-circle-plus text-lg mb-0.5"></i>
                     <span class="text-[10px] font-bold uppercase">Novo Chamado</span>
                 </button>
 
-                <!-- Botão Acompanhar -->
-                <button onclick="trocarAbaObras('acompanhar')" id="btn-aba-acompanhar" class="flex-1 py-2 flex flex-col items-center justify-center text-gray-500 bg-white border-b-2 border-transparent hover:bg-gray-50 transition-all">
-                    <i class="fa-solid fa-list-check text-base mb-1"></i>
+                <button onclick="trocarAbaObras('acompanhar')" id="btn-aba-acompanhar" class="flex-1 py-2 flex flex-col items-center justify-center text-gray-400 bg-gray-100 border-b-2 border-transparent transition-all">
+                    <i class="fa-solid fa-list-check text-lg mb-0.5"></i>
                     <span class="text-[10px] font-bold uppercase">Acompanhar</span>
                 </button>
-
             </div>
         </header>
 
-        <!-- ========================================== -->
-        <!-- ABA 1: NOVO CHAMADO (FORMULÁRIO)           -->
-        <!-- ========================================== -->
-        <main id="aba-nova" class="flex-grow overflow-y-auto p-4 pb-8 scroll-smooth block bg-gray-50">
+        <main id="aba-nova" class="flex-grow overflow-y-auto p-4 pb-6 scroll-smooth block bg-gray-50">
             
             <div class="mb-5">
                 <h2 class="text-lg font-bold text-gray-800">Solicitar Reparo</h2>
@@ -96,7 +84,6 @@
                 
                 <input type="hidden" id="solicitante-nome">
 
-                <!-- 1. Tipo de Serviço -->
                 <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
                     <label class="block text-xs font-bold text-gray-700 mb-2"><i class="fa-solid fa-list-check text-amber-500 mr-1"></i> Qual é o problema?</label>
                     <div class="relative">
@@ -116,14 +103,12 @@
                     </div>
                 </div>
 
-                <!-- 2. Localização -->
                 <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm space-y-3">
                     <label class="block text-xs font-bold text-gray-700"><i class="fa-solid fa-location-dot text-red-500 mr-1"></i> Onde é o local?</label>
                     <input type="text" id="form-endereco" required placeholder="Ex: Rua Piumhi, Próximo ao nº 150" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm">
                     <input type="text" id="form-referencia" placeholder="Ponto de referência (Opcional)" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm">
                 </div>
 
-                <!-- 3. Urgência -->
                 <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
                     <label class="block text-xs font-bold text-gray-700 mb-2"><i class="fa-solid fa-gauge-high text-blue-500 mr-1"></i> Nível de Urgência</label>
                     <div class="grid grid-cols-3 gap-2">
@@ -143,7 +128,6 @@
                     <p class="text-[9px] text-gray-400 mt-2 italic">* Use "Alta" apenas para situações de risco à comunidade.</p>
                 </div>
 
-                <!-- 4. Foto do Local -->
                 <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
                     <label class="block text-xs font-bold text-gray-700 mb-2"><i class="fa-solid fa-camera text-gray-500 mr-1"></i> Anexar Foto (Recomendado)</label>
                     
@@ -164,28 +148,23 @@
                     <input type="hidden" id="foto-base64">
                 </div>
 
-                <!-- 5. Descrição -->
                 <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
                     <label class="block text-xs font-bold text-gray-700 mb-2"><i class="fa-solid fa-comment-dots text-gray-500 mr-1"></i> Detalhes Adicionais</label>
                     <textarea id="form-descricao" rows="3" placeholder="Descreva mais detalhes que possam ajudar a equipe..." class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm resize-none"></textarea>
                 </div>
 
                 <button type="submit" id="btn-enviar" class="w-full bg-amber-500 text-white font-bold py-3.5 rounded-xl shadow-md hover:bg-amber-600 active:scale-[0.98] transition-all flex justify-center items-center gap-2 mt-6">
-                    <i class="fa-solid fa-paper-plane"></i> Enviar Solicitação
+                    <i class="fa-solid fa-paper-plane"></i> Gerar Solicitação
                 </button>
             </form>
         </main>
 
-        <!-- ========================================== -->
-        <!-- ABA 2: ACOMPANHAR CHAMADOS                 -->
-        <!-- ========================================== -->
         <main id="aba-acompanhar" class="flex-grow overflow-y-auto p-4 pb-8 scroll-smooth hidden bg-gray-100">
             <div class="mb-5">
                 <h2 class="text-lg font-bold text-gray-800">Meus Chamados</h2>
-                <p class="text-gray-500 mt-1 text-xs leading-snug">Acompanhe o status em tempo real das solicitações que você enviou para Obras.</p>
+                <p class="text-gray-500 mt-1 text-xs leading-snug">Acompanhe o status e o número de protocolo das solicitações que você enviou para Obras.</p>
             </div>
 
-            <!-- Lista onde os cards de acompanhamento aparecerão -->
             <div id="lista-meus-chamados" class="flex flex-col gap-4">
                 <div class="text-center py-8 text-gray-400 text-sm">
                     <i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i><br>
@@ -196,7 +175,6 @@
 
     </div>
 
-    <!-- SCRIPT DE LÓGICA E FIREBASE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getFirestore, collection, addDoc, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -255,23 +233,23 @@
                 abaAcompanhar.classList.add('hidden');
                 
                 // Ativa Botão Novo Chamado
-                btnNova.classList.add('text-amber-600', 'bg-amber-50', 'border-amber-500');
-                btnNova.classList.remove('text-gray-500', 'bg-white', 'border-transparent');
+                btnNova.classList.add('text-amber-600', 'bg-white', 'border-amber-500');
+                btnNova.classList.remove('text-gray-400', 'bg-gray-100', 'border-transparent');
                 
                 // Desativa Botão Acompanhar
-                btnAcompanhar.classList.add('text-gray-500', 'bg-white', 'border-transparent');
-                btnAcompanhar.classList.remove('text-amber-600', 'bg-amber-50', 'border-amber-500');
+                btnAcompanhar.classList.add('text-gray-400', 'bg-gray-100', 'border-transparent');
+                btnAcompanhar.classList.remove('text-amber-600', 'bg-white', 'border-amber-500');
             } else {
                 abaAcompanhar.classList.remove('hidden');
                 abaNova.classList.add('hidden');
                 
                 // Ativa Botão Acompanhar
-                btnAcompanhar.classList.add('text-amber-600', 'bg-amber-50', 'border-amber-500');
-                btnAcompanhar.classList.remove('text-gray-500', 'bg-white', 'border-transparent');
+                btnAcompanhar.classList.add('text-amber-600', 'bg-white', 'border-amber-500');
+                btnAcompanhar.classList.remove('text-gray-400', 'bg-gray-100', 'border-transparent');
                 
                 // Desativa Botão Novo Chamado
-                btnNova.classList.add('text-gray-500', 'bg-white', 'border-transparent');
-                btnNova.classList.remove('text-amber-600', 'bg-amber-50', 'border-amber-500');
+                btnNova.classList.add('text-gray-400', 'bg-gray-100', 'border-transparent');
+                btnNova.classList.remove('text-amber-600', 'bg-white', 'border-amber-500');
             }
         };
 
@@ -290,7 +268,7 @@
             }
         });
 
-        // --- SISTEMA DE ACOMPANHAMENTO REAL-TIME ---
+        // --- SISTEMA DE ACOMPANHAMENTO COM PROTOCOLO ---
         function carregarMeusChamados() {
             const solicitacoesRef = collection(db, "solicitacoes_obras");
             const qSolicitacoes = query(solicitacoesRef, orderBy("dataRegistro", "desc"));
@@ -314,6 +292,9 @@
                     encontrouChamados = true;
                     
                     const dataFormatada = new Date(data.dataRegistro).toLocaleDateString('pt-BR', {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit'});
+                    
+                    // Número de Protocolo (Se for um chamado antigo sem protocolo, exibe 'Em Análise')
+                    const protocoloTexto = data.protocolo ? `#${data.protocolo}` : 'Pendente';
 
                     let statusHtml = '';
                     if(data.status === 'EM ANDAMENTO') {
@@ -329,8 +310,11 @@
                             <div class="absolute left-0 top-0 bottom-0 w-1.5 ${data.urgencia === 'ALTA' ? 'bg-red-500' : (data.urgencia === 'MÉDIA' ? 'bg-amber-500' : 'bg-green-500')}"></div>
                             
                             <div class="flex justify-between items-start mb-3 pl-3 gap-2 border-b border-gray-50 pb-3">
-                                <h3 class="font-bold text-gray-800 text-sm leading-tight">${data.tipoServico}</h3>
-                                <div class="shrink-0">${statusHtml}</div>
+                                <div>
+                                    <span class="text-[10px] font-black text-amber-500 mb-1 block uppercase"><i class="fa-solid fa-hashtag mr-0.5"></i> Protocolo: ${protocoloTexto}</span>
+                                    <h3 class="font-bold text-gray-800 text-sm leading-tight">${data.tipoServico}</h3>
+                                </div>
+                                <div class="shrink-0 mt-1">${statusHtml}</div>
                             </div>
                             
                             <div class="pl-3 space-y-1.5">
@@ -398,13 +382,13 @@
             document.getElementById('upload-label').classList.add('flex');
         };
 
-        // --- ENVIAR SOLICITAÇÃO ---
+        // --- ENVIAR SOLICITAÇÃO COM GERAÇÃO DE PROTOCOLO ---
         window.enviarSolicitacao = async function(event) {
             event.preventDefault();
 
             const btn = document.getElementById('btn-enviar');
             btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enviando...';
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Gerando Protocolo...';
 
             const nome = document.getElementById('solicitante-nome').value;
             const servico = document.getElementById('form-servico').value;
@@ -414,13 +398,24 @@
             const fotoBase64 = document.getElementById('foto-base64').value;
             const descricao = document.getElementById('form-descricao').value;
 
+            // Formatação do Endereço
             let enderecoFinal = endereco;
             if (referencia) {
                 enderecoFinal += ` (Ref: ${referencia})`;
             }
 
+            // --- GERAÇÃO DE PROTOCOLO ---
+            // Formato: OBR + Ano (2 últimos dígitos) + Mês + Sequência Aleatória (ex: OBR2606-A1B2)
+            const dataAtual = new Date();
+            const ano = dataAtual.getFullYear().toString().slice(-2);
+            const mes = (dataAtual.getMonth() + 1).toString().padStart(2, '0');
+            const aleatorio = Math.random().toString(36).substring(2, 6).toUpperCase();
+            const numeroProtocolo = `OBR${ano}${mes}-${aleatorio}`;
+
             try {
+                // Salvando no Banco de Dados com a nova propriedade 'protocolo'
                 await addDoc(collection(db, "solicitacoes_obras"), {
+                    protocolo: numeroProtocolo, // Número do protocolo gerado
                     nomeCidadao: nome,
                     tipoServico: servico,
                     endereco: enderecoFinal,
@@ -428,24 +423,24 @@
                     fotoUrl: fotoBase64, 
                     descricao: descricao,
                     status: "PENDENTE", 
-                    dataRegistro: new Date().toISOString()
+                    dataRegistro: dataAtual.toISOString()
                 });
                 
-                mostrarAviso("Sua solicitação foi enviada com sucesso!", "sucesso");
+                mostrarAviso(`Solicitação enviada! Protocolo: #${numeroProtocolo}`, "sucesso");
                 
                 setTimeout(() => {
                     document.getElementById('form-solicitacao').reset();
                     removerFoto();
                     trocarAbaObras('acompanhar');
                     btn.disabled = false;
-                    btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Enviar Solicitação';
+                    btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Gerar Solicitação';
                 }, 1500);
 
             } catch (error) {
                 console.error("Erro ao enviar chamado: ", error);
                 mostrarAviso("Ocorreu um erro ao enviar. Verifique a internet.", "erro");
                 btn.disabled = false;
-                btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Enviar Solicitação';
+                btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Gerar Solicitação';
             }
         };
     </script>
