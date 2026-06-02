@@ -42,10 +42,12 @@
     <!-- CONTAINER PRINCIPAL DO APP -->
     <div class="bg-gray-50 w-full max-w-md h-[100dvh] flex flex-col relative shadow-2xl overflow-hidden sm:rounded-xl sm:h-[95vh] sm:border sm:border-gray-300">
         
-        <!-- HEADER -->
-        <header class="bg-white shadow-sm z-10 flex-shrink-0 border-b border-gray-200">
+        <!-- HEADER COM MENUS NO TOPO -->
+        <header class="bg-white shadow-sm z-10 flex-shrink-0">
             <div class="bg-amber-500 h-2 w-full"></div> 
-            <div class="px-4 py-3 flex items-center justify-between">
+            
+            <!-- Título da Secretaria -->
+            <div class="px-4 py-3 flex items-center justify-center bg-white relative">
                 <div class="flex items-center space-x-3">
                     <div class="w-10 h-10 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center shrink-0 shadow-inner">
                         <i class="fa-solid fa-helmet-safety text-lg"></i>
@@ -56,12 +58,33 @@
                     </div>
                 </div>
             </div>
+
+            <!-- TRÊS BOTÕES DE NAVEGAÇÃO NO TOPO -->
+            <div class="flex border-t border-b border-gray-200 bg-gray-100">
+                <!-- Botão: Início -->
+                <a href="index.html" class="flex-1 py-2 flex flex-col items-center justify-center text-gray-500 hover:text-doresopolis-green transition-colors border-r border-gray-200">
+                    <i class="fa-solid fa-house text-lg mb-0.5"></i>
+                    <span class="text-[10px] font-bold uppercase">Início</span>
+                </a>
+                
+                <!-- Botão: Novo Chamado (Ativo por Padrão) -->
+                <button onclick="trocarAbaObras('nova')" id="btn-aba-nova" class="flex-1 py-2 flex flex-col items-center justify-center text-amber-600 bg-white border-b-2 border-amber-500 transition-all border-r border-gray-200">
+                    <i class="fa-solid fa-circle-plus text-lg mb-0.5"></i>
+                    <span class="text-[10px] font-bold uppercase">Novo Chamado</span>
+                </button>
+
+                <!-- Botão: Acompanhar -->
+                <button onclick="trocarAbaObras('acompanhar')" id="btn-aba-acompanhar" class="flex-1 py-2 flex flex-col items-center justify-center text-gray-400 bg-gray-100 border-b-2 border-transparent transition-all">
+                    <i class="fa-solid fa-list-check text-lg mb-0.5"></i>
+                    <span class="text-[10px] font-bold uppercase">Acompanhar</span>
+                </button>
+            </div>
         </header>
 
         <!-- ========================================== -->
         <!-- ABA 1: NOVO CHAMADO (FORMULÁRIO)           -->
         <!-- ========================================== -->
-        <main id="aba-nova" class="flex-grow overflow-y-auto p-4 pb-24 scroll-smooth block">
+        <main id="aba-nova" class="flex-grow overflow-y-auto p-4 pb-6 scroll-smooth block">
             
             <div class="mb-5">
                 <h2 class="text-lg font-bold text-gray-800">Solicitar Reparo</h2>
@@ -155,7 +178,7 @@
         <!-- ========================================== -->
         <!-- ABA 2: ACOMPANHAR CHAMADOS                 -->
         <!-- ========================================== -->
-        <main id="aba-acompanhar" class="flex-grow overflow-y-auto p-4 pb-24 scroll-smooth hidden bg-gray-100">
+        <main id="aba-acompanhar" class="flex-grow overflow-y-auto p-4 pb-6 scroll-smooth hidden bg-gray-100">
             <div class="mb-5">
                 <h2 class="text-lg font-bold text-gray-800">Meus Chamados</h2>
                 <p class="text-gray-500 mt-1 text-xs leading-snug">Acompanhe o status em tempo real das solicitações que você enviou.</p>
@@ -170,38 +193,6 @@
             </div>
         </main>
 
-        <!-- ========================================== -->
-        <!-- BARRA DE NAVEGAÇÃO INFERIOR EXCLUSIVA      -->
-        <!-- ========================================== -->
-        <nav class="absolute bottom-0 w-full bg-white border-t border-gray-200 z-50 pb-safe">
-            <div class="flex justify-around items-center h-16 relative">
-                
-                <!-- Aba: Novo Chamado -->
-                <a href="#" onclick="event.preventDefault(); trocarAbaObras('nova')" id="btn-aba-nova" class="flex flex-col items-center justify-center w-full h-full text-amber-500 transition-colors">
-                    <i class="fa-solid fa-circle-plus text-xl mb-1"></i>
-                    <span class="text-[10px] font-bold">Novo Chamado</span>
-                </a>
-                
-                <!-- Divisor visual -->
-                <div class="w-px h-8 bg-gray-200"></div>
-
-                <!-- Aba: Acompanhar -->
-                <a href="#" onclick="event.preventDefault(); trocarAbaObras('acompanhar')" id="btn-aba-acompanhar" class="flex flex-col items-center justify-center w-full h-full text-gray-400 transition-colors">
-                    <i class="fa-solid fa-list-check text-xl mb-1"></i>
-                    <span class="text-[10px] font-bold">Acompanhar</span>
-                </a>
-
-                <!-- Divisor visual -->
-                <div class="w-px h-8 bg-gray-200"></div>
-
-                <!-- Voltar ao Início -->
-                <a href="index.html" class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-doresopolis-green transition-colors">
-                    <i class="fa-solid fa-house text-xl mb-1"></i>
-                    <span class="text-[10px] font-bold">Início</span>
-                </a>
-
-            </div>
-        </nav>
     </div>
 
     <!-- SCRIPT DE LÓGICA E FIREBASE -->
@@ -251,7 +242,7 @@
             }, 4000);
         };
 
-        // --- NAVEGAÇÃO DE ABAS INFERIORES ---
+        // --- NAVEGAÇÃO DOS BOTÕES NO TOPO ---
         window.trocarAbaObras = function(aba) {
             const abaNova = document.getElementById('aba-nova');
             const abaAcompanhar = document.getElementById('aba-acompanhar');
@@ -259,21 +250,33 @@
             const btnAcompanhar = document.getElementById('btn-aba-acompanhar');
 
             if (aba === 'nova') {
-                // Mostra formulário
+                // Mostra formulário e esconde acompanhamento
                 abaNova.classList.remove('hidden');
                 abaAcompanhar.classList.add('hidden');
                 
-                // Pinta botão Novo Chamado de Laranja
-                btnNova.classList.replace('text-gray-400', 'text-amber-500');
-                btnAcompanhar.classList.replace('text-amber-500', 'text-gray-400');
+                // Botão 'Novo Chamado' Ativo
+                btnNova.classList.replace('text-gray-400', 'text-amber-600');
+                btnNova.classList.replace('bg-gray-100', 'bg-white');
+                btnNova.classList.replace('border-transparent', 'border-amber-500');
+                
+                // Botão 'Acompanhar' Inativo
+                btnAcompanhar.classList.replace('text-amber-600', 'text-gray-400');
+                btnAcompanhar.classList.replace('bg-white', 'bg-gray-100');
+                btnAcompanhar.classList.replace('border-amber-500', 'border-transparent');
             } else {
-                // Mostra acompanhamento
+                // Mostra acompanhamento e esconde formulário
                 abaAcompanhar.classList.remove('hidden');
                 abaNova.classList.add('hidden');
                 
-                // Pinta botão Acompanhar de Laranja
-                btnAcompanhar.classList.replace('text-gray-400', 'text-amber-500');
-                btnNova.classList.replace('text-amber-500', 'text-gray-400');
+                // Botão 'Acompanhar' Ativo
+                btnAcompanhar.classList.replace('text-gray-400', 'text-amber-600');
+                btnAcompanhar.classList.replace('bg-gray-100', 'bg-white');
+                btnAcompanhar.classList.replace('border-transparent', 'border-amber-500');
+                
+                // Botão 'Novo Chamado' Inativo
+                btnNova.classList.replace('text-amber-600', 'text-gray-400');
+                btnNova.classList.replace('bg-white', 'bg-gray-100');
+                btnNova.classList.replace('border-amber-500', 'border-transparent');
             }
         };
 
@@ -285,7 +288,7 @@
             if (sessaoSalva) {
                 usuarioLogado = sessaoSalva;
                 document.getElementById('solicitante-nome').value = sessaoSalva;
-                carregarMeusChamados(); // Dispara o carregamento do histórico do cidadão
+                carregarMeusChamados(); 
             } else {
                 alert("Você precisa estar logado para abrir um chamado.");
                 window.location.href = "index.html";
@@ -311,7 +314,7 @@
                 snapshot.forEach((docSnap) => {
                     const data = docSnap.data();
                     
-                    // Exibe apenas os chamados criados por ESTE usuário
+                    // Filtra via JavaScript os chamados apenas desse usuário
                     if(data.nomeCidadao !== usuarioLogado) return;
                     
                     encontrouChamados = true;
@@ -436,7 +439,6 @@
                 
                 mostrarAviso("Sua solicitação foi enviada com sucesso!", "sucesso");
                 
-                // Limpa o formulário e pula para a aba de acompanhamento automaticamente
                 setTimeout(() => {
                     document.getElementById('form-solicitacao').reset();
                     removerFoto();
