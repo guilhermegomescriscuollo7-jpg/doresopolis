@@ -43,7 +43,6 @@
 
 <body class="bg-gray-200 font-sans text-gray-800 flex justify-center items-center min-h-screen">
 
-    <!-- NOTIFICAÇÃO NO APP (TOAST) -->
     <div id="toast-aviso" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-[100] bg-red-600 text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-3 transition-all duration-300 opacity-0 pointer-events-none translate-y-[-20px] w-11/12 max-w-sm">
         <i id="toast-icone" class="fa-solid fa-circle-exclamation text-lg"></i>
         <span id="toast-mensagem" class="text-sm font-medium leading-snug"></span>
@@ -51,9 +50,6 @@
 
     <div class="bg-gray-50 w-full max-w-md h-[100dvh] flex flex-col relative shadow-2xl overflow-hidden sm:rounded-xl sm:h-[95vh] sm:border sm:border-gray-300">
         
-        <!-- ========================================== -->
-        <!-- TELA 1: LOGIN                              -->
-        <!-- ========================================== -->
         <div id="tela-login" class="flex flex-col h-full w-full bg-white z-20 absolute inset-0 transition-opacity duration-300">
             <div class="flex-grow flex flex-col justify-center px-8">
                 
@@ -98,9 +94,6 @@
             </div>
         </div>
 
-        <!-- ========================================== -->
-        <!-- TELA 2: CADASTRO                           -->
-        <!-- ========================================== -->
         <div id="tela-cadastro" class="flex flex-col h-full w-full bg-white z-30 absolute inset-0 hidden overflow-y-auto transition-opacity duration-300">
             <div class="p-6">
                 <button onclick="mostrarTela('tela-login')" class="text-gray-500 hover:text-doresopolis-green flex items-center mb-6">
@@ -133,7 +126,6 @@
                         </div>
                     </div>
                     
-                    <!-- NOVO CAMPO: EMAIL -->
                     <div>
                         <label class="block text-xs font-bold text-gray-700 mb-1">E-mail (Opcional)</label>
                         <div class="relative">
@@ -201,11 +193,7 @@
             </div>
         </div>
 
-        <!-- ========================================== -->
-        <!-- TELA 3: PAINEL PRINCIPAL (APP INTERNO)     -->
-        <!-- ========================================== -->
         <div id="tela-principal" class="hidden flex-col h-full w-full z-10">
-            <!-- HEADER -->
             <header class="bg-white shadow-sm border-b border-gray-200 z-10 flex-shrink-0">
                 <div class="bg-doresopolis-green h-2 w-full"></div>
                 <div class="px-4 py-3 flex items-center justify-between">
@@ -221,7 +209,6 @@
 
             <main class="flex-grow overflow-y-auto overflow-x-hidden p-4 pb-24 scroll-smooth">
                 
-                <!-- CONTEÚDO 1: ABA INÍCIO -->
                 <div id="aba-inicio" class="block">
                     <div class="flex justify-between items-center mb-6 mt-1">
                         <div>
@@ -230,7 +217,6 @@
                         </div>
                     </div>
 
-                    <!-- MURAL DE AVISOS OFICIAIS DINÂMICO -->
                     <div class="mb-6">
                         <div class="flex items-center justify-between mb-3">
                             <h3 class="font-bold text-gray-800 text-sm border-l-4 border-doresopolis-green pl-2">
@@ -246,7 +232,6 @@
                         </div>
                     </div>
 
-                    <!-- SECRETARIAS -->
                     <div class="mb-8">
                         <h3 class="font-bold text-gray-800 text-sm mb-3 border-l-4 border-blue-500 pl-2">Serviços por Secretaria</h3>
                         <div class="flex flex-col gap-3">
@@ -265,7 +250,6 @@
                                 <div class="ml-4 flex-grow"><h3 class="font-bold text-gray-800 text-sm">Tributos</h3><p class="text-[10px] text-gray-500 mt-0.5">Emissão de IPTU e taxas</p></div>
                                 <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
                             </button>
-                            <!-- OBRAS LINKADO PARA obras.html -->
                             <button onclick="window.location.href='obras.html'" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 active:bg-gray-50 active:scale-[0.98] transition-all text-left">
                                 <div class="p-3 bg-amber-50 text-amber-600 rounded-lg"><i class="fa-solid fa-helmet-safety text-lg w-5 text-center"></i></div>
                                 <div class="ml-4 flex-grow"><h3 class="font-bold text-gray-800 text-sm">Obras</h3><p class="text-[10px] text-gray-500 mt-0.5">Iluminação e manutenção</p></div>
@@ -279,7 +263,6 @@
                         </div>
                     </div>
 
-                    <!-- TELEFONES ÚTEIS E EMERGÊNCIA -->
                     <div class="mb-4">
                         <h3 class="font-bold text-gray-800 text-sm mb-3 border-l-4 border-red-500 pl-2">Telefones Úteis e Emergência</h3>
                         <div class="grid grid-cols-2 gap-3">
@@ -323,7 +306,6 @@
                     </div>
                 </div>
 
-                <!-- CONTEÚDO 2: ABA PERFIL -->
                 <div id="aba-perfil" class="hidden">
                     <div class="mb-6 mt-1 flex items-center justify-between">
                         <div>
@@ -335,7 +317,6 @@
                         </div>
                     </div>
 
-                    <!-- Formulário de Edição de Perfil -->
                     <form onsubmit="salvarPerfil(event)" class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 space-y-4">
                         <input type="hidden" id="perfil-doc-id">
 
@@ -384,7 +365,6 @@
                         </button>
                     </form>
 
-                    <!-- Botão de Sair no Perfil -->
                     <button onclick="fazerLogout()" class="w-full bg-red-50 text-red-600 font-bold py-3 rounded-lg border border-red-100 hover:bg-red-100 active:scale-[0.98] transition-all mt-4 flex justify-center items-center gap-2">
                         <i class="fa-solid fa-right-from-bracket"></i> Sair da Conta
                     </button>
@@ -392,7 +372,6 @@
 
             </main>
 
-            <!-- BARRA DE NAVEGAÇÃO INFERIOR ATUALIZADA (3 BOTÕES) -->
             <nav class="absolute bottom-0 w-full bg-white border-t border-gray-200 z-50 pb-safe">
                 <div class="flex justify-around items-center h-16">
                     
@@ -414,12 +393,9 @@
 
     </div>
 
-    <!-- ========================================== -->
-    <!-- SCRIPT DE LÓGICA E FIREBASE                -->
-    <!-- ========================================== -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        // Importando funções para atualizar perfil: doc, updateDoc
+        // Importando funções para atualizar perfil
         import { getFirestore, collection, addDoc, query, where, getDocs, orderBy, limit, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -496,7 +472,6 @@
                 navPerfil.classList.replace('text-gray-400', 'text-doresopolis-green');
                 navInicio.classList.replace('text-doresopolis-green', 'text-gray-400');
                 
-                // Sempre que clicar em Perfil, busca os dados reais no banco
                 carregarDadosPerfil();
             }
         };
@@ -547,22 +522,26 @@
             }
         };
 
-        // --- VERIFICAÇÃO INICIAL E PROTEÇÃO DE SESSÃO ---
+        // --- VERIFICAÇÃO INICIAL E REDIRECIONAMENTO DE ADMINS ---
         document.addEventListener('DOMContentLoaded', () => {
             const sessaoSalva = localStorage.getItem('usuarioDoresopolis');
             const telefoneSalvo = localStorage.getItem('userTelefone');
+            const acessoSalvo = localStorage.getItem('userAcesso');
 
-            if (sessaoSalva) {
-                // Se o usuário logou em uma versão anterior do app (sem o Telefone salvo), force o relogin para vincular o perfil
-                if (sessaoSalva === 'Cidadão' || !telefoneSalvo) {
-                    localStorage.removeItem('usuarioDoresopolis');
-                    localStorage.removeItem('userTelefone');
-                    mostrarTela('tela-login');
+            if (sessaoSalva && telefoneSalvo) {
+                
+                // SE O USUÁRIO LOGADO FOR ADMIN, JOGA PRO PAINEL DELE!
+                if (acessoSalvo === 'Admin - Obras') {
+                    window.location.href = 'painel-obras.html';
+                } else if (acessoSalvo === 'TI') {
+                    window.location.href = 'painel-ti.html';
                 } else {
+                    // Cidadão comum fica na tela principal do index
                     document.getElementById('nome-usuario-logado').innerText = sessaoSalva;
                     mostrarTela('tela-principal');
                     carregarAvisos();
                 }
+
             } else {
                 mostrarTela('tela-login');
             }
@@ -578,7 +557,7 @@
 
             const nome = document.getElementById('cad-nome').value;
             const telefone = document.getElementById('cad-telefone').value;
-            const email = document.getElementById('cad-email').value; // Novo campo de email
+            const email = document.getElementById('cad-email').value;
             const rua = document.getElementById('cad-rua').value; 
             const numero = document.getElementById('cad-numero').value;
             const bairro = document.getElementById('cad-bairro').value;
@@ -586,6 +565,7 @@
 
             const enderecoCompleto = `${rua}, ${numero} - ${bairro}`;
             const primeiroNome = nome.split(' ')[0];
+            const tipoAcesso = "Cidadão"; // Todo novo cadastro é cidadão por padrão
 
             try {
                 const usuariosRef = collection(db, "usuarios");
@@ -613,14 +593,16 @@
                 await addDoc(usuariosRef, {
                     nomeCompleto: nome,
                     telefone: telefone,
-                    email: email, // Salvando o e-mail no Firebase
+                    email: email,
                     endereco: enderecoCompleto,
-                    senha: senha, 
+                    senha: senha,
+                    tipoAcesso: tipoAcesso, // Salva o acesso como cidadão
                     dataRegistro: new Date().toISOString()
                 });
                 
                 localStorage.setItem('usuarioDoresopolis', primeiroNome);
-                localStorage.setItem('userTelefone', telefone); // Salva o telefone para o sistema de Perfil
+                localStorage.setItem('userTelefone', telefone); 
+                localStorage.setItem('userAcesso', tipoAcesso);
                 
                 document.getElementById('nome-usuario-logado').innerText = primeiroNome; 
                 mostrarTela('tela-principal');
@@ -639,7 +621,7 @@
             }
         };
 
-        // --- LOGIN ---
+        // --- LOGIN INTELIGENTE (VERIFICA CARGO) ---
         window.realizarLogin = async function(event) {
             event.preventDefault();
             
@@ -661,15 +643,25 @@
                 } else {
                     const usuarioData = snapshot.docs[0].data();
                     const primeiroNome = usuarioData.nomeCompleto.split(' ')[0];
+                    const acessoSalvoNoBanco = usuarioData.tipoAcesso || 'Cidadão'; // Se não tiver nada, é cidadão
                     
+                    // Salva na memória do celular
                     localStorage.setItem('usuarioDoresopolis', primeiroNome);
-                    localStorage.setItem('userTelefone', telefone); // Salva o telefone p/ edição de perfil
+                    localStorage.setItem('userTelefone', telefone); 
+                    localStorage.setItem('userAcesso', acessoSalvoNoBanco); 
                     
-                    document.getElementById('nome-usuario-logado').innerText = primeiroNome;
-                    mostrarTela('tela-principal');
-                    mostrarAviso(`Bem-vindo de volta, ${primeiroNome}!`, 'sucesso');
-                    
-                    carregarAvisos(); 
+                    // LÓGICA DE REDIRECIONAMENTO
+                    if (acessoSalvoNoBanco === 'Admin - Obras') {
+                        window.location.href = 'painel-obras.html';
+                    } else if (acessoSalvoNoBanco === 'TI') {
+                        window.location.href = 'painel-ti.html';
+                    } else {
+                        // Cidadão acessa o menu principal normalmente
+                        document.getElementById('nome-usuario-logado').innerText = primeiroNome;
+                        mostrarTela('tela-principal');
+                        mostrarAviso(`Bem-vindo de volta, ${primeiroNome}!`, 'sucesso');
+                        carregarAvisos(); 
+                    }
                 }
             } catch (error) {
                 console.error("Erro ao tentar fazer login: ", error);
@@ -693,7 +685,6 @@
                     const docUsuario = snapshot.docs[0];
                     const dados = docUsuario.data();
 
-                    // Preenche os campos do formulário
                     document.getElementById('perfil-doc-id').value = docUsuario.id;
                     document.getElementById('perfil-nome').value = dados.nomeCompleto || '';
                     document.getElementById('perfil-telefone').value = dados.telefone || '';
@@ -721,7 +712,6 @@
             const endereco = document.getElementById('perfil-endereco').value;
             const senha = document.getElementById('perfil-senha').value;
 
-            // Monta objeto de atualização
             const dadosAtualizados = {
                 nomeCompleto: nome,
                 telefone: telefone,
@@ -729,23 +719,19 @@
                 endereco: endereco
             };
             
-            // Se o usuário digitou uma nova senha, envia junto para o banco
             if(senha.trim() !== "") {
                 dadosAtualizados.senha = senha;
             }
 
             try {
-                // Atualiza o documento no Firestore
                 const userRef = doc(db, "usuarios", idDocumento);
                 await updateDoc(userRef, dadosAtualizados);
                 
-                // Atualiza também os nomes salvos na memória do celular
                 const primeiroNome = nome.split(' ')[0];
                 localStorage.setItem('usuarioDoresopolis', primeiroNome);
                 localStorage.setItem('userTelefone', telefone);
                 document.getElementById('nome-usuario-logado').innerText = primeiroNome;
 
-                // Limpa o campo de senha
                 document.getElementById('perfil-senha').value = '';
 
                 mostrarAviso("Dados atualizados com sucesso!", "sucesso");
@@ -763,10 +749,9 @@
             if(confirm("Deseja realmente sair da sua conta?")) {
                 localStorage.removeItem('usuarioDoresopolis');
                 localStorage.removeItem('userTelefone');
+                localStorage.removeItem('userAcesso'); // Limpa a permissão
                 
-                // Retorna os botões de aba pro estado inicial
                 mudarAbaPrincipal('inicio');
-
                 mostrarTela('tela-login');
                 document.getElementById('login-telefone').value = '';
                 document.getElementById('login-senha').value = '';
