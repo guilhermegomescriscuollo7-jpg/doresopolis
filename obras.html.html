@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0b5c3b">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <title>Obras - App Doresópolis</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        doresopolis: {
+                            green: '#0b5c3b',
+                            dark: '#3f3f46',
+                            light: '#f8fafc'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-gray-200 font-sans text-gray-800 flex justify-center items-center min-h-screen">
+
+    <!-- NOTIFICAÇÃO NO APP (TOAST) -->
+    <div id="toast-aviso" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-[100] bg-green-600 text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-3 transition-all duration-300 opacity-0 pointer-events-none translate-y-[-20px] w-11/12 max-w-sm">
+        <i id="toast-icone" class="fa-solid fa-circle-check text-lg"></i>
+        <span id="toast-mensagem" class="text-sm font-medium leading-snug"></span>
+    </div>
+
+    <!-- CONTAINER PRINCIPAL DO APP -->
+    <div class="bg-gray-50 w-full max-w-md h-[100dvh] flex flex-col relative shadow-2xl overflow-hidden sm:rounded-xl sm:h-[95vh] sm:border sm:border-gray-300">
+        
+        <!-- HEADER COM BOTÃO VOLTAR -->
+        <header class="bg-white shadow-sm border-b border-gray-200 z-10 flex-shrink-0">
+            <div class="bg-amber-500 h-2 w-full"></div> <!-- Destaque laranja para Obras -->
+            <div class="px-4 py-3 flex items-center gap-4">
+                <!-- Botão Voltar para o Index -->
+                <button onclick="window.location.href='index.html'" class="text-gray-500 hover:text-amber-500 text-xl w-8 h-8 flex items-center justify-center rounded-full active:bg-gray-100 transition-colors">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center shrink-0">
+                        <i class="fa-solid fa-helmet-safety text-lg"></i>
+                    </div>
+                    <div>
+                        <p class="text-[9px] tracking-[0.1em] text-gray-500 uppercase font-semibold leading-none">Solicitação de Serviços</p>
+                        <h1 class="text-xl font-black text-gray-700 tracking-tight uppercase leading-none mt-1">Sec. Obras</h1>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- CONTEÚDO PRINCIPAL (FORMULÁRIO) -->
+        <main class="flex-grow overflow-y-auto p-4 pb-24 scroll-smooth">
+            
+            <div class="mb-5">
+                <h2 class="text-lg font-bold text-gray-800">Novo Chamado</h2>
+                <p class="text-gray-500 mt-1 text-xs leading-snug">Preencha os dados abaixo para enviar uma solicitação diretamente para a equipe de obras da prefeitura.</p>
+            </div>
+
+            <form onsubmit="enviarSolicitacao(event)" class="space-y-4">
+                
+                <!-- Nome do Cidadão (Oculto visualmente, mas usado no envio) -->
+                <input type="hidden" id="solicitante-nome">
+
+                <!-- 1. Tipo de Serviço -->
+                <div class="bg-white p-3 rounded-xl border border-gray-200 shadow-sm">
+                    <label class="block text-xs font-bold text-gray-700 mb-2"><i class="fa-solid fa-list-check text-amber-500 mr-1"></i> Qual é o problema?</label>
+                    <div class="relative">
+                        <select id="form-servico" required class="w-full pl-3 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm appearance-none text-gray-700">
+                            <option value="" disabled selected>Selecione uma opção...</option>
+                            <option value="Tapa-Buraco (Asfalto/Calçamento)">Tapa-Buraco (Asfalto/Calçamento)</option>
+                            <option value="Iluminação Pública (Lâmpada Queimada)">Iluminação Pública (Lâmpada Queimada)</option>
+                            <option value="Limpeza de Via Pública">Limpeza de Via Pública</option>
+                            <option value="Manutenção de Bueiro/Boca de Lobo">Manutenção de Bueiro/Boca de Lobo</option>
+                            <option value="Estrada Rural (Patrolamento)">Estrada Rural (Patrolamento)</option>
+                            <option value="Retirada de Entulho/Galhos">Retirada de Entulho/Galhos</option>
+                            <option value="Outros">Outros (Descrever abaixo)</option>
+                        </select>
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                            <i class="fa-solid fa-chevron-down text-gray-400 text-xs"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Localização -->
+                <div class="bg-white p-3 rounded-xl border border-gray-200 shadow-sm space-y-3">
+                    <label class="block text-xs font-bold text-gray-700"><i class="fa-solid fa-location-dot text-red-500 mr-1"></i> Onde é o local?</label>
+                    
+                    <input type="text" id="form-endereco" required placeholder="Ex: Rua Piumhi, Próximo ao nº 150" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm">
+                    
+                    <input type="text" id="form-referencia" placeholder="Ponto de referência (Opcional)" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm">
+                </div>
+
+                <!-- 3. Urgência -->
+                <div class="bg-white p-3 rounded-xl border border-gray-200 shadow-sm">
+                    <label class="block text-xs font-bold text-gray-700 mb-2"><i class="fa-solid fa-gauge-high text-blue-500 mr-1"></i> Nível de Urgência</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <!-- Botões de rádio estilizados -->
+                        <label class="cursor-pointer">
+                            <input type="radio" name="urgencia" value="BAIXA" class="peer sr-only" required>
+                            <div class="text-center px-2 py-2 rounded-lg border border-gray-200 peer-checked:bg-green-100 peer-checked:border-green-500 peer-checked:text-green-700 text-gray-500 text-xs font-bold transition-all">
+                                Baixa
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="urgencia" value="MÉDIA" class="peer sr-only">
+                            <div class="text-center px-2 py-2 rounded-lg border border-gray-200 peer-checked:bg-amber-100 peer-checked:border-amber-500 peer-checked:text-amber-700 text-gray-500 text-xs font-bold transition-all">
+                                Média
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="urgencia" value="ALTA" class="peer sr-only">
+                            <div class="text-center px-2 py-2 rounded-lg border border-gray-200 peer-checked:bg-red-100 peer-checked:border-red-500 peer-checked:text-red-700 text-gray-500 text-xs font-bold transition-all">
+                                Alta
+                            </div>
+                        </label>
+                    </div>
+                    <p class="text-[9px] text-gray-400 mt-2 italic">* Use "Alta" apenas para situações de risco à comunidade.</p>
+                </div>
+
+                <!-- 4. Foto do Local -->
+                <div class="bg-white p-3 rounded-xl border border-gray-200 shadow-sm">
+                    <label class="block text-xs font-bold text-gray-700 mb-2"><i class="fa-solid fa-camera text-gray-500 mr-1"></i> Anexar Foto (Recomendado)</label>
+                    
+                    <!-- Preview da Imagem -->
+                    <div id="preview-container" class="hidden mb-3 relative rounded-lg overflow-hidden border border-gray-200 h-40 bg-gray-100">
+                        <img id="imagem-preview" src="" alt="Sua foto" class="w-full h-full object-cover">
+                        <button type="button" onclick="removerFoto()" class="absolute top-2 right-2 bg-red-600 text-white w-8 h-8 rounded-full flex items-center justify-center shadow-md active:scale-95">
+                            <i class="fa-solid fa-trash text-sm"></i>
+                        </button>
+                    </div>
+
+                    <!-- Botão de Upload -->
+                    <label id="upload-label" class="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                            <i class="fa-solid fa-cloud-arrow-up text-2xl text-gray-400 mb-1"></i>
+                            <p class="text-xs text-gray-500 font-medium">Tirar foto ou abrir galeria</p>
+                        </div>
+                        <input id="form-foto" type="file" accept="image/*" capture="environment" class="hidden" onchange="processarFoto(event)" />
+                    </label>
+                    <!-- Campo invisível que guardará a imagem em formato texto comprimido -->
+                    <input type="hidden" id="foto-base64">
+                </div>
+
+                <!-- 5. Descrição Detalhada -->
+                <div class="bg-white p-3 rounded-xl border border-gray-200 shadow-sm">
+                    <label class="block text-xs font-bold text-gray-700 mb-2"><i class="fa-solid fa-comment-dots text-gray-500 mr-1"></i> Detalhes Adicionais</label>
+                    <textarea id="form-descricao" rows="3" placeholder="Descreva mais detalhes que possam ajudar a equipe..." class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm resize-none"></textarea>
+                </div>
+
+                <!-- Botão Enviar -->
+                <button type="submit" id="btn-enviar" class="w-full bg-amber-500 text-white font-bold py-3.5 rounded-xl shadow-md hover:bg-amber-600 active:scale-[0.98] transition-all flex justify-center items-center gap-2 mt-6">
+                    <i class="fa-solid fa-paper-plane"></i> Enviar Solicitação
+                </button>
+
+            </form>
+        </main>
+
+        <!-- BARRA DE NAVEGAÇÃO INFERIOR -->
+        <nav class="absolute bottom-0 w-full bg-white border-t border-gray-200 z-50 pb-safe">
+            <div class="flex justify-around items-center h-16">
+                <!-- O botão Início volta para o index.html -->
+                <a href="index.html" class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-doresopolis-green transition-colors">
+                    <i class="fa-solid fa-house text-lg mb-1"></i><span class="text-[10px] font-medium">Início</span>
+                </a>
+                <a href="https://www.doresopolis.mg.gov.br/portal/servicos/1001/historia/" target="_blank" class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-doresopolis-green transition-colors">
+                    <i class="fa-solid fa-map-location-dot text-lg mb-1"></i><span class="text-[10px] font-medium">A Cidade</span>
+                </a>
+                <a href="https://www.doresopolis.mg.gov.br/portal/ouvidoria" target="_blank" class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-doresopolis-green transition-colors">
+                    <i class="fa-solid fa-bullhorn text-lg mb-1"></i><span class="text-[10px] font-medium">Ouvidoria</span>
+                </a>
+                <a href="https://ilai.memory.com.br/#/public/inicio" target="_blank" class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-doresopolis-green transition-colors">
+                    <i class="fa-solid fa-chart-pie text-lg mb-1"></i><span class="text-[10px] font-medium">Transparência</span>
+                </a>
+            </div>
+        </nav>
+    </div>
+
+    <!-- SCRIPT DE LÓGICA E FIREBASE -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCpaNuC1IUkteO4fHzFPiNS7s580EyTleU",
+            authDomain: "doresopolis.firebaseapp.com",
+            projectId: "doresopolis",
+            storageBucket: "doresopolis.firebasestorage.app",
+            messagingSenderId: "465119846468",
+            appId: "1:465119846468:web:8b292481fec10132cf9c11",
+            measurementId: "G-WXWGXEWY53"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app); 
+
+        // Notificações em Tela
+        window.mostrarAviso = function(mensagem, tipo = 'sucesso') {
+            const toast = document.getElementById('toast-aviso');
+            const icone = document.getElementById('toast-icone');
+            document.getElementById('toast-mensagem').innerText = mensagem;
+
+            if(tipo === 'sucesso') {
+                toast.classList.remove('bg-red-600');
+                toast.classList.add('bg-green-600');
+                icone.className = 'fa-solid fa-circle-check text-lg';
+            } else if (tipo === 'info') {
+                toast.classList.remove('bg-red-600', 'bg-green-600');
+                toast.classList.add('bg-amber-500');
+                icone.className = 'fa-solid fa-circle-info text-lg';
+            } else {
+                toast.classList.remove('bg-green-600', 'bg-amber-500');
+                toast.classList.add('bg-red-600');
+                icone.className = 'fa-solid fa-circle-exclamation text-lg';
+            }
+
+            toast.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-[-20px]');
+            toast.classList.add('opacity-100', 'translate-y-0');
+
+            setTimeout(() => {
+                toast.classList.remove('opacity-100', 'translate-y-0');
+                toast.classList.add('opacity-0', 'pointer-events-none', 'translate-y-[-20px]');
+            }, 4000);
+        };
+
+        // Verifica o usuário logado ao abrir a tela
+        document.addEventListener('DOMContentLoaded', () => {
+            const sessaoSalva = localStorage.getItem('usuarioDoresopolis');
+            if (sessaoSalva) {
+                document.getElementById('solicitante-nome').value = sessaoSalva;
+            } else {
+                // Se não estiver logado, redireciona para a tela inicial
+                alert("Você precisa estar logado para abrir um chamado.");
+                window.location.href = "index.html";
+            }
+        });
+
+        // --- SISTEMA DE COMPRESSÃO DE FOTOS ---
+        // Pega a foto gigante do celular e comprime para caber no banco de dados sem travar
+        window.processarFoto = function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // Mostra o botão carregando
+            mostrarAviso("Processando imagem...", "info");
+
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function(e) {
+                const img = new Image();
+                img.src = e.target.result;
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    // Reduz para no máximo 800px de largura
+                    const MAX_WIDTH = 800;
+                    const scaleSize = MAX_WIDTH / img.width;
+                    
+                    // Se a imagem já for menor que 800px, mantém o tamanho original
+                    if(scaleSize < 1) {
+                        canvas.width = MAX_WIDTH;
+                        canvas.height = img.height * scaleSize;
+                    } else {
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                    }
+
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    
+                    // Converte para JPG qualidade média/baixa (0.6) para ficar super leve
+                    const fotoComprimida = canvas.toDataURL('image/jpeg', 0.6);
+                    
+                    // Salva no input invisível e mostra na tela
+                    document.getElementById('foto-base64').value = fotoComprimida;
+                    document.getElementById('imagem-preview').src = fotoComprimida;
+                    
+                    document.getElementById('preview-container').classList.remove('hidden');
+                    document.getElementById('upload-label').classList.add('hidden');
+                };
+            };
+        };
+
+        // Função para apagar a foto anexada
+        window.removerFoto = function() {
+            document.getElementById('foto-base64').value = '';
+            document.getElementById('form-foto').value = '';
+            document.getElementById('preview-container').classList.add('hidden');
+            document.getElementById('upload-label').classList.remove('hidden');
+            document.getElementById('upload-label').classList.add('flex');
+        };
+
+        // --- ENVIAR SOLICITAÇÃO PARA O BANCO DE DADOS ---
+        window.enviarSolicitacao = async function(event) {
+            event.preventDefault();
+
+            const btn = document.getElementById('btn-enviar');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enviando...';
+
+            const nome = document.getElementById('solicitante-nome').value;
+            const servico = document.getElementById('form-servico').value;
+            const endereco = document.getElementById('form-endereco').value;
+            const referencia = document.getElementById('form-referencia').value;
+            const urgencia = document.querySelector('input[name="urgencia"]:checked').value;
+            const fotoBase64 = document.getElementById('foto-base64').value;
+            const descricao = document.getElementById('form-descricao').value;
+
+            // Formata o endereço final
+            let enderecoFinal = endereco;
+            if (referencia) {
+                enderecoFinal += ` (Ref: ${referencia})`;
+            }
+
+            try {
+                // Salva na coleção "solicitacoes_obras" (A mesma que o painel do Admin lê)
+                await addDoc(collection(db, "solicitacoes_obras"), {
+                    nomeCidadao: nome,
+                    tipoServico: servico,
+                    endereco: enderecoFinal,
+                    urgencia: urgencia,
+                    fotoUrl: fotoBase64, // Salva o código da foto
+                    descricao: descricao,
+                    status: "PENDENTE", // Status inicial padrão
+                    dataRegistro: new Date().toISOString()
+                });
+                
+                mostrarAviso("Sua solicitação foi enviada para a Secretaria de Obras com sucesso!", "sucesso");
+                
+                // Reseta o formulário após 2 segundos e leva a pessoa pro início
+                setTimeout(() => {
+                    window.location.href = "index.html";
+                }, 2500);
+
+            } catch (error) {
+                console.error("Erro ao enviar chamado: ", error);
+                mostrarAviso("Ocorreu um erro ao enviar. Verifique a conexão com a internet.", "erro");
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Enviar Solicitação';
+            }
+        };
+    </script>
+</body>
+</html>
