@@ -2,8 +2,14 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel de Gestão - Secretaria de Obras | Doresópolis</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0b5c3b">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <title>Painel Sec. Obras | Doresópolis</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -24,170 +30,128 @@
         }
     </script>
 </head>
-<body class="bg-gray-100 font-sans text-gray-800 flex min-h-screen relative overflow-hidden">
 
-    <div id="toast-aviso" class="fixed top-4 right-4 z-[100] bg-green-600 text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-3 transition-all duration-300 opacity-0 pointer-events-none translate-y-[-20px] max-w-sm">
+<body class="bg-gray-200 font-sans text-gray-800 flex justify-center items-center min-h-screen">
+
+    <div id="toast-aviso" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-[100] bg-green-600 text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-3 transition-all duration-300 opacity-0 pointer-events-none translate-y-[-20px] w-11/12 max-w-sm">
         <i id="toast-icone" class="fa-solid fa-circle-check text-lg"></i>
         <span id="toast-mensagem" class="text-sm font-medium leading-snug"></span>
     </div>
 
-    <div id="overlay-menu" onclick="toggleMenu()" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden transition-opacity duration-300"></div>
-
-    <aside id="menu-lateral" class="w-64 bg-doresopolis-dark text-white flex flex-col shadow-xl flex-shrink-0 fixed inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition-transform duration-300 ease-in-out z-50 h-full">
+    <div class="bg-gray-50 w-full max-w-md h-[100dvh] flex flex-col relative shadow-2xl overflow-hidden sm:rounded-xl sm:h-[95vh] sm:border sm:border-gray-300">
         
-        <div class="p-6 border-b border-gray-600 text-center relative">
-            <button onclick="toggleMenu()" class="absolute top-4 right-4 text-gray-400 hover:text-white md:hidden">
-                <i class="fa-solid fa-xmark text-xl"></i>
-            </button>
-            <img src="https://cdn.tecconcursos.com.br/figuras/7528d9ce-3894-4606-a0ed-7b57ef6cb7ed" alt="Brasão" class="w-16 h-16 mx-auto object-contain mb-3 brightness-0 invert opacity-90">
-            <h1 class="text-lg font-black tracking-wider uppercase">Doresópolis</h1>
-            <p class="text-xs text-amber-400 font-bold mt-1">SECRETARIA DE OBRAS</p>
-        </div>
-
-        <nav class="flex-grow p-4 space-y-2">
-            <a href="#" onclick="toggleMenu()" class="flex items-center gap-3 px-4 py-3 bg-amber-500 text-white rounded-lg shadow-sm font-medium transition-colors">
-                <i class="fa-solid fa-chart-line w-5"></i> Dashboard
-            </a>
-            <a href="#" onclick="toggleMenu()" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-700 text-gray-300 hover:text-white rounded-lg font-medium transition-colors">
-                <i class="fa-solid fa-helmet-safety w-5"></i> Solicitações
-            </a>
-        </nav>
-
-        <div class="p-4 border-t border-gray-600">
-            <button class="flex items-center gap-3 px-4 py-2 w-full text-left hover:bg-red-600 text-gray-300 hover:text-white rounded-lg font-medium transition-colors">
-                <i class="fa-solid fa-right-from-bracket w-5"></i> Sair do Painel
-            </button>
-        </div>
-    </aside>
-
-    <main class="flex-grow flex flex-col h-screen overflow-hidden w-full relative">
-        
-        <header class="bg-white shadow-sm border-b border-gray-200 px-6 py-4 flex justify-between items-center z-10 flex-shrink-0 w-full">
-            <div class="flex items-center gap-4">
-                <button onclick="toggleMenu()" class="md:hidden text-gray-500 hover:text-doresopolis-green text-xl p-2 -ml-2 rounded-lg active:bg-gray-100">
-                    <i class="fa-solid fa-bars"></i>
-                </button>
-                <h2 class="text-xl font-bold text-gray-800">Visão Geral</h2>
-            </div>
-            <div class="flex items-center gap-4">
-                <span class="text-sm font-medium text-gray-600 hidden sm:block"><i class="fa-regular fa-user mr-1"></i> Admin Obras</span>
-                <div class="w-10 h-10 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center font-bold shadow-inner">
-                    OB
+        <header class="bg-white shadow-sm border-b border-gray-200 z-10 flex-shrink-0">
+            <div class="bg-doresopolis-green h-2 w-full"></div>
+            <div class="px-4 py-3 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <img src="https://cdn.tecconcursos.com.br/figuras/7528d9ce-3894-4606-a0ed-7b57ef6cb7ed" alt="Brasão" class="w-10 h-10 object-contain flex-shrink-0 drop-shadow-sm">
+                    <div>
+                        <p class="text-[9px] tracking-[0.1em] text-gray-500 uppercase font-semibold leading-none">Painel de Gestão</p>
+                        <h1 class="text-xl font-black text-gray-700 tracking-tight uppercase leading-none mt-1">Sec. Obras</h1>
+                    </div>
                 </div>
+                <button onclick="fazerLogout()" class="text-red-400 hover:text-red-600 ml-2" title="Sair do Painel">
+                    <i class="fa-solid fa-right-from-bracket text-xl"></i>
+                </button>
             </div>
         </header>
 
-        <div class="flex-grow p-4 md:p-6 overflow-y-auto">
+        <main id="aba-solicitacoes" class="flex-grow overflow-y-auto p-4 pb-24 scroll-smooth block">
             
-            <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
-                
-                <div class="xl:col-span-2 space-y-6">
-                    
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm border-t-4 border-t-red-500">
-                            <p class="text-xs text-gray-500 font-bold uppercase mb-1">Pendentes</p>
-                            <h3 id="stat-pendentes" class="text-3xl font-black text-gray-800">0</h3>
-                        </div>
-                        <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm border-t-4 border-t-blue-500">
-                            <p class="text-xs text-gray-500 font-bold uppercase mb-1">Em Andamento</p>
-                            <h3 id="stat-andamento" class="text-3xl font-black text-gray-800">0</h3>
-                        </div>
-                        <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm border-t-4 border-t-green-500">
-                            <p class="text-xs text-gray-500 font-bold uppercase mb-1">Concluídos</p>
-                            <h3 id="stat-concluidos" class="text-3xl font-black text-gray-800">0</h3>
-                        </div>
-                    </div>
-
-                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-                        <div class="px-6 py-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
-                            <h3 class="font-bold text-gray-800"><i class="fa-solid fa-list-check text-amber-500 mr-2"></i> Solicitações Recentes</h3>
-                            <button class="text-xs font-bold text-doresopolis-green hover:underline"><i class="fa-solid fa-rotate-right mr-1"></i>Ao vivo</button>
-                        </div>
-                        
-                        <div class="overflow-x-auto w-full">
-                            <table class="w-full text-sm text-left whitespace-nowrap min-w-[700px]">
-                                <thead class="text-xs text-gray-500 uppercase bg-white border-b border-gray-100">
-                                    <tr>
-                                        <th class="px-6 py-3 w-16">Foto</th>
-                                        <th class="px-6 py-3">Cidadão / Local</th>
-                                        <th class="px-6 py-3">Serviço</th>
-                                        <th class="px-6 py-3 text-center">Urgência</th>
-                                        <th class="px-6 py-3 text-center">Status</th>
-                                        <th class="px-6 py-3 text-right">Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tabela-solicitacoes">
-                                    <tr>
-                                        <td colspan="6" class="px-6 py-8 text-center text-gray-400">
-                                            <i class="fa-solid fa-spinner fa-spin mr-2"></i> Escutando solicitações do cidadão...
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
+            <div class="grid grid-cols-3 gap-2 mb-6">
+                <div class="bg-white p-3 rounded-xl border border-gray-200 shadow-sm border-t-4 border-t-red-500 text-center">
+                    <h3 id="stat-pendentes" class="text-2xl font-black text-gray-800">0</h3>
+                    <p class="text-[9px] text-gray-500 font-bold uppercase mt-1">Pendentes</p>
                 </div>
-
-                <div class="xl:col-span-1">
-                    
-                    <div class="bg-gradient-to-br from-amber-50 to-white rounded-xl border border-amber-100 shadow-sm overflow-hidden mb-6">
-                        <div class="px-6 py-4 bg-amber-500 text-white flex items-center gap-3">
-                            <i class="fa-solid fa-mobile-screen text-xl"></i>
-                            <div>
-                                <h3 class="font-bold leading-tight">Publicar no App</h3>
-                                <p class="text-[10px] text-amber-100">Envia direto para o Mural do Cidadão</p>
-                            </div>
-                        </div>
-                        
-                        <form onsubmit="publicarAviso(event)" class="p-5 space-y-4">
-                            <div>
-                                <label class="block text-xs font-bold text-gray-700 mb-1">Título do Aviso</label>
-                                <input type="text" id="aviso-titulo" required placeholder="Ex: Interdição de Rua" class="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm">
-                            </div>
-                            
-                            <div>
-                                <label class="block text-xs font-bold text-gray-700 mb-1">Mensagem (Detalhes)</label>
-                                <textarea id="aviso-descricao" required rows="3" placeholder="A Rua X estará interditada amanhã..." class="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm resize-none"></textarea>
-                            </div>
-
-                            <button type="submit" id="btn-publicar" class="w-full bg-amber-500 text-white font-bold py-2.5 rounded-lg shadow-sm hover:bg-amber-600 active:scale-[0.98] transition-all flex justify-center items-center gap-2">
-                                <i class="fa-solid fa-paper-plane"></i> Publicar Aviso
-                            </button>
-                        </form>
-                    </div>
-
+                <div class="bg-white p-3 rounded-xl border border-gray-200 shadow-sm border-t-4 border-t-blue-500 text-center">
+                    <h3 id="stat-andamento" class="text-2xl font-black text-gray-800">0</h3>
+                    <p class="text-[9px] text-gray-500 font-bold uppercase mt-1">Andamento</p>
+                </div>
+                <div class="bg-white p-3 rounded-xl border border-gray-200 shadow-sm border-t-4 border-t-green-500 text-center">
+                    <h3 id="stat-concluidos" class="text-2xl font-black text-gray-800">0</h3>
+                    <p class="text-[9px] text-gray-500 font-bold uppercase mt-1">Concluídos</p>
                 </div>
             </div>
-            
-        </div>
-    </main>
 
-    <script>
-        window.toggleMenu = function() {
-            const menu = document.getElementById('menu-lateral');
-            const overlay = document.getElementById('overlay-menu');
+            <h3 class="font-bold text-gray-800 text-sm mb-3 border-l-4 border-amber-500 pl-2">Solicitações Recebidas</h3>
             
-            // Verifica se o menu está fechado (tem a classe -translate-x-full)
-            if (menu.classList.contains('-translate-x-full')) {
-                // Abrir
-                menu.classList.remove('-translate-x-full');
-                overlay.classList.remove('hidden');
-                // Pequeno delay para a transição de fade do overlay
-                setTimeout(() => overlay.classList.add('opacity-100'), 10);
-            } else {
-                // Fechar
-                menu.classList.add('-translate-x-full');
-                overlay.classList.remove('opacity-100');
-                // Aguarda a animação acabar para esconder
-                setTimeout(() => overlay.classList.add('hidden'), 300);
-            }
-        };
-    </script>
+            <div id="lista-solicitacoes" class="flex flex-col gap-3">
+                <div class="text-center py-8 text-gray-400 text-sm">
+                    <i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i><br>
+                    Escutando solicitações do cidadão...
+                </div>
+            </div>
+
+        </main>
+
+        <main id="aba-avisos" class="flex-grow overflow-y-auto p-4 pb-24 scroll-smooth hidden">
+            
+            <div class="bg-gradient-to-br from-amber-50 to-white rounded-xl border border-amber-200 shadow-sm overflow-hidden mb-6">
+                <div class="px-4 py-3 bg-amber-500 text-white flex items-center gap-2">
+                    <i class="fa-solid fa-mobile-screen"></i>
+                    <div>
+                        <h3 id="titulo-form-aviso" class="font-bold text-sm leading-tight">Publicar Novo Aviso</h3>
+                    </div>
+                </div>
+                
+                <form onsubmit="salvarAviso(event)" class="p-4 space-y-3">
+                    <input type="hidden" id="aviso-id">
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Título</label>
+                        <input type="text" id="aviso-titulo" required placeholder="Ex: Interdição de Rua" class="w-full px-3 py-2.5 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Descrição</label>
+                        <textarea id="aviso-descricao" required rows="3" placeholder="Detalhes do aviso..." class="w-full px-3 py-2.5 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm resize-none"></textarea>
+                    </div>
+
+                    <div class="flex gap-2 pt-2">
+                        <button type="button" id="btn-cancelar-aviso" onclick="cancelarEdicao()" class="hidden w-1/3 bg-gray-200 text-gray-600 font-bold py-2.5 rounded-lg shadow-sm hover:bg-gray-300 active:scale-[0.98] transition-all text-sm">
+                            Cancelar
+                        </button>
+                        <button type="submit" id="btn-salvar-aviso" class="w-full bg-amber-500 text-white font-bold py-2.5 rounded-lg shadow-sm hover:bg-amber-600 active:scale-[0.98] transition-all flex justify-center items-center gap-2 text-sm">
+                            <i class="fa-solid fa-paper-plane"></i> <span id="texto-btn-salvar">Publicar</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <h3 class="font-bold text-gray-800 text-sm mb-3 border-l-4 border-amber-500 pl-2">Avisos Publicados</h3>
+            
+            <div id="lista-avisos" class="flex flex-col gap-3">
+                <div class="text-center py-6 text-gray-400 text-sm">
+                    <i class="fa-solid fa-spinner fa-spin mb-2"></i><br>Carregando avisos...
+                </div>
+            </div>
+
+        </main>
+
+        <nav class="absolute bottom-0 w-full bg-white border-t border-gray-200 z-50 pb-safe">
+            <div class="flex justify-around items-center h-16 relative">
+                
+                <a href="#" onclick="trocarAba('solicitacoes')" id="btn-aba-solicitacoes" class="flex flex-col items-center justify-center w-full h-full text-doresopolis-green transition-colors">
+                    <i class="fa-solid fa-helmet-safety text-xl mb-1"></i>
+                    <span class="text-[10px] font-bold">Solicitações</span>
+                </a>
+                
+                <div class="w-px h-8 bg-gray-200"></div>
+
+                <a href="#" onclick="trocarAba('avisos')" id="btn-aba-avisos" class="flex flex-col items-center justify-center w-full h-full text-gray-400 transition-colors">
+                    <i class="fa-solid fa-bullhorn text-xl mb-1"></i>
+                    <span class="text-[10px] font-bold">Avisos no App</span>
+                </a>
+
+            </div>
+        </nav>
+
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        // Importações completas para CRUD
+        import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, query, where, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCpaNuC1IUkteO4fHzFPiNS7s580EyTleU",
@@ -202,7 +166,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app); 
 
-        // Função de Notificação (Toast)
+        // --- SISTEMA DE TOAST (AVISOS NA TELA) ---
         window.mostrarAviso = function(mensagem, tipo = 'sucesso') {
             const toast = document.getElementById('toast-aviso');
             const icone = document.getElementById('toast-icone');
@@ -224,25 +188,47 @@
             setTimeout(() => {
                 toast.classList.remove('opacity-100', 'translate-y-0');
                 toast.classList.add('opacity-0', 'pointer-events-none', 'translate-y-[-20px]');
-            }, 4000);
+            }, 3000);
         };
 
-        // --- LÓGICA DE SOLICITAÇÕES (REAL-TIME) ---
+        // --- TROCAR ABAS (NAVEGAÇÃO INFERIOR) ---
+        window.trocarAba = function(aba) {
+            const abaSolicitacoes = document.getElementById('aba-solicitacoes');
+            const abaAvisos = document.getElementById('aba-avisos');
+            const btnSolicitacoes = document.getElementById('btn-aba-solicitacoes');
+            const btnAvisos = document.getElementById('btn-aba-avisos');
+
+            if (aba === 'solicitacoes') {
+                abaSolicitacoes.classList.remove('hidden');
+                abaAvisos.classList.add('hidden');
+                
+                btnSolicitacoes.classList.replace('text-gray-400', 'text-doresopolis-green');
+                btnAvisos.classList.replace('text-doresopolis-green', 'text-gray-400');
+            } else {
+                abaAvisos.classList.remove('hidden');
+                abaSolicitacoes.classList.add('hidden');
+                
+                btnAvisos.classList.replace('text-gray-400', 'text-doresopolis-green');
+                btnSolicitacoes.classList.replace('text-doresopolis-green', 'text-gray-400');
+            }
+        };
+
+        // --- 1. GESTÃO DE SOLICITAÇÕES (REAL-TIME) ---
         const solicitacoesRef = collection(db, "solicitacoes_obras");
         const qSolicitacoes = query(solicitacoesRef, orderBy("dataRegistro", "desc"));
 
         onSnapshot(qSolicitacoes, (snapshot) => {
-            const tbody = document.getElementById("tabela-solicitacoes");
+            const container = document.getElementById("lista-solicitacoes");
             
             if (snapshot.empty) {
-                tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-8 text-center text-gray-500 font-medium">O painel está escutando o aplicativo do cidadão... As solicitações aparecerão aqui.</td></tr>`;
+                container.innerHTML = `<div class="text-center py-6 text-gray-500 text-sm">Nenhuma solicitação encontrada.</div>`;
                 document.getElementById("stat-pendentes").innerText = '0';
                 document.getElementById("stat-andamento").innerText = '0';
                 document.getElementById("stat-concluidos").innerText = '0';
                 return;
             }
 
-            tbody.innerHTML = "";
+            container.innerHTML = "";
             let contPendentes = 0;
             let contAndamento = 0;
             let contConcluidos = 0;
@@ -257,47 +243,36 @@
 
                 const fotoHtml = data.fotoUrl 
                     ? `<img src="${data.fotoUrl}" class="w-full h-full object-cover">` 
-                    : `<i class="fa-solid fa-image text-gray-400 text-xl"></i>`;
-
-                let urgenciaHtml = '';
-                if(data.urgencia === 'ALTA') urgenciaHtml = `<span class="bg-red-100 text-red-700 border border-red-200 px-2.5 py-1 rounded-md text-[10px] font-black tracking-wider">ALTA</span>`;
-                else if(data.urgencia === 'MÉDIA') urgenciaHtml = `<span class="bg-amber-100 text-amber-700 border border-amber-200 px-2.5 py-1 rounded-md text-[10px] font-black tracking-wider">MÉDIA</span>`;
-                else urgenciaHtml = `<span class="bg-green-100 text-green-700 border border-green-200 px-2.5 py-1 rounded-md text-[10px] font-black tracking-wider">BAIXA</span>`;
+                    : `<i class="fa-solid fa-image text-gray-300 text-2xl"></i>`;
 
                 let corSelect = 'text-red-600 bg-red-50 border-red-200';
                 if(data.status === 'EM ANDAMENTO') corSelect = 'text-blue-600 bg-blue-50 border-blue-200';
                 else if(data.status === 'CONCLUÍDO') corSelect = 'text-green-600 bg-green-50 border-green-200';
 
-                const statusEditavel = `
-                    <select onchange="atualizarStatusBD('${id}', this.value)" class="text-[10px] font-bold border rounded-full px-2 py-1 outline-none cursor-pointer transition-colors ${corSelect}">
-                        <option value="PENDENTE" ${data.status === 'PENDENTE' ? 'selected' : ''}>PENDENTE</option>
-                        <option value="EM ANDAMENTO" ${data.status === 'EM ANDAMENTO' ? 'selected' : ''}>EM ANDAMENTO</option>
-                        <option value="CONCLUÍDO" ${data.status === 'CONCLUÍDO' ? 'selected' : ''}>CONCLUÍDO</option>
-                    </select>
-                `;
-
-                const tr = `
-                    <tr class="bg-white border-b border-gray-50 hover:bg-gray-50 transition-colors">
-                        <td class="px-6 py-3">
-                            <div class="w-12 h-12 rounded-lg bg-gray-200 border border-gray-300 overflow-hidden flex items-center justify-center shadow-sm">
+                // Design em Card (Adaptado para Mobile)
+                const card = `
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 flex flex-col gap-3">
+                        <div class="flex gap-3 items-center">
+                            <div class="w-14 h-14 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
                                 ${fotoHtml}
                             </div>
-                        </td>
-                        <td class="px-6 py-3">
-                            <p class="font-bold text-gray-800"><i class="fa-regular fa-user text-gray-400 mr-1"></i> ${data.nomeCidadao || 'Não informado'}</p>
-                            <p class="text-xs text-gray-500 mt-0.5"><i class="fa-solid fa-location-dot text-red-400 mr-1"></i> ${data.endereco || 'Não informado'}</p>
-                        </td>
-                        <td class="px-6 py-3 font-medium text-gray-700 whitespace-normal min-w-[150px]">${data.tipoServico || 'Reparo Geral'}</td>
-                        <td class="px-6 py-3 text-center">${urgenciaHtml}</td>
-                        <td class="px-6 py-3 text-center">${statusEditavel}</td>
-                        <td class="px-6 py-3 text-right">
-                            <button onclick="alert('Funcionalidade em desenvolvimento para a próxima versão.')" class="text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 p-2 rounded-lg transition-colors" title="Ver detalhes completos">
-                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                            </button>
-                        </td>
-                    </tr>
+                            <div class="flex-grow">
+                                <h4 class="font-bold text-gray-800 text-sm leading-tight">${data.tipoServico || 'Reparo Geral'}</h4>
+                                <p class="text-xs text-gray-500 mt-0.5 truncate"><i class="fa-regular fa-user mr-1"></i> ${data.nomeCidadao || 'Não informado'}</p>
+                                <p class="text-xs text-red-500 mt-0.5 truncate max-w-[200px]"><i class="fa-solid fa-location-dot mr-1"></i> ${data.endereco || 'Não informado'}</p>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center border-t border-gray-50 pt-2 mt-1">
+                            <span class="text-[10px] text-gray-400 font-medium">Urgência: <span class="font-bold text-gray-700">${data.urgencia || 'N/A'}</span></span>
+                            <select onchange="atualizarStatusBD('${id}', this.value)" class="text-[10px] font-bold border rounded-full px-2 py-1 outline-none cursor-pointer ${corSelect}">
+                                <option value="PENDENTE" ${data.status === 'PENDENTE' ? 'selected' : ''}>PENDENTE</option>
+                                <option value="EM ANDAMENTO" ${data.status === 'EM ANDAMENTO' ? 'selected' : ''}>ANDAMENTO</option>
+                                <option value="CONCLUÍDO" ${data.status === 'CONCLUÍDO' ? 'selected' : ''}>CONCLUÍDO</option>
+                            </select>
+                        </div>
+                    </div>
                 `;
-                tbody.innerHTML += tr;
+                container.innerHTML += card;
             });
 
             document.getElementById("stat-pendentes").innerText = contPendentes;
@@ -305,48 +280,154 @@
             document.getElementById("stat-concluidos").innerText = contConcluidos;
         });
 
-        // Atualizar Status do Pedido
-        window.atualizarStatusBD = async function(idSolicitacao, novoStatus) {
+        window.atualizarStatusBD = async function(id, novoStatus) {
             try {
-                const docRef = doc(db, "solicitacoes_obras", idSolicitacao);
-                await updateDoc(docRef, { status: novoStatus });
-                mostrarAviso("Status da obra atualizado com sucesso!", "sucesso");
+                await updateDoc(doc(db, "solicitacoes_obras", id), { status: novoStatus });
+                mostrarAviso("Status atualizado com sucesso!");
             } catch (error) {
-                console.error("Erro ao atualizar status:", error);
-                mostrarAviso("Não foi possível atualizar o status no servidor.", "erro");
+                mostrarAviso("Erro ao atualizar o status.", "erro");
             }
         };
 
-        // Publicar Aviso no Painel Index
-        window.publicarAviso = async function(event) {
+        // --- 2. GESTÃO DE AVISOS (CRUD COMPLETO) ---
+        const avisosRef = collection(db, "avisos");
+        // Filtra apenas avisos da secretaria de obras
+        const qAvisos = query(avisosRef, where("secretaria", "==", "Obras"), orderBy("dataPublicacao", "desc"));
+
+        onSnapshot(qAvisos, (snapshot) => {
+            const container = document.getElementById("lista-avisos");
+            if (snapshot.empty) {
+                container.innerHTML = `<p class="text-center text-xs text-gray-400 py-4">Nenhum aviso publicado.</p>`;
+                return;
+            }
+            
+            container.innerHTML = "";
+            snapshot.forEach((docSnap) => {
+                const aviso = docSnap.data();
+                const id = docSnap.id;
+                
+                const dataFormatada = new Date(aviso.dataPublicacao).toLocaleDateString('pt-BR', {day:'2-digit', month:'2-digit', year:'2-digit'});
+
+                // Card do Aviso
+                const card = `
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-3">
+                        <div class="flex justify-between items-start">
+                            <h4 class="font-bold text-gray-800 text-sm leading-tight pr-2">${aviso.titulo}</h4>
+                            <span class="text-[9px] text-gray-400 whitespace-nowrap">${dataFormatada}</span>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1.5 line-clamp-2">${aviso.descricao}</p>
+                        
+                        <div class="flex justify-end gap-2 mt-3 pt-2 border-t border-gray-100">
+                            <button onclick="prepararEdicao('${id}', '${aviso.titulo.replace(/'/g, "\\'")}', '${aviso.descricao.replace(/'/g, "\\'")}')" class="text-blue-500 bg-blue-50 hover:bg-blue-100 px-3 py-1 rounded-md text-[10px] font-bold transition-colors">
+                                <i class="fa-solid fa-pen mr-1"></i> Editar
+                            </button>
+                            <button onclick="excluirAviso('${id}')" class="text-red-500 bg-red-50 hover:bg-red-100 px-3 py-1 rounded-md text-[10px] font-bold transition-colors">
+                                <i class="fa-solid fa-trash mr-1"></i> Excluir
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += card;
+            });
+        });
+
+        // Salvar (Criar ou Atualizar) Aviso
+        window.salvarAviso = async function(event) {
             event.preventDefault();
+            const btn = document.getElementById('btn-salvar-aviso');
+            const textoBtn = document.getElementById('texto-btn-salvar');
+            const iconOriginal = btn.innerHTML;
 
-            const btn = document.getElementById('btn-publicar');
             btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Publicando...';
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Salvando...';
 
+            const idAviso = document.getElementById('aviso-id').value;
             const titulo = document.getElementById('aviso-titulo').value;
             const descricao = document.getElementById('aviso-descricao').value;
 
             try {
-                await addDoc(collection(db, "avisos"), {
-                    secretaria: "Obras",
-                    titulo: titulo,
-                    descricao: descricao,
-                    dataPublicacao: new Date().toISOString()
-                });
-                
-                mostrarAviso("Aviso publicado no app do cidadão com sucesso!", "sucesso");
-                
-                document.getElementById('aviso-titulo').value = '';
-                document.getElementById('aviso-descricao').value = '';
-
+                if (idAviso) {
+                    // ATUALIZAR AVISO EXISTENTE
+                    await updateDoc(doc(db, "avisos", idAviso), {
+                        titulo: titulo,
+                        descricao: descricao
+                    });
+                    mostrarAviso("Aviso alterado com sucesso!");
+                    cancelarEdicao(); // Limpa e volta o formulário ao normal
+                } else {
+                    // CRIAR NOVO AVISO
+                    await addDoc(avisosRef, {
+                        secretaria: "Obras",
+                        titulo: titulo,
+                        descricao: descricao,
+                        dataPublicacao: new Date().toISOString()
+                    });
+                    mostrarAviso("Aviso publicado no app!");
+                    document.getElementById('aviso-titulo').value = '';
+                    document.getElementById('aviso-descricao').value = '';
+                }
             } catch (error) {
-                console.error("Erro ao publicar: ", error);
-                mostrarAviso("Erro ao conectar ao servidor. Tente novamente.", "erro");
+                console.error(error);
+                mostrarAviso("Erro ao conectar ao servidor.", "erro");
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Publicar Aviso';
+                if(idAviso) {
+                    btn.innerHTML = '<i class="fa-solid fa-check"></i> <span id="texto-btn-salvar">Salvar Alteração</span>';
+                } else {
+                    btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> <span id="texto-btn-salvar">Publicar</span>';
+                }
+            }
+        };
+
+        // Preparar formulário para Edição
+        window.prepararEdicao = function(id, titulo, descricao) {
+            document.getElementById('titulo-form-aviso').innerText = "Editar Aviso";
+            document.getElementById('aviso-id').value = id;
+            document.getElementById('aviso-titulo').value = titulo;
+            document.getElementById('aviso-descricao').value = descricao;
+            
+            document.getElementById('btn-cancelar-aviso').classList.remove('hidden');
+            document.getElementById('texto-btn-salvar').innerText = "Salvar Alteração";
+            document.getElementById('btn-salvar-aviso').classList.replace('bg-amber-500', 'bg-blue-600');
+            document.getElementById('btn-salvar-aviso').classList.replace('hover:bg-amber-600', 'hover:bg-blue-700');
+            
+            // Rola a página para o topo para a pessoa ver o formulário
+            document.getElementById('aba-avisos').scrollTo(0,0);
+        };
+
+        // Cancelar Edição (limpa tudo)
+        window.cancelarEdicao = function() {
+            document.getElementById('titulo-form-aviso').innerText = "Publicar Novo Aviso";
+            document.getElementById('aviso-id').value = '';
+            document.getElementById('aviso-titulo').value = '';
+            document.getElementById('aviso-descricao').value = '';
+            
+            document.getElementById('btn-cancelar-aviso').classList.add('hidden');
+            document.getElementById('texto-btn-salvar').innerText = "Publicar";
+            document.getElementById('btn-salvar-aviso').classList.replace('bg-blue-600', 'bg-amber-500');
+            document.getElementById('btn-salvar-aviso').classList.replace('hover:bg-blue-700', 'hover:bg-amber-600');
+        };
+
+        // Excluir Aviso
+        window.excluirAviso = async function(id) {
+            if(confirm("Tem certeza que deseja excluir este aviso? Ele sumirá do aplicativo do cidadão.")) {
+                try {
+                    await deleteDoc(doc(db, "avisos", id));
+                    mostrarAviso("Aviso excluído com sucesso!");
+                    
+                    // Se a pessoa excluiu um aviso que estava tentando editar, limpa o form
+                    if(document.getElementById('aviso-id').value === id) {
+                        cancelarEdicao();
+                    }
+                } catch (error) {
+                    mostrarAviso("Erro ao excluir o aviso.", "erro");
+                }
+            }
+        };
+
+        window.fazerLogout = function() {
+            if(confirm("Deseja realmente sair?")) {
+                alert("Logout concluído. (Redirecionaria para o login)");
             }
         };
     </script>
