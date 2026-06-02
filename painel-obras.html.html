@@ -24,30 +24,35 @@
         }
     </script>
 </head>
-<body class="bg-gray-100 font-sans text-gray-800 flex min-h-screen">
+<body class="bg-gray-100 font-sans text-gray-800 flex min-h-screen relative overflow-hidden">
 
-    <!-- NOTIFICAÇÃO (TOAST) -->
     <div id="toast-aviso" class="fixed top-4 right-4 z-[100] bg-green-600 text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-3 transition-all duration-300 opacity-0 pointer-events-none translate-y-[-20px] max-w-sm">
         <i id="toast-icone" class="fa-solid fa-circle-check text-lg"></i>
         <span id="toast-mensagem" class="text-sm font-medium leading-snug"></span>
     </div>
 
-    <!-- MENU LATERAL (SIDEBAR) -->
-    <aside class="w-64 bg-doresopolis-dark text-white hidden md:flex flex-col shadow-xl flex-shrink-0">
-        <div class="p-6 border-b border-gray-600 text-center">
+    <div id="overlay-menu" onclick="toggleMenu()" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden transition-opacity duration-300"></div>
+
+    <aside id="menu-lateral" class="w-64 bg-doresopolis-dark text-white flex flex-col shadow-xl flex-shrink-0 fixed inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition-transform duration-300 ease-in-out z-50 h-full">
+        
+        <div class="p-6 border-b border-gray-600 text-center relative">
+            <button onclick="toggleMenu()" class="absolute top-4 right-4 text-gray-400 hover:text-white md:hidden">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
             <img src="https://cdn.tecconcursos.com.br/figuras/7528d9ce-3894-4606-a0ed-7b57ef6cb7ed" alt="Brasão" class="w-16 h-16 mx-auto object-contain mb-3 brightness-0 invert opacity-90">
             <h1 class="text-lg font-black tracking-wider uppercase">Doresópolis</h1>
             <p class="text-xs text-amber-400 font-bold mt-1">SECRETARIA DE OBRAS</p>
         </div>
+
         <nav class="flex-grow p-4 space-y-2">
-            <a href="#" class="flex items-center gap-3 px-4 py-3 bg-amber-500 text-white rounded-lg shadow-sm font-medium transition-colors">
+            <a href="#" onclick="toggleMenu()" class="flex items-center gap-3 px-4 py-3 bg-amber-500 text-white rounded-lg shadow-sm font-medium transition-colors">
                 <i class="fa-solid fa-chart-line w-5"></i> Dashboard
             </a>
-            <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-700 text-gray-300 hover:text-white rounded-lg font-medium transition-colors">
+            <a href="#" onclick="toggleMenu()" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-700 text-gray-300 hover:text-white rounded-lg font-medium transition-colors">
                 <i class="fa-solid fa-helmet-safety w-5"></i> Solicitações
             </a>
-            <!-- Removido o botão de Projetos a pedido do usuário -->
         </nav>
+
         <div class="p-4 border-t border-gray-600">
             <button class="flex items-center gap-3 px-4 py-2 w-full text-left hover:bg-red-600 text-gray-300 hover:text-white rounded-lg font-medium transition-colors">
                 <i class="fa-solid fa-right-from-bracket w-5"></i> Sair do Painel
@@ -55,34 +60,29 @@
         </div>
     </aside>
 
-    <!-- ÁREA PRINCIPAL -->
-    <main class="flex-grow flex flex-col h-screen overflow-hidden">
+    <main class="flex-grow flex flex-col h-screen overflow-hidden w-full relative">
         
-        <!-- CABEÇALHO MOBILE / TOPO DESKTOP -->
-        <header class="bg-white shadow-sm border-b border-gray-200 px-6 py-4 flex justify-between items-center z-10 flex-shrink-0">
+        <header class="bg-white shadow-sm border-b border-gray-200 px-6 py-4 flex justify-between items-center z-10 flex-shrink-0 w-full">
             <div class="flex items-center gap-4">
-                <button class="md:hidden text-gray-500 hover:text-doresopolis-green text-xl">
+                <button onclick="toggleMenu()" class="md:hidden text-gray-500 hover:text-doresopolis-green text-xl p-2 -ml-2 rounded-lg active:bg-gray-100">
                     <i class="fa-solid fa-bars"></i>
                 </button>
                 <h2 class="text-xl font-bold text-gray-800">Visão Geral</h2>
             </div>
             <div class="flex items-center gap-4">
                 <span class="text-sm font-medium text-gray-600 hidden sm:block"><i class="fa-regular fa-user mr-1"></i> Admin Obras</span>
-                <div class="w-10 h-10 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center font-bold">
+                <div class="w-10 h-10 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center font-bold shadow-inner">
                     OB
                 </div>
             </div>
         </header>
 
-        <!-- CONTEÚDO ROLÁVEL -->
         <div class="flex-grow p-4 md:p-6 overflow-y-auto">
             
             <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
                 
-                <!-- COLUNA ESQUERDA: ESTATÍSTICAS E CHAMADOS -->
                 <div class="xl:col-span-2 space-y-6">
                     
-                    <!-- CARDS DE RESUMO DINÂMICOS -->
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm border-t-4 border-t-red-500">
                             <p class="text-xs text-gray-500 font-bold uppercase mb-1">Pendentes</p>
@@ -98,15 +98,14 @@
                         </div>
                     </div>
 
-                    <!-- TABELA DE ÚLTIMOS CHAMADOS COM BANCO DE DADOS -->
                     <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
                         <div class="px-6 py-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
                             <h3 class="font-bold text-gray-800"><i class="fa-solid fa-list-check text-amber-500 mr-2"></i> Solicitações Recentes</h3>
-                            <button class="text-xs font-bold text-doresopolis-green hover:underline">Atualizar</button>
+                            <button class="text-xs font-bold text-doresopolis-green hover:underline"><i class="fa-solid fa-rotate-right mr-1"></i>Ao vivo</button>
                         </div>
                         
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-sm text-left whitespace-nowrap">
+                        <div class="overflow-x-auto w-full">
+                            <table class="w-full text-sm text-left whitespace-nowrap min-w-[700px]">
                                 <thead class="text-xs text-gray-500 uppercase bg-white border-b border-gray-100">
                                     <tr>
                                         <th class="px-6 py-3 w-16">Foto</th>
@@ -117,11 +116,10 @@
                                         <th class="px-6 py-3 text-right">Ações</th>
                                     </tr>
                                 </thead>
-                                <!-- O Corpo da tabela será preenchido pelo JavaScript -->
                                 <tbody id="tabela-solicitacoes">
                                     <tr>
                                         <td colspan="6" class="px-6 py-8 text-center text-gray-400">
-                                            <i class="fa-solid fa-spinner fa-spin mr-2"></i> Carregando solicitações da população...
+                                            <i class="fa-solid fa-spinner fa-spin mr-2"></i> Escutando solicitações do cidadão...
                                         </td>
                                     </tr>
                                 </tbody>
@@ -131,10 +129,8 @@
 
                 </div>
 
-                <!-- COLUNA DIREITA: MURAL DE AVISOS -->
                 <div class="xl:col-span-1">
                     
-                    <!-- FORMULÁRIO PARA PUBLICAR NO APP DO CIDADÃO -->
                     <div class="bg-gradient-to-br from-amber-50 to-white rounded-xl border border-amber-100 shadow-sm overflow-hidden mb-6">
                         <div class="px-6 py-4 bg-amber-500 text-white flex items-center gap-3">
                             <i class="fa-solid fa-mobile-screen text-xl"></i>
@@ -167,10 +163,30 @@
         </div>
     </main>
 
-    <!-- SCRIPT DO FIREBASE PARA SALVAR O AVISO E CARREGAR SOLICITAÇÕES -->
+    <script>
+        window.toggleMenu = function() {
+            const menu = document.getElementById('menu-lateral');
+            const overlay = document.getElementById('overlay-menu');
+            
+            // Verifica se o menu está fechado (tem a classe -translate-x-full)
+            if (menu.classList.contains('-translate-x-full')) {
+                // Abrir
+                menu.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+                // Pequeno delay para a transição de fade do overlay
+                setTimeout(() => overlay.classList.add('opacity-100'), 10);
+            } else {
+                // Fechar
+                menu.classList.add('-translate-x-full');
+                overlay.classList.remove('opacity-100');
+                // Aguarda a animação acabar para esconder
+                setTimeout(() => overlay.classList.add('hidden'), 300);
+            }
+        };
+    </script>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        // Adicionadas importações para onSnapshot (tempo real), doc e updateDoc (para editar o status)
         import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -212,7 +228,6 @@
         };
 
         // --- LÓGICA DE SOLICITAÇÕES (REAL-TIME) ---
-        // Escuta a coleção "solicitacoes_obras" em tempo real
         const solicitacoesRef = collection(db, "solicitacoes_obras");
         const qSolicitacoes = query(solicitacoesRef, orderBy("dataRegistro", "desc"));
 
@@ -220,7 +235,7 @@
             const tbody = document.getElementById("tabela-solicitacoes");
             
             if (snapshot.empty) {
-                tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-8 text-center text-gray-500 font-medium">Nenhuma solicitação encontrada.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-8 text-center text-gray-500 font-medium">O painel está escutando o aplicativo do cidadão... As solicitações aparecerão aqui.</td></tr>`;
                 document.getElementById("stat-pendentes").innerText = '0';
                 document.getElementById("stat-andamento").innerText = '0';
                 document.getElementById("stat-concluidos").innerText = '0';
@@ -236,28 +251,23 @@
                 const data = docSnap.data();
                 const id = docSnap.id;
 
-                // Contadores para o Dashboard
                 if(data.status === 'PENDENTE') contPendentes++;
                 else if(data.status === 'EM ANDAMENTO') contAndamento++;
                 else if(data.status === 'CONCLUÍDO') contConcluidos++;
 
-                // Lógica de Imagem (Se não enviou foto, exibe um ícone)
                 const fotoHtml = data.fotoUrl 
                     ? `<img src="${data.fotoUrl}" class="w-full h-full object-cover">` 
                     : `<i class="fa-solid fa-image text-gray-400 text-xl"></i>`;
 
-                // Lógica da cor da Urgência
                 let urgenciaHtml = '';
                 if(data.urgencia === 'ALTA') urgenciaHtml = `<span class="bg-red-100 text-red-700 border border-red-200 px-2.5 py-1 rounded-md text-[10px] font-black tracking-wider">ALTA</span>`;
                 else if(data.urgencia === 'MÉDIA') urgenciaHtml = `<span class="bg-amber-100 text-amber-700 border border-amber-200 px-2.5 py-1 rounded-md text-[10px] font-black tracking-wider">MÉDIA</span>`;
                 else urgenciaHtml = `<span class="bg-green-100 text-green-700 border border-green-200 px-2.5 py-1 rounded-md text-[10px] font-black tracking-wider">BAIXA</span>`;
 
-                // Lógica de Cores do Select de Status Editável
                 let corSelect = 'text-red-600 bg-red-50 border-red-200';
                 if(data.status === 'EM ANDAMENTO') corSelect = 'text-blue-600 bg-blue-50 border-blue-200';
                 else if(data.status === 'CONCLUÍDO') corSelect = 'text-green-600 bg-green-50 border-green-200';
 
-                // Dropdown para editar o status diretamente na tabela
                 const statusEditavel = `
                     <select onchange="atualizarStatusBD('${id}', this.value)" class="text-[10px] font-bold border rounded-full px-2 py-1 outline-none cursor-pointer transition-colors ${corSelect}">
                         <option value="PENDENTE" ${data.status === 'PENDENTE' ? 'selected' : ''}>PENDENTE</option>
@@ -266,7 +276,6 @@
                     </select>
                 `;
 
-                // Montagem da Linha da Tabela
                 const tr = `
                     <tr class="bg-white border-b border-gray-50 hover:bg-gray-50 transition-colors">
                         <td class="px-6 py-3">
@@ -278,11 +287,11 @@
                             <p class="font-bold text-gray-800"><i class="fa-regular fa-user text-gray-400 mr-1"></i> ${data.nomeCidadao || 'Não informado'}</p>
                             <p class="text-xs text-gray-500 mt-0.5"><i class="fa-solid fa-location-dot text-red-400 mr-1"></i> ${data.endereco || 'Não informado'}</p>
                         </td>
-                        <td class="px-6 py-3 font-medium text-gray-700">${data.tipoServico || 'Reparo Geral'}</td>
+                        <td class="px-6 py-3 font-medium text-gray-700 whitespace-normal min-w-[150px]">${data.tipoServico || 'Reparo Geral'}</td>
                         <td class="px-6 py-3 text-center">${urgenciaHtml}</td>
                         <td class="px-6 py-3 text-center">${statusEditavel}</td>
                         <td class="px-6 py-3 text-right">
-                            <button onclick="alert('Funcionalidade: Abrir detalhes e foto expandida em breve.')" class="text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 p-2 rounded-lg transition-colors" title="Ver detalhes completos">
+                            <button onclick="alert('Funcionalidade em desenvolvimento para a próxima versão.')" class="text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 p-2 rounded-lg transition-colors" title="Ver detalhes completos">
                                 <i class="fa-solid fa-arrow-up-right-from-square"></i>
                             </button>
                         </td>
@@ -291,25 +300,24 @@
                 tbody.innerHTML += tr;
             });
 
-            // Atualiza os painéis numéricos superiores
             document.getElementById("stat-pendentes").innerText = contPendentes;
             document.getElementById("stat-andamento").innerText = contAndamento;
             document.getElementById("stat-concluidos").innerText = contConcluidos;
         });
 
-        // Função chamada quando o Admin altera o menu Select
+        // Atualizar Status do Pedido
         window.atualizarStatusBD = async function(idSolicitacao, novoStatus) {
             try {
                 const docRef = doc(db, "solicitacoes_obras", idSolicitacao);
                 await updateDoc(docRef, { status: novoStatus });
-                mostrarAviso("Status atualizado com sucesso!", "sucesso");
+                mostrarAviso("Status da obra atualizado com sucesso!", "sucesso");
             } catch (error) {
                 console.error("Erro ao atualizar status:", error);
-                mostrarAviso("Não foi possível atualizar o status.", "erro");
+                mostrarAviso("Não foi possível atualizar o status no servidor.", "erro");
             }
         };
 
-        // --- Função para Publicar o Aviso no App (Mural Inicial) ---
+        // Publicar Aviso no Painel Index
         window.publicarAviso = async function(event) {
             event.preventDefault();
 
@@ -322,7 +330,7 @@
 
             try {
                 await addDoc(collection(db, "avisos"), {
-                    secretaria: "Obras", // Nome fixo da secretaria
+                    secretaria: "Obras",
                     titulo: titulo,
                     descricao: descricao,
                     dataPublicacao: new Date().toISOString()
@@ -330,7 +338,6 @@
                 
                 mostrarAviso("Aviso publicado no app do cidadão com sucesso!", "sucesso");
                 
-                // Limpa os campos após publicar
                 document.getElementById('aviso-titulo').value = '';
                 document.getElementById('aviso-descricao').value = '';
 
