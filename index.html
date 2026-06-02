@@ -35,10 +35,9 @@
     </script>
 </head>
 
-<!-- Fundo escuro para destacar o "celular" se for aberto no computador -->
 <body class="bg-gray-200 font-sans text-gray-800 flex justify-center items-center min-h-screen">
 
-    <!-- CONTAINER PRINCIPAL DO APP (Simula a tela do smartphone) -->
+    <!-- CONTAINER PRINCIPAL DO APP -->
     <div class="bg-gray-50 w-full max-w-md h-[100dvh] flex flex-col relative shadow-2xl overflow-hidden sm:rounded-xl sm:h-[95vh] sm:border sm:border-gray-300">
         
         <!-- HEADER (Fixo no topo) -->
@@ -57,7 +56,7 @@
                         <h1 class="text-xl font-black text-gray-700 tracking-tight uppercase leading-none mt-1">Doresópolis</h1>
                     </div>
                 </div>
-                <!-- Botão de perfil/notificações (Opcional) -->
+                <!-- Botão de perfil/notificações -->
                 <button class="text-gray-400 hover:text-doresopolis-green">
                     <i class="fa-regular fa-bell text-xl"></i>
                 </button>
@@ -160,53 +159,68 @@
 
             </div>
             
-            <!-- Espaço no final para não ficar grudado na navegação -->
             <div class="h-6 w-full text-center mt-6">
                 <span class="text-[10px] text-gray-400">App Oficial - Doresópolis MG</span>
             </div>
         </main>
 
-        <!-- BARRA DE NAVEGAÇÃO INFERIOR (Padrão de App Nativo) -->
+        <!-- BARRA DE NAVEGAÇÃO INFERIOR -->
         <nav class="absolute bottom-0 w-full bg-white border-t border-gray-200 z-50 pb-safe">
             <div class="flex justify-around items-center h-16">
-                
-                <!-- Início -->
                 <a href="#" class="flex flex-col items-center justify-center w-full h-full text-doresopolis-green">
                     <i class="fa-solid fa-house text-lg mb-1"></i>
                     <span class="text-[10px] font-medium">Início</span>
                 </a>
-
-                <!-- A Nossa Cidade -->
                 <a href="https://www.doresopolis.mg.gov.br/portal/servicos/1001/historia/" target="_blank" class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-doresopolis-green transition-colors">
                     <i class="fa-solid fa-map-location-dot text-lg mb-1"></i>
                     <span class="text-[10px] font-medium">A Cidade</span>
                 </a>
-
-                <!-- Ouvidoria -->
                 <a href="https://www.doresopolis.mg.gov.br/portal/ouvidoria" target="_blank" class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-doresopolis-green transition-colors">
                     <i class="fa-solid fa-bullhorn text-lg mb-1"></i>
                     <span class="text-[10px] font-medium">Ouvidoria</span>
                 </a>
-
-                <!-- Transparência -->
                 <a href="https://ilai.memory.com.br/#/public/inicio" target="_blank" class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-doresopolis-green transition-colors">
                     <i class="fa-solid fa-chart-pie text-lg mb-1"></i>
                     <span class="text-[10px] font-medium">Transparência</span>
                 </a>
-
             </div>
         </nav>
 
     </div>
 
-    <!-- SCRIPT DE NAVEGAÇÃO INTERNA -->
-    <script>
-        function navegarPara(secretaria) {
-            // Vibração ao clicar (funciona apenas em dispositivos móveis reais)
+    <!-- SCRIPT DO FIREBASE (Type Module) -->
+    <script type="module">
+        // Importando o Firebase através de CDNs compatíveis com o navegador
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
+        
+        // Se no futuro precisar do Firestore (Banco de dados), basta descomentar a linha abaixo:
+        // import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+        // Configuração do Firebase fornecida
+        const firebaseConfig = {
+            apiKey: "AIzaSyCpaNuC1IUkteO4fHzFPiNS7s580EyTleU",
+            authDomain: "doresopolis.firebaseapp.com",
+            projectId: "doresopolis",
+            storageBucket: "doresopolis.firebasestorage.app",
+            messagingSenderId: "465119846468",
+            appId: "1:465119846468:web:8b292481fec10132cf9c11",
+            measurementId: "G-WXWGXEWY53"
+        };
+
+        // Inicializando o Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        
+        console.log("🔥 Firebase inicializado com sucesso no App de Doresópolis!");
+
+        // Como usamos type="module", precisamos anexar a função navegarPara ao objeto global 'window' 
+        // para que os botões do HTML (onclick) consigam encontrá-la.
+        window.navegarPara = function(secretaria) {
             if (navigator.vibrate) {
                 navigator.vibrate(50);
             }
-            alert('Acessando aba: ' + secretaria.toUpperCase());
+            alert('Você clicou em: ' + secretaria.toUpperCase() + '\n(O Firebase já está rodando no fundo!)');
         }
     </script>
 
