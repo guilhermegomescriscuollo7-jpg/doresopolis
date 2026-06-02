@@ -33,13 +33,16 @@
 
 <body class="bg-gray-200 font-sans text-gray-800 flex justify-center items-center min-h-screen">
 
+    <!-- NOTIFICAÇÃO NO APP (TOAST) -->
     <div id="toast-aviso" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-[100] bg-green-600 text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-3 transition-all duration-300 opacity-0 pointer-events-none translate-y-[-20px] w-11/12 max-w-sm">
         <i id="toast-icone" class="fa-solid fa-circle-check text-lg"></i>
         <span id="toast-mensagem" class="text-sm font-medium leading-snug"></span>
     </div>
 
+    <!-- CONTAINER PRINCIPAL DO APP (Formato Smartphone) -->
     <div class="bg-gray-50 w-full max-w-md h-[100dvh] flex flex-col relative shadow-2xl overflow-hidden sm:rounded-xl sm:h-[95vh] sm:border sm:border-gray-300">
         
+        <!-- HEADER -->
         <header class="bg-white shadow-sm border-b border-gray-200 z-10 flex-shrink-0">
             <div class="bg-doresopolis-green h-2 w-full"></div>
             <div class="px-4 py-3 flex items-center justify-between">
@@ -56,8 +59,12 @@
             </div>
         </header>
 
+        <!-- ========================================== -->
+        <!-- ABA 1: GESTÃO DE SOLICITAÇÕES              -->
+        <!-- ========================================== -->
         <main id="aba-solicitacoes" class="flex-grow overflow-y-auto p-4 pb-24 scroll-smooth block">
             
+            <!-- Cards de Estatísticas -->
             <div class="grid grid-cols-3 gap-2 mb-6">
                 <div class="bg-white p-3 rounded-xl border border-gray-200 shadow-sm border-t-4 border-t-red-500 text-center">
                     <h3 id="stat-pendentes" class="text-2xl font-black text-gray-800">0</h3>
@@ -75,6 +82,7 @@
 
             <h3 class="font-bold text-gray-800 text-sm mb-3 border-l-4 border-amber-500 pl-2">Solicitações Recebidas</h3>
             
+            <!-- Lista de Solicitações -->
             <div id="lista-solicitacoes" class="flex flex-col gap-3">
                 <div class="text-center py-8 text-gray-400 text-sm">
                     <i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i><br>
@@ -84,8 +92,12 @@
 
         </main>
 
+        <!-- ========================================== -->
+        <!-- ABA 2: MURAL DE AVISOS (CRUD)              -->
+        <!-- ========================================== -->
         <main id="aba-avisos" class="flex-grow overflow-y-auto p-4 pb-24 scroll-smooth hidden">
             
+            <!-- Formulário Criar/Editar Aviso -->
             <div class="bg-gradient-to-br from-amber-50 to-white rounded-xl border border-amber-200 shadow-sm overflow-hidden mb-6">
                 <div class="px-4 py-3 bg-amber-500 text-white flex items-center gap-2">
                     <i class="fa-solid fa-mobile-screen"></i>
@@ -120,6 +132,7 @@
 
             <h3 class="font-bold text-gray-800 text-sm mb-3 border-l-4 border-amber-500 pl-2">Avisos Publicados</h3>
             
+            <!-- Lista de Avisos -->
             <div id="lista-avisos" class="flex flex-col gap-3">
                 <div class="text-center py-6 text-gray-400 text-sm">
                     <i class="fa-solid fa-spinner fa-spin mb-2"></i><br>Carregando avisos...
@@ -128,6 +141,9 @@
 
         </main>
 
+        <!-- ========================================== -->
+        <!-- BARRA DE NAVEGAÇÃO INFERIOR                -->
+        <!-- ========================================== -->
         <nav class="absolute bottom-0 w-full bg-white border-t border-gray-200 z-50 pb-safe">
             <div class="flex justify-around items-center h-16 relative">
                 
@@ -136,6 +152,7 @@
                     <span class="text-[10px] font-bold">Solicitações</span>
                 </a>
                 
+                <!-- Divisor visual -->
                 <div class="w-px h-8 bg-gray-200"></div>
 
                 <a href="#" onclick="trocarAba('avisos')" id="btn-aba-avisos" class="flex flex-col items-center justify-center w-full h-full text-gray-400 transition-colors">
@@ -148,10 +165,11 @@
 
     </div>
 
+    <!-- SCRIPT DE LÓGICA E FIREBASE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        // Importações completas para CRUD
-        import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, query, where, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        // Importações completas
+        import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCpaNuC1IUkteO4fHzFPiNS7s580EyTleU",
@@ -249,7 +267,6 @@
                 if(data.status === 'EM ANDAMENTO') corSelect = 'text-blue-600 bg-blue-50 border-blue-200';
                 else if(data.status === 'CONCLUÍDO') corSelect = 'text-green-600 bg-green-50 border-green-200';
 
-                // Design em Card (Adaptado para Mobile)
                 const card = `
                     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 flex flex-col gap-3">
                         <div class="flex gap-3 items-center">
@@ -278,6 +295,8 @@
             document.getElementById("stat-pendentes").innerText = contPendentes;
             document.getElementById("stat-andamento").innerText = contAndamento;
             document.getElementById("stat-concluidos").innerText = contConcluidos;
+        }, (error) => {
+            console.error("Erro ao puxar solicitações:", error);
         });
 
         window.atualizarStatusBD = async function(id, novoStatus) {
@@ -289,26 +308,32 @@
             }
         };
 
-        // --- 2. GESTÃO DE AVISOS (CRUD COMPLETO) ---
+        // --- 2. GESTÃO DE AVISOS (CRUD COMPLETO SEM ERRO DE INDEX) ---
         const avisosRef = collection(db, "avisos");
-        // Filtra apenas avisos da secretaria de obras
-        const qAvisos = query(avisosRef, where("secretaria", "==", "Obras"), orderBy("dataPublicacao", "desc"));
+        // Buscamos ordenando por data. O filtro da Secretaria será feito no JS para evitar erro de Index no Firebase!
+        const qAvisos = query(avisosRef, orderBy("dataPublicacao", "desc"));
 
         onSnapshot(qAvisos, (snapshot) => {
             const container = document.getElementById("lista-avisos");
+            
             if (snapshot.empty) {
                 container.innerHTML = `<p class="text-center text-xs text-gray-400 py-4">Nenhum aviso publicado.</p>`;
                 return;
             }
             
             container.innerHTML = "";
+            let encontrouAvisos = false;
+
             snapshot.forEach((docSnap) => {
                 const aviso = docSnap.data();
                 const id = docSnap.id;
                 
+                // Filtra aqui no Javascript para contornar a exigência de Índice Composto do Firebase
+                if(aviso.secretaria !== "Obras") return;
+                
+                encontrouAvisos = true;
                 const dataFormatada = new Date(aviso.dataPublicacao).toLocaleDateString('pt-BR', {day:'2-digit', month:'2-digit', year:'2-digit'});
 
-                // Card do Aviso
                 const card = `
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-3">
                         <div class="flex justify-between items-start">
@@ -318,6 +343,7 @@
                         <p class="text-xs text-gray-500 mt-1.5 line-clamp-2">${aviso.descricao}</p>
                         
                         <div class="flex justify-end gap-2 mt-3 pt-2 border-t border-gray-100">
+                            <!-- Passando Replace para evitar que aspas no texto quebrem a função -->
                             <button onclick="prepararEdicao('${id}', '${aviso.titulo.replace(/'/g, "\\'")}', '${aviso.descricao.replace(/'/g, "\\'")}')" class="text-blue-500 bg-blue-50 hover:bg-blue-100 px-3 py-1 rounded-md text-[10px] font-bold transition-colors">
                                 <i class="fa-solid fa-pen mr-1"></i> Editar
                             </button>
@@ -329,14 +355,19 @@
                 `;
                 container.innerHTML += card;
             });
+
+            if (!encontrouAvisos) {
+                container.innerHTML = `<p class="text-center text-xs text-gray-400 py-4">Nenhum aviso publicado.</p>`;
+            }
+        }, (error) => {
+            console.error("Erro ao puxar avisos:", error);
+            document.getElementById("lista-avisos").innerHTML = `<p class="text-center text-xs text-red-500 py-4">Erro ao carregar o mural.</p>`;
         });
 
         // Salvar (Criar ou Atualizar) Aviso
         window.salvarAviso = async function(event) {
             event.preventDefault();
             const btn = document.getElementById('btn-salvar-aviso');
-            const textoBtn = document.getElementById('texto-btn-salvar');
-            const iconOriginal = btn.innerHTML;
 
             btn.disabled = true;
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Salvando...';
@@ -347,15 +378,13 @@
 
             try {
                 if (idAviso) {
-                    // ATUALIZAR AVISO EXISTENTE
                     await updateDoc(doc(db, "avisos", idAviso), {
                         titulo: titulo,
                         descricao: descricao
                     });
                     mostrarAviso("Aviso alterado com sucesso!");
-                    cancelarEdicao(); // Limpa e volta o formulário ao normal
+                    cancelarEdicao(); 
                 } else {
-                    // CRIAR NOVO AVISO
                     await addDoc(avisosRef, {
                         secretaria: "Obras",
                         titulo: titulo,
@@ -391,7 +420,6 @@
             document.getElementById('btn-salvar-aviso').classList.replace('bg-amber-500', 'bg-blue-600');
             document.getElementById('btn-salvar-aviso').classList.replace('hover:bg-amber-600', 'hover:bg-blue-700');
             
-            // Rola a página para o topo para a pessoa ver o formulário
             document.getElementById('aba-avisos').scrollTo(0,0);
         };
 
@@ -415,7 +443,6 @@
                     await deleteDoc(doc(db, "avisos", id));
                     mostrarAviso("Aviso excluído com sucesso!");
                     
-                    // Se a pessoa excluiu um aviso que estava tentando editar, limpa o form
                     if(document.getElementById('aviso-id').value === id) {
                         cancelarEdicao();
                     }
@@ -427,7 +454,8 @@
 
         window.fazerLogout = function() {
             if(confirm("Deseja realmente sair?")) {
-                alert("Logout concluído. (Redirecionaria para o login)");
+                alert("Logout concluído. (Você pode redirecionar para a tela index do app geral)");
+                window.location.href = "index.html";
             }
         };
     </script>
