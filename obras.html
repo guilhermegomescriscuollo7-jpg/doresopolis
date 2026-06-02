@@ -42,15 +42,12 @@
     <!-- CONTAINER PRINCIPAL DO APP -->
     <div class="bg-gray-50 w-full max-w-md h-[100dvh] flex flex-col relative shadow-2xl overflow-hidden sm:rounded-xl sm:h-[95vh] sm:border sm:border-gray-300">
         
-        <!-- HEADER COM BOTÃO VOLTAR -->
-        <header class="bg-white shadow-sm z-10 flex-shrink-0">
-            <div class="bg-amber-500 h-2 w-full"></div>
-            <div class="px-4 py-3 flex items-center gap-4 border-b border-gray-100">
-                <button onclick="window.location.href='index.html'" class="text-gray-500 hover:text-amber-500 text-xl w-8 h-8 flex items-center justify-center rounded-full active:bg-gray-100 transition-colors">
-                    <i class="fa-solid fa-arrow-left"></i>
-                </button>
+        <!-- HEADER -->
+        <header class="bg-white shadow-sm z-10 flex-shrink-0 border-b border-gray-200">
+            <div class="bg-amber-500 h-2 w-full"></div> 
+            <div class="px-4 py-3 flex items-center justify-between">
                 <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center shrink-0">
+                    <div class="w-10 h-10 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center shrink-0 shadow-inner">
                         <i class="fa-solid fa-helmet-safety text-lg"></i>
                     </div>
                     <div>
@@ -58,16 +55,6 @@
                         <h1 class="text-xl font-black text-gray-700 tracking-tight uppercase leading-none mt-1">Sec. Obras</h1>
                     </div>
                 </div>
-            </div>
-
-            <!-- ABAS DE NAVEGAÇÃO SUPERIOR -->
-            <div class="flex border-b border-gray-200">
-                <button onclick="trocarAbaObras('nova')" id="btn-aba-nova" class="flex-1 py-3 text-xs font-bold text-amber-600 border-b-2 border-amber-500 transition-all">
-                    Novo Chamado
-                </button>
-                <button onclick="trocarAbaObras('acompanhar')" id="btn-aba-acompanhar" class="flex-1 py-3 text-xs font-bold text-gray-400 border-b-2 border-transparent transition-all">
-                    Acompanhar
-                </button>
             </div>
         </header>
 
@@ -183,21 +170,36 @@
             </div>
         </main>
 
-        <!-- BARRA DE NAVEGAÇÃO INFERIOR -->
+        <!-- ========================================== -->
+        <!-- BARRA DE NAVEGAÇÃO INFERIOR EXCLUSIVA      -->
+        <!-- ========================================== -->
         <nav class="absolute bottom-0 w-full bg-white border-t border-gray-200 z-50 pb-safe">
-            <div class="flex justify-around items-center h-16">
+            <div class="flex justify-around items-center h-16 relative">
+                
+                <!-- Aba: Novo Chamado -->
+                <a href="#" onclick="event.preventDefault(); trocarAbaObras('nova')" id="btn-aba-nova" class="flex flex-col items-center justify-center w-full h-full text-amber-500 transition-colors">
+                    <i class="fa-solid fa-circle-plus text-xl mb-1"></i>
+                    <span class="text-[10px] font-bold">Novo Chamado</span>
+                </a>
+                
+                <!-- Divisor visual -->
+                <div class="w-px h-8 bg-gray-200"></div>
+
+                <!-- Aba: Acompanhar -->
+                <a href="#" onclick="event.preventDefault(); trocarAbaObras('acompanhar')" id="btn-aba-acompanhar" class="flex flex-col items-center justify-center w-full h-full text-gray-400 transition-colors">
+                    <i class="fa-solid fa-list-check text-xl mb-1"></i>
+                    <span class="text-[10px] font-bold">Acompanhar</span>
+                </a>
+
+                <!-- Divisor visual -->
+                <div class="w-px h-8 bg-gray-200"></div>
+
+                <!-- Voltar ao Início -->
                 <a href="index.html" class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-doresopolis-green transition-colors">
-                    <i class="fa-solid fa-house text-lg mb-1"></i><span class="text-[10px] font-medium">Início</span>
+                    <i class="fa-solid fa-house text-xl mb-1"></i>
+                    <span class="text-[10px] font-bold">Início</span>
                 </a>
-                <a href="https://www.doresopolis.mg.gov.br/portal/servicos/1001/historia/" target="_blank" class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-doresopolis-green transition-colors">
-                    <i class="fa-solid fa-map-location-dot text-lg mb-1"></i><span class="text-[10px] font-medium">A Cidade</span>
-                </a>
-                <a href="https://www.doresopolis.mg.gov.br/portal/ouvidoria" target="_blank" class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-doresopolis-green transition-colors">
-                    <i class="fa-solid fa-bullhorn text-lg mb-1"></i><span class="text-[10px] font-medium">Ouvidoria</span>
-                </a>
-                <a href="https://ilai.memory.com.br/#/public/inicio" target="_blank" class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-doresopolis-green transition-colors">
-                    <i class="fa-solid fa-chart-pie text-lg mb-1"></i><span class="text-[10px] font-medium">Transparência</span>
-                </a>
+
             </div>
         </nav>
     </div>
@@ -205,7 +207,6 @@
     <!-- SCRIPT DE LÓGICA E FIREBASE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        // Importando o onSnapshot para o acompanhamento em tempo real
         import { getFirestore, collection, addDoc, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -221,34 +222,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app); 
 
-        // Controle de Abas
-        window.trocarAbaObras = function(aba) {
-            const abaNova = document.getElementById('aba-nova');
-            const abaAcompanhar = document.getElementById('aba-acompanhar');
-            const btnNova = document.getElementById('btn-aba-nova');
-            const btnAcompanhar = document.getElementById('btn-aba-acompanhar');
-
-            if (aba === 'nova') {
-                abaNova.classList.remove('hidden');
-                abaAcompanhar.classList.add('hidden');
-                
-                btnNova.classList.replace('text-gray-400', 'text-amber-600');
-                btnNova.classList.replace('border-transparent', 'border-amber-500');
-                
-                btnAcompanhar.classList.replace('text-amber-600', 'text-gray-400');
-                btnAcompanhar.classList.replace('border-amber-500', 'border-transparent');
-            } else {
-                abaAcompanhar.classList.remove('hidden');
-                abaNova.classList.add('hidden');
-                
-                btnAcompanhar.classList.replace('text-gray-400', 'text-amber-600');
-                btnAcompanhar.classList.replace('border-transparent', 'border-amber-500');
-                
-                btnNova.classList.replace('text-amber-600', 'text-gray-400');
-                btnNova.classList.replace('border-amber-500', 'border-transparent');
-            }
-        };
-
+        // --- SISTEMA DE TOAST (AVISOS) ---
         window.mostrarAviso = function(mensagem, tipo = 'sucesso') {
             const toast = document.getElementById('toast-aviso');
             const icone = document.getElementById('toast-icone');
@@ -277,14 +251,41 @@
             }, 4000);
         };
 
+        // --- NAVEGAÇÃO DE ABAS INFERIORES ---
+        window.trocarAbaObras = function(aba) {
+            const abaNova = document.getElementById('aba-nova');
+            const abaAcompanhar = document.getElementById('aba-acompanhar');
+            const btnNova = document.getElementById('btn-aba-nova');
+            const btnAcompanhar = document.getElementById('btn-aba-acompanhar');
+
+            if (aba === 'nova') {
+                // Mostra formulário
+                abaNova.classList.remove('hidden');
+                abaAcompanhar.classList.add('hidden');
+                
+                // Pinta botão Novo Chamado de Laranja
+                btnNova.classList.replace('text-gray-400', 'text-amber-500');
+                btnAcompanhar.classList.replace('text-amber-500', 'text-gray-400');
+            } else {
+                // Mostra acompanhamento
+                abaAcompanhar.classList.remove('hidden');
+                abaNova.classList.add('hidden');
+                
+                // Pinta botão Acompanhar de Laranja
+                btnAcompanhar.classList.replace('text-gray-400', 'text-amber-500');
+                btnNova.classList.replace('text-amber-500', 'text-gray-400');
+            }
+        };
+
         let usuarioLogado = "";
 
+        // Verifica o usuário logado ao abrir a tela
         document.addEventListener('DOMContentLoaded', () => {
             const sessaoSalva = localStorage.getItem('usuarioDoresopolis');
             if (sessaoSalva) {
                 usuarioLogado = sessaoSalva;
                 document.getElementById('solicitante-nome').value = sessaoSalva;
-                carregarMeusChamados(); // Dispara o carregamento do histórico
+                carregarMeusChamados(); // Dispara o carregamento do histórico do cidadão
             } else {
                 alert("Você precisa estar logado para abrir um chamado.");
                 window.location.href = "index.html";
@@ -310,15 +311,13 @@
                 snapshot.forEach((docSnap) => {
                     const data = docSnap.data();
                     
-                    // O filtro é feito no JavaScript para exibir apenas os chamados desta pessoa
+                    // Exibe apenas os chamados criados por ESTE usuário
                     if(data.nomeCidadao !== usuarioLogado) return;
                     
                     encontrouChamados = true;
                     
-                    // Formata Data
                     const dataFormatada = new Date(data.dataRegistro).toLocaleDateString('pt-BR', {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit'});
 
-                    // Estiliza Status
                     let statusHtml = '';
                     if(data.status === 'EM ANDAMENTO') {
                         statusHtml = `<span class="bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-[10px] font-black"><i class="fa-solid fa-person-digging mr-1"></i> ANDAMENTO</span>`;
@@ -330,12 +329,11 @@
 
                     const card = `
                         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 relative overflow-hidden">
-                            <!-- Faixa colorida lateral baseada na urgência -->
                             <div class="absolute left-0 top-0 bottom-0 w-1 ${data.urgencia === 'ALTA' ? 'bg-red-500' : (data.urgencia === 'MÉDIA' ? 'bg-amber-500' : 'bg-green-500')}"></div>
                             
-                            <div class="flex justify-between items-start mb-2 pl-2">
-                                <h3 class="font-bold text-gray-800 text-sm w-2/3 leading-tight">${data.tipoServico}</h3>
-                                ${statusHtml}
+                            <div class="flex justify-between items-start mb-2 pl-2 gap-2">
+                                <h3 class="font-bold text-gray-800 text-sm leading-tight">${data.tipoServico}</h3>
+                                <div class="shrink-0">${statusHtml}</div>
                             </div>
                             
                             <div class="pl-2 space-y-1">
@@ -356,6 +354,7 @@
             });
         }
 
+        // --- SISTEMA DE COMPRESSÃO DE FOTO ---
         window.processarFoto = function(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -402,6 +401,7 @@
             document.getElementById('upload-label').classList.add('flex');
         };
 
+        // --- ENVIAR SOLICITAÇÃO ---
         window.enviarSolicitacao = async function(event) {
             event.preventDefault();
 
@@ -436,7 +436,7 @@
                 
                 mostrarAviso("Sua solicitação foi enviada com sucesso!", "sucesso");
                 
-                // Limpa o formulário, remove a foto e pula para a tela de acompanhamento
+                // Limpa o formulário e pula para a aba de acompanhamento automaticamente
                 setTimeout(() => {
                     document.getElementById('form-solicitacao').reset();
                     removerFoto();
