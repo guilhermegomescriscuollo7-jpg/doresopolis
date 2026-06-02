@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#1e293b"> <!-- Cor escura para a TI -->
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <title>Painel TI - Gestão de Acessos | Doresópolis</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        doresopolis: {
+                            green: '#0b5c3b',
+                            dark: '#3f3f46',
+                            light: '#f8fafc'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-gray-200 font-sans text-gray-800 flex justify-center items-center min-h-screen">
+
+    <!-- NOTIFICAÇÃO NO APP (TOAST) -->
+    <div id="toast-aviso" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-[100] bg-green-600 text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-3 transition-all duration-300 opacity-0 pointer-events-none translate-y-[-20px] w-11/12 max-w-sm">
+        <i id="toast-icone" class="fa-solid fa-circle-check text-lg"></i>
+        <span id="toast-mensagem" class="text-sm font-medium leading-snug"></span>
+    </div>
+
+    <!-- CONTAINER PRINCIPAL DO APP -->
+    <div class="bg-gray-50 w-full max-w-md h-[100dvh] flex flex-col relative shadow-2xl overflow-hidden sm:rounded-xl sm:h-[95vh] sm:border sm:border-gray-300">
+        
+        <!-- HEADER TI (Visual Escuro/Tech) -->
+        <header class="bg-slate-800 shadow-md z-10 flex-shrink-0 text-white border-b border-slate-900">
+            <div class="bg-blue-500 h-1.5 w-full"></div> 
+            
+            <div class="px-4 py-3 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-full bg-slate-700 text-blue-400 flex items-center justify-center shrink-0 border border-slate-600">
+                        <i class="fa-solid fa-server text-lg"></i>
+                    </div>
+                    <div>
+                        <p class="text-[9px] tracking-[0.1em] text-slate-400 uppercase font-bold leading-none">Gestão de Sistema</p>
+                        <h1 class="text-xl font-black text-white tracking-tight uppercase leading-none mt-1">Painel TI</h1>
+                    </div>
+                </div>
+                <button onclick="window.location.href='index.html'" class="text-slate-400 hover:text-white transition-colors" title="Sair do Painel TI">
+                    <i class="fa-solid fa-right-from-bracket text-xl"></i>
+                </button>
+            </div>
+
+            <!-- ESTATÍSTICAS RÁPIDAS -->
+            <div class="flex border-t border-slate-700 bg-slate-800 px-4 py-2 gap-4">
+                <div class="flex flex-col">
+                    <span class="text-[9px] text-slate-400 uppercase font-bold">Total Cadastros</span>
+                    <span id="stat-total" class="text-lg font-black text-white leading-none">0</span>
+                </div>
+                <div class="w-px h-6 bg-slate-600 my-auto"></div>
+                <div class="flex flex-col">
+                    <span class="text-[9px] text-slate-400 uppercase font-bold">Admins Ativos</span>
+                    <span id="stat-admins" class="text-lg font-black text-blue-400 leading-none">0</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- CONTEÚDO PRINCIPAL (LISTA DE USUÁRIOS) -->
+        <main class="flex-grow overflow-y-auto p-4 pb-6 scroll-smooth block bg-gray-100">
+            
+            <div class="mb-4 flex justify-between items-end">
+                <div>
+                    <h2 class="text-lg font-bold text-gray-800">Controle de Acessos</h2>
+                    <p class="text-gray-500 mt-0.5 text-xs leading-snug">Defina quem é administrador de cada secretaria.</p>
+                </div>
+            </div>
+
+            <!-- BARRA DE PESQUISA SIMPLES (Filtragem via JS) -->
+            <div class="relative mb-5">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
+                </div>
+                <input type="text" id="input-pesquisa" onkeyup="filtrarUsuarios()" placeholder="Buscar por nome ou telefone..." class="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm shadow-sm">
+            </div>
+
+            <!-- LISTA DE USUÁRIOS -->
+            <div id="lista-usuarios" class="flex flex-col gap-3">
+                <div class="text-center py-10 bg-white rounded-xl shadow-sm border border-gray-200">
+                    <i class="fa-solid fa-spinner fa-spin text-2xl text-gray-400 mb-3"></i>
+                    <p class="text-xs text-gray-500 font-medium">Carregando banco de usuários...</p>
+                </div>
+            </div>
+        </main>
+
+        <!-- ========================================== -->
+        <!-- MODAL DE EDIÇÃO DE ACESSO                  -->
+        <!-- ========================================== -->
+        <div id="modal-acesso" class="absolute inset-0 z-[150] hidden flex-col justify-end">
+            <!-- Overlay escuro -->
+            <div id="modal-overlay" class="absolute inset-0 bg-black bg-opacity-0 transition-opacity duration-300" onclick="fecharModal()"></div>
+            
+            <!-- Janela -->
+            <div id="modal-content" class="bg-white rounded-t-3xl max-h-[85vh] overflow-y-auto w-full relative z-10 transform translate-y-full transition-transform duration-300 flex flex-col shadow-[0_-10px_40px_rgba(0,0,0,0.2)]">
+                
+                <div class="sticky top-0 bg-white px-5 py-4 border-b border-gray-100 flex justify-between items-center z-20">
+                    <h3 class="font-black text-gray-800 text-lg">Alterar Permissão</h3>
+                    <button onclick="fecharModal()" class="w-8 h-8 bg-gray-100 text-gray-600 rounded-full hover:bg-gray-200 flex items-center justify-center transition-colors">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                
+                <div class="p-5 pb-8">
+                    <!-- Resumo do Usuário -->
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 mb-5 flex items-center gap-4">
+                        <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center border border-slate-200 shadow-sm shrink-0 text-slate-400 text-xl">
+                            <i class="fa-solid fa-user"></i>
+                        </div>
+                        <div class="overflow-hidden">
+                            <h4 id="modal-user-nome" class="font-bold text-gray-800 text-sm truncate">Nome do Usuário</h4>
+                            <p id="modal-user-telefone" class="text-xs text-gray-500 truncate mt-0.5">Telefone</p>
+                        </div>
+                    </div>
+
+                    <form onsubmit="salvarNovaPermissao(event)" class="space-y-4">
+                        <input type="hidden" id="modal-user-id">
+
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-2"><i class="fa-solid fa-key text-blue-500 mr-1"></i> Nível de Acesso (Cargo)</label>
+                            <div class="relative">
+                                <select id="modal-user-acesso" required class="w-full pl-3 pr-10 py-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm appearance-none text-gray-800 font-medium shadow-sm">
+                                    <option value="Cidadão">👤 Cidadão (Padrão)</option>
+                                    <option value="Admin - Obras">👷‍♂️ Admin - Secretaria de Obras</option>
+                                    <option value="Admin - Saúde">🏥 Admin - Secretaria de Saúde</option>
+                                    <option value="Admin - Educação">🎓 Admin - Secretaria de Educação</option>
+                                    <option value="Admin - Tributos">📄 Admin - Sec. Tributos/Finanças</option>
+                                    <option value="Admin - Transporte">🚌 Admin - Sec. Transporte</option>
+                                    <option value="TI">💻 TI / Super Admin</option>
+                                </select>
+                                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                    <i class="fa-solid fa-chevron-down text-gray-400 text-xs"></i>
+                                </div>
+                            </div>
+                            <p class="text-[10px] text-gray-500 mt-2 leading-tight">Atenção: Ao conceder status de "Admin", este usuário será redirecionado para o painel de gestão interno ao fazer login.</p>
+                        </div>
+
+                        <button type="submit" id="btn-salvar-acesso" class="w-full bg-blue-600 text-white font-bold py-3.5 rounded-xl shadow-md hover:bg-blue-700 active:scale-[0.98] transition-all flex justify-center items-center gap-2 mt-2">
+                            <i class="fa-solid fa-floppy-disk"></i> Confirmar Alteração
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- SCRIPT DE LÓGICA E FIREBASE -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getFirestore, collection, query, orderBy, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCpaNuC1IUkteO4fHzFPiNS7s580EyTleU",
+            authDomain: "doresopolis.firebaseapp.com",
+            projectId: "doresopolis",
+            storageBucket: "doresopolis.firebasestorage.app",
+            messagingSenderId: "465119846468",
+            appId: "1:465119846468:web:8b292481fec10132cf9c11",
+            measurementId: "G-WXWGXEWY53"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app); 
+
+        // Memória para a busca (search bar)
+        window.todosUsuarios = [];
+
+        // --- SISTEMA DE TOAST (AVISOS) ---
+        window.mostrarAviso = function(mensagem, tipo = 'sucesso') {
+            const toast = document.getElementById('toast-aviso');
+            const icone = document.getElementById('toast-icone');
+            document.getElementById('toast-mensagem').innerText = mensagem;
+
+            if(tipo === 'sucesso') {
+                toast.classList.remove('bg-red-600');
+                toast.classList.add('bg-green-600');
+                icone.className = 'fa-solid fa-circle-check text-lg';
+            } else {
+                toast.classList.remove('bg-green-600');
+                toast.classList.add('bg-red-600');
+                icone.className = 'fa-solid fa-circle-exclamation text-lg';
+            }
+
+            toast.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-[-20px]');
+            toast.classList.add('opacity-100', 'translate-y-0');
+
+            setTimeout(() => {
+                toast.classList.remove('opacity-100', 'translate-y-0');
+                toast.classList.add('opacity-0', 'pointer-events-none', 'translate-y-[-20px]');
+            }, 3000);
+        };
+
+        // --- CARREGAR USUÁRIOS EM TEMPO REAL ---
+        const usuariosRef = collection(db, "usuarios");
+        const qUsuarios = query(usuariosRef, orderBy("nomeCompleto", "asc"));
+
+        onSnapshot(qUsuarios, (snapshot) => {
+            const container = document.getElementById("lista-usuarios");
+            
+            if (snapshot.empty) {
+                container.innerHTML = `<div class="text-center py-6 text-gray-500 text-sm">Nenhum usuário cadastrado no sistema.</div>`;
+                return;
+            }
+
+            window.todosUsuarios = []; // Limpa o array
+            let totalAdmins = 0;
+
+            snapshot.forEach((docSnap) => {
+                const data = docSnap.data();
+                const id = docSnap.id;
+                const tipoAcesso = data.tipoAcesso || 'Cidadão'; // Se não tiver o campo, é cidadão
+                
+                if (tipoAcesso !== 'Cidadão') {
+                    totalAdmins++;
+                }
+
+                window.todosUsuarios.push({
+                    id: id,
+                    nome: data.nomeCompleto || 'Sem Nome',
+                    telefone: data.telefone || 'Sem Telefone',
+                    acesso: tipoAcesso
+                });
+            });
+
+            // Atualiza Estatísticas
+            document.getElementById("stat-total").innerText = window.todosUsuarios.length;
+            document.getElementById("stat-admins").innerText = totalAdmins;
+
+            renderizarLista(window.todosUsuarios);
+        }, (error) => {
+            console.error("Erro ao puxar usuários:", error);
+            document.getElementById("lista-usuarios").innerHTML = `<div class="text-center py-8 text-red-500 text-sm">Erro de conexão com o banco de dados.</div>`;
+        });
+
+        // --- RENDERIZAR LISTA NA TELA ---
+        window.renderizarLista = function(arrayUsuarios) {
+            const container = document.getElementById("lista-usuarios");
+            container.innerHTML = "";
+
+            if (arrayUsuarios.length === 0) {
+                container.innerHTML = `<div class="text-center py-6 text-gray-500 text-xs">Nenhum resultado para a busca.</div>`;
+                return;
+            }
+
+            arrayUsuarios.forEach(user => {
+                
+                // Estilo da Etiqueta de Acesso
+                let badgeAcesso = '';
+                if (user.acesso === 'Cidadão') {
+                    badgeAcesso = `<span class="bg-gray-100 text-gray-600 border border-gray-200 px-2 py-0.5 rounded text-[9px] font-bold uppercase"><i class="fa-regular fa-user mr-1"></i> Cidadão</span>`;
+                } else if (user.acesso === 'TI') {
+                    badgeAcesso = `<span class="bg-blue-100 text-blue-700 border border-blue-200 px-2 py-0.5 rounded text-[9px] font-black uppercase"><i class="fa-solid fa-code mr-1"></i> TI / Admin</span>`;
+                } else {
+                    // Outras secretarias (Obras, Saúde, etc)
+                    badgeAcesso = `<span class="bg-amber-100 text-amber-700 border border-amber-200 px-2 py-0.5 rounded text-[9px] font-black uppercase"><i class="fa-solid fa-user-tie mr-1"></i> ${user.acesso}</span>`;
+                }
+
+                // Proteção para passar variáveis com aspas na função onclick
+                const nomeEscapado = user.nome.replace(/'/g, "\\'");
+
+                const card = `
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-3 flex justify-between items-center transition-all hover:border-blue-300 cursor-default">
+                        <div class="flex flex-col w-2/3 pr-2">
+                            <h4 class="font-bold text-gray-800 text-sm truncate">${user.nome}</h4>
+                            <p class="text-[11px] text-gray-500 mt-0.5 mb-1.5 font-medium tracking-wide"><i class="fa-solid fa-phone text-gray-400 text-[9px] mr-1"></i> ${user.telefone}</p>
+                            <div>${badgeAcesso}</div>
+                        </div>
+                        <div class="shrink-0 pl-2 border-l border-gray-100">
+                            <button onclick="abrirModal('${user.id}', '${nomeEscapado}', '${user.telefone}', '${user.acesso}')" class="bg-slate-100 text-slate-600 p-2.5 rounded-lg border border-slate-200 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 active:scale-95 transition-all" title="Alterar Permissão">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += card;
+            });
+        };
+
+        // --- SISTEMA DE PESQUISA (FILTRO) ---
+        window.filtrarUsuarios = function() {
+            const termo = document.getElementById('input-pesquisa').value.toLowerCase();
+            const usuariosFiltrados = window.todosUsuarios.filter(user => 
+                user.nome.toLowerCase().includes(termo) || 
+                user.telefone.includes(termo)
+            );
+            renderizarLista(usuariosFiltrados);
+        };
+
+        // --- LÓGICA DO MODAL ---
+        window.abrirModal = function(id, nome, telefone, acessoAtual) {
+            document.getElementById('modal-user-id').value = id;
+            document.getElementById('modal-user-nome').innerText = nome;
+            document.getElementById('modal-user-telefone').innerText = telefone;
+            document.getElementById('modal-user-acesso').value = acessoAtual;
+
+            const modal = document.getElementById('modal-acesso');
+            const overlay = document.getElementById('modal-overlay');
+            const content = document.getElementById('modal-content');
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            
+            void modal.offsetWidth;
+
+            overlay.classList.replace('bg-opacity-0', 'bg-opacity-60');
+            content.classList.remove('translate-y-full');
+        };
+
+        window.fecharModal = function() {
+            const modal = document.getElementById('modal-acesso');
+            const overlay = document.getElementById('modal-overlay');
+            const content = document.getElementById('modal-content');
+
+            overlay.classList.replace('bg-opacity-60', 'bg-opacity-0');
+            content.classList.add('translate-y-full');
+
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300); 
+        };
+
+        // --- SALVAR NOVA PERMISSÃO NO BANCO ---
+        window.salvarNovaPermissao = async function(event) {
+            event.preventDefault();
+
+            const btn = document.getElementById('btn-salvar-acesso');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Salvando...';
+
+            const idUser = document.getElementById('modal-user-id').value;
+            const novoAcesso = document.getElementById('modal-user-acesso').value;
+
+            try {
+                // Atualiza APENAS o campo tipoAcesso no documento do usuário
+                const userRef = doc(db, "usuarios", idUser);
+                await updateDoc(userRef, {
+                    tipoAcesso: novoAcesso
+                });
+                
+                mostrarAviso("Permissão de usuário atualizada com sucesso!");
+                fecharModal();
+                
+                // O onSnapshot vai reagir à mudança e atualizar a lista sozinho
+            } catch (error) {
+                console.error("Erro ao atualizar acesso: ", error);
+                mostrarAviso("Erro ao conectar ao servidor.", "erro");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Confirmar Alteração';
+            }
+        };
+    </script>
+</body>
+</html>
