@@ -9,7 +9,7 @@
     <meta name="theme-color" content="#0b5c3b">
     <meta name="mobile-web-app-capable" content="yes">
     
-    <title>App Doresópolis</title>
+    <title>Doresópolis</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -31,7 +31,6 @@
     </script>
     
     <style>
-        /* Oculta a barra de rolagem no carrossel de notícias, mas mantém a função de rolar/arrastar */
         .hide-scrollbar::-webkit-scrollbar {
             display: none;
         }
@@ -85,7 +84,7 @@
                         </div>
                     </div>
 
-                    <button type="submit" class="w-full bg-doresopolis-green text-white font-bold py-3 rounded-xl shadow-md hover:bg-green-800 active:scale-[0.98] transition-all mt-4">
+                    <button type="submit" id="btn-login" class="w-full bg-doresopolis-green text-white font-bold py-3 rounded-xl shadow-md hover:bg-green-800 active:scale-[0.98] transition-all mt-4 disabled:opacity-50">
                         Entrar no App
                     </button>
                 </form>
@@ -215,10 +214,10 @@
             <!-- CONTEÚDO PRINCIPAL -->
             <main class="flex-grow overflow-y-auto overflow-x-hidden p-4 pb-24 scroll-smooth">
                 
-                <!-- Saudação e Widget de Clima -->
+                <!-- Saudação Dinâmica e Widget de Clima -->
                 <div class="flex justify-between items-center mb-6 mt-1">
                     <div>
-                        <h2 class="text-xl font-bold text-gray-800">Olá, <span id="nome-usuario-logado" class="text-doresopolis-green">Cidadão</span>!</h2>
+                        <h2 class="text-xl font-bold text-gray-800">Olá, <span id="nome-usuario-logado" class="text-doresopolis-green"></span>!</h2>
                         <p class="text-gray-500 mt-0.5 text-xs">O que você precisa hoje?</p>
                     </div>
                     <!-- WIDGET DE CLIMA/TEMPO -->
@@ -308,9 +307,7 @@
                 <!-- TELEFONES ÚTEIS E EMERGÊNCIA -->
                 <div class="mb-4">
                     <h3 class="font-bold text-gray-800 text-sm mb-3 border-l-4 border-red-500 pl-2">Telefones Úteis e Emergência</h3>
-                    <!-- Grade de 2 colunas para botões menores e práticos -->
                     <div class="grid grid-cols-2 gap-3">
-                        <!-- Botão ligar Polícia -->
                         <a href="tel:190" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 hover:border-red-300 active:bg-red-50 transition-all">
                             <div class="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center mr-3 shrink-0">
                                 <i class="fa-solid fa-shield-halved text-sm"></i>
@@ -320,7 +317,6 @@
                                 <p class="text-[10px] text-red-600 font-bold">Ligar 190</p>
                             </div>
                         </a>
-                        <!-- Botão ligar Ambulância -->
                         <a href="tel:192" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 hover:border-red-300 active:bg-red-50 transition-all">
                             <div class="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center mr-3 shrink-0">
                                 <i class="fa-solid fa-truck-medical text-sm"></i>
@@ -330,7 +326,6 @@
                                 <p class="text-[10px] text-red-600 font-bold">Ligar 192</p>
                             </div>
                         </a>
-                        <!-- Botão Saúde Local -->
                         <a href="tel:3733561212" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 hover:border-blue-300 active:bg-blue-50 transition-all">
                             <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mr-3 shrink-0">
                                 <i class="fa-solid fa-house-medical text-sm"></i>
@@ -340,7 +335,6 @@
                                 <p class="text-[9px] text-gray-500 font-medium">3356-1212</p>
                             </div>
                         </a>
-                        <!-- Botão Prefeitura -->
                         <a href="tel:3733561221" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 hover:border-doresopolis-green active:bg-green-50 transition-all">
                             <div class="w-8 h-8 rounded-full bg-green-100 text-doresopolis-green flex items-center justify-center mr-3 shrink-0">
                                 <i class="fa-solid fa-building-user text-sm"></i>
@@ -500,7 +494,6 @@
                 });
                 
                 localStorage.setItem('usuarioDoresopolis', primeiroNome);
-                
                 document.getElementById('nome-usuario-logado').innerText = primeiroNome; 
                 mostrarTela('tela-principal');
                 mostrarAviso(`Bem-vindo, ${primeiroNome}!`, 'sucesso');
@@ -516,16 +509,47 @@
             }
         };
 
-        // --- LÓGICA DE LOGIN ---
-        window.realizarLogin = function(event) {
+        // --- LÓGICA DE LOGIN COM BUSCA NO BANCO ---
+        window.realizarLogin = async function(event) {
             event.preventDefault();
+            
+            const btn = document.getElementById('btn-login');
+            btn.disabled = true;
+            btn.innerText = "Entrando...";
+
             const telefone = document.getElementById('login-telefone').value;
-            
-            localStorage.setItem('usuarioDoresopolis', 'Cidadão');
-            
-            document.getElementById('nome-usuario-logado').innerText = "Cidadão";
-            mostrarTela('tela-principal');
-            mostrarAviso("Login realizado com sucesso!", 'sucesso');
+            const senha = document.getElementById('login-senha').value;
+
+            try {
+                const usuariosRef = collection(db, "usuarios");
+                
+                // Busca um documento que combine exatamente o telefone E a senha
+                const qLogin = query(usuariosRef, where("telefone", "==", telefone), where("senha", "==", senha));
+                const snapshot = await getDocs(qLogin);
+                
+                if (snapshot.empty) {
+                    // Se não encontrou, ou a senha tá errada ou o telefone não existe
+                    mostrarAviso("Telefone ou senha incorretos.");
+                } else {
+                    // Se encontrou, pega os dados do usuário para extrair o nome
+                    const usuarioData = snapshot.docs[0].data();
+                    const primeiroNome = usuarioData.nomeCompleto.split(' ')[0];
+                    
+                    // Salva a sessão no celular
+                    localStorage.setItem('usuarioDoresopolis', primeiroNome);
+                    
+                    // Atualiza a interface
+                    document.getElementById('nome-usuario-logado').innerText = primeiroNome;
+                    mostrarTela('tela-principal');
+                    mostrarAviso(`Bem-vindo de volta, ${primeiroNome}!`, 'sucesso');
+                }
+            } catch (error) {
+                console.error("Erro ao tentar fazer login: ", error);
+                mostrarAviso("Erro de conexão ao tentar fazer login. Tente novamente.");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Entrar no App";
+            }
         };
 
         // --- LOGOUT E NAVEGAÇÃO ---
