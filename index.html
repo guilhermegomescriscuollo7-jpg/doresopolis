@@ -33,8 +33,17 @@
 
 <body class="bg-gray-200 font-sans text-gray-800 flex justify-center items-center min-h-screen">
 
+    <!-- NOTIFICAÇÃO NO APP (TOAST) -->
+    <div id="toast-aviso" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-[100] bg-red-600 text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-3 transition-all duration-300 opacity-0 pointer-events-none translate-y-[-20px] w-11/12 max-w-sm">
+        <i id="toast-icone" class="fa-solid fa-circle-exclamation text-lg"></i>
+        <span id="toast-mensagem" class="text-sm font-medium leading-snug"></span>
+    </div>
+
     <div class="bg-gray-50 w-full max-w-md h-[100dvh] flex flex-col relative shadow-2xl overflow-hidden sm:rounded-xl sm:h-[95vh] sm:border sm:border-gray-300">
         
+        <!-- ========================================== -->
+        <!-- TELA 1: LOGIN                              -->
+        <!-- ========================================== -->
         <div id="tela-login" class="flex flex-col h-full w-full bg-white z-20 absolute inset-0 transition-opacity duration-300">
             <div class="flex-grow flex flex-col justify-center px-8">
                 
@@ -79,6 +88,9 @@
             </div>
         </div>
 
+        <!-- ========================================== -->
+        <!-- TELA 2: CADASTRO                           -->
+        <!-- ========================================== -->
         <div id="tela-cadastro" class="flex flex-col h-full w-full bg-white z-30 absolute inset-0 hidden overflow-y-auto transition-opacity duration-300">
             <div class="p-6">
                 <button onclick="mostrarTela('tela-login')" class="text-gray-500 hover:text-doresopolis-green flex items-center mb-6">
@@ -168,6 +180,9 @@
             </div>
         </div>
 
+        <!-- ========================================== -->
+        <!-- TELA 3: PAINEL PRINCIPAL (APP INTERNO)     -->
+        <!-- ========================================== -->
         <div id="tela-principal" class="hidden flex-col h-full w-full z-10">
             <header class="bg-white shadow-sm border-b border-gray-200 z-10 flex-shrink-0">
                 <div class="bg-doresopolis-green h-2 w-full"></div>
@@ -233,6 +248,7 @@
                 </div>
             </main>
 
+            <!-- BARRA DE NAVEGAÇÃO INFERIOR -->
             <nav class="absolute bottom-0 w-full bg-white border-t border-gray-200 z-50 pb-safe">
                 <div class="flex justify-around items-center h-16">
                     <a href="#" onclick="event.preventDefault(); mostrarTela('tela-principal');" class="flex flex-col items-center justify-center w-full h-full text-doresopolis-green">
@@ -254,9 +270,11 @@
 
     </div>
 
+    <!-- ========================================== -->
+    <!-- SCRIPT DE LÓGICA E FIREBASE                -->
+    <!-- ========================================== -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        // Importadas as funções query, where e getDocs para podermos realizar a verificação no banco
         import { getFirestore, collection, addDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -272,6 +290,40 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app); 
 
+        // --- SISTEMA DE AVISOS INTERNOS (TOAST) ---
+        window.mostrarAviso = function(mensagem, tipo = 'erro') {
+            const toast = document.getElementById('toast-aviso');
+            const icone = document.getElementById('toast-icone');
+            document.getElementById('toast-mensagem').innerText = mensagem;
+
+            // Define as cores com base no tipo
+            if(tipo === 'sucesso') {
+                toast.classList.remove('bg-red-600');
+                toast.classList.add('bg-green-600');
+                icone.className = 'fa-solid fa-circle-check text-lg';
+            } else if (tipo === 'info') {
+                toast.classList.remove('bg-red-600', 'bg-green-600');
+                toast.classList.add('bg-blue-600');
+                icone.className = 'fa-solid fa-circle-info text-lg';
+            } else {
+                // erro padrão
+                toast.classList.remove('bg-green-600', 'bg-blue-600');
+                toast.classList.add('bg-red-600');
+                icone.className = 'fa-solid fa-circle-exclamation text-lg';
+            }
+
+            // Mostra o Toast
+            toast.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-[-20px]');
+            toast.classList.add('opacity-100', 'translate-y-0');
+
+            // Esconde após 4 segundos
+            setTimeout(() => {
+                toast.classList.remove('opacity-100', 'translate-y-0');
+                toast.classList.add('opacity-0', 'pointer-events-none', 'translate-y-[-20px]');
+            }, 4000);
+        };
+
+        // --- GERENCIAMENTO DE TELAS E SESSÃO ---
         window.mostrarTela = function(telaId) {
             document.getElementById('tela-login').classList.add('hidden');
             document.getElementById('tela-cadastro').classList.add('hidden');
@@ -285,13 +337,24 @@
             }
         };
 
-        // --- LÓGICA DE CADASTRO COM VERIFICAÇÃO DE DUPLICIDADE ---
+        // Verifica se o usuário já estava logado antes de atualizar a página
+        document.addEventListener('DOMContentLoaded', () => {
+            const sessaoSalva = localStorage.getItem('usuarioDoresopolis');
+            if (sessaoSalva) {
+                document.getElementById('nome-usuario-logado').innerText = sessaoSalva;
+                mostrarTela('tela-principal');
+            } else {
+                mostrarTela('tela-login');
+            }
+        });
+
+        // --- LÓGICA DE CADASTRO COM VERIFICAÇÃO ---
         window.realizarCadastro = async function(event) {
             event.preventDefault(); 
             
             const btn = document.getElementById('btn-cadastrar');
             btn.disabled = true;
-            btn.innerText = "Criando Cadastro!"; // Novo texto do botão conforme solicitado
+            btn.innerText = "Criando Cadastro!";
 
             const nome = document.getElementById('cad-nome').value;
             const telefone = document.getElementById('cad-telefone').value;
@@ -301,34 +364,35 @@
             const senha = document.getElementById('cad-senha').value;
 
             const enderecoCompleto = `${rua}, ${numero} - ${bairro}`;
+            const primeiroNome = nome.split(' ')[0];
 
             try {
                 const usuariosRef = collection(db, "usuarios");
 
-                // 1. Verificando se o TELEFONE já existe no banco
+                // 1. Verificando Telefone
                 const qTelefone = query(usuariosRef, where("telefone", "==", telefone));
                 const snapshotTelefone = await getDocs(qTelefone);
                 
                 if (!snapshotTelefone.empty) {
-                    alert("Atenção: Já existe um cadastro registrado com este número de telefone.");
+                    mostrarAviso("Já existe um cadastro com este número de telefone.");
                     btn.disabled = false;
                     btn.innerText = "Concluir Cadastro";
-                    return; // Para a execução do código aqui e não salva
+                    return; 
                 }
 
-                // 2. Verificando se o NOME já existe no banco
+                // 2. Verificando Nome
                 const qNome = query(usuariosRef, where("nomeCompleto", "==", nome));
                 const snapshotNome = await getDocs(qNome);
                 
                 if (!snapshotNome.empty) {
-                    alert("Atenção: Já existe um cadastro registrado com este nome completo.");
+                    mostrarAviso("Já existe um cadastro registrado com este nome completo.");
                     btn.disabled = false;
                     btn.innerText = "Concluir Cadastro";
-                    return; // Para a execução do código aqui e não salva
+                    return; 
                 }
 
-                // 3. Se passou pelas verificações, salva o novo cadastro
-                const docRef = await addDoc(usuariosRef, {
+                // 3. Salva o novo cadastro
+                await addDoc(usuariosRef, {
                     nomeCompleto: nome,
                     telefone: telefone,
                     endereco: enderecoCompleto,
@@ -336,32 +400,44 @@
                     dataRegistro: new Date().toISOString()
                 });
                 
-                console.log("Usuário salvo no banco com ID: ", docRef.id);
+                // Salva a sessão para não deslogar
+                localStorage.setItem('usuarioDoresopolis', primeiroNome);
                 
-                document.getElementById('nome-usuario-logado').innerText = nome.split(' ')[0]; 
+                document.getElementById('nome-usuario-logado').innerText = primeiroNome; 
                 mostrarTela('tela-principal');
+                mostrarAviso(`Bem-vindo, ${primeiroNome}!`, 'sucesso');
 
             } catch (error) {
-                console.error("Erro ao salvar no Firebase Firestore: ", error);
-                alert("Ocorreu um erro ao verificar/salvar o seu cadastro. Verifique a conexão com a internet.");
+                console.error("Erro ao salvar: ", error);
+                mostrarAviso("Ocorreu um erro de conexão. Tente novamente.");
             } finally {
                 btn.disabled = false;
-                // Volta o texto normal caso dê erro de internet ou o cadastro já exista
                 if(btn.innerText === "Criando Cadastro!") {
                     btn.innerText = "Concluir Cadastro";
                 }
             }
         };
 
+        // --- LÓGICA DE LOGIN ---
         window.realizarLogin = function(event) {
             event.preventDefault();
+            // Apenas simulação de login por enquanto. No futuro, você pode checar a senha no Firebase.
             const telefone = document.getElementById('login-telefone').value;
+            
+            // Salva a sessão para não deslogar
+            localStorage.setItem('usuarioDoresopolis', 'Cidadão');
+            
             document.getElementById('nome-usuario-logado').innerText = "Cidadão";
             mostrarTela('tela-principal');
+            mostrarAviso("Login realizado com sucesso!", 'sucesso');
         };
 
+        // --- LOGOUT E NAVEGAÇÃO ---
         window.fazerLogout = function() {
             if(confirm("Deseja realmente sair da sua conta?")) {
+                // Remove a sessão salva no celular
+                localStorage.removeItem('usuarioDoresopolis');
+                
                 mostrarTela('tela-login');
                 document.getElementById('login-telefone').value = '';
                 document.getElementById('login-senha').value = '';
@@ -370,7 +446,7 @@
 
         window.navegarPara = function(secretaria) {
             if (navigator.vibrate) navigator.vibrate(50);
-            alert('Acessando os serviços restritos de: ' + secretaria.toUpperCase());
+            mostrarAviso(`Acessando serviços de: ${secretaria.toUpperCase()}`, 'info');
         };
     </script>
 
