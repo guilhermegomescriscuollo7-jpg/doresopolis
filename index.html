@@ -256,8 +256,8 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        // Importando as funções oficiais do Banco de Dados Firestore
-        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        // Importadas as funções query, where e getDocs para podermos realizar a verificação no banco
+        import { getFirestore, collection, addDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCpaNuC1IUkteO4fHzFPiNS7s580EyTleU",
@@ -270,7 +270,7 @@
         };
 
         const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app); // Inicializando o banco de dados
+        const db = getFirestore(app); 
 
         window.mostrarTela = function(telaId) {
             document.getElementById('tela-login').classList.add('hidden');
@@ -285,14 +285,13 @@
             }
         };
 
-        // --- LÓGICA DE CADASTRO COM INTEGRAÇÃO AO BANCO DE DADOS ---
-        // A função agora é assíncrona (async) para poder aguardar o retorno do Firebase
+        // --- LÓGICA DE CADASTRO COM VERIFICAÇÃO DE DUPLICIDADE ---
         window.realizarCadastro = async function(event) {
             event.preventDefault(); 
             
             const btn = document.getElementById('btn-cadastrar');
             btn.disabled = true;
-            btn.innerText = "Salvando no Banco...";
+            btn.innerText = "Criando Cadastro!"; // Novo texto do botão conforme solicitado
 
             const nome = document.getElementById('cad-nome').value;
             const telefone = document.getElementById('cad-telefone').value;
@@ -304,12 +303,36 @@
             const enderecoCompleto = `${rua}, ${numero} - ${bairro}`;
 
             try {
-                // Salvando na coleção 'usuarios' do Firestore
-                const docRef = await addDoc(collection(db, "usuarios"), {
+                const usuariosRef = collection(db, "usuarios");
+
+                // 1. Verificando se o TELEFONE já existe no banco
+                const qTelefone = query(usuariosRef, where("telefone", "==", telefone));
+                const snapshotTelefone = await getDocs(qTelefone);
+                
+                if (!snapshotTelefone.empty) {
+                    alert("Atenção: Já existe um cadastro registrado com este número de telefone.");
+                    btn.disabled = false;
+                    btn.innerText = "Concluir Cadastro";
+                    return; // Para a execução do código aqui e não salva
+                }
+
+                // 2. Verificando se o NOME já existe no banco
+                const qNome = query(usuariosRef, where("nomeCompleto", "==", nome));
+                const snapshotNome = await getDocs(qNome);
+                
+                if (!snapshotNome.empty) {
+                    alert("Atenção: Já existe um cadastro registrado com este nome completo.");
+                    btn.disabled = false;
+                    btn.innerText = "Concluir Cadastro";
+                    return; // Para a execução do código aqui e não salva
+                }
+
+                // 3. Se passou pelas verificações, salva o novo cadastro
+                const docRef = await addDoc(usuariosRef, {
                     nomeCompleto: nome,
                     telefone: telefone,
                     endereco: enderecoCompleto,
-                    senha: senha, // Atenção: em um sistema real as senhas devem ir pro Firebase Auth, mas aqui salvamos no DB conforme pedido
+                    senha: senha, 
                     dataRegistro: new Date().toISOString()
                 });
                 
@@ -320,10 +343,13 @@
 
             } catch (error) {
                 console.error("Erro ao salvar no Firebase Firestore: ", error);
-                alert("Ocorreu um erro ao salvar o seu cadastro. Verifique a conexão com a internet ou as permissões do Firebase.");
+                alert("Ocorreu um erro ao verificar/salvar o seu cadastro. Verifique a conexão com a internet.");
             } finally {
                 btn.disabled = false;
-                btn.innerText = "Concluir Cadastro";
+                // Volta o texto normal caso dê erro de internet ou o cadastro já exista
+                if(btn.innerText === "Criando Cadastro!") {
+                    btn.innerText = "Concluir Cadastro";
+                }
             }
         };
 
