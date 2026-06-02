@@ -9,7 +9,7 @@
     <meta name="theme-color" content="#0b5c3b">
     <meta name="mobile-web-app-capable" content="yes">
     
-    <title>Doresópolis</title>
+    <title>App Doresópolis</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -434,11 +434,18 @@
             }
         };
 
+        // Verifica o cache do navegador e remove lixo de versões antigas do app
         document.addEventListener('DOMContentLoaded', () => {
             const sessaoSalva = localStorage.getItem('usuarioDoresopolis');
             if (sessaoSalva) {
-                document.getElementById('nome-usuario-logado').innerText = sessaoSalva;
-                mostrarTela('tela-principal');
+                // TRAVA DE SEGURANÇA: Se o cache tiver guardado o texto antigo "Cidadão", ele limpa e força o logout
+                if (sessaoSalva === 'Cidadão') {
+                    localStorage.removeItem('usuarioDoresopolis');
+                    mostrarTela('tela-login');
+                } else {
+                    document.getElementById('nome-usuario-logado').innerText = sessaoSalva;
+                    mostrarTela('tela-principal');
+                }
             } else {
                 mostrarTela('tela-login');
             }
@@ -509,7 +516,7 @@
             }
         };
 
-        // --- LÓGICA DE LOGIN COM BUSCA NO BANCO ---
+        // --- LÓGICA DE LOGIN COM BUSCA REAL NO BANCO DE DADOS ---
         window.realizarLogin = async function(event) {
             event.preventDefault();
             
@@ -528,17 +535,17 @@
                 const snapshot = await getDocs(qLogin);
                 
                 if (snapshot.empty) {
-                    // Se não encontrou, ou a senha tá errada ou o telefone não existe
+                    // Se não encontrou, a senha está errada ou o telefone não existe
                     mostrarAviso("Telefone ou senha incorretos.");
                 } else {
-                    // Se encontrou, pega os dados do usuário para extrair o nome
+                    // Se encontrou, pega os dados do usuário para extrair o primeiro nome
                     const usuarioData = snapshot.docs[0].data();
                     const primeiroNome = usuarioData.nomeCompleto.split(' ')[0];
                     
-                    // Salva a sessão no celular
+                    // Salva a sessão no celular do usuário
                     localStorage.setItem('usuarioDoresopolis', primeiroNome);
                     
-                    // Atualiza a interface
+                    // Atualiza a interface com o nome real
                     document.getElementById('nome-usuario-logado').innerText = primeiroNome;
                     mostrarTela('tela-principal');
                     mostrarAviso(`Bem-vindo de volta, ${primeiroNome}!`, 'sucesso');
