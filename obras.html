@@ -33,13 +33,16 @@
 
 <body class="bg-gray-200 font-sans text-gray-800 flex justify-center items-center min-h-screen">
 
+    <!-- NOTIFICAÇÃO NO APP (TOAST) -->
     <div id="toast-aviso" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-[100] bg-green-600 text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-3 transition-all duration-300 opacity-0 pointer-events-none translate-y-[-20px] w-11/12 max-w-sm">
         <i id="toast-icone" class="fa-solid fa-circle-check text-lg"></i>
         <span id="toast-mensagem" class="text-sm font-medium leading-snug"></span>
     </div>
 
+    <!-- CONTAINER PRINCIPAL DO APP -->
     <div class="bg-gray-50 w-full max-w-md h-[100dvh] flex flex-col relative shadow-2xl overflow-hidden sm:rounded-xl sm:h-[95vh] sm:border sm:border-gray-300">
         
+        <!-- HEADER COM MENUS NO TOPO -->
         <header class="bg-white shadow-sm z-10 flex-shrink-0">
             <div class="bg-amber-500 h-2 w-full"></div> 
             
@@ -55,6 +58,7 @@
                 </div>
             </div>
 
+            <!-- TRÊS BOTÕES DE NAVEGAÇÃO NO TOPO -->
             <div class="flex border-t border-b border-gray-200 bg-gray-100">
                 <a href="index.html" class="flex-1 py-2 flex flex-col items-center justify-center text-gray-500 hover:text-doresopolis-green transition-colors border-r border-gray-200">
                     <i class="fa-solid fa-house text-lg mb-0.5"></i>
@@ -73,6 +77,9 @@
             </div>
         </header>
 
+        <!-- ========================================== -->
+        <!-- ABA 1: NOVO CHAMADO (FORMULÁRIO)           -->
+        <!-- ========================================== -->
         <main id="aba-nova" class="flex-grow overflow-y-auto p-4 pb-6 scroll-smooth block bg-gray-50">
             
             <div class="mb-5">
@@ -159,6 +166,9 @@
             </form>
         </main>
 
+        <!-- ========================================== -->
+        <!-- ABA 2: ACOMPANHAR CHAMADOS                 -->
+        <!-- ========================================== -->
         <main id="aba-acompanhar" class="flex-grow overflow-y-auto p-4 pb-8 scroll-smooth hidden bg-gray-100">
             <div class="mb-5">
                 <h2 class="text-lg font-bold text-gray-800">Meus Chamados</h2>
@@ -175,9 +185,11 @@
 
     </div>
 
+    <!-- SCRIPT DE LÓGICA E FIREBASE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        // Importadas as funções getDocs e where para buscar o nome completo
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, getDocs, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCpaNuC1IUkteO4fHzFPiNS7s580EyTleU",
@@ -192,7 +204,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app); 
 
-        // --- SISTEMA DE TOAST (AVISOS) ---
         window.mostrarAviso = function(mensagem, tipo = 'sucesso') {
             const toast = document.getElementById('toast-aviso');
             const icone = document.getElementById('toast-icone');
@@ -221,7 +232,6 @@
             }, 4000);
         };
 
-        // --- NAVEGAÇÃO DE ABAS SUPERIORES ---
         window.trocarAbaObras = function(aba) {
             const abaNova = document.getElementById('aba-nova');
             const abaAcompanhar = document.getElementById('aba-acompanhar');
@@ -232,35 +242,49 @@
                 abaNova.classList.remove('hidden');
                 abaAcompanhar.classList.add('hidden');
                 
-                // Ativa Botão Novo Chamado
                 btnNova.classList.add('text-amber-600', 'bg-white', 'border-amber-500');
                 btnNova.classList.remove('text-gray-400', 'bg-gray-100', 'border-transparent');
                 
-                // Desativa Botão Acompanhar
                 btnAcompanhar.classList.add('text-gray-400', 'bg-gray-100', 'border-transparent');
                 btnAcompanhar.classList.remove('text-amber-600', 'bg-white', 'border-amber-500');
             } else {
                 abaAcompanhar.classList.remove('hidden');
                 abaNova.classList.add('hidden');
                 
-                // Ativa Botão Acompanhar
                 btnAcompanhar.classList.add('text-amber-600', 'bg-white', 'border-amber-500');
                 btnAcompanhar.classList.remove('text-gray-400', 'bg-gray-100', 'border-transparent');
                 
-                // Desativa Botão Novo Chamado
                 btnNova.classList.add('text-gray-400', 'bg-gray-100', 'border-transparent');
                 btnNova.classList.remove('text-amber-600', 'bg-white', 'border-amber-500');
             }
         };
 
-        let usuarioLogado = "";
+        let usuarioNomePrimeiro = "";
+        let usuarioNomeCompleto = "";
 
-        // Verifica o usuário logado ao abrir a tela
-        document.addEventListener('DOMContentLoaded', () => {
-            const sessaoSalva = localStorage.getItem('usuarioDoresopolis');
-            if (sessaoSalva) {
-                usuarioLogado = sessaoSalva;
-                document.getElementById('solicitante-nome').value = sessaoSalva;
+        // Inicialização Avançada: Busca o nome completo no banco para enviar o chamado perfeitamente
+        document.addEventListener('DOMContentLoaded', async () => {
+            usuarioNomePrimeiro = localStorage.getItem('usuarioDoresopolis');
+            const telefoneSalvo = localStorage.getItem('userTelefone');
+
+            if (usuarioNomePrimeiro && telefoneSalvo) {
+                try {
+                    // Consulta o banco para pegar o nome completo vinculado a este telefone
+                    const qUser = query(collection(db, "usuarios"), where("telefone", "==", telefoneSalvo));
+                    const snapUser = await getDocs(qUser);
+                    
+                    if(!snapUser.empty) {
+                        usuarioNomeCompleto = snapUser.docs[0].data().nomeCompleto;
+                    } else {
+                        usuarioNomeCompleto = usuarioNomePrimeiro; // Fallback de segurança
+                    }
+                } catch(e) {
+                    console.error(e);
+                    usuarioNomeCompleto = usuarioNomePrimeiro;
+                }
+
+                // Salva o NOME COMPLETO no input escondido para enviar junto com a solicitação
+                document.getElementById('solicitante-nome').value = usuarioNomeCompleto;
                 carregarMeusChamados(); 
             } else {
                 alert("Você precisa estar logado para abrir um chamado.");
@@ -268,7 +292,6 @@
             }
         });
 
-        // --- SISTEMA DE ACOMPANHAMENTO COM PROTOCOLO ---
         function carregarMeusChamados() {
             const solicitacoesRef = collection(db, "solicitacoes_obras");
             const qSolicitacoes = query(solicitacoesRef, orderBy("dataRegistro", "desc"));
@@ -287,13 +310,12 @@
                 snapshot.forEach((docSnap) => {
                     const data = docSnap.data();
                     
-                    if(data.nomeCidadao !== usuarioLogado) return;
+                    // Mostra solicitações se o nome bater com o nome completo ou o primeiro nome (retrocompatibilidade)
+                    if(data.nomeCidadao !== usuarioNomeCompleto && data.nomeCidadao !== usuarioNomePrimeiro) return;
                     
                     encontrouChamados = true;
                     
                     const dataFormatada = new Date(data.dataRegistro).toLocaleDateString('pt-BR', {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit'});
-                    
-                    // Número de Protocolo (Se for um chamado antigo sem protocolo, exibe 'Em Análise')
                     const protocoloTexto = data.protocolo ? `#${data.protocolo}` : 'Pendente';
 
                     let statusHtml = '';
@@ -335,7 +357,6 @@
             });
         }
 
-        // --- SISTEMA DE COMPRESSÃO DE FOTO ---
         window.processarFoto = function(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -382,7 +403,6 @@
             document.getElementById('upload-label').classList.add('flex');
         };
 
-        // --- ENVIAR SOLICITAÇÃO COM GERAÇÃO DE PROTOCOLO ---
         window.enviarSolicitacao = async function(event) {
             event.preventDefault();
 
@@ -398,14 +418,11 @@
             const fotoBase64 = document.getElementById('foto-base64').value;
             const descricao = document.getElementById('form-descricao').value;
 
-            // Formatação do Endereço
             let enderecoFinal = endereco;
             if (referencia) {
                 enderecoFinal += ` (Ref: ${referencia})`;
             }
 
-            // --- GERAÇÃO DE PROTOCOLO ---
-            // Formato: OBR + Ano (2 últimos dígitos) + Mês + Sequência Aleatória (ex: OBR2606-A1B2)
             const dataAtual = new Date();
             const ano = dataAtual.getFullYear().toString().slice(-2);
             const mes = (dataAtual.getMonth() + 1).toString().padStart(2, '0');
@@ -413,10 +430,9 @@
             const numeroProtocolo = `OBR${ano}${mes}-${aleatorio}`;
 
             try {
-                // Salvando no Banco de Dados com a nova propriedade 'protocolo'
                 await addDoc(collection(db, "solicitacoes_obras"), {
-                    protocolo: numeroProtocolo, // Número do protocolo gerado
-                    nomeCidadao: nome,
+                    protocolo: numeroProtocolo, 
+                    nomeCidadao: nome, // Agora vai salvar o nome completo perfeitamente
                     tipoServico: servico,
                     endereco: enderecoFinal,
                     urgencia: urgencia,
