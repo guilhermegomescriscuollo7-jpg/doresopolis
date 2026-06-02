@@ -163,6 +163,70 @@
             </div>
         </nav>
 
+        <!-- ========================================== -->
+        <!-- MODAL DE DETALHES DA SOLICITAÇÃO           -->
+        <!-- ========================================== -->
+        <div id="modal-detalhes" class="absolute inset-0 z-[150] hidden flex-col justify-end">
+            <!-- Fundo escuro (Overlay) -->
+            <div id="modal-overlay" class="absolute inset-0 bg-black bg-opacity-0 transition-opacity duration-300" onclick="fecharDetalhes()"></div>
+            
+            <!-- Cartão que sobe -->
+            <div id="modal-content" class="bg-white rounded-t-3xl max-h-[85vh] overflow-y-auto w-full relative z-10 transform translate-y-full transition-transform duration-300 flex flex-col shadow-[0_-10px_40px_rgba(0,0,0,0.2)]">
+                
+                <div class="sticky top-0 bg-white px-5 py-4 border-b border-gray-100 flex justify-between items-center z-20">
+                    <h3 class="font-black text-gray-800 text-lg">Detalhes do Chamado</h3>
+                    <button onclick="fecharDetalhes()" class="w-8 h-8 bg-gray-100 text-gray-600 rounded-full hover:bg-gray-200 flex items-center justify-center transition-colors">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                
+                <div class="p-5 space-y-5 pb-10">
+                    <!-- Protocolo -->
+                    <div class="flex justify-between items-center bg-amber-50 p-3 rounded-xl border border-amber-100">
+                        <span class="text-xs font-bold text-amber-700 uppercase"><i class="fa-solid fa-hashtag mr-1"></i> Protocolo</span>
+                        <span id="detalhe-protocolo" class="font-black text-amber-600 text-sm"></span>
+                    </div>
+
+                    <!-- Imagem Visualmente Destacada -->
+                    <div id="detalhe-imagem-container" class="w-full h-56 bg-gray-100 rounded-xl overflow-hidden border border-gray-200 shadow-inner">
+                        <!-- Imagem injetada via JS -->
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <!-- Info Cidadão -->
+                            <div class="bg-gray-50 p-3 rounded-lg border border-gray-100">
+                                <p class="text-[9px] text-gray-400 font-bold uppercase mb-0.5"><i class="fa-regular fa-user mr-1"></i> Cidadão</p>
+                                <p id="detalhe-nome" class="text-xs font-bold text-gray-800 leading-tight"></p>
+                            </div>
+                            <!-- Data -->
+                            <div class="bg-gray-50 p-3 rounded-lg border border-gray-100">
+                                <p class="text-[9px] text-gray-400 font-bold uppercase mb-0.5"><i class="fa-regular fa-calendar mr-1"></i> Recebido em</p>
+                                <p id="detalhe-data" class="text-xs font-bold text-gray-800 leading-tight"></p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <p class="text-[9px] text-gray-400 font-bold uppercase mb-1 ml-1">Serviço Solicitado</p>
+                            <p id="detalhe-servico" class="text-sm font-bold text-gray-800 bg-gray-50 p-3 rounded-lg border border-gray-100"></p>
+                        </div>
+                        
+                        <div>
+                            <p class="text-[9px] text-gray-400 font-bold uppercase mb-1 ml-1"><i class="fa-solid fa-location-dot mr-1"></i> Endereço / Referência</p>
+                            <p id="detalhe-endereco" class="text-sm font-bold text-red-600 bg-red-50 p-3 rounded-lg border border-red-100"></p>
+                        </div>
+
+                        <div>
+                            <p class="text-[9px] text-gray-400 font-bold uppercase mb-1 ml-1"><i class="fa-solid fa-comment-dots mr-1"></i> Descrição Adicional do Cidadão</p>
+                            <div class="bg-blue-50 p-3 rounded-lg border border-blue-100">
+                                <p id="detalhe-descricao" class="text-xs text-blue-800 italic"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <!-- SCRIPT DE LÓGICA E FIREBASE -->
@@ -183,6 +247,9 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app); 
+        
+        // Memória para guardar os dados das solicitações e exibir no Modal
+        window.dadosSolicitacoes = {};
 
         // --- SISTEMA DE TOAST (AVISOS NA TELA) ---
         window.mostrarAviso = function(mensagem, tipo = 'sucesso') {
@@ -254,10 +321,15 @@
             snapshot.forEach((docSnap) => {
                 const data = docSnap.data();
                 const id = docSnap.id;
+                
+                // Salva no objeto para o modal
+                window.dadosSolicitacoes[id] = data;
 
                 if(data.status === 'PENDENTE') contPendentes++;
                 else if(data.status === 'EM ANDAMENTO') contAndamento++;
                 else if(data.status === 'CONCLUÍDO') contConcluidos++;
+
+                const protocoloTexto = data.protocolo ? `#${data.protocolo}` : 'Sem Protocolo';
 
                 const fotoHtml = data.fotoUrl 
                     ? `<img src="${data.fotoUrl}" class="w-full h-full object-cover">` 
@@ -273,19 +345,23 @@
                             <div class="w-14 h-14 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
                                 ${fotoHtml}
                             </div>
-                            <div class="flex-grow">
-                                <h4 class="font-bold text-gray-800 text-sm leading-tight">${data.tipoServico || 'Reparo Geral'}</h4>
+                            <div class="flex-grow overflow-hidden">
+                                <span class="text-[9px] font-black text-amber-500 mb-0.5 block uppercase truncate"><i class="fa-solid fa-hashtag mr-0.5"></i> Protocolo: ${protocoloTexto}</span>
+                                <h4 class="font-bold text-gray-800 text-sm leading-tight truncate">${data.tipoServico || 'Reparo Geral'}</h4>
                                 <p class="text-xs text-gray-500 mt-0.5 truncate"><i class="fa-regular fa-user mr-1"></i> ${data.nomeCidadao || 'Não informado'}</p>
-                                <p class="text-xs text-red-500 mt-0.5 truncate max-w-[200px]"><i class="fa-solid fa-location-dot mr-1"></i> ${data.endereco || 'Não informado'}</p>
                             </div>
                         </div>
                         <div class="flex justify-between items-center border-t border-gray-50 pt-2 mt-1">
-                            <span class="text-[10px] text-gray-400 font-medium">Urgência: <span class="font-bold text-gray-700">${data.urgencia || 'N/A'}</span></span>
-                            <select onchange="atualizarStatusBD('${id}', this.value)" class="text-[10px] font-bold border rounded-full px-2 py-1 outline-none cursor-pointer ${corSelect}">
+                            <select onchange="atualizarStatusBD('${id}', this.value)" class="text-[10px] font-bold border rounded-full px-2 py-1.5 outline-none cursor-pointer ${corSelect}">
                                 <option value="PENDENTE" ${data.status === 'PENDENTE' ? 'selected' : ''}>PENDENTE</option>
                                 <option value="EM ANDAMENTO" ${data.status === 'EM ANDAMENTO' ? 'selected' : ''}>ANDAMENTO</option>
                                 <option value="CONCLUÍDO" ${data.status === 'CONCLUÍDO' ? 'selected' : ''}>CONCLUÍDO</option>
                             </select>
+                            
+                            <!-- NOVO BOTÃO DE DETALHES -->
+                            <button onclick="abrirDetalhes('${id}')" class="text-[10px] font-bold text-blue-600 bg-blue-50 border border-blue-200 px-3 py-1.5 rounded-full hover:bg-blue-100 active:scale-95 transition-all">
+                                <i class="fa-solid fa-eye mr-1"></i> Detalhes
+                            </button>
                         </div>
                     </div>
                 `;
@@ -308,9 +384,71 @@
             }
         };
 
+        // --- LÓGICA DO MODAL DE DETALHES ---
+        window.abrirDetalhes = function(id) {
+            const data = window.dadosSolicitacoes[id];
+            if(!data) return;
+
+            // Preenche as informações
+            document.getElementById('detalhe-protocolo').innerText = data.protocolo ? `#${data.protocolo}` : 'Pendente';
+            document.getElementById('detalhe-nome').innerText = data.nomeCidadao || 'Não informado';
+            
+            const dataFormatada = new Date(data.dataRegistro).toLocaleDateString('pt-BR', {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit'});
+            document.getElementById('detalhe-data').innerText = dataFormatada;
+            
+            document.getElementById('detalhe-servico').innerText = data.tipoServico || 'Não informado';
+            document.getElementById('detalhe-endereco').innerText = data.endereco || 'Não informado';
+            
+            const desc = document.getElementById('detalhe-descricao');
+            if(data.descricao && data.descricao.trim() !== '') {
+                desc.innerText = `"${data.descricao}"`;
+                desc.classList.remove('text-gray-400');
+            } else {
+                desc.innerText = "Nenhuma descrição adicional foi fornecida pelo cidadão.";
+                desc.classList.add('text-gray-400');
+            }
+
+            // Preenche a imagem
+            const imgContainer = document.getElementById('detalhe-imagem-container');
+            if(data.fotoUrl) {
+                imgContainer.innerHTML = `<img src="${data.fotoUrl}" class="w-full h-full object-cover">`;
+            } else {
+                imgContainer.innerHTML = `<div class="w-full h-full flex flex-col items-center justify-center text-gray-400 bg-gray-100"><i class="fa-solid fa-image text-4xl mb-2"></i><span class="text-xs font-medium">Cidadão não enviou foto</span></div>`;
+            }
+
+            // Animação de Abertura
+            const modal = document.getElementById('modal-detalhes');
+            const overlay = document.getElementById('modal-overlay');
+            const content = document.getElementById('modal-content');
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            
+            // Força o navegador a renderizar o modal antes de aplicar a transição (Reflow)
+            void modal.offsetWidth;
+
+            overlay.classList.replace('bg-opacity-0', 'bg-opacity-60');
+            content.classList.remove('translate-y-full');
+        };
+
+        window.fecharDetalhes = function() {
+            const modal = document.getElementById('modal-detalhes');
+            const overlay = document.getElementById('modal-overlay');
+            const content = document.getElementById('modal-content');
+
+            // Animação de Fechamento
+            overlay.classList.replace('bg-opacity-60', 'bg-opacity-0');
+            content.classList.add('translate-y-full');
+
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300); // Tempo igual ao duration-300 do tailwind
+        };
+
+
         // --- 2. GESTÃO DE AVISOS (CRUD COMPLETO SEM ERRO DE INDEX) ---
         const avisosRef = collection(db, "avisos");
-        // Buscamos ordenando por data. O filtro da Secretaria será feito no JS para evitar erro de Index no Firebase!
         const qAvisos = query(avisosRef, orderBy("dataPublicacao", "desc"));
 
         onSnapshot(qAvisos, (snapshot) => {
@@ -328,7 +466,6 @@
                 const aviso = docSnap.data();
                 const id = docSnap.id;
                 
-                // Filtra aqui no Javascript para contornar a exigência de Índice Composto do Firebase
                 if(aviso.secretaria !== "Obras") return;
                 
                 encontrouAvisos = true;
