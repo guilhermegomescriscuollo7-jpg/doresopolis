@@ -46,9 +46,7 @@
             <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-700 text-gray-300 hover:text-white rounded-lg font-medium transition-colors">
                 <i class="fa-solid fa-helmet-safety w-5"></i> Solicitações
             </a>
-            <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-700 text-gray-300 hover:text-white rounded-lg font-medium transition-colors">
-                <i class="fa-solid fa-map-location-dot w-5"></i> Projetos
-            </a>
+            <!-- Removido o botão de Projetos a pedido do usuário -->
         </nav>
         <div class="p-4 border-t border-gray-600">
             <button class="flex items-center gap-3 px-4 py-2 w-full text-left hover:bg-red-600 text-gray-300 hover:text-white rounded-lg font-medium transition-colors">
@@ -84,30 +82,29 @@
                 <!-- COLUNA ESQUERDA: ESTATÍSTICAS E CHAMADOS -->
                 <div class="xl:col-span-2 space-y-6">
                     
-                    <!-- CARDS DE RESUMO -->
+                    <!-- CARDS DE RESUMO DINÂMICOS -->
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm border-t-4 border-t-red-500">
                             <p class="text-xs text-gray-500 font-bold uppercase mb-1">Pendentes</p>
-                            <h3 class="text-3xl font-black text-gray-800">14</h3>
+                            <h3 id="stat-pendentes" class="text-3xl font-black text-gray-800">0</h3>
                         </div>
                         <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm border-t-4 border-t-blue-500">
                             <p class="text-xs text-gray-500 font-bold uppercase mb-1">Em Andamento</p>
-                            <h3 class="text-3xl font-black text-gray-800">08</h3>
+                            <h3 id="stat-andamento" class="text-3xl font-black text-gray-800">0</h3>
                         </div>
                         <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm border-t-4 border-t-green-500">
-                            <p class="text-xs text-gray-500 font-bold uppercase mb-1">Concluídos (Mês)</p>
-                            <h3 class="text-3xl font-black text-gray-800">42</h3>
+                            <p class="text-xs text-gray-500 font-bold uppercase mb-1">Concluídos</p>
+                            <h3 id="stat-concluidos" class="text-3xl font-black text-gray-800">0</h3>
                         </div>
                     </div>
 
-                    <!-- TABELA DE ÚLTIMOS CHAMADOS COM NOVOS CAMPOS -->
+                    <!-- TABELA DE ÚLTIMOS CHAMADOS COM BANCO DE DADOS -->
                     <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
                         <div class="px-6 py-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
                             <h3 class="font-bold text-gray-800"><i class="fa-solid fa-list-check text-amber-500 mr-2"></i> Solicitações Recentes</h3>
-                            <button class="text-xs font-bold text-doresopolis-green hover:underline">Ver todas</button>
+                            <button class="text-xs font-bold text-doresopolis-green hover:underline">Atualizar</button>
                         </div>
                         
-                        <!-- Wrapper para rolagem horizontal em telas pequenas -->
                         <div class="overflow-x-auto">
                             <table class="w-full text-sm text-left whitespace-nowrap">
                                 <thead class="text-xs text-gray-500 uppercase bg-white border-b border-gray-100">
@@ -120,90 +117,13 @@
                                         <th class="px-6 py-3 text-right">Ações</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    
-                                    <!-- Solicitação 1 (Urgência Alta) -->
-                                    <tr class="bg-white border-b border-gray-50 hover:bg-gray-50 transition-colors">
-                                        <!-- Foto do problema -->
-                                        <td class="px-6 py-3">
-                                            <div class="w-12 h-12 rounded-lg bg-gray-200 border border-gray-300 overflow-hidden flex items-center justify-center shadow-sm">
-                                                <img src="https://placehold.co/150x150/e2e8f0/64748b?text=Foto" alt="Anexo do serviço" class="w-full h-full object-cover">
-                                            </div>
-                                        </td>
-                                        <!-- Cidadão e Local -->
-                                        <td class="px-6 py-3">
-                                            <p class="font-bold text-gray-800"><i class="fa-regular fa-user text-gray-400 mr-1"></i> Carlos Silva</p>
-                                            <p class="text-xs text-gray-500 mt-0.5"><i class="fa-solid fa-location-dot text-red-400 mr-1"></i> Rua Piumhi, 120</p>
-                                        </td>
-                                        <!-- Tipo de Serviço -->
-                                        <td class="px-6 py-3 font-medium text-gray-700">Tapa-Buraco</td>
-                                        <!-- Nível de Urgência -->
-                                        <td class="px-6 py-3 text-center">
-                                            <span class="bg-red-100 text-red-700 border border-red-200 px-2.5 py-1 rounded-md text-[10px] font-black tracking-wider">ALTA</span>
-                                        </td>
-                                        <!-- Status -->
-                                        <td class="px-6 py-3 text-center">
-                                            <span class="bg-gray-100 text-gray-600 border border-gray-200 px-2.5 py-1 rounded-full text-[10px] font-bold"><i class="fa-regular fa-clock mr-1"></i> PENDENTE</span>
-                                        </td>
-                                        <!-- Ações -->
-                                        <td class="px-6 py-3 text-right">
-                                            <button class="text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 p-2 rounded-lg transition-colors" title="Ver detalhes completos">
-                                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                                            </button>
+                                <!-- O Corpo da tabela será preenchido pelo JavaScript -->
+                                <tbody id="tabela-solicitacoes">
+                                    <tr>
+                                        <td colspan="6" class="px-6 py-8 text-center text-gray-400">
+                                            <i class="fa-solid fa-spinner fa-spin mr-2"></i> Carregando solicitações da população...
                                         </td>
                                     </tr>
-
-                                    <!-- Solicitação 2 (Urgência Média) -->
-                                    <tr class="bg-white border-b border-gray-50 hover:bg-gray-50 transition-colors">
-                                        <td class="px-6 py-3">
-                                            <div class="w-12 h-12 rounded-lg bg-gray-200 border border-gray-300 overflow-hidden flex items-center justify-center shadow-sm">
-                                                <!-- Ícone genérico caso o cidadão não envie foto -->
-                                                <i class="fa-solid fa-image text-gray-400 text-xl"></i>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-3">
-                                            <p class="font-bold text-gray-800"><i class="fa-regular fa-user text-gray-400 mr-1"></i> Maria Oliveira</p>
-                                            <p class="text-xs text-gray-500 mt-0.5"><i class="fa-solid fa-location-dot text-red-400 mr-1"></i> Praça da Matriz, S/N</p>
-                                        </td>
-                                        <td class="px-6 py-3 font-medium text-gray-700">Troca de Lâmpada</td>
-                                        <td class="px-6 py-3 text-center">
-                                            <span class="bg-amber-100 text-amber-700 border border-amber-200 px-2.5 py-1 rounded-md text-[10px] font-black tracking-wider">MÉDIA</span>
-                                        </td>
-                                        <td class="px-6 py-3 text-center">
-                                            <span class="bg-blue-100 text-blue-700 border border-blue-200 px-2.5 py-1 rounded-full text-[10px] font-bold"><i class="fa-solid fa-person-digging mr-1"></i> EM ANDAMENTO</span>
-                                        </td>
-                                        <td class="px-6 py-3 text-right">
-                                            <button class="text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 p-2 rounded-lg transition-colors" title="Ver detalhes completos">
-                                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    
-                                    <!-- Solicitação 3 (Urgência Baixa) -->
-                                    <tr class="bg-white hover:bg-gray-50 transition-colors">
-                                        <td class="px-6 py-3">
-                                            <div class="w-12 h-12 rounded-lg bg-gray-200 border border-gray-300 overflow-hidden flex items-center justify-center shadow-sm">
-                                                <img src="https://placehold.co/150x150/e2e8f0/64748b?text=Foto" alt="Anexo do serviço" class="w-full h-full object-cover grayscale opacity-75">
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-3">
-                                            <p class="font-bold text-gray-800"><i class="fa-regular fa-user text-gray-400 mr-1"></i> João Batista</p>
-                                            <p class="text-xs text-gray-500 mt-0.5"><i class="fa-solid fa-location-dot text-red-400 mr-1"></i> Rua Bela Vista, 45</p>
-                                        </td>
-                                        <td class="px-6 py-3 font-medium text-gray-700">Limpeza de Bueiro</td>
-                                        <td class="px-6 py-3 text-center">
-                                            <span class="bg-green-100 text-green-700 border border-green-200 px-2.5 py-1 rounded-md text-[10px] font-black tracking-wider">BAIXA</span>
-                                        </td>
-                                        <td class="px-6 py-3 text-center">
-                                            <span class="bg-green-100 text-green-700 border border-green-200 px-2.5 py-1 rounded-full text-[10px] font-bold"><i class="fa-solid fa-check mr-1"></i> CONCLUÍDO</span>
-                                        </td>
-                                        <td class="px-6 py-3 text-right">
-                                            <button class="text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 p-2 rounded-lg transition-colors" title="Ver detalhes completos">
-                                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    
                                 </tbody>
                             </table>
                         </div>
@@ -247,10 +167,11 @@
         </div>
     </main>
 
-    <!-- SCRIPT DO FIREBASE PARA SALVAR O AVISO -->
+    <!-- SCRIPT DO FIREBASE PARA SALVAR O AVISO E CARREGAR SOLICITAÇÕES -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        // Adicionadas importações para onSnapshot (tempo real), doc e updateDoc (para editar o status)
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCpaNuC1IUkteO4fHzFPiNS7s580EyTleU",
@@ -290,7 +211,105 @@
             }, 4000);
         };
 
-        // Função para Publicar o Aviso no Banco de Dados
+        // --- LÓGICA DE SOLICITAÇÕES (REAL-TIME) ---
+        // Escuta a coleção "solicitacoes_obras" em tempo real
+        const solicitacoesRef = collection(db, "solicitacoes_obras");
+        const qSolicitacoes = query(solicitacoesRef, orderBy("dataRegistro", "desc"));
+
+        onSnapshot(qSolicitacoes, (snapshot) => {
+            const tbody = document.getElementById("tabela-solicitacoes");
+            
+            if (snapshot.empty) {
+                tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-8 text-center text-gray-500 font-medium">Nenhuma solicitação encontrada.</td></tr>`;
+                document.getElementById("stat-pendentes").innerText = '0';
+                document.getElementById("stat-andamento").innerText = '0';
+                document.getElementById("stat-concluidos").innerText = '0';
+                return;
+            }
+
+            tbody.innerHTML = "";
+            let contPendentes = 0;
+            let contAndamento = 0;
+            let contConcluidos = 0;
+
+            snapshot.forEach((docSnap) => {
+                const data = docSnap.data();
+                const id = docSnap.id;
+
+                // Contadores para o Dashboard
+                if(data.status === 'PENDENTE') contPendentes++;
+                else if(data.status === 'EM ANDAMENTO') contAndamento++;
+                else if(data.status === 'CONCLUÍDO') contConcluidos++;
+
+                // Lógica de Imagem (Se não enviou foto, exibe um ícone)
+                const fotoHtml = data.fotoUrl 
+                    ? `<img src="${data.fotoUrl}" class="w-full h-full object-cover">` 
+                    : `<i class="fa-solid fa-image text-gray-400 text-xl"></i>`;
+
+                // Lógica da cor da Urgência
+                let urgenciaHtml = '';
+                if(data.urgencia === 'ALTA') urgenciaHtml = `<span class="bg-red-100 text-red-700 border border-red-200 px-2.5 py-1 rounded-md text-[10px] font-black tracking-wider">ALTA</span>`;
+                else if(data.urgencia === 'MÉDIA') urgenciaHtml = `<span class="bg-amber-100 text-amber-700 border border-amber-200 px-2.5 py-1 rounded-md text-[10px] font-black tracking-wider">MÉDIA</span>`;
+                else urgenciaHtml = `<span class="bg-green-100 text-green-700 border border-green-200 px-2.5 py-1 rounded-md text-[10px] font-black tracking-wider">BAIXA</span>`;
+
+                // Lógica de Cores do Select de Status Editável
+                let corSelect = 'text-red-600 bg-red-50 border-red-200';
+                if(data.status === 'EM ANDAMENTO') corSelect = 'text-blue-600 bg-blue-50 border-blue-200';
+                else if(data.status === 'CONCLUÍDO') corSelect = 'text-green-600 bg-green-50 border-green-200';
+
+                // Dropdown para editar o status diretamente na tabela
+                const statusEditavel = `
+                    <select onchange="atualizarStatusBD('${id}', this.value)" class="text-[10px] font-bold border rounded-full px-2 py-1 outline-none cursor-pointer transition-colors ${corSelect}">
+                        <option value="PENDENTE" ${data.status === 'PENDENTE' ? 'selected' : ''}>PENDENTE</option>
+                        <option value="EM ANDAMENTO" ${data.status === 'EM ANDAMENTO' ? 'selected' : ''}>EM ANDAMENTO</option>
+                        <option value="CONCLUÍDO" ${data.status === 'CONCLUÍDO' ? 'selected' : ''}>CONCLUÍDO</option>
+                    </select>
+                `;
+
+                // Montagem da Linha da Tabela
+                const tr = `
+                    <tr class="bg-white border-b border-gray-50 hover:bg-gray-50 transition-colors">
+                        <td class="px-6 py-3">
+                            <div class="w-12 h-12 rounded-lg bg-gray-200 border border-gray-300 overflow-hidden flex items-center justify-center shadow-sm">
+                                ${fotoHtml}
+                            </div>
+                        </td>
+                        <td class="px-6 py-3">
+                            <p class="font-bold text-gray-800"><i class="fa-regular fa-user text-gray-400 mr-1"></i> ${data.nomeCidadao || 'Não informado'}</p>
+                            <p class="text-xs text-gray-500 mt-0.5"><i class="fa-solid fa-location-dot text-red-400 mr-1"></i> ${data.endereco || 'Não informado'}</p>
+                        </td>
+                        <td class="px-6 py-3 font-medium text-gray-700">${data.tipoServico || 'Reparo Geral'}</td>
+                        <td class="px-6 py-3 text-center">${urgenciaHtml}</td>
+                        <td class="px-6 py-3 text-center">${statusEditavel}</td>
+                        <td class="px-6 py-3 text-right">
+                            <button onclick="alert('Funcionalidade: Abrir detalhes e foto expandida em breve.')" class="text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 p-2 rounded-lg transition-colors" title="Ver detalhes completos">
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += tr;
+            });
+
+            // Atualiza os painéis numéricos superiores
+            document.getElementById("stat-pendentes").innerText = contPendentes;
+            document.getElementById("stat-andamento").innerText = contAndamento;
+            document.getElementById("stat-concluidos").innerText = contConcluidos;
+        });
+
+        // Função chamada quando o Admin altera o menu Select
+        window.atualizarStatusBD = async function(idSolicitacao, novoStatus) {
+            try {
+                const docRef = doc(db, "solicitacoes_obras", idSolicitacao);
+                await updateDoc(docRef, { status: novoStatus });
+                mostrarAviso("Status atualizado com sucesso!", "sucesso");
+            } catch (error) {
+                console.error("Erro ao atualizar status:", error);
+                mostrarAviso("Não foi possível atualizar o status.", "erro");
+            }
+        };
+
+        // --- Função para Publicar o Aviso no App (Mural Inicial) ---
         window.publicarAviso = async function(event) {
             event.preventDefault();
 
