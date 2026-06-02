@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
-    <!-- Meta tags para comportamento de WebApp Nativo (PWA) -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#0b5c3b">
@@ -12,12 +11,9 @@
     
     <title>App Doresópolis</title>
     
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome para os ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Configuração de cores personalizadas do Tailwind -->
     <script>
         tailwind.config = {
             theme: {
@@ -37,167 +33,211 @@
 
 <body class="bg-gray-200 font-sans text-gray-800 flex justify-center items-center min-h-screen">
 
-    <!-- CONTAINER PRINCIPAL DO APP -->
     <div class="bg-gray-50 w-full max-w-md h-[100dvh] flex flex-col relative shadow-2xl overflow-hidden sm:rounded-xl sm:h-[95vh] sm:border sm:border-gray-300">
         
-        <!-- HEADER (Fixo no topo) -->
-        <header class="bg-white shadow-sm border-b border-gray-200 z-10 flex-shrink-0">
-            <!-- Faixa verde superior -->
-            <div class="bg-doresopolis-green h-2 w-full"></div>
-            
-            <div class="px-4 py-3 flex items-center justify-between">
-                <!-- Logo e Título -->
-                <div class="flex items-center space-x-3 w-full">
-                    <div class="w-10 h-10 border-2 border-doresopolis-green rounded-full flex items-center justify-center text-doresopolis-green font-bold text-[8px] bg-gray-50 shadow-inner flex-shrink-0">
+        <div id="tela-login" class="flex flex-col h-full w-full bg-white z-20 absolute inset-0 transition-opacity duration-300">
+            <div class="flex-grow flex flex-col justify-center px-8">
+                <div class="text-center mb-8">
+                    <div class="w-20 h-20 mx-auto border-2 border-doresopolis-green rounded-full flex items-center justify-center text-doresopolis-green font-bold text-xs bg-gray-50 shadow-inner mb-4">
                         BRASÃO
                     </div>
-                    <div>
-                        <p class="text-[9px] tracking-[0.1em] text-gray-500 uppercase font-semibold leading-none">Prefeitura de</p>
-                        <h1 class="text-xl font-black text-gray-700 tracking-tight uppercase leading-none mt-1">Doresópolis</h1>
-                    </div>
+                    <h1 class="text-2xl font-black text-gray-800 tracking-tight uppercase">Doresópolis</h1>
+                    <p class="text-gray-500 text-sm mt-1">Portal Digital do Cidadão</p>
                 </div>
-                <!-- Botão de perfil/notificações -->
-                <button class="text-gray-400 hover:text-doresopolis-green">
-                    <i class="fa-regular fa-bell text-xl"></i>
-                </button>
-            </div>
 
-            <!-- Barra de Pesquisa Integrada no Header -->
-            <div class="px-4 pb-3">
-                <div class="relative text-gray-400 focus-within:text-doresopolis-green">
-                    <input type="text" placeholder="Buscar serviços..." class="w-full bg-gray-100 border-none rounded-full py-2 pl-4 pr-10 focus:outline-none focus:ring-2 focus:ring-doresopolis-green text-sm transition-colors">
-                    <button class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">
-                        <i class="fa-solid fa-magnifying-glass"></i>
+                <form onsubmit="realizarLogin(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Telefone</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fa-solid fa-phone text-gray-400"></i>
+                            </div>
+                            <input type="tel" id="login-telefone" required placeholder="(00) 00000-0000" class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-doresopolis-green focus:bg-white transition-colors text-sm">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Senha</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fa-solid fa-lock text-gray-400"></i>
+                            </div>
+                            <input type="password" id="login-senha" required placeholder="••••••••" class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-doresopolis-green focus:bg-white transition-colors text-sm">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full bg-doresopolis-green text-white font-bold py-3 rounded-xl shadow-md hover:bg-green-800 active:scale-[0.98] transition-all mt-4">
+                        Entrar no App
+                    </button>
+                </form>
+
+                <div class="mt-8 text-center">
+                    <p class="text-sm text-gray-600">Ainda não tem acesso?</p>
+                    <button onclick="mostrarTela('tela-cadastro')" class="mt-2 text-doresopolis-green font-bold hover:underline">
+                        Criar minha conta
                     </button>
                 </div>
             </div>
-        </header>
+        </div>
 
-        <!-- ÁREA ROLÁVEL (Conteúdo) -->
-        <main class="flex-grow overflow-y-auto overflow-x-hidden p-4 pb-24 scroll-smooth">
-            
-            <!-- Saudação -->
-            <div class="mb-6 mt-2">
-                <h2 class="text-xl font-bold text-gray-800">Olá, Cidadão!</h2>
-                <p class="text-gray-500 mt-1 text-sm leading-snug">Selecione uma secretaria abaixo para solicitar serviços.</p>
+        <div id="tela-cadastro" class="flex flex-col h-full w-full bg-white z-30 absolute inset-0 hidden overflow-y-auto transition-opacity duration-300">
+            <div class="p-6">
+                <button onclick="mostrarTela('tela-login')" class="text-gray-500 hover:text-doresopolis-green flex items-center mb-6">
+                    <i class="fa-solid fa-arrow-left mr-2"></i> Voltar
+                </button>
+
+                <div class="mb-6">
+                    <h2 class="text-2xl font-black text-gray-800">Criar Conta</h2>
+                    <p class="text-gray-500 text-sm mt-1">Preencha seus dados para acessar os serviços da prefeitura.</p>
+                </div>
+
+                <form onsubmit="realizarCadastro(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Nome Completo</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fa-regular fa-user text-gray-400"></i>
+                            </div>
+                            <input type="text" id="cad-nome" required placeholder="Ex: João da Silva" class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-doresopolis-green focus:bg-white text-sm">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Telefone (Celular)</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fa-solid fa-phone text-gray-400"></i>
+                            </div>
+                            <input type="tel" id="cad-telefone" required placeholder="(00) 00000-0000" class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-doresopolis-green focus:bg-white text-sm">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Endereço Completo</label>
+                        <div class="relative">
+                            <div class="absolute top-3 left-0 pl-3 pointer-events-none">
+                                <i class="fa-solid fa-map-location-dot text-gray-400"></i>
+                            </div>
+                            <textarea id="cad-endereco" required rows="2" placeholder="Rua, Número, Bairro" class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-doresopolis-green focus:bg-white text-sm resize-none"></textarea>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Criar Senha</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fa-solid fa-lock text-gray-400"></i>
+                            </div>
+                            <input type="password" id="cad-senha" required placeholder="Mínimo 6 caracteres" minlength="6" class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-doresopolis-green focus:bg-white text-sm">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full bg-doresopolis-green text-white font-bold py-3 rounded-xl shadow-md hover:bg-green-800 active:scale-[0.98] transition-all mt-6">
+                        Concluir Cadastro
+                    </button>
+                </form>
             </div>
+        </div>
 
-            <!-- LISTA DE SECRETARIAS (1 Coluna) -->
-            <div class="flex flex-col gap-3">
-                
-                <!-- Saúde -->
-                <button onclick="navegarPara('saude')" class="flex items-center p-4 bg-white rounded-xl shadow-sm border border-gray-100 active:bg-gray-50 active:scale-[0.98] transition-all duration-150 text-left">
-                    <div class="p-3 bg-red-50 text-red-600 rounded-lg">
-                        <i class="fa-solid fa-heart-pulse text-lg w-5 text-center"></i>
+        <div id="tela-principal" class="hidden flex-col h-full w-full z-10">
+            <header class="bg-white shadow-sm border-b border-gray-200 z-10 flex-shrink-0">
+                <div class="bg-doresopolis-green h-2 w-full"></div>
+                <div class="px-4 py-3 flex items-center justify-between">
+                    <div class="flex items-center space-x-3 w-full">
+                        <div class="w-10 h-10 border-2 border-doresopolis-green rounded-full flex items-center justify-center text-doresopolis-green font-bold text-[8px] bg-gray-50 shadow-inner flex-shrink-0">
+                            BRASÃO
+                        </div>
+                        <div>
+                            <p class="text-[9px] tracking-[0.1em] text-gray-500 uppercase font-semibold leading-none">Prefeitura de</p>
+                            <h1 class="text-xl font-black text-gray-700 tracking-tight uppercase leading-none mt-1">Doresópolis</h1>
+                        </div>
                     </div>
-                    <div class="ml-4 flex-grow">
-                        <h3 class="font-bold text-gray-800 text-sm">Saúde</h3>
-                        <p class="text-[11px] text-gray-500 mt-0.5">Consultas, vacinas e remédios</p>
+                    <button onclick="fazerLogout()" class="text-red-400 hover:text-red-600 ml-2" title="Sair da conta">
+                        <i class="fa-solid fa-right-from-bracket text-xl"></i>
+                    </button>
+                </div>
+                <div class="px-4 pb-3">
+                    <div class="relative text-gray-400 focus-within:text-doresopolis-green">
+                        <input type="text" placeholder="Buscar serviços..." class="w-full bg-gray-100 border-none rounded-full py-2 pl-4 pr-10 focus:outline-none focus:ring-2 focus:ring-doresopolis-green text-sm transition-colors">
+                        <button class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </button>
                     </div>
-                    <i class="fa-solid fa-chevron-right text-gray-300 text-sm"></i>
-                </button>
+                </div>
+            </header>
 
-                <!-- Educação -->
-                <button onclick="navegarPara('educacao')" class="flex items-center p-4 bg-white rounded-xl shadow-sm border border-gray-100 active:bg-gray-50 active:scale-[0.98] transition-all duration-150 text-left">
-                    <div class="p-3 bg-blue-50 text-blue-600 rounded-lg">
-                        <i class="fa-solid fa-graduation-cap text-lg w-5 text-center"></i>
-                    </div>
-                    <div class="ml-4 flex-grow">
-                        <h3 class="font-bold text-gray-800 text-sm">Educação</h3>
-                        <p class="text-[11px] text-gray-500 mt-0.5">Matrículas e transporte escolar</p>
-                    </div>
-                    <i class="fa-solid fa-chevron-right text-gray-300 text-sm"></i>
-                </button>
+            <main class="flex-grow overflow-y-auto overflow-x-hidden p-4 pb-24 scroll-smooth">
+                <div class="mb-6 mt-2">
+                    <h2 class="text-xl font-bold text-gray-800">Olá, <span id="nome-usuario-logado" class="text-doresopolis-green">Cidadão</span>!</h2>
+                    <p class="text-gray-500 mt-1 text-sm leading-snug">Selecione uma secretaria abaixo para solicitar serviços.</p>
+                </div>
 
-                <!-- Tributos -->
-                <button onclick="navegarPara('tributos')" class="flex items-center p-4 bg-white rounded-xl shadow-sm border border-gray-100 active:bg-gray-50 active:scale-[0.98] transition-all duration-150 text-left">
-                    <div class="p-3 bg-green-50 text-green-600 rounded-lg">
-                        <i class="fa-solid fa-file-invoice-dollar text-lg w-5 text-center"></i>
-                    </div>
-                    <div class="ml-4 flex-grow">
-                        <h3 class="font-bold text-gray-800 text-sm">Tributos</h3>
-                        <p class="text-[11px] text-gray-500 mt-0.5">Emissão de IPTU e taxas</p>
-                    </div>
-                    <i class="fa-solid fa-chevron-right text-gray-300 text-sm"></i>
-                </button>
+                <div class="flex flex-col gap-3">
+                    <button onclick="navegarPara('saude')" class="flex items-center p-4 bg-white rounded-xl shadow-sm border border-gray-100 active:bg-gray-50 active:scale-[0.98] transition-all text-left">
+                        <div class="p-3 bg-red-50 text-red-600 rounded-lg"><i class="fa-solid fa-heart-pulse text-lg w-5 text-center"></i></div>
+                        <div class="ml-4 flex-grow"><h3 class="font-bold text-gray-800 text-sm">Saúde</h3><p class="text-[11px] text-gray-500 mt-0.5">Consultas, vacinas e remédios</p></div>
+                        <i class="fa-solid fa-chevron-right text-gray-300 text-sm"></i>
+                    </button>
 
-                <!-- Obras -->
-                <button onclick="navegarPara('obras')" class="flex items-center p-4 bg-white rounded-xl shadow-sm border border-gray-100 active:bg-gray-50 active:scale-[0.98] transition-all duration-150 text-left">
-                    <div class="p-3 bg-amber-50 text-amber-600 rounded-lg">
-                        <i class="fa-solid fa-helmet-safety text-lg w-5 text-center"></i>
-                    </div>
-                    <div class="ml-4 flex-grow">
-                        <h3 class="font-bold text-gray-800 text-sm">Obras</h3>
-                        <p class="text-[11px] text-gray-500 mt-0.5">Iluminação e manutenção</p>
-                    </div>
-                    <i class="fa-solid fa-chevron-right text-gray-300 text-sm"></i>
-                </button>
+                    <button onclick="navegarPara('educacao')" class="flex items-center p-4 bg-white rounded-xl shadow-sm border border-gray-100 active:bg-gray-50 active:scale-[0.98] transition-all text-left">
+                        <div class="p-3 bg-blue-50 text-blue-600 rounded-lg"><i class="fa-solid fa-graduation-cap text-lg w-5 text-center"></i></div>
+                        <div class="ml-4 flex-grow"><h3 class="font-bold text-gray-800 text-sm">Educação</h3><p class="text-[11px] text-gray-500 mt-0.5">Matrículas e transporte escolar</p></div>
+                        <i class="fa-solid fa-chevron-right text-gray-300 text-sm"></i>
+                    </button>
 
-                <!-- Transporte -->
-                <button onclick="navegarPara('transporte')" class="flex items-center p-4 bg-white rounded-xl shadow-sm border border-gray-100 active:bg-gray-50 active:scale-[0.98] transition-all duration-150 text-left">
-                    <div class="p-3 bg-purple-50 text-purple-600 rounded-lg">
-                        <i class="fa-solid fa-bus text-lg w-5 text-center"></i>
-                    </div>
-                    <div class="ml-4 flex-grow">
-                        <h3 class="font-bold text-gray-800 text-sm">Transporte</h3>
-                        <p class="text-[11px] text-gray-500 mt-0.5">Horários e estradas rurais</p>
-                    </div>
-                    <i class="fa-solid fa-chevron-right text-gray-300 text-sm"></i>
-                </button>
+                    <button onclick="navegarPara('tributos')" class="flex items-center p-4 bg-white rounded-xl shadow-sm border border-gray-100 active:bg-gray-50 active:scale-[0.98] transition-all text-left">
+                        <div class="p-3 bg-green-50 text-green-600 rounded-lg"><i class="fa-solid fa-file-invoice-dollar text-lg w-5 text-center"></i></div>
+                        <div class="ml-4 flex-grow"><h3 class="font-bold text-gray-800 text-sm">Tributos</h3><p class="text-[11px] text-gray-500 mt-0.5">Emissão de IPTU e taxas</p></div>
+                        <i class="fa-solid fa-chevron-right text-gray-300 text-sm"></i>
+                    </button>
 
-                <!-- Esporte -->
-                <button onclick="navegarPara('esporte')" class="flex items-center p-4 bg-white rounded-xl shadow-sm border border-gray-100 active:bg-gray-50 active:scale-[0.98] transition-all duration-150 text-left">
-                    <div class="p-3 bg-orange-50 text-orange-600 rounded-lg">
-                        <i class="fa-solid fa-trophy text-lg w-5 text-center"></i>
-                    </div>
-                    <div class="ml-4 flex-grow">
-                        <h3 class="font-bold text-gray-800 text-sm">Esporte</h3>
-                        <p class="text-[11px] text-gray-500 mt-0.5">Inscrições e campeonatos</p>
-                    </div>
-                    <i class="fa-solid fa-chevron-right text-gray-300 text-sm"></i>
-                </button>
+                    <button onclick="navegarPara('obras')" class="flex items-center p-4 bg-white rounded-xl shadow-sm border border-gray-100 active:bg-gray-50 active:scale-[0.98] transition-all text-left">
+                        <div class="p-3 bg-amber-50 text-amber-600 rounded-lg"><i class="fa-solid fa-helmet-safety text-lg w-5 text-center"></i></div>
+                        <div class="ml-4 flex-grow"><h3 class="font-bold text-gray-800 text-sm">Obras</h3><p class="text-[11px] text-gray-500 mt-0.5">Iluminação e manutenção</p></div>
+                        <i class="fa-solid fa-chevron-right text-gray-300 text-sm"></i>
+                    </button>
 
-            </div>
-            
-            <div class="h-6 w-full text-center mt-6">
-                <span class="text-[10px] text-gray-400">App Oficial - Doresópolis MG</span>
-            </div>
-        </main>
+                    <button onclick="navegarPara('transporte')" class="flex items-center p-4 bg-white rounded-xl shadow-sm border border-gray-100 active:bg-gray-50 active:scale-[0.98] transition-all text-left">
+                        <div class="p-3 bg-purple-50 text-purple-600 rounded-lg"><i class="fa-solid fa-bus text-lg w-5 text-center"></i></div>
+                        <div class="ml-4 flex-grow"><h3 class="font-bold text-gray-800 text-sm">Transporte</h3><p class="text-[11px] text-gray-500 mt-0.5">Horários e estradas rurais</p></div>
+                        <i class="fa-solid fa-chevron-right text-gray-300 text-sm"></i>
+                    </button>
 
-        <!-- BARRA DE NAVEGAÇÃO INFERIOR -->
-        <nav class="absolute bottom-0 w-full bg-white border-t border-gray-200 z-50 pb-safe">
-            <div class="flex justify-around items-center h-16">
-                <a href="#" class="flex flex-col items-center justify-center w-full h-full text-doresopolis-green">
-                    <i class="fa-solid fa-house text-lg mb-1"></i>
-                    <span class="text-[10px] font-medium">Início</span>
-                </a>
-                <a href="https://www.doresopolis.mg.gov.br/portal/servicos/1001/historia/" target="_blank" class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-doresopolis-green transition-colors">
-                    <i class="fa-solid fa-map-location-dot text-lg mb-1"></i>
-                    <span class="text-[10px] font-medium">A Cidade</span>
-                </a>
-                <a href="https://www.doresopolis.mg.gov.br/portal/ouvidoria" target="_blank" class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-doresopolis-green transition-colors">
-                    <i class="fa-solid fa-bullhorn text-lg mb-1"></i>
-                    <span class="text-[10px] font-medium">Ouvidoria</span>
-                </a>
-                <a href="https://ilai.memory.com.br/#/public/inicio" target="_blank" class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-doresopolis-green transition-colors">
-                    <i class="fa-solid fa-chart-pie text-lg mb-1"></i>
-                    <span class="text-[10px] font-medium">Transparência</span>
-                </a>
-            </div>
-        </nav>
+                    <button onclick="navegarPara('esporte')" class="flex items-center p-4 bg-white rounded-xl shadow-sm border border-gray-100 active:bg-gray-50 active:scale-[0.98] transition-all text-left">
+                        <div class="p-3 bg-orange-50 text-orange-600 rounded-lg"><i class="fa-solid fa-trophy text-lg w-5 text-center"></i></div>
+                        <div class="ml-4 flex-grow"><h3 class="font-bold text-gray-800 text-sm">Esporte</h3><p class="text-[11px] text-gray-500 mt-0.5">Inscrições e campeonatos</p></div>
+                        <i class="fa-solid fa-chevron-right text-gray-300 text-sm"></i>
+                    </button>
+                </div>
+            </main>
+
+            <nav class="absolute bottom-0 w-full bg-white border-t border-gray-200 z-50 pb-safe">
+                <div class="flex justify-around items-center h-16">
+                    <a href="#" class="flex flex-col items-center justify-center w-full h-full text-doresopolis-green">
+                        <i class="fa-solid fa-house text-lg mb-1"></i><span class="text-[10px] font-medium">Início</span>
+                    </a>
+                    <a href="https://www.doresopolis.mg.gov.br/portal/servicos/1001/historia/" target="_blank" class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-doresopolis-green transition-colors">
+                        <i class="fa-solid fa-map-location-dot text-lg mb-1"></i><span class="text-[10px] font-medium">A Cidade</span>
+                    </a>
+                    <a href="https://www.doresopolis.mg.gov.br/portal/ouvidoria" target="_blank" class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-doresopolis-green transition-colors">
+                        <i class="fa-solid fa-bullhorn text-lg mb-1"></i><span class="text-[10px] font-medium">Ouvidoria</span>
+                    </a>
+                    <a href="https://ilai.memory.com.br/#/public/inicio" target="_blank" class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-doresopolis-green transition-colors">
+                        <i class="fa-solid fa-chart-pie text-lg mb-1"></i><span class="text-[10px] font-medium">Transparência</span>
+                    </a>
+                </div>
+            </nav>
+        </div>
 
     </div>
 
-    <!-- SCRIPT DO FIREBASE (Type Module) -->
     <script type="module">
-        // Importando o Firebase através de CDNs compatíveis com o navegador
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
-        
-        // Se no futuro precisar do Firestore (Banco de dados), basta descomentar a linha abaixo:
-        // import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        // Importações futuras para banco de dados e autenticação:
+        // import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        // import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-        // Configuração do Firebase fornecida
         const firebaseConfig = {
             apiKey: "AIzaSyCpaNuC1IUkteO4fHzFPiNS7s580EyTleU",
             authDomain: "doresopolis.firebaseapp.com",
@@ -208,20 +248,73 @@
             measurementId: "G-WXWGXEWY53"
         };
 
-        // Inicializando o Firebase
         const app = initializeApp(firebaseConfig);
         const analytics = getAnalytics(app);
-        
-        console.log("🔥 Firebase inicializado com sucesso no App de Doresópolis!");
 
-        // Como usamos type="module", precisamos anexar a função navegarPara ao objeto global 'window' 
-        // para que os botões do HTML (onclick) consigam encontrá-la.
-        window.navegarPara = function(secretaria) {
-            if (navigator.vibrate) {
-                navigator.vibrate(50);
+        // --- LÓGICA DE INTERFACE (Telas) ---
+        window.mostrarTela = function(telaId) {
+            // Esconde todas
+            document.getElementById('tela-login').classList.add('hidden');
+            document.getElementById('tela-cadastro').classList.add('hidden');
+            document.getElementById('tela-principal').classList.remove('flex');
+            document.getElementById('tela-principal').classList.add('hidden');
+
+            // Mostra a solicitada
+            const tela = document.getElementById(telaId);
+            tela.classList.remove('hidden');
+            if(telaId === 'tela-principal') {
+                tela.classList.add('flex');
             }
-            alert('Você clicou em: ' + secretaria.toUpperCase() + '\n(O Firebase já está rodando no fundo!)');
-        }
+        };
+
+        // --- LÓGICA DE CADASTRO ---
+        window.realizarCadastro = function(event) {
+            event.preventDefault(); // Impede a página de recarregar
+            
+            // Coletando os dados do formulário
+            const nome = document.getElementById('cad-nome').value;
+            const telefone = document.getElementById('cad-telefone').value;
+            const endereco = document.getElementById('cad-endereco').value;
+            const senha = document.getElementById('cad-senha').value;
+
+            // TODO: Aqui entrará o código do Firebase Firestore para salvar os dados
+            console.log("Dados prontos para o Firebase:", { nome, telefone, endereco, senha });
+
+            // Simulando sucesso e direcionando para a tela principal
+            alert("Cadastro realizado com sucesso, " + nome + "!");
+            document.getElementById('nome-usuario-logado').innerText = nome.split(' ')[0]; // Pega o primeiro nome
+            mostrarTela('tela-principal');
+        };
+
+        // --- LÓGICA DE LOGIN ---
+        window.realizarLogin = function(event) {
+            event.preventDefault();
+            
+            const telefone = document.getElementById('login-telefone').value;
+            const senha = document.getElementById('login-senha').value;
+
+            // TODO: Aqui entrará a verificação de Auth do Firebase
+            console.log("Tentativa de login com:", telefone);
+
+            // Simulando login
+            document.getElementById('nome-usuario-logado').innerText = "Cidadão";
+            mostrarTela('tela-principal');
+        };
+
+        // --- LOGOUT E NAVEGAÇÃO ---
+        window.fazerLogout = function() {
+            if(confirm("Deseja realmente sair da sua conta?")) {
+                mostrarTela('tela-login');
+                // Limpa os campos do login
+                document.getElementById('login-telefone').value = '';
+                document.getElementById('login-senha').value = '';
+            }
+        };
+
+        window.navegarPara = function(secretaria) {
+            if (navigator.vibrate) navigator.vibrate(50);
+            alert('Acessando os serviços restritos de: ' + secretaria.toUpperCase());
+        };
     </script>
 
 </body>
