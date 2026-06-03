@@ -1,709 +1,771 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#dc2626">
-    <meta name="mobile-web-app-capable" content="yes">
-    
-    <title>Painel Sec. Saúde | Doresópolis</title>
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        doresopolis: {
-                            green: '#0b5c3b',
-                            dark: '#3f3f46',
-                            light: '#f8fafc'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#dc2626">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Painel Sec. Saúde | Doresópolis</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        doresopolis: { green: '#0b5c3b', dark: '#3f3f46', light: '#f8fafc' }
+      }
+    }
+  }
+}
+</script>
+<style>
+  .tab-active { color: #dc2626; border-bottom: 2.5px solid #dc2626; background: white; }
+  .tab-inactive { color: #9ca3af; border-bottom: 2.5px solid transparent; background: #f9fafb; }
+  .slide-up { animation: slideUp 0.25s ease; }
+  @keyframes slideUp { from { transform: translateY(8px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+</style>
 </head>
-
 <body class="bg-gray-200 font-sans text-gray-800 flex justify-center items-center min-h-screen">
 
-    <!-- NOTIFICAÇÃO NO APP (TOAST) -->
-    <div id="toast-aviso" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-[100] bg-green-600 text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-3 transition-all duration-300 opacity-0 pointer-events-none translate-y-[-20px] w-11/12 max-w-sm">
-        <i id="toast-icone" class="fa-solid fa-circle-check text-lg"></i>
-        <span id="toast-mensagem" class="text-sm font-medium leading-snug"></span>
-    </div>
+<!-- TOAST -->
+<div id="toast-aviso" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-[200] bg-green-600 text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-3 transition-all duration-300 opacity-0 pointer-events-none translate-y-[-20px] w-11/12 max-w-sm">
+  <i id="toast-icone" class="fa-solid fa-circle-check text-lg"></i>
+  <span id="toast-mensagem" class="text-sm font-medium leading-snug"></span>
+</div>
 
-    <!-- CONTAINER PRINCIPAL DO APP -->
-    <div class="bg-gray-50 w-full max-w-md h-[100dvh] flex flex-col relative shadow-2xl overflow-hidden sm:rounded-xl sm:h-[95vh] sm:border sm:border-gray-300">
-        
-        <!-- HEADER -->
-        <header class="bg-white shadow-sm border-b border-gray-200 z-10 flex-shrink-0">
-            <div class="bg-red-600 h-2 w-full"></div>
-            <div class="px-4 py-3 flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 rounded-full bg-red-50 text-red-600 flex items-center justify-center shrink-0 shadow-inner">
-                        <i class="fa-solid fa-heart-pulse text-lg"></i>
-                    </div>
-                    <div>
-                        <p class="text-[9px] tracking-[0.1em] text-gray-500 uppercase font-semibold leading-none">Painel de Gestão</p>
-                        <h1 class="text-xl font-black text-gray-700 tracking-tight uppercase leading-none mt-1">Sec. Saúde</h1>
-                    </div>
-                </div>
-                <button onclick="fazerLogout()" class="text-red-400 hover:text-red-600 ml-2" title="Sair do Painel">
-                    <i class="fa-solid fa-right-from-bracket text-xl"></i>
-                </button>
-            </div>
-        </header>
+<div class="bg-gray-50 w-full max-w-md h-[100dvh] flex flex-col relative shadow-2xl overflow-hidden sm:rounded-xl sm:h-[95vh] sm:border sm:border-gray-300">
 
-        <!-- ========================================== -->
-        <!-- ABA 1: GESTÃO DE AGENDAMENTOS              -->
-        <!-- ========================================== -->
-        <main id="aba-solicitacoes" class="flex-grow overflow-y-auto p-4 pb-24 scroll-smooth block">
-            
-            <div class="grid grid-cols-3 gap-2 mb-6">
-                <div class="bg-white p-3 rounded-xl border border-gray-200 shadow-sm border-t-4 border-t-amber-500 text-center">
-                    <h3 id="stat-analise" class="text-2xl font-black text-gray-800">0</h3>
-                    <p class="text-[8px] text-gray-500 font-bold uppercase mt-1">Análise</p>
-                </div>
-                <div class="bg-white p-3 rounded-xl border border-gray-200 shadow-sm border-t-4 border-t-blue-500 text-center">
-                    <h3 id="stat-confirmado" class="text-2xl font-black text-gray-800">0</h3>
-                    <p class="text-[8px] text-gray-500 font-bold uppercase mt-1">Confirmados</p>
-                </div>
-                <div class="bg-white p-3 rounded-xl border border-gray-200 shadow-sm border-t-4 border-t-green-500 text-center">
-                    <h3 id="stat-realizado" class="text-2xl font-black text-gray-800">0</h3>
-                    <p class="text-[8px] text-gray-500 font-bold uppercase mt-1">Realizados</p>
-                </div>
-            </div>
-
-            <h3 class="font-bold text-gray-800 text-sm mb-3 border-l-4 border-red-500 pl-2">Agendamentos Recebidos</h3>
-            
-            <div id="lista-solicitacoes" class="flex flex-col gap-3">
-                <div class="text-center py-8 text-gray-400 text-sm">
-                    <i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i><br>
-                    Escutando agendamentos do cidadão...
-                </div>
-            </div>
-
-        </main>
-
-        <!-- ========================================== -->
-        <!-- ABA 2: CRIAR HORÁRIOS / VAGAS              -->
-        <!-- ========================================== -->
-        <main id="aba-horarios" class="flex-grow overflow-y-auto p-4 pb-24 scroll-smooth hidden">
-            
-            <!-- Formulário Adicionar Vaga -->
-            <div class="bg-gradient-to-br from-blue-50 to-white rounded-xl border border-blue-200 shadow-sm overflow-hidden mb-6">
-                <div class="px-4 py-3 bg-blue-600 text-white flex items-center gap-2">
-                    <i class="fa-regular fa-calendar-plus"></i>
-                    <div>
-                        <h3 class="font-bold text-sm leading-tight">Disponibilizar Vagas</h3>
-                    </div>
-                </div>
-                
-                <form onsubmit="adicionarVagaSaude(event)" class="p-4 space-y-3">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-700 mb-1">Especialidade</label>
-                        <select id="vaga-especialidade" required class="w-full px-3 py-2.5 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-gray-700">
-                            <option value="" disabled selected>Selecione...</option>
-                            <option value="Clínico Geral">Clínico Geral</option>
-                            <option value="Pediatria">Pediatria</option>
-                            <option value="Odontologia">Odontologia (Dentista)</option>
-                            <option value="Ginecologia">Ginecologia</option>
-                            <option value="Psicologia">Psicologia</option>
-                            <option value="Enfermagem (Triagem/Curativo)">Enfermagem (Triagem/Curativo)</option>
-                        </select>
-                    </div>
-                    
-                    <div class="flex gap-2">
-                        <div class="w-1/2">
-                            <label class="block text-xs font-bold text-gray-700 mb-1">Data</label>
-                            <input type="date" id="vaga-data" required class="w-full px-3 py-2.5 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-gray-700">
-                        </div>
-                        <div class="w-1/2">
-                            <label class="block text-xs font-bold text-gray-700 mb-1">Hora</label>
-                            <input type="time" id="vaga-hora" required class="w-full px-3 py-2.5 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-gray-700">
-                        </div>
-                    </div>
-
-                    <button type="submit" id="btn-salvar-vaga" class="w-full bg-blue-600 text-white font-bold py-2.5 rounded-lg shadow-sm hover:bg-blue-700 active:scale-[0.98] transition-all flex justify-center items-center gap-2 text-sm mt-2">
-                        <i class="fa-solid fa-plus"></i> Abrir Horário
-                    </button>
-                </form>
-            </div>
-
-            <h3 class="font-bold text-gray-800 text-sm mb-3 border-l-4 border-blue-500 pl-2">Vagas Abertas (Disponíveis)</h3>
-            
-            <div id="lista-vagas" class="flex flex-col gap-2">
-                <div class="text-center py-6 text-gray-400 text-sm">
-                    <i class="fa-solid fa-spinner fa-spin mb-2"></i><br>Carregando vagas...
-                </div>
-            </div>
-
-        </main>
-
-        <!-- ========================================== -->
-        <!-- ABA 3: MURAL DE AVISOS (CRUD)              -->
-        <!-- ========================================== -->
-        <main id="aba-avisos" class="flex-grow overflow-y-auto p-4 pb-24 scroll-smooth hidden">
-            
-            <div class="bg-gradient-to-br from-red-50 to-white rounded-xl border border-red-200 shadow-sm overflow-hidden mb-6">
-                <div class="px-4 py-3 bg-red-600 text-white flex items-center gap-2">
-                    <i class="fa-solid fa-bullhorn"></i>
-                    <div>
-                        <h3 id="titulo-form-aviso" class="font-bold text-sm leading-tight">Publicar Aviso de Saúde</h3>
-                    </div>
-                </div>
-                
-                <form onsubmit="salvarAviso(event)" class="p-4 space-y-3">
-                    <input type="hidden" id="aviso-id">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-700 mb-1">Título</label>
-                        <input type="text" id="aviso-titulo" required placeholder="Ex: Campanha de Vacinação" class="w-full px-3 py-2.5 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-700 mb-1">Descrição</label>
-                        <textarea id="aviso-descricao" required rows="3" placeholder="Detalhes do aviso para a população..." class="w-full px-3 py-2.5 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-sm resize-none"></textarea>
-                    </div>
-
-                    <div class="flex gap-2 pt-2">
-                        <button type="button" id="btn-cancelar-aviso" onclick="cancelarEdicao()" class="hidden w-1/3 bg-gray-200 text-gray-600 font-bold py-2.5 rounded-lg shadow-sm hover:bg-gray-300 active:scale-[0.98] transition-all text-sm">Cancelar</button>
-                        <button type="submit" id="btn-salvar-aviso" class="w-full bg-red-600 text-white font-bold py-2.5 rounded-lg shadow-sm hover:bg-red-700 active:scale-[0.98] transition-all flex justify-center items-center gap-2 text-sm">
-                            <i class="fa-solid fa-paper-plane"></i> <span id="texto-btn-salvar">Publicar</span>
-                        </button>
-                    </div>
-                </form>
-            </div>
-
-            <h3 class="font-bold text-gray-800 text-sm mb-3 border-l-4 border-red-500 pl-2">Avisos Publicados</h3>
-            
-            <div id="lista-avisos" class="flex flex-col gap-3">
-                <div class="text-center py-6 text-gray-400 text-sm">
-                    <i class="fa-solid fa-spinner fa-spin mb-2"></i><br>Carregando avisos...
-                </div>
-            </div>
-
-        </main>
-
-        <!-- ========================================== -->
-        <!-- BARRA DE NAVEGAÇÃO INFERIOR                -->
-        <!-- ========================================== -->
-        <nav class="absolute bottom-0 w-full bg-white border-t border-gray-200 z-50 pb-safe">
-            <div class="flex justify-around items-center h-16 relative">
-                
-                <a href="#" onclick="trocarAba('solicitacoes')" id="btn-aba-solicitacoes" class="flex flex-col items-center justify-center w-full h-full text-red-600 transition-colors">
-                    <i class="fa-solid fa-calendar-check text-lg mb-1"></i>
-                    <span class="text-[10px] font-bold">Agendamentos</span>
-                </a>
-                
-                <div class="w-px h-8 bg-gray-200"></div>
-
-                <a href="#" onclick="trocarAba('horarios')" id="btn-aba-horarios" class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-blue-600 transition-colors">
-                    <i class="fa-solid fa-clock text-lg mb-1"></i>
-                    <span class="text-[10px] font-bold">Horários</span>
-                </a>
-
-                <div class="w-px h-8 bg-gray-200"></div>
-
-                <a href="#" onclick="trocarAba('avisos')" id="btn-aba-avisos" class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-red-600 transition-colors">
-                    <i class="fa-solid fa-bullhorn text-lg mb-1"></i>
-                    <span class="text-[10px] font-bold">Avisos no App</span>
-                </a>
-
-            </div>
-        </nav>
-
-        <!-- ========================================== -->
-        <!-- MODAL DE DETALHES DO AGENDAMENTO           -->
-        <!-- ========================================== -->
-        <div id="modal-detalhes" class="absolute inset-0 z-[150] hidden flex-col justify-end">
-            <div id="modal-overlay" class="absolute inset-0 bg-black bg-opacity-0 transition-opacity duration-300" onclick="fecharDetalhes()"></div>
-            
-            <div id="modal-content" class="bg-white rounded-t-3xl max-h-[85vh] overflow-y-auto w-full relative z-10 transform translate-y-full transition-transform duration-300 flex flex-col shadow-[0_-10px_40px_rgba(0,0,0,0.2)] pb-safe">
-                
-                <div class="sticky top-0 bg-white px-5 py-4 border-b border-gray-100 flex justify-between items-center z-20">
-                    <h3 class="font-black text-gray-800 text-lg">Detalhes da Consulta</h3>
-                    <button onclick="fecharDetalhes()" class="w-8 h-8 bg-gray-100 text-gray-600 rounded-full hover:bg-gray-200 flex items-center justify-center transition-colors">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                </div>
-                
-                <div class="p-5 space-y-5">
-                    <div class="flex justify-between items-center bg-red-50 p-3 rounded-xl border border-red-100">
-                        <span class="text-xs font-bold text-red-700 uppercase"><i class="fa-solid fa-hashtag mr-1"></i> Protocolo</span>
-                        <span id="detalhe-protocolo" class="font-black text-red-600 text-sm"></span>
-                    </div>
-
-                    <div class="space-y-4">
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="bg-gray-50 p-3 rounded-lg border border-gray-100">
-                                <p class="text-[9px] text-gray-400 font-bold uppercase mb-0.5"><i class="fa-regular fa-user mr-1"></i> Paciente</p>
-                                <p id="detalhe-nome" class="text-xs font-bold text-gray-800 leading-tight"></p>
-                            </div>
-                            <div class="bg-gray-50 p-3 rounded-lg border border-gray-100">
-                                <p class="text-[9px] text-gray-400 font-bold uppercase mb-0.5"><i class="fa-solid fa-paper-plane mr-1"></i> Solicitado em</p>
-                                <p id="detalhe-data-registro" class="text-xs font-bold text-gray-800 leading-tight"></p>
-                            </div>
-                        </div>
-
-                        <div>
-                            <p class="text-[9px] text-gray-400 font-bold uppercase mb-1 ml-1">Especialidade / Serviço</p>
-                            <div class="flex items-center gap-2 bg-gray-50 p-3 rounded-lg border border-gray-100">
-                                <i class="fa-solid fa-stethoscope text-red-500"></i>
-                                <p id="detalhe-especialidade" class="text-sm font-bold text-gray-800"></p>
-                            </div>
-                        </div>
-                        
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <p class="text-[9px] text-gray-400 font-bold uppercase mb-1 ml-1"><i class="fa-regular fa-calendar mr-1"></i> Data Agendada</p>
-                                <p id="detalhe-data-consulta" class="text-sm font-bold text-blue-700 bg-blue-50 p-3 rounded-lg border border-blue-100"></p>
-                            </div>
-                            <div>
-                                <p class="text-[9px] text-gray-400 font-bold uppercase mb-1 ml-1"><i class="fa-regular fa-clock mr-1"></i> Hora</p>
-                                <p id="detalhe-hora-consulta" class="text-sm font-bold text-blue-700 bg-blue-50 p-3 rounded-lg border border-blue-100"></p>
-                            </div>
-                        </div>
-
-                        <div>
-                            <p class="text-[9px] text-gray-400 font-bold uppercase mb-1 ml-1"><i class="fa-solid fa-comment-medical mr-1"></i> Sintomas / Motivo</p>
-                            <div class="bg-amber-50 p-3 rounded-lg border border-amber-100">
-                                <p id="detalhe-sintomas" class="text-xs text-amber-800 italic"></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+  <!-- HEADER -->
+  <header class="bg-white shadow-sm z-10 flex-shrink-0">
+    <div class="bg-red-600 h-1.5 w-full"></div>
+    <div class="px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full bg-red-50 text-red-600 flex items-center justify-center shrink-0">
+          <i class="fa-solid fa-heart-pulse text-lg"></i>
         </div>
+        <div>
+          <p class="text-[9px] tracking-widest text-gray-400 uppercase font-semibold">Painel de Gestão</p>
+          <h1 class="text-lg font-black text-gray-800 uppercase tracking-tight leading-none">Sec. Saúde</h1>
+        </div>
+      </div>
+      <button onclick="fazerLogout()" class="text-gray-400 hover:text-red-500 transition-colors p-2">
+        <i class="fa-solid fa-right-from-bracket text-lg"></i>
+      </button>
+    </div>
+    <!-- TABS -->
+    <div class="flex border-t border-gray-100">
+      <button onclick="trocarAba('agendamentos')" id="tab-agendamentos" class="flex-1 py-2.5 flex flex-col items-center gap-0.5 text-[10px] font-bold uppercase transition-all tab-active">
+        <i class="fa-solid fa-calendar-check text-base"></i> Agendamentos
+      </button>
+      <button onclick="trocarAba('horarios')" id="tab-horarios" class="flex-1 py-2.5 flex flex-col items-center gap-0.5 text-[10px] font-bold uppercase transition-all tab-inactive">
+        <i class="fa-solid fa-clock text-base"></i> Horários
+      </button>
+      <button onclick="trocarAba('especialidades')" id="tab-especialidades" class="flex-1 py-2.5 flex flex-col items-center gap-0.5 text-[10px] font-bold uppercase transition-all tab-inactive">
+        <i class="fa-solid fa-user-doctor text-base"></i> Especialidades
+      </button>
+      <button onclick="trocarAba('avisos')" id="tab-avisos" class="flex-1 py-2.5 flex flex-col items-center gap-0.5 text-[10px] font-bold uppercase transition-all tab-inactive">
+        <i class="fa-solid fa-bullhorn text-base"></i> Avisos
+      </button>
+    </div>
+  </header>
 
+  <!-- ===== ABA: AGENDAMENTOS ===== -->
+  <main id="aba-agendamentos" class="flex-grow overflow-y-auto p-4 pb-6 bg-gray-50 block">
+
+    <!-- Estatísticas -->
+    <div class="grid grid-cols-3 gap-2 mb-5">
+      <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-3 text-center border-t-4 border-t-amber-400">
+        <p id="stat-analise" class="text-2xl font-black text-gray-800">0</p>
+        <p class="text-[9px] text-gray-400 font-bold uppercase mt-0.5">Em Análise</p>
+      </div>
+      <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-3 text-center border-t-4 border-t-blue-500">
+        <p id="stat-confirmado" class="text-2xl font-black text-gray-800">0</p>
+        <p class="text-[9px] text-gray-400 font-bold uppercase mt-0.5">Confirmados</p>
+      </div>
+      <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-3 text-center border-t-4 border-t-green-500">
+        <p id="stat-realizado" class="text-2xl font-black text-gray-800">0</p>
+        <p class="text-[9px] text-gray-400 font-bold uppercase mt-0.5">Realizados</p>
+      </div>
     </div>
 
-    <!-- SCRIPT DE LÓGICA E FIREBASE -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, query, orderBy, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    <!-- Filtro de status -->
+    <div class="flex gap-2 mb-4 overflow-x-auto pb-1">
+      <button onclick="filtrarPorStatus('TODOS')" id="filtro-TODOS" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-gray-800 text-white">Todos</button>
+      <button onclick="filtrarPorStatus('EM ANÁLISE')" id="filtro-EM ANÁLISE" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">Em Análise</button>
+      <button onclick="filtrarPorStatus('CONFIRMADO')" id="filtro-CONFIRMADO" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">Confirmados</button>
+      <button onclick="filtrarPorStatus('REALIZADO')" id="filtro-REALIZADO" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">Realizados</button>
+      <button onclick="filtrarPorStatus('CANCELADO')" id="filtro-CANCELADO" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">Cancelados</button>
+    </div>
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyCpaNuC1IUkteO4fHzFPiNS7s580EyTleU",
-            authDomain: "doresopolis.firebaseapp.com",
-            projectId: "doresopolis",
-            storageBucket: "doresopolis.firebasestorage.app",
-            messagingSenderId: "465119846468",
-            appId: "1:465119846468:web:8b292481fec10132cf9c11",
-            measurementId: "G-WXWGXEWY53"
-        };
+    <div id="lista-agendamentos" class="flex flex-col gap-3">
+      <div class="text-center py-10 text-gray-400 text-sm">
+        <i class="fa-solid fa-spinner fa-spin text-2xl mb-2 block"></i>
+        Carregando agendamentos...
+      </div>
+    </div>
+  </main>
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app); 
-        
-        window.dadosAgendamentos = {};
+  <!-- ===== ABA: HORÁRIOS / VAGAS ===== -->
+  <main id="aba-horarios" class="flex-grow overflow-y-auto p-4 pb-6 bg-gray-50 hidden">
 
-        window.mostrarAviso = function(mensagem, tipo = 'sucesso') {
-            const toast = document.getElementById('toast-aviso');
-            const icone = document.getElementById('toast-icone');
-            document.getElementById('toast-mensagem').innerText = mensagem;
+    <!-- Formulário criar vaga -->
+    <div class="bg-white rounded-xl border border-blue-100 shadow-sm overflow-hidden mb-5">
+      <div class="bg-blue-600 px-4 py-3 flex items-center gap-2 text-white">
+        <i class="fa-solid fa-calendar-plus"></i>
+        <h3 class="font-bold text-sm">Criar Horários Disponíveis</h3>
+      </div>
+      <form onsubmit="criarHorario(event)" class="p-4 space-y-3">
+        <div>
+          <label class="block text-xs font-bold text-gray-600 mb-1">Especialidade</label>
+          <div class="relative">
+            <select id="h-especialidade" required class="w-full pl-3 pr-8 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none">
+              <option value="" disabled selected>Carregando especialidades...</option>
+            </select>
+            <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 text-xs"><i class="fa-solid fa-chevron-down"></i></div>
+          </div>
+        </div>
+        <div class="flex gap-2">
+          <div class="flex-1">
+            <label class="block text-xs font-bold text-gray-600 mb-1">Data</label>
+            <input type="date" id="h-data" required class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+          <div class="flex-1">
+            <label class="block text-xs font-bold text-gray-600 mb-1">Horário</label>
+            <input type="time" id="h-hora" required class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-600 mb-1">Limite de Vagas neste horário</label>
+          <div class="flex items-center gap-3">
+            <input type="number" id="h-vagas" min="1" max="50" value="1" required class="w-24 px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-center font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <p class="text-xs text-gray-400">paciente(s) por vez</p>
+          </div>
+        </div>
+        <button type="submit" id="btn-criar-horario" class="w-full bg-blue-600 text-white font-bold py-2.5 rounded-lg shadow-sm hover:bg-blue-700 active:scale-[0.98] transition-all flex justify-center items-center gap-2 text-sm">
+          <i class="fa-solid fa-plus"></i> Criar Horário
+        </button>
+      </form>
+    </div>
 
-            if(tipo === 'sucesso') {
-                toast.classList.remove('bg-red-600');
-                toast.classList.add('bg-green-600');
-                icone.className = 'fa-solid fa-circle-check text-lg';
-            } else {
-                toast.classList.remove('bg-green-600');
-                toast.classList.add('bg-red-600');
-                icone.className = 'fa-solid fa-circle-exclamation text-lg';
-            }
+    <h3 class="font-bold text-gray-700 text-xs uppercase tracking-wider mb-3 pl-1 border-l-4 border-blue-500 pl-3">Horários Disponíveis Abertos</h3>
+    <div id="lista-horarios" class="flex flex-col gap-2">
+      <div class="text-center py-8 text-gray-400 text-sm">
+        <i class="fa-solid fa-spinner fa-spin mb-2 block"></i> Carregando...
+      </div>
+    </div>
+  </main>
 
-            toast.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-[-20px]');
-            toast.classList.add('opacity-100', 'translate-y-0');
+  <!-- ===== ABA: ESPECIALIDADES ===== -->
+  <main id="aba-especialidades" class="flex-grow overflow-y-auto p-4 pb-6 bg-gray-50 hidden">
 
-            setTimeout(() => {
-                toast.classList.remove('opacity-100', 'translate-y-0');
-                toast.classList.add('opacity-0', 'pointer-events-none', 'translate-y-[-20px]');
-            }, 3000);
-        };
+    <!-- Formulário criar especialidade -->
+    <div class="bg-white rounded-xl border border-green-100 shadow-sm overflow-hidden mb-5">
+      <div class="bg-doresopolis-green px-4 py-3 flex items-center gap-2 text-white" style="background:#0b5c3b">
+        <i class="fa-solid fa-user-doctor"></i>
+        <h3 class="font-bold text-sm">Cadastrar Especialidade</h3>
+      </div>
+      <form onsubmit="salvarEspecialidade(event)" class="p-4 space-y-3">
+        <input type="hidden" id="esp-id">
+        <div>
+          <label class="block text-xs font-bold text-gray-600 mb-1">Nome da Especialidade</label>
+          <input type="text" id="esp-nome" required placeholder="Ex: Clínico Geral, Dentista..." class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-600">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-600 mb-1">Nome do Profissional</label>
+          <input type="text" id="esp-profissional" required placeholder="Ex: Dr. João Silva" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-600">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-600 mb-1">Descrição breve (opcional)</label>
+          <input type="text" id="esp-descricao" placeholder="Ex: Atendimento infantil de 0 a 12 anos" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-600">
+        </div>
+        <div class="flex gap-2 pt-1">
+          <button type="button" id="btn-cancelar-esp" onclick="cancelarEdicaoEsp()" class="hidden flex-1 bg-gray-100 text-gray-600 font-bold py-2.5 rounded-lg text-sm">Cancelar</button>
+          <button type="submit" id="btn-salvar-esp" class="flex-1 text-white font-bold py-2.5 rounded-lg shadow-sm active:scale-[0.98] transition-all flex justify-center items-center gap-2 text-sm" style="background:#0b5c3b">
+            <i class="fa-solid fa-plus"></i> <span id="txt-btn-esp">Cadastrar</span>
+          </button>
+        </div>
+      </form>
+    </div>
 
-        window.trocarAba = function(aba) {
-            ['solicitacoes', 'horarios', 'avisos'].forEach(nome => {
-                const docAba = document.getElementById(`aba-${nome}`);
-                const docBtn = document.getElementById(`aba-btn-${nome}`);
-                
-                if(nome === aba) {
-                    docAba.classList.replace('hidden', 'block');
-                    if(nome === 'horarios') {
-                        docBtn.classList.replace('text-gray-400', 'text-blue-600');
-                    } else {
-                        docBtn.classList.replace('text-gray-400', 'text-red-600');
-                    }
-                } else {
-                    docAba.classList.replace('block', 'hidden');
-                    if(nome === 'horarios') {
-                        docBtn.classList.replace('text-blue-600', 'text-gray-400');
-                    } else {
-                        docBtn.classList.replace('text-red-600', 'text-gray-400');
-                    }
-                }
-            });
-        };
+    <h3 class="font-bold text-gray-700 text-xs uppercase tracking-wider mb-3 border-l-4 pl-3" style="border-color:#0b5c3b">Especialidades Cadastradas</h3>
+    <div id="lista-especialidades" class="flex flex-col gap-3">
+      <div class="text-center py-8 text-gray-400 text-sm">
+        <i class="fa-solid fa-spinner fa-spin mb-2 block"></i> Carregando...
+      </div>
+    </div>
+  </main>
 
-        // --- 1. GESTÃO DE AGENDAMENTOS (PACIENTES) ---
-        const saudeRef = collection(db, "solicitacoes_saude");
-        const qSaude = query(saudeRef, orderBy("dataRegistro", "desc"));
+  <!-- ===== ABA: AVISOS ===== -->
+  <main id="aba-avisos" class="flex-grow overflow-y-auto p-4 pb-6 bg-gray-50 hidden">
+    <div class="bg-white rounded-xl border border-red-100 shadow-sm overflow-hidden mb-5">
+      <div class="bg-red-600 px-4 py-3 flex items-center gap-2 text-white">
+        <i class="fa-solid fa-bullhorn"></i>
+        <h3 id="titulo-form-aviso" class="font-bold text-sm">Publicar Aviso de Saúde</h3>
+      </div>
+      <form onsubmit="salvarAviso(event)" class="p-4 space-y-3">
+        <input type="hidden" id="aviso-id">
+        <div>
+          <label class="block text-xs font-bold text-gray-600 mb-1">Título</label>
+          <input type="text" id="aviso-titulo" required placeholder="Ex: Campanha de Vacinação" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-600 mb-1">Descrição</label>
+          <textarea id="aviso-descricao" required rows="3" placeholder="Detalhes do aviso..." class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-red-500"></textarea>
+        </div>
+        <div class="flex gap-2">
+          <button type="button" id="btn-cancelar-aviso" onclick="cancelarEdicaoAviso()" class="hidden flex-1 bg-gray-100 text-gray-600 font-bold py-2.5 rounded-lg text-sm">Cancelar</button>
+          <button type="submit" id="btn-salvar-aviso" class="flex-1 bg-red-600 text-white font-bold py-2.5 rounded-lg shadow-sm hover:bg-red-700 active:scale-[0.98] transition-all flex justify-center items-center gap-2 text-sm">
+            <i class="fa-solid fa-paper-plane"></i> <span id="txt-btn-aviso">Publicar</span>
+          </button>
+        </div>
+      </form>
+    </div>
+    <h3 class="font-bold text-gray-700 text-xs uppercase tracking-wider mb-3 border-l-4 border-red-500 pl-3">Avisos Publicados</h3>
+    <div id="lista-avisos" class="flex flex-col gap-3">
+      <div class="text-center py-8 text-gray-400 text-sm"><i class="fa-solid fa-spinner fa-spin mb-2 block"></i> Carregando...</div>
+    </div>
+  </main>
 
-        onSnapshot(qSaude, (snapshot) => {
-            const container = document.getElementById("lista-solicitacoes");
-            
-            if (snapshot.empty) {
-                container.innerHTML = `<div class="text-center py-6 text-gray-500 text-sm">Nenhum agendamento encontrado.</div>`;
-                document.getElementById("stat-analise").innerText = '0';
-                document.getElementById("stat-confirmado").innerText = '0';
-                document.getElementById("stat-realizado").innerText = '0';
-                return;
-            }
+</div>
 
-            container.innerHTML = "";
-            let contAnalise = 0;
-            let contConfirmado = 0;
-            let contRealizado = 0;
+<!-- MODAL DETALHES AGENDAMENTO -->
+<div id="modal-detalhes" class="fixed inset-0 z-[150] hidden flex-col justify-end" style="max-width:448px; margin:auto;">
+  <div id="modal-overlay" class="absolute inset-0 bg-black bg-opacity-0 transition-opacity duration-300" onclick="fecharDetalhes()"></div>
+  <div id="modal-content" class="bg-white rounded-t-3xl max-h-[88vh] overflow-y-auto w-full relative z-10 transform translate-y-full transition-transform duration-300 shadow-[0_-10px_40px_rgba(0,0,0,0.2)]">
+    <div class="sticky top-0 bg-white px-5 py-4 border-b border-gray-100 flex justify-between items-center">
+      <h3 class="font-black text-gray-800 text-lg">Detalhes da Consulta</h3>
+      <button onclick="fecharDetalhes()" class="w-8 h-8 bg-gray-100 text-gray-600 rounded-full flex items-center justify-center">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="p-5 space-y-4">
+      <div class="flex justify-between items-center bg-red-50 p-3 rounded-xl border border-red-100">
+        <span class="text-xs font-bold text-red-600 uppercase">Protocolo</span>
+        <span id="d-protocolo" class="font-black text-red-600 text-sm"></span>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="bg-gray-50 p-3 rounded-xl border border-gray-100">
+          <p class="text-[9px] text-gray-400 font-bold uppercase mb-1">Paciente</p>
+          <p id="d-nome" class="text-xs font-bold text-gray-800"></p>
+        </div>
+        <div class="bg-gray-50 p-3 rounded-xl border border-gray-100">
+          <p class="text-[9px] text-gray-400 font-bold uppercase mb-1">Solicitado em</p>
+          <p id="d-registro" class="text-xs font-bold text-gray-800"></p>
+        </div>
+      </div>
+      <div class="bg-gray-50 p-3 rounded-xl border border-gray-100">
+        <p class="text-[9px] text-gray-400 font-bold uppercase mb-1">Especialidade / Profissional</p>
+        <p id="d-especialidade" class="text-sm font-bold text-gray-800"></p>
+        <p id="d-profissional" class="text-xs text-gray-500 mt-0.5"></p>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="bg-blue-50 p-3 rounded-xl border border-blue-100">
+          <p class="text-[9px] text-blue-500 font-bold uppercase mb-1">Data</p>
+          <p id="d-data" class="text-sm font-bold text-blue-700"></p>
+        </div>
+        <div class="bg-blue-50 p-3 rounded-xl border border-blue-100">
+          <p class="text-[9px] text-blue-500 font-bold uppercase mb-1">Horário</p>
+          <p id="d-hora" class="text-sm font-bold text-blue-700"></p>
+        </div>
+      </div>
+      <div class="bg-amber-50 p-3 rounded-xl border border-amber-100">
+        <p class="text-[9px] text-amber-600 font-bold uppercase mb-1">Motivo / Sintomas</p>
+        <p id="d-sintomas" class="text-xs text-amber-800 italic"></p>
+      </div>
+      <!-- Botões de ação rápida -->
+      <div id="d-acoes" class="flex gap-2 pt-2"></div>
+    </div>
+  </div>
+</div>
 
-            snapshot.forEach((docSnap) => {
-                const data = docSnap.data();
-                const id = docSnap.id;
-                
-                window.dadosAgendamentos[id] = data;
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, query, orderBy, where, onSnapshot, getDocs, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-                if(data.status === 'EM ANÁLISE') contAnalise++;
-                else if(data.status === 'CONFIRMADO') contConfirmado++;
-                else if(data.status === 'REALIZADO') contRealizado++;
+const firebaseConfig = {
+  apiKey: "AIzaSyCpaNuC1IUkteO4fHzFPiNS7s580EyTleU",
+  authDomain: "doresopolis.firebaseapp.com",
+  projectId: "doresopolis",
+  storageBucket: "doresopolis.firebasestorage.app",
+  messagingSenderId: "465119846468",
+  appId: "1:465119846468:web:8b292481fec10132cf9c11"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-                const protocoloTexto = data.protocolo ? `#${data.protocolo}` : 'Sem Protocolo';
+// Cache
+window.cacheAgendamentos = {};
+window.cacheEspecialidades = {};
+window.filtroAtual = 'TODOS';
 
-                let corSelect = 'text-amber-600 bg-amber-50 border-amber-200';
-                if(data.status === 'CONFIRMADO') corSelect = 'text-blue-600 bg-blue-50 border-blue-200';
-                else if(data.status === 'REALIZADO') corSelect = 'text-green-600 bg-green-50 border-green-200';
-                else if(data.status === 'CANCELADO') corSelect = 'text-red-600 bg-red-50 border-red-200';
+// ===== TOAST =====
+window.mostrarAviso = function(msg, tipo = 'sucesso') {
+  const t = document.getElementById('toast-aviso');
+  const i = document.getElementById('toast-icone');
+  document.getElementById('toast-mensagem').innerText = msg;
+  t.className = t.className.replace(/bg-\w+-\d+/, '');
+  if (tipo === 'sucesso') { t.classList.add('bg-green-600'); i.className = 'fa-solid fa-circle-check text-lg'; }
+  else if (tipo === 'info') { t.classList.add('bg-blue-600'); i.className = 'fa-solid fa-circle-info text-lg'; }
+  else { t.classList.add('bg-red-600'); i.className = 'fa-solid fa-circle-exclamation text-lg'; }
+  t.classList.remove('opacity-0','pointer-events-none','translate-y-[-20px]');
+  t.classList.add('opacity-100','translate-y-0');
+  setTimeout(() => { t.classList.add('opacity-0','pointer-events-none','translate-y-[-20px]'); t.classList.remove('opacity-100','translate-y-0'); }, 3500);
+};
 
-                const [ano, mes, dia] = data.dataConsulta.split('-');
-                const dataFmt = `${dia}/${mes}/${ano}`;
+// ===== ABAS =====
+window.trocarAba = function(aba) {
+  ['agendamentos','horarios','especialidades','avisos'].forEach(nome => {
+    document.getElementById(`aba-${nome}`).classList.add('hidden');
+    document.getElementById(`aba-${nome}`).classList.remove('block');
+    const tab = document.getElementById(`tab-${nome}`);
+    tab.classList.remove('tab-active');
+    tab.classList.add('tab-inactive');
+  });
+  document.getElementById(`aba-${aba}`).classList.remove('hidden');
+  document.getElementById(`aba-${aba}`).classList.add('block');
+  document.getElementById(`tab-${aba}`).classList.add('tab-active');
+  document.getElementById(`tab-${aba}`).classList.remove('tab-inactive');
+};
 
-                const card = `
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 flex flex-col gap-3">
-                        <div class="flex gap-3 items-center">
-                            <div class="w-14 h-14 rounded-lg bg-red-50 text-red-500 flex items-center justify-center flex-shrink-0">
-                                <i class="fa-solid fa-stethoscope text-2xl"></i>
-                            </div>
-                            <div class="flex-grow overflow-hidden">
-                                <span class="text-[9px] font-black text-red-500 mb-0.5 block uppercase truncate"><i class="fa-solid fa-hashtag mr-0.5"></i> Protocolo: ${protocoloTexto}</span>
-                                <h4 class="font-bold text-gray-800 text-sm leading-tight truncate">${data.especialidade || 'Consulta Médica'}</h4>
-                                <p class="text-xs text-gray-500 mt-0.5 truncate"><i class="fa-regular fa-user mr-1 text-gray-400"></i> ${data.nomeCidadao || 'Não informado'}</p>
-                                <p class="text-[10px] font-bold text-blue-600 mt-1"><i class="fa-regular fa-calendar mr-1"></i> ${dataFmt} às ${data.horaConsulta || 'S/H'}</p>
-                            </div>
-                        </div>
-                        <div class="flex justify-between items-center border-t border-gray-50 pt-2 mt-1">
-                            <select onchange="atualizarStatusBD('${id}', this.value)" class="text-[10px] font-bold border rounded-full px-2 py-1.5 outline-none cursor-pointer ${corSelect}">
-                                <option value="EM ANÁLISE" ${data.status === 'EM ANÁLISE' ? 'selected' : ''}>EM ANÁLISE</option>
-                                <option value="CONFIRMADO" ${data.status === 'CONFIRMADO' ? 'selected' : ''}>CONFIRMADO</option>
-                                <option value="REALIZADO" ${data.status === 'REALIZADO' ? 'selected' : ''}>REALIZADO</option>
-                                <option value="CANCELADO" ${data.status === 'CANCELADO' ? 'selected' : ''}>CANCELADO</option>
-                            </select>
-                            
-                            <button onclick="abrirDetalhes('${id}')" class="text-[10px] font-bold text-blue-600 bg-blue-50 border border-blue-200 px-3 py-1.5 rounded-full hover:bg-blue-100 active:scale-95 transition-all">
-                                <i class="fa-solid fa-eye mr-1"></i> Ver Dados
-                            </button>
-                        </div>
-                    </div>
-                `;
-                container.innerHTML += card;
-            });
+// ===== FILTRO AGENDAMENTOS =====
+window.filtrarPorStatus = function(status) {
+  window.filtroAtual = status;
+  document.querySelectorAll('[id^="filtro-"]').forEach(btn => {
+    btn.classList.remove('bg-gray-800','text-white');
+    btn.classList.add('bg-gray-100','text-gray-500');
+  });
+  const btnAtivo = document.getElementById(`filtro-${status}`);
+  if (btnAtivo) {
+    btnAtivo.classList.add('bg-gray-800','text-white');
+    btnAtivo.classList.remove('bg-gray-100','text-gray-500');
+  }
+  renderizarAgendamentos();
+};
 
-            document.getElementById("stat-analise").innerText = contAnalise;
-            document.getElementById("stat-confirmado").innerText = contConfirmado;
-            document.getElementById("stat-realizado").innerText = contRealizado;
-        }, (error) => {
-            console.error("Erro ao puxar solicitações:", error);
-        });
+let todosAgendamentos = [];
 
-        window.atualizarStatusBD = async function(id, novoStatus) {
-            try {
-                await updateDoc(doc(db, "solicitacoes_saude", id), { status: novoStatus });
-                mostrarAviso("Status da consulta atualizado!");
-            } catch (error) {
-                mostrarAviso("Erro ao atualizar o status.", "erro");
-            }
-        };
+function renderizarAgendamentos() {
+  const container = document.getElementById('lista-agendamentos');
+  let lista = todosAgendamentos;
+  if (window.filtroAtual !== 'TODOS') {
+    lista = todosAgendamentos.filter(a => a.status === window.filtroAtual);
+  }
+  if (lista.length === 0) {
+    container.innerHTML = `<div class="text-center py-10 text-gray-400 text-sm bg-white rounded-xl border border-gray-100">Nenhum agendamento nesta categoria.</div>`;
+    return;
+  }
+  container.innerHTML = lista.map(ag => {
+    const [ano, mes, dia] = ag.dataConsulta.split('-');
+    const dataFmt = `${dia}/${mes}/${ano}`;
+    const statusColor = {
+      'EM ANÁLISE': 'bg-amber-100 text-amber-700 border-amber-200',
+      'CONFIRMADO': 'bg-blue-100 text-blue-700 border-blue-200',
+      'REALIZADO': 'bg-green-100 text-green-700 border-green-200',
+      'CANCELADO': 'bg-red-100 text-red-700 border-red-200',
+    }[ag.status] || 'bg-gray-100 text-gray-600 border-gray-200';
 
-        window.abrirDetalhes = function(id) {
-            const data = window.dadosAgendamentos[id];
-            if(!data) return;
+    return `
+    <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-3 slide-up">
+      <div class="flex gap-3 items-start">
+        <div class="w-12 h-12 rounded-xl bg-red-50 text-red-500 flex items-center justify-center shrink-0">
+          <i class="fa-solid fa-stethoscope text-xl"></i>
+        </div>
+        <div class="flex-grow min-w-0">
+          <div class="flex items-center justify-between gap-2 mb-1">
+            <span class="text-[9px] font-black text-red-400 uppercase truncate">#${ag.protocolo || 'S/N'}</span>
+            <span class="text-[9px] font-bold border rounded-full px-2 py-0.5 shrink-0 ${statusColor}">${ag.status}</span>
+          </div>
+          <h4 class="font-bold text-gray-800 text-sm truncate">${ag.especialidade}</h4>
+          <p class="text-xs text-gray-500 truncate"><i class="fa-regular fa-user mr-1"></i>${ag.nomeCidadao}</p>
+          <p class="text-[10px] text-blue-600 font-bold mt-1"><i class="fa-regular fa-calendar mr-1"></i>${dataFmt} às ${ag.horaConsulta}</p>
+        </div>
+      </div>
+      <div class="flex gap-2 mt-3 pt-2 border-t border-gray-50">
+        ${ag.status === 'EM ANÁLISE' ? `
+          <button onclick="aprovarAgendamento('${ag.id}')" class="flex-1 bg-blue-600 text-white text-[11px] font-bold py-2 rounded-lg active:scale-95 transition-all flex items-center justify-center gap-1">
+            <i class="fa-solid fa-check"></i> Confirmar
+          </button>
+          <button onclick="cancelarAgendamento('${ag.id}')" class="flex-1 bg-red-50 text-red-600 border border-red-200 text-[11px] font-bold py-2 rounded-lg active:scale-95 transition-all flex items-center justify-center gap-1">
+            <i class="fa-solid fa-ban"></i> Recusar
+          </button>
+        ` : `
+          <select onchange="atualizarStatus('${ag.id}', this.value)" class="flex-1 text-[10px] font-bold border rounded-lg px-2 py-2 outline-none cursor-pointer ${statusColor}">
+            <option value="EM ANÁLISE" ${ag.status === 'EM ANÁLISE' ? 'selected' : ''}>EM ANÁLISE</option>
+            <option value="CONFIRMADO" ${ag.status === 'CONFIRMADO' ? 'selected' : ''}>CONFIRMADO</option>
+            <option value="REALIZADO" ${ag.status === 'REALIZADO' ? 'selected' : ''}>REALIZADO</option>
+            <option value="CANCELADO" ${ag.status === 'CANCELADO' ? 'selected' : ''}>CANCELADO</option>
+          </select>
+        `}
+        <button onclick="abrirDetalhes('${ag.id}')" class="shrink-0 bg-gray-100 text-gray-600 text-[11px] font-bold px-3 py-2 rounded-lg active:scale-95 transition-all">
+          <i class="fa-solid fa-eye"></i>
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+}
 
-            document.getElementById('detalhe-protocolo').innerText = data.protocolo ? `#${data.protocolo}` : 'Pendente';
-            document.getElementById('detalhe-nome').innerText = data.nomeCidadao || 'Não informado';
-            
-            const dataFormatadaRegistro = new Date(data.dataRegistro).toLocaleDateString('pt-BR', {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit'});
-            document.getElementById('detalhe-data-registro').innerText = dataFormatadaRegistro;
-            
-            const [ano, mes, dia] = data.dataConsulta.split('-');
-            document.getElementById('detalhe-especialidade').innerText = data.especialidade || 'Consulta Médica';
-            document.getElementById('detalhe-data-consulta').innerText = `${dia}/${mes}/${ano}`;
-            document.getElementById('detalhe-hora-consulta').innerText = data.horaConsulta || 'Não definida';
-            
-            const desc = document.getElementById('detalhe-sintomas');
-            if(data.sintomas && data.sintomas.trim() !== '') {
-                desc.innerText = `"${data.sintomas}"`;
-                desc.classList.remove('text-gray-400');
-            } else {
-                desc.innerText = "Nenhuma descrição de sintomas fornecida.";
-                desc.classList.add('text-gray-400');
-            }
+// Listener agendamentos
+const qAgen = query(collection(db, "solicitacoes_saude"), orderBy("dataRegistro", "desc"));
+onSnapshot(qAgen, (snap) => {
+  todosAgendamentos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  snap.docs.forEach(d => { window.cacheAgendamentos[d.id] = d.data(); });
 
-            const modal = document.getElementById('modal-detalhes');
-            const overlay = document.getElementById('modal-overlay');
-            const content = document.getElementById('modal-content');
-            
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            
-            void modal.offsetWidth;
+  let contAnalise = 0, contConfirmado = 0, contRealizado = 0;
+  todosAgendamentos.forEach(a => {
+    if (a.status === 'EM ANÁLISE') contAnalise++;
+    else if (a.status === 'CONFIRMADO') contConfirmado++;
+    else if (a.status === 'REALIZADO') contRealizado++;
+  });
+  document.getElementById('stat-analise').innerText = contAnalise;
+  document.getElementById('stat-confirmado').innerText = contConfirmado;
+  document.getElementById('stat-realizado').innerText = contRealizado;
+  renderizarAgendamentos();
+});
 
-            overlay.classList.replace('bg-opacity-0', 'bg-opacity-60');
-            content.classList.remove('translate-y-full');
-        };
+window.aprovarAgendamento = async function(id) {
+  await updateDoc(doc(db, "solicitacoes_saude", id), { status: 'CONFIRMADO' });
+  mostrarAviso('Consulta confirmada!', 'sucesso');
+};
+window.cancelarAgendamento = async function(id) {
+  if (!confirm('Deseja realmente recusar este agendamento?')) return;
+  const ag = window.cacheAgendamentos[id];
+  await updateDoc(doc(db, "solicitacoes_saude", id), { status: 'CANCELADO' });
+  // Libera a vaga de volta se houver agendaId
+  if (ag && ag.agendaId) {
+    try {
+      const agRef = doc(db, "agendas_saude", ag.agendaId);
+      const agSnap = await getDoc(agRef);
+      if (agSnap.exists()) {
+        const vagasOcupadas = (agSnap.data().vagasOcupadas || 1) - 1;
+        const limite = agSnap.data().limiteVagas || 1;
+        await updateDoc(agRef, { vagasOcupadas: Math.max(0, vagasOcupadas), disponivel: vagasOcupadas < limite });
+      }
+    } catch(e) {}
+  }
+  mostrarAviso('Agendamento recusado e vaga liberada.', 'info');
+};
+window.atualizarStatus = async function(id, status) {
+  await updateDoc(doc(db, "solicitacoes_saude", id), { status });
+  mostrarAviso('Status atualizado!');
+};
 
-        window.fecharDetalhes = function() {
-            const modal = document.getElementById('modal-detalhes');
-            const overlay = document.getElementById('modal-overlay');
-            const content = document.getElementById('modal-content');
+// Modal detalhes
+window.abrirDetalhes = function(id) {
+  const data = window.cacheAgendamentos[id];
+  if (!data) return;
+  document.getElementById('d-protocolo').innerText = `#${data.protocolo || 'S/N'}`;
+  document.getElementById('d-nome').innerText = data.nomeCidadao || '';
+  document.getElementById('d-registro').innerText = new Date(data.dataRegistro).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'});
+  document.getElementById('d-especialidade').innerText = data.especialidade || '';
+  document.getElementById('d-profissional').innerText = data.profissional ? `Dr(a). ${data.profissional}` : '';
+  const [ano, mes, dia] = (data.dataConsulta||'').split('-');
+  document.getElementById('d-data').innerText = `${dia}/${mes}/${ano}`;
+  document.getElementById('d-hora').innerText = data.horaConsulta || '';
+  const sint = document.getElementById('d-sintomas');
+  sint.innerText = data.sintomas?.trim() ? `"${data.sintomas}"` : 'Não informado.';
 
-            overlay.classList.replace('bg-opacity-60', 'bg-opacity-0');
-            content.classList.add('translate-y-full');
+  // Ações rápidas no modal
+  const acoes = document.getElementById('d-acoes');
+  if (data.status === 'EM ANÁLISE') {
+    acoes.innerHTML = `
+      <button onclick="aprovarAgendamento('${id}'); fecharDetalhes();" class="flex-1 bg-blue-600 text-white font-bold py-2.5 rounded-xl text-sm flex items-center justify-center gap-2">
+        <i class="fa-solid fa-check"></i> Confirmar
+      </button>
+      <button onclick="cancelarAgendamento('${id}'); fecharDetalhes();" class="flex-1 bg-red-50 text-red-600 border border-red-200 font-bold py-2.5 rounded-xl text-sm flex items-center justify-center gap-2">
+        <i class="fa-solid fa-ban"></i> Recusar
+      </button>`;
+  } else {
+    acoes.innerHTML = '';
+  }
 
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-            }, 300); 
-        };
+  const modal = document.getElementById('modal-detalhes');
+  modal.classList.remove('hidden'); modal.classList.add('flex');
+  requestAnimationFrame(() => {
+    document.getElementById('modal-overlay').classList.replace('bg-opacity-0','bg-opacity-60');
+    document.getElementById('modal-content').classList.remove('translate-y-full');
+  });
+};
+window.fecharDetalhes = function() {
+  document.getElementById('modal-overlay').classList.replace('bg-opacity-60','bg-opacity-0');
+  document.getElementById('modal-content').classList.add('translate-y-full');
+  setTimeout(() => { document.getElementById('modal-detalhes').classList.add('hidden'); document.getElementById('modal-detalhes').classList.remove('flex'); }, 300);
+};
 
-        // --- 2. GESTÃO DE HORÁRIOS / VAGAS ---
-        const agendasRef = collection(db, "agendas_saude");
-        const qVagas = query(agendasRef, where("disponivel", "==", true), orderBy("dataISO", "asc"));
+// ===== ESPECIALIDADES =====
+let especialidadesCache = [];
 
-        onSnapshot(qVagas, (snapshot) => {
-            const container = document.getElementById("lista-vagas");
-            if (snapshot.empty) {
-                container.innerHTML = `<p class="text-center text-xs text-gray-400 py-4">Nenhuma vaga aberta no momento.</p>`;
-                return;
-            }
-            container.innerHTML = "";
-            snapshot.forEach((docSnap) => {
-                const vaga = docSnap.data();
-                const id = docSnap.id;
-                
-                const [ano, mes, dia] = vaga.dataISO.split('-');
-                
-                const card = `
-                    <div class="bg-white rounded-lg shadow-sm border border-blue-100 p-2 flex justify-between items-center">
-                        <div class="flex gap-3 items-center w-full">
-                            <div class="bg-blue-50 text-blue-600 font-black text-[10px] px-2 py-1.5 rounded uppercase w-12 text-center shrink-0">
-                                ${vaga.hora}
-                            </div>
-                            <div class="flex-grow">
-                                <h4 class="font-bold text-gray-800 text-xs">${vaga.especialidade}</h4>
-                                <span class="text-[9px] text-gray-500"><i class="fa-regular fa-calendar mr-1"></i> ${dia}/${mes}/${ano}</span>
-                            </div>
-                            <button onclick="excluirVaga('${id}')" class="text-red-400 hover:text-red-600 bg-red-50 p-1.5 rounded transition-colors" title="Excluir Horário">
-                                <i class="fa-solid fa-trash text-xs"></i>
-                            </button>
-                        </div>
-                    </div>
-                `;
-                container.innerHTML += card;
-            });
-        }, (error) => {
-            console.error("Erro ao puxar vagas:", error);
-        });
+function carregarEspecialidades() {
+  const qEsp = query(collection(db, "especialidades_saude"), orderBy("nome", "asc"));
+  onSnapshot(qEsp, (snap) => {
+    especialidadesCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    snap.docs.forEach(d => { window.cacheEspecialidades[d.id] = d.data(); });
+    renderizarEspecialidades();
+    popularSelectEspecialidades();
+  });
+}
 
-        window.adicionarVagaSaude = async function(event) {
-            event.preventDefault();
-            const btn = document.getElementById('btn-salvar-vaga');
+function renderizarEspecialidades() {
+  const container = document.getElementById('lista-especialidades');
+  if (especialidadesCache.length === 0) {
+    container.innerHTML = `<div class="text-center py-8 text-gray-400 text-sm bg-white rounded-xl border border-gray-100">Nenhuma especialidade cadastrada.</div>`;
+    return;
+  }
+  container.innerHTML = especialidadesCache.map(esp => `
+    <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-3 flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-green-50 text-green-700 flex items-center justify-center shrink-0">
+        <i class="fa-solid fa-user-doctor"></i>
+      </div>
+      <div class="flex-grow min-w-0">
+        <h4 class="font-bold text-gray-800 text-sm truncate">${esp.nome}</h4>
+        <p class="text-xs text-gray-500 truncate">${esp.profissional}</p>
+        ${esp.descricao ? `<p class="text-[10px] text-gray-400 truncate">${esp.descricao}</p>` : ''}
+      </div>
+      <div class="flex gap-1 shrink-0">
+        <button onclick="editarEsp('${esp.id}')" class="w-8 h-8 bg-blue-50 text-blue-500 rounded-lg flex items-center justify-center text-xs">
+          <i class="fa-solid fa-pen"></i>
+        </button>
+        <button onclick="excluirEsp('${esp.id}')" class="w-8 h-8 bg-red-50 text-red-400 rounded-lg flex items-center justify-center text-xs">
+          <i class="fa-solid fa-trash"></i>
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
 
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Abrindo...';
+function popularSelectEspecialidades() {
+  const sel = document.getElementById('h-especialidade');
+  const valorAtual = sel.value;
+  sel.innerHTML = '<option value="" disabled selected>Selecione a especialidade...</option>';
+  especialidadesCache.forEach(esp => {
+    const opt = document.createElement('option');
+    opt.value = esp.id;
+    opt.textContent = `${esp.nome} — ${esp.profissional}`;
+    opt.dataset.nome = esp.nome;
+    opt.dataset.profissional = esp.profissional;
+    sel.appendChild(opt);
+  });
+  if (valorAtual) sel.value = valorAtual;
+}
 
-            const especialidade = document.getElementById('vaga-especialidade').value;
-            const dataISO = document.getElementById('vaga-data').value;
-            const hora = document.getElementById('vaga-hora').value;
+window.salvarEspecialidade = async function(event) {
+  event.preventDefault();
+  const btn = document.getElementById('btn-salvar-esp');
+  btn.disabled = true;
+  const id = document.getElementById('esp-id').value;
+  const nome = document.getElementById('esp-nome').value.trim();
+  const profissional = document.getElementById('esp-profissional').value.trim();
+  const descricao = document.getElementById('esp-descricao').value.trim();
+  try {
+    if (id) {
+      await updateDoc(doc(db, "especialidades_saude", id), { nome, profissional, descricao });
+      mostrarAviso('Especialidade atualizada!');
+      cancelarEdicaoEsp();
+    } else {
+      await addDoc(collection(db, "especialidades_saude"), { nome, profissional, descricao, criadoEm: new Date().toISOString() });
+      mostrarAviso('Especialidade cadastrada!');
+      document.getElementById('esp-nome').value = '';
+      document.getElementById('esp-profissional').value = '';
+      document.getElementById('esp-descricao').value = '';
+    }
+  } catch(e) { mostrarAviso('Erro ao salvar.', 'erro'); }
+  finally { btn.disabled = false; }
+};
 
-            try {
-                await addDoc(agendasRef, {
-                    especialidade: especialidade,
-                    dataISO: dataISO,
-                    hora: hora,
-                    disponivel: true, 
-                    dataRegistro: new Date().toISOString()
-                });
-                mostrarAviso("Vaga adicionada com sucesso!");
-                document.getElementById('vaga-hora').value = '';
-            } catch (error) {
-                console.error(error);
-                mostrarAviso("Erro ao conectar ao servidor.", "erro");
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fa-solid fa-plus"></i> Abrir Horário';
-            }
-        };
+window.editarEsp = function(id) {
+  const esp = window.cacheEspecialidades[id];
+  document.getElementById('esp-id').value = id;
+  document.getElementById('esp-nome').value = esp.nome;
+  document.getElementById('esp-profissional').value = esp.profissional;
+  document.getElementById('esp-descricao').value = esp.descricao || '';
+  document.getElementById('btn-cancelar-esp').classList.remove('hidden');
+  document.getElementById('txt-btn-esp').innerText = 'Salvar Edição';
+  document.getElementById('aba-especialidades').scrollTo(0,0);
+};
+window.cancelarEdicaoEsp = function() {
+  document.getElementById('esp-id').value = '';
+  document.getElementById('esp-nome').value = '';
+  document.getElementById('esp-profissional').value = '';
+  document.getElementById('esp-descricao').value = '';
+  document.getElementById('btn-cancelar-esp').classList.add('hidden');
+  document.getElementById('txt-btn-esp').innerText = 'Cadastrar';
+};
+window.excluirEsp = async function(id) {
+  if (!confirm('Excluir esta especialidade? Os horários vinculados serão afetados.')) return;
+  await deleteDoc(doc(db, "especialidades_saude", id));
+  mostrarAviso('Especialidade excluída.', 'info');
+};
 
-        window.excluirVaga = async function(id) {
-            if(confirm("Deseja cancelar a disponibilidade desta vaga?")) {
-                try {
-                    await deleteDoc(doc(db, "agendas_saude", id));
-                    mostrarAviso("Vaga removida!");
-                } catch (error) {
-                    mostrarAviso("Erro ao excluir vaga.", "erro");
-                }
-            }
-        };
+// ===== HORÁRIOS =====
+const qHorarios = query(collection(db, "agendas_saude"), orderBy("dataISO", "asc"));
+onSnapshot(qHorarios, (snap) => {
+  const container = document.getElementById('lista-horarios');
+  const vagasDisp = snap.docs.filter(d => d.data().disponivel !== false);
+  if (vagasDisp.length === 0) {
+    container.innerHTML = `<div class="text-center py-8 text-gray-400 text-sm bg-white rounded-xl border border-gray-100">Nenhum horário aberto.</div>`;
+    return;
+  }
+  container.innerHTML = vagasDisp.map(docSnap => {
+    const v = docSnap.data();
+    const id = docSnap.id;
+    const [ano, mes, dia] = (v.dataISO||'').split('-');
+    const ocupadas = v.vagasOcupadas || 0;
+    const limite = v.limiteVagas || 1;
+    const livres = limite - ocupadas;
+    return `
+    <div class="bg-white rounded-xl border border-blue-100 shadow-sm p-3 flex items-center gap-3">
+      <div class="bg-blue-50 text-blue-700 font-black text-xs px-2 py-2 rounded-lg text-center w-14 shrink-0">
+        ${v.hora || '--:--'}
+      </div>
+      <div class="flex-grow min-w-0">
+        <h4 class="font-bold text-gray-800 text-xs truncate">${v.especialidade || 'Especialidade'}</h4>
+        <p class="text-[10px] text-gray-500"><i class="fa-regular fa-calendar mr-1"></i>${dia}/${mes}/${ano}</p>
+        <div class="flex items-center gap-1 mt-1">
+          <div class="h-1.5 rounded-full bg-gray-200 flex-1 overflow-hidden">
+            <div class="h-full rounded-full ${livres > 0 ? 'bg-green-400' : 'bg-red-400'}" style="width:${(ocupadas/limite)*100}%"></div>
+          </div>
+          <span class="text-[9px] font-bold ${livres > 0 ? 'text-green-600' : 'text-red-500'}">${livres}/${limite} vagas</span>
+        </div>
+      </div>
+      <button onclick="excluirHorario('${id}')" class="w-8 h-8 bg-red-50 text-red-400 rounded-lg flex items-center justify-center shrink-0">
+        <i class="fa-solid fa-trash text-xs"></i>
+      </button>
+    </div>`;
+  }).join('');
+});
 
-        // --- 3. GESTÃO DE AVISOS ---
-        const avisosRef = collection(db, "avisos");
-        const qAvisos = query(avisosRef, orderBy("dataPublicacao", "desc"));
+window.criarHorario = async function(event) {
+  event.preventDefault();
+  const btn = document.getElementById('btn-criar-horario');
+  btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Criando...';
+  const sel = document.getElementById('h-especialidade');
+  const espId = sel.value;
+  const espOpt = sel.options[sel.selectedIndex];
+  const nomeEsp = espOpt?.dataset?.nome || '';
+  const profissional = espOpt?.dataset?.profissional || '';
+  const dataISO = document.getElementById('h-data').value;
+  const hora = document.getElementById('h-hora').value;
+  const limiteVagas = parseInt(document.getElementById('h-vagas').value) || 1;
+  try {
+    await addDoc(collection(db, "agendas_saude"), {
+      especialidadeId: espId,
+      especialidade: nomeEsp,
+      profissional,
+      dataISO,
+      hora,
+      limiteVagas,
+      vagasOcupadas: 0,
+      disponivel: true,
+      criadoEm: new Date().toISOString()
+    });
+    mostrarAviso(`${limiteVagas} vaga(s) abertas!`);
+    document.getElementById('h-hora').value = '';
+    document.getElementById('h-vagas').value = '1';
+  } catch(e) { mostrarAviso('Erro ao criar horário.', 'erro'); }
+  finally { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-plus"></i> Criar Horário'; }
+};
 
-        onSnapshot(qAvisos, (snapshot) => {
-            const container = document.getElementById("lista-avisos");
-            if (snapshot.empty) {
-                container.innerHTML = `<p class="text-center text-xs text-gray-400 py-4">Nenhum aviso publicado.</p>`;
-                return;
-            }
-            container.innerHTML = "";
-            let encontrouAvisos = false;
+window.excluirHorario = async function(id) {
+  if (!confirm('Deseja remover este horário?')) return;
+  await deleteDoc(doc(db, "agendas_saude", id));
+  mostrarAviso('Horário removido.', 'info');
+};
 
-            snapshot.forEach((docSnap) => {
-                const aviso = docSnap.data();
-                const id = docSnap.id;
-                
-                if(aviso.secretaria !== "Saúde") return;
-                
-                encontrouAvisos = true;
-                const dataFormatada = new Date(aviso.dataPublicacao).toLocaleDateString('pt-BR', {day:'2-digit', month:'2-digit', year:'2-digit'});
+// ===== AVISOS =====
+const qAvisos = query(collection(db, "avisos"), orderBy("dataPublicacao", "desc"));
+onSnapshot(qAvisos, (snap) => {
+  const container = document.getElementById('lista-avisos');
+  const avisosSaude = snap.docs.filter(d => d.data().secretaria === 'Saúde');
+  if (avisosSaude.length === 0) {
+    container.innerHTML = `<div class="text-center py-8 text-gray-400 text-sm bg-white rounded-xl border border-gray-100">Nenhum aviso publicado.</div>`;
+    return;
+  }
+  container.innerHTML = avisosSaude.map(docSnap => {
+    const av = docSnap.data(); const id = docSnap.id;
+    const dt = new Date(av.dataPublicacao).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit'});
+    return `
+    <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-3">
+      <div class="flex justify-between items-start mb-2">
+        <h4 class="font-bold text-gray-800 text-sm">${av.titulo}</h4>
+        <span class="text-[9px] text-gray-400 shrink-0 ml-2">${dt}</span>
+      </div>
+      <p class="text-xs text-gray-500 line-clamp-2">${av.descricao}</p>
+      <div class="flex gap-2 mt-3 pt-2 border-t border-gray-50">
+        <button onclick="editarAviso('${id}','${av.titulo.replace(/'/g,"\\'")}','${av.descricao.replace(/'/g,"\\'")}')" class="flex-1 bg-blue-50 text-blue-600 text-[11px] font-bold py-1.5 rounded-lg">
+          <i class="fa-solid fa-pen mr-1"></i> Editar
+        </button>
+        <button onclick="excluirAviso('${id}')" class="flex-1 bg-red-50 text-red-500 text-[11px] font-bold py-1.5 rounded-lg">
+          <i class="fa-solid fa-trash mr-1"></i> Excluir
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+});
 
-                const card = `
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-3">
-                        <div class="flex justify-between items-start">
-                            <h4 class="font-bold text-gray-800 text-sm leading-tight pr-2">${aviso.titulo}</h4>
-                            <span class="text-[9px] text-gray-400 whitespace-nowrap">${dataFormatada}</span>
-                        </div>
-                        <p class="text-xs text-gray-500 mt-1.5 line-clamp-2">${aviso.descricao}</p>
-                        <div class="flex justify-end gap-2 mt-3 pt-2 border-t border-gray-100">
-                            <button onclick="prepararEdicao('${id}', '${aviso.titulo.replace(/'/g, "\\'")}', '${aviso.descricao.replace(/'/g, "\\'")}')" class="text-blue-500 bg-blue-50 hover:bg-blue-100 px-3 py-1 rounded-md text-[10px] font-bold transition-colors">
-                                <i class="fa-solid fa-pen mr-1"></i> Editar
-                            </button>
-                            <button onclick="excluirAviso('${id}')" class="text-red-500 bg-red-50 hover:bg-red-100 px-3 py-1 rounded-md text-[10px] font-bold transition-colors">
-                                <i class="fa-solid fa-trash mr-1"></i> Excluir
-                            </button>
-                        </div>
-                    </div>
-                `;
-                container.innerHTML += card;
-            });
+window.salvarAviso = async function(event) {
+  event.preventDefault();
+  const btn = document.getElementById('btn-salvar-aviso');
+  btn.disabled = true;
+  const id = document.getElementById('aviso-id').value;
+  const titulo = document.getElementById('aviso-titulo').value;
+  const descricao = document.getElementById('aviso-descricao').value;
+  try {
+    if (id) {
+      await updateDoc(doc(db, "avisos", id), { titulo, descricao });
+      mostrarAviso('Aviso atualizado!');
+      cancelarEdicaoAviso();
+    } else {
+      await addDoc(collection(db, "avisos"), { secretaria: 'Saúde', titulo, descricao, dataPublicacao: new Date().toISOString() });
+      mostrarAviso('Aviso publicado no app!');
+      document.getElementById('aviso-titulo').value = '';
+      document.getElementById('aviso-descricao').value = '';
+    }
+  } catch(e) { mostrarAviso('Erro ao salvar.','erro'); }
+  finally { btn.disabled = false; }
+};
+window.editarAviso = function(id, titulo, descricao) {
+  document.getElementById('aviso-id').value = id;
+  document.getElementById('aviso-titulo').value = titulo;
+  document.getElementById('aviso-descricao').value = descricao;
+  document.getElementById('titulo-form-aviso').innerText = 'Editar Aviso';
+  document.getElementById('txt-btn-aviso').innerText = 'Salvar';
+  document.getElementById('btn-cancelar-aviso').classList.remove('hidden');
+  document.getElementById('aba-avisos').scrollTo(0,0);
+};
+window.cancelarEdicaoAviso = function() {
+  document.getElementById('aviso-id').value = '';
+  document.getElementById('aviso-titulo').value = '';
+  document.getElementById('aviso-descricao').value = '';
+  document.getElementById('titulo-form-aviso').innerText = 'Publicar Aviso de Saúde';
+  document.getElementById('txt-btn-aviso').innerText = 'Publicar';
+  document.getElementById('btn-cancelar-aviso').classList.add('hidden');
+};
+window.excluirAviso = async function(id) {
+  if (!confirm('Excluir este aviso?')) return;
+  await deleteDoc(doc(db, "avisos", id));
+  mostrarAviso('Aviso excluído.','info');
+  if (document.getElementById('aviso-id').value === id) cancelarEdicaoAviso();
+};
 
-            if (!encontrouAvisos) {
-                container.innerHTML = `<p class="text-center text-xs text-gray-400 py-4">Nenhum aviso publicado.</p>`;
-            }
-        }, (error) => {
-            document.getElementById("lista-avisos").innerHTML = `<p class="text-center text-xs text-red-500 py-4">Erro ao carregar o mural.</p>`;
-        });
+// ===== LOGOUT =====
+window.fazerLogout = function() {
+  if (!confirm('Sair do painel?')) return;
+  localStorage.clear();
+  window.location.href = 'index.html';
+};
 
-        window.salvarAviso = async function(event) {
-            event.preventDefault();
-            const btn = document.getElementById('btn-salvar-aviso');
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Publicando...';
-
-            const idAviso = document.getElementById('aviso-id').value;
-            const titulo = document.getElementById('aviso-titulo').value;
-            const descricao = document.getElementById('aviso-descricao').value;
-
-            try {
-                if (idAviso) {
-                    await updateDoc(doc(db, "avisos", idAviso), {
-                        titulo: titulo,
-                        descricao: descricao
-                    });
-                    mostrarAviso("Aviso da Saúde alterado!");
-                    cancelarEdicao(); 
-                } else {
-                    await addDoc(avisosRef, {
-                        secretaria: "Saúde", 
-                        titulo: titulo,
-                        descricao: descricao,
-                        dataPublicacao: new Date().toISOString()
-                    });
-                    mostrarAviso("Aviso de Saúde no app!");
-                    document.getElementById('aviso-titulo').value = '';
-                    document.getElementById('aviso-descricao').value = '';
-                }
-            } catch (error) {
-                mostrarAviso("Erro ao conectar ao servidor.", "erro");
-            } finally {
-                btn.disabled = false;
-                if(idAviso) {
-                    btn.innerHTML = '<i class="fa-solid fa-check"></i> <span id="texto-btn-salvar">Salvar Alteração</span>';
-                } else {
-                    btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> <span id="texto-btn-salvar">Publicar</span>';
-                }
-            }
-        };
-
-        window.prepararEdicao = function(id, titulo, descricao) {
-            document.getElementById('titulo-form-aviso').innerText = "Editar Aviso";
-            document.getElementById('aviso-id').value = id;
-            document.getElementById('aviso-titulo').value = titulo;
-            document.getElementById('aviso-descricao').value = descricao;
-            
-            document.getElementById('btn-cancelar-aviso').classList.remove('hidden');
-            document.getElementById('texto-btn-salvar').innerText = "Salvar Alteração";
-            document.getElementById('btn-salvar-aviso').classList.replace('bg-red-600', 'bg-blue-600');
-            document.getElementById('btn-salvar-aviso').classList.replace('hover:bg-red-700', 'hover:bg-blue-700');
-            document.getElementById('aba-avisos').scrollTo(0,0);
-        };
-
-        window.cancelarEdicao = function() {
-            document.getElementById('titulo-form-aviso').innerText = "Publicar Aviso de Saúde";
-            document.getElementById('aviso-id').value = '';
-            document.getElementById('aviso-titulo').value = '';
-            document.getElementById('aviso-descricao').value = '';
-            
-            document.getElementById('btn-cancelar-aviso').classList.add('hidden');
-            document.getElementById('texto-btn-salvar').innerText = "Publicar";
-            document.getElementById('btn-salvar-aviso').classList.replace('bg-blue-600', 'bg-red-600');
-            document.getElementById('btn-salvar-aviso').classList.replace('hover:bg-blue-700', 'hover:bg-red-700');
-        };
-
-        window.excluirAviso = async function(id) {
-            if(confirm("Deseja realmente excluir este aviso do aplicativo?")) {
-                try {
-                    await deleteDoc(doc(db, "avisos", id));
-                    mostrarAviso("Aviso excluído com sucesso!");
-                    if(document.getElementById('aviso-id').value === id) {
-                        cancelarEdicao();
-                    }
-                } catch (error) {
-                    mostrarAviso("Erro ao excluir o aviso.", "erro");
-                }
-            }
-        };
-
-        window.fazerLogout = function() {
-            if(confirm("Deseja realmente sair do painel da Saúde?")) {
-                localStorage.removeItem('usuarioDoresopolis');
-                localStorage.removeItem('userTelefone');
-                localStorage.removeItem('userAcesso');
-                window.location.href = "index.html";
-            }
-        };
-    </script>
+// ===== AUTH CHECK =====
+document.addEventListener('DOMContentLoaded', () => {
+  const acesso = localStorage.getItem('userAcesso');
+  if (acesso !== 'Admin - Saúde' && acesso !== 'TI') {
+    alert('Acesso não autorizado.');
+    window.location.href = 'index.html';
+    return;
+  }
+  carregarEspecialidades();
+});
+</script>
 </body>
 </html>
