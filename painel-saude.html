@@ -350,7 +350,7 @@
             });
         };
 
-        // --- 1. GESTÃO DE AGENDAMENTOS ---
+        // --- 1. GESTÃO DE AGENDAMENTOS (PACIENTES) ---
         const saudeRef = collection(db, "solicitacoes_saude");
         const qSaude = query(saudeRef, orderBy("dataRegistro", "desc"));
 
@@ -387,7 +387,6 @@
                 else if(data.status === 'REALIZADO') corSelect = 'text-green-600 bg-green-50 border-green-200';
                 else if(data.status === 'CANCELADO') corSelect = 'text-red-600 bg-red-50 border-red-200';
 
-                // Formatar Data ISO para PT-BR
                 const [ano, mes, dia] = data.dataConsulta.split('-');
                 const dataFmt = `${dia}/${mes}/${ano}`;
 
@@ -437,7 +436,6 @@
             }
         };
 
-        // --- LÓGICA DO MODAL DE DETALHES ---
         window.abrirDetalhes = function(id) {
             const data = window.dadosAgendamentos[id];
             if(!data) return;
@@ -489,9 +487,8 @@
             }, 300); 
         };
 
-        // --- 2. GESTÃO DE HORÁRIOS / VAGAS (NOVO) ---
+        // --- 2. GESTÃO DE HORÁRIOS / VAGAS ---
         const agendasRef = collection(db, "agendas_saude");
-        // Escuta apenas vagas ativas ordenadas por data
         const qVagas = query(agendasRef, where("disponivel", "==", true), orderBy("dataISO", "asc"));
 
         onSnapshot(qVagas, (snapshot) => {
@@ -545,12 +542,10 @@
                     especialidade: especialidade,
                     dataISO: dataISO,
                     hora: hora,
-                    disponivel: true, // Disponível para o cidadão ver
+                    disponivel: true, 
                     dataRegistro: new Date().toISOString()
                 });
                 mostrarAviso("Vaga adicionada com sucesso!");
-                
-                // Limpa os campos, mantendo a especialidade pra facilitar cadastrar vários
                 document.getElementById('vaga-hora').value = '';
             } catch (error) {
                 console.error(error);
@@ -572,8 +567,7 @@
             }
         };
 
-
-        // --- 3. GESTÃO DE AVISOS (CRUD - FILTRO SAÚDE) ---
+        // --- 3. GESTÃO DE AVISOS ---
         const avisosRef = collection(db, "avisos");
         const qAvisos = query(avisosRef, orderBy("dataPublicacao", "desc"));
 
@@ -625,7 +619,6 @@
         window.salvarAviso = async function(event) {
             event.preventDefault();
             const btn = document.getElementById('btn-salvar-aviso');
-
             btn.disabled = true;
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Publicando...';
 
