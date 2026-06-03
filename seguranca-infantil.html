@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0b5c3b">
+    
+    <title>Padrões de Segurança e Proteção Infantil | App Doresópolis</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        doresopolis: {
+                            green: '#0b5c3b',
+                            dark: '#3f3f46',
+                            light: '#f8fafc'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-gray-200 font-sans text-gray-800 flex justify-center items-center min-h-screen">
+
+    <div class="bg-gray-50 w-full max-w-md h-[100dvh] flex flex-col relative shadow-2xl overflow-hidden sm:rounded-xl sm:h-[95vh] sm:border sm:border-gray-300">
+        
+        <!-- HEADER -->
+        <header class="bg-white shadow-sm border-b border-gray-200 z-10 flex-shrink-0">
+            <div class="bg-doresopolis-green h-2 w-full"></div>
+            <div class="px-4 py-3 flex items-center justify-between">
+                <div class="flex items-center space-x-3 w-full">
+                    <button onclick="window.location.href='index.html'" class="w-8 h-8 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center hover:bg-gray-200 transition-colors">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                    <div>
+                        <p class="text-[9px] tracking-[0.1em] text-gray-500 uppercase font-semibold leading-none">Segurança e Diretrizes</p>
+                        <h1 class="text-base font-black text-gray-700 tracking-tight uppercase leading-none mt-1">Proteção Infantil</h1>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- CONTEÚDO PRINCIPAL -->
+        <main class="flex-grow overflow-y-auto p-5 pb-10 scroll-smooth bg-white text-sm text-gray-600 leading-relaxed space-y-5">
+            
+            <div class="text-center mb-4">
+                <div class="w-16 h-16 bg-blue-600 text-white rounded-full flex items-center justify-center text-2xl mx-auto mb-3 shadow-md">
+                    <i class="fa-solid fa-children"></i>
+                </div>
+                <h2 class="text-xl font-black text-gray-800">Diretrizes Antiaúbso (CSAE)</h2>
+                <p class="text-xs text-gray-500 mt-1">Compromisso com a Proteção e Segurança Infantil</p>
+                <p class="text-[10px] text-gray-400 mt-0.5">Prefeitura Municipal de Doresópolis</p>
+            </div>
+
+            <section class="bg-red-50 border border-red-200 rounded-xl p-4">
+                <div class="flex items-center gap-2 text-red-800 font-bold mb-1">
+                    <i class="fa-solid fa-circle-exclamation text-base"></i>
+                    <h3 class="text-xs uppercase tracking-wide">Tolerância Zero</h3>
+                </div>
+                <p class="text-xs text-red-700 leading-normal">
+                    O aplicativo oficial de Doresópolis possui **tolerância zero** contra qualquer forma de Abuso e Exploração Sexual Infantil (CSAE). Qualquer violação resultará no banimento imediato da conta e encaminhamento do caso às autoridades policiais competentes.
+                </p>
+            </section>
+
+            <section>
+                <h3 class="font-bold text-gray-800 border-l-4 border-doresopolis-green pl-2 mb-2">1. Escopo das Diretrizes</h3>
+                <p>Embora este aplicativo seja uma ferramenta institucional voltada exclusivamente para a solicitação de serviços urbanos (Obras) e agendamentos de consultas (Saúde), estabelecemos padrões estritos de segurança para garantir que nenhuma funcionalidade de upload de imagens ou descrições em texto seja utilizada para fins ilícitos.</p>
+            </section>
+
+            <section>
+                <h3 class="font-bold text-gray-800 border-l-4 border-doresopolis-green pl-2 mb-2">2. Proibições Estritas</h3>
+                <p>É terminantemente proibido enviar, armazenar ou compartilhar através de qualquer formulário do aplicativo municipal:</p>
+                <ul class="list-disc pl-5 mt-2 space-y-1 text-xs">
+                    <li>Imagens, mídias ou textos que contenham ou sugiram exploração sexual ou abuso de menores.</li>
+                    <li>Linguagem inadequada, ofensiva ou predatória direcionada a crianças ou adolescentes.</li>
+                    <li>Qualquer conteúdo que viole os direitos humanos ou as leis nacionais de proteção à infância e juventude (ECA - Estatuto da Criança e do Adolescente).</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3 class="font-bold text-gray-800 border-l-4 border-doresopolis-green pl-2 mb-2">3. Monitoramento e Moderação</h3>
+                <p>Todas as imagens enviadas via formulário de manutenção urbana e descrições de chamados passam por auditoria eletrônica e visual realizada pelos administradores de TI e secretários responsáveis pelo painel de gestão. Conteúdos identificados como suspeitos ou em desconformidade com as diretrizes do Google Play e da legislação federal serão imediatamente eliminados.</p>
+            </section>
+
+            <section>
+                <h3 class="font-bold text-gray-800 border-l-4 border-doresopolis-green pl-2 mb-2">4. Como Denunciar</h3>
+                <p>Se você identificar qualquer uso indevido da plataforma ou conduta suspeita, além dos mecanismos internos do aplicativo, você pode acionar os canais nacionais oficiais de proteção:</p>
+                <div class="mt-3 space-y-2">
+                    <div class="bg-gray-50 border border-gray-200 p-3 rounded-lg flex items-center justify-between">
+                        <div>
+                            <p class="font-bold text-gray-800 text-xs">Disque Direitos Humanos</p>
+                            <p class="text-[11px] text-gray-500">Canal gratuito e anônimo</p>
+                        </div>
+                        <span class="bg-blue-600 text-white font-black text-xs px-2.5 py-1 rounded-full">Disque 100</span>
+                    </div>
+                    <div class="bg-gray-50 border border-gray-200 p-3 rounded-lg flex items-center justify-between">
+                        <div>
+                            <p class="font-bold text-gray-800 text-xs">Conselho Tutelar Regional</p>
+                            <p class="text-[11px] text-gray-500">Atendimento municipal</p>
+                        </div>
+                        <a href="tel:3733561221" class="text-doresopolis-green font-bold text-xs"><i class="fa-solid fa-phone mr-1"></i> Ligar</a>
+                    </div>
+                </div>
+            </section>
+
+            <section class="pt-4 border-t border-gray-100 text-[11px] text-gray-400 text-center">
+                Prefeitura Municipal de Doresópolis • CNPJ: 18.306.494/0001-20<br>
+                Em conformidade com a Política contra CSAE da Google Play Store.
+            </section>
+            
+        </main>
+    </div>
+</body>
+</html>
