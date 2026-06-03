@@ -6,7 +6,7 @@
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#dc2626"> <!-- Vermelho Saúde -->
+    <meta name="theme-color" content="#dc2626">
     <meta name="mobile-web-app-capable" content="yes">
     
     <title>Painel Sec. Saúde | Doresópolis</title>
@@ -66,7 +66,6 @@
         <!-- ========================================== -->
         <main id="aba-solicitacoes" class="flex-grow overflow-y-auto p-4 pb-24 scroll-smooth block">
             
-            <!-- Cards de Estatísticas -->
             <div class="grid grid-cols-3 gap-2 mb-6">
                 <div class="bg-white p-3 rounded-xl border border-gray-200 shadow-sm border-t-4 border-t-amber-500 text-center">
                     <h3 id="stat-analise" class="text-2xl font-black text-gray-800">0</h3>
@@ -84,7 +83,6 @@
 
             <h3 class="font-bold text-gray-800 text-sm mb-3 border-l-4 border-red-500 pl-2">Agendamentos Recebidos</h3>
             
-            <!-- Lista de Solicitações -->
             <div id="lista-solicitacoes" class="flex flex-col gap-3">
                 <div class="text-center py-8 text-gray-400 text-sm">
                     <i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i><br>
@@ -95,11 +93,65 @@
         </main>
 
         <!-- ========================================== -->
-        <!-- ABA 2: MURAL DE AVISOS (CRUD)              -->
+        <!-- ABA 2: CRIAR HORÁRIOS / VAGAS              -->
+        <!-- ========================================== -->
+        <main id="aba-horarios" class="flex-grow overflow-y-auto p-4 pb-24 scroll-smooth hidden">
+            
+            <!-- Formulário Adicionar Vaga -->
+            <div class="bg-gradient-to-br from-blue-50 to-white rounded-xl border border-blue-200 shadow-sm overflow-hidden mb-6">
+                <div class="px-4 py-3 bg-blue-600 text-white flex items-center gap-2">
+                    <i class="fa-regular fa-calendar-plus"></i>
+                    <div>
+                        <h3 class="font-bold text-sm leading-tight">Disponibilizar Vagas</h3>
+                    </div>
+                </div>
+                
+                <form onsubmit="adicionarVagaSaude(event)" class="p-4 space-y-3">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Especialidade</label>
+                        <select id="vaga-especialidade" required class="w-full px-3 py-2.5 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-gray-700">
+                            <option value="" disabled selected>Selecione...</option>
+                            <option value="Clínico Geral">Clínico Geral</option>
+                            <option value="Pediatria">Pediatria</option>
+                            <option value="Odontologia">Odontologia (Dentista)</option>
+                            <option value="Ginecologia">Ginecologia</option>
+                            <option value="Psicologia">Psicologia</option>
+                            <option value="Enfermagem (Triagem/Curativo)">Enfermagem (Triagem/Curativo)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="flex gap-2">
+                        <div class="w-1/2">
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Data</label>
+                            <input type="date" id="vaga-data" required class="w-full px-3 py-2.5 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-gray-700">
+                        </div>
+                        <div class="w-1/2">
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Hora</label>
+                            <input type="time" id="vaga-hora" required class="w-full px-3 py-2.5 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-gray-700">
+                        </div>
+                    </div>
+
+                    <button type="submit" id="btn-salvar-vaga" class="w-full bg-blue-600 text-white font-bold py-2.5 rounded-lg shadow-sm hover:bg-blue-700 active:scale-[0.98] transition-all flex justify-center items-center gap-2 text-sm mt-2">
+                        <i class="fa-solid fa-plus"></i> Abrir Horário
+                    </button>
+                </form>
+            </div>
+
+            <h3 class="font-bold text-gray-800 text-sm mb-3 border-l-4 border-blue-500 pl-2">Vagas Abertas (Disponíveis)</h3>
+            
+            <div id="lista-vagas" class="flex flex-col gap-2">
+                <div class="text-center py-6 text-gray-400 text-sm">
+                    <i class="fa-solid fa-spinner fa-spin mb-2"></i><br>Carregando vagas...
+                </div>
+            </div>
+
+        </main>
+
+        <!-- ========================================== -->
+        <!-- ABA 3: MURAL DE AVISOS (CRUD)              -->
         <!-- ========================================== -->
         <main id="aba-avisos" class="flex-grow overflow-y-auto p-4 pb-24 scroll-smooth hidden">
             
-            <!-- Formulário Criar/Editar Aviso -->
             <div class="bg-gradient-to-br from-red-50 to-white rounded-xl border border-red-200 shadow-sm overflow-hidden mb-6">
                 <div class="px-4 py-3 bg-red-600 text-white flex items-center gap-2">
                     <i class="fa-solid fa-bullhorn"></i>
@@ -110,21 +162,17 @@
                 
                 <form onsubmit="salvarAviso(event)" class="p-4 space-y-3">
                     <input type="hidden" id="aviso-id">
-
                     <div>
                         <label class="block text-xs font-bold text-gray-700 mb-1">Título</label>
                         <input type="text" id="aviso-titulo" required placeholder="Ex: Campanha de Vacinação" class="w-full px-3 py-2.5 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-sm">
                     </div>
-                    
                     <div>
                         <label class="block text-xs font-bold text-gray-700 mb-1">Descrição</label>
                         <textarea id="aviso-descricao" required rows="3" placeholder="Detalhes do aviso para a população..." class="w-full px-3 py-2.5 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-sm resize-none"></textarea>
                     </div>
 
                     <div class="flex gap-2 pt-2">
-                        <button type="button" id="btn-cancelar-aviso" onclick="cancelarEdicao()" class="hidden w-1/3 bg-gray-200 text-gray-600 font-bold py-2.5 rounded-lg shadow-sm hover:bg-gray-300 active:scale-[0.98] transition-all text-sm">
-                            Cancelar
-                        </button>
+                        <button type="button" id="btn-cancelar-aviso" onclick="cancelarEdicao()" class="hidden w-1/3 bg-gray-200 text-gray-600 font-bold py-2.5 rounded-lg shadow-sm hover:bg-gray-300 active:scale-[0.98] transition-all text-sm">Cancelar</button>
                         <button type="submit" id="btn-salvar-aviso" class="w-full bg-red-600 text-white font-bold py-2.5 rounded-lg shadow-sm hover:bg-red-700 active:scale-[0.98] transition-all flex justify-center items-center gap-2 text-sm">
                             <i class="fa-solid fa-paper-plane"></i> <span id="texto-btn-salvar">Publicar</span>
                         </button>
@@ -134,7 +182,6 @@
 
             <h3 class="font-bold text-gray-800 text-sm mb-3 border-l-4 border-red-500 pl-2">Avisos Publicados</h3>
             
-            <!-- Lista de Avisos -->
             <div id="lista-avisos" class="flex flex-col gap-3">
                 <div class="text-center py-6 text-gray-400 text-sm">
                     <i class="fa-solid fa-spinner fa-spin mb-2"></i><br>Carregando avisos...
@@ -150,14 +197,21 @@
             <div class="flex justify-around items-center h-16 relative">
                 
                 <a href="#" onclick="trocarAba('solicitacoes')" id="btn-aba-solicitacoes" class="flex flex-col items-center justify-center w-full h-full text-red-600 transition-colors">
-                    <i class="fa-solid fa-calendar-check text-xl mb-1"></i>
+                    <i class="fa-solid fa-calendar-check text-lg mb-1"></i>
                     <span class="text-[10px] font-bold">Agendamentos</span>
                 </a>
                 
                 <div class="w-px h-8 bg-gray-200"></div>
 
+                <a href="#" onclick="trocarAba('horarios')" id="btn-aba-horarios" class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-blue-600 transition-colors">
+                    <i class="fa-solid fa-clock text-lg mb-1"></i>
+                    <span class="text-[10px] font-bold">Horários</span>
+                </a>
+
+                <div class="w-px h-8 bg-gray-200"></div>
+
                 <a href="#" onclick="trocarAba('avisos')" id="btn-aba-avisos" class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-red-600 transition-colors">
-                    <i class="fa-solid fa-bullhorn text-xl mb-1"></i>
+                    <i class="fa-solid fa-bullhorn text-lg mb-1"></i>
                     <span class="text-[10px] font-bold">Avisos no App</span>
                 </a>
 
@@ -180,7 +234,6 @@
                 </div>
                 
                 <div class="p-5 space-y-5">
-                    <!-- Protocolo -->
                     <div class="flex justify-between items-center bg-red-50 p-3 rounded-xl border border-red-100">
                         <span class="text-xs font-bold text-red-700 uppercase"><i class="fa-solid fa-hashtag mr-1"></i> Protocolo</span>
                         <span id="detalhe-protocolo" class="font-black text-red-600 text-sm"></span>
@@ -188,12 +241,10 @@
 
                     <div class="space-y-4">
                         <div class="grid grid-cols-2 gap-4">
-                            <!-- Info Cidadão -->
                             <div class="bg-gray-50 p-3 rounded-lg border border-gray-100">
                                 <p class="text-[9px] text-gray-400 font-bold uppercase mb-0.5"><i class="fa-regular fa-user mr-1"></i> Paciente</p>
                                 <p id="detalhe-nome" class="text-xs font-bold text-gray-800 leading-tight"></p>
                             </div>
-                            <!-- Solicitado em -->
                             <div class="bg-gray-50 p-3 rounded-lg border border-gray-100">
                                 <p class="text-[9px] text-gray-400 font-bold uppercase mb-0.5"><i class="fa-solid fa-paper-plane mr-1"></i> Solicitado em</p>
                                 <p id="detalhe-data-registro" class="text-xs font-bold text-gray-800 leading-tight"></p>
@@ -210,11 +261,11 @@
                         
                         <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <p class="text-[9px] text-gray-400 font-bold uppercase mb-1 ml-1"><i class="fa-regular fa-calendar mr-1"></i> Data Desejada</p>
+                                <p class="text-[9px] text-gray-400 font-bold uppercase mb-1 ml-1"><i class="fa-regular fa-calendar mr-1"></i> Data Agendada</p>
                                 <p id="detalhe-data-consulta" class="text-sm font-bold text-blue-700 bg-blue-50 p-3 rounded-lg border border-blue-100"></p>
                             </div>
                             <div>
-                                <p class="text-[9px] text-gray-400 font-bold uppercase mb-1 ml-1"><i class="fa-regular fa-clock mr-1"></i> Hora Desejada</p>
+                                <p class="text-[9px] text-gray-400 font-bold uppercase mb-1 ml-1"><i class="fa-regular fa-clock mr-1"></i> Hora</p>
                                 <p id="detalhe-hora-consulta" class="text-sm font-bold text-blue-700 bg-blue-50 p-3 rounded-lg border border-blue-100"></p>
                             </div>
                         </div>
@@ -235,7 +286,7 @@
     <!-- SCRIPT DE LÓGICA E FIREBASE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, query, orderBy, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCpaNuC1IUkteO4fHzFPiNS7s580EyTleU",
@@ -250,10 +301,8 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app); 
         
-        // Memória para guardar os dados e exibir no Modal
         window.dadosAgendamentos = {};
 
-        // --- SISTEMA DE TOAST (AVISOS NA TELA) ---
         window.mostrarAviso = function(mensagem, tipo = 'sucesso') {
             const toast = document.getElementById('toast-aviso');
             const icone = document.getElementById('toast-icone');
@@ -278,29 +327,30 @@
             }, 3000);
         };
 
-        // --- TROCAR ABAS (NAVEGAÇÃO INFERIOR) ---
         window.trocarAba = function(aba) {
-            const abaSolicitacoes = document.getElementById('aba-solicitacoes');
-            const abaAvisos = document.getElementById('aba-avisos');
-            const btnSolicitacoes = document.getElementById('btn-aba-solicitacoes');
-            const btnAvisos = document.getElementById('btn-aba-avisos');
-
-            if (aba === 'solicitacoes') {
-                abaSolicitacoes.classList.remove('hidden');
-                abaAvisos.classList.add('hidden');
+            ['solicitacoes', 'horarios', 'avisos'].forEach(nome => {
+                const docAba = document.getElementById(`aba-${nome}`);
+                const docBtn = document.getElementById(`aba-btn-${nome}`);
                 
-                btnSolicitacoes.classList.replace('text-gray-400', 'text-red-600');
-                btnAvisos.classList.replace('text-red-600', 'text-gray-400');
-            } else {
-                abaAvisos.classList.remove('hidden');
-                abaSolicitacoes.classList.add('hidden');
-                
-                btnAvisos.classList.replace('text-gray-400', 'text-red-600');
-                btnSolicitacoes.classList.replace('text-red-600', 'text-gray-400');
-            }
+                if(nome === aba) {
+                    docAba.classList.replace('hidden', 'block');
+                    if(nome === 'horarios') {
+                        docBtn.classList.replace('text-gray-400', 'text-blue-600');
+                    } else {
+                        docBtn.classList.replace('text-gray-400', 'text-red-600');
+                    }
+                } else {
+                    docAba.classList.replace('block', 'hidden');
+                    if(nome === 'horarios') {
+                        docBtn.classList.replace('text-blue-600', 'text-gray-400');
+                    } else {
+                        docBtn.classList.replace('text-red-600', 'text-gray-400');
+                    }
+                }
+            });
         };
 
-        // --- 1. GESTÃO DE AGENDAMENTOS DA SAÚDE (REAL-TIME) ---
+        // --- 1. GESTÃO DE AGENDAMENTOS ---
         const saudeRef = collection(db, "solicitacoes_saude");
         const qSaude = query(saudeRef, orderBy("dataRegistro", "desc"));
 
@@ -332,11 +382,14 @@
 
                 const protocoloTexto = data.protocolo ? `#${data.protocolo}` : 'Sem Protocolo';
 
-                // Cores do Dropdown baseadas no status
-                let corSelect = 'text-amber-600 bg-amber-50 border-amber-200'; // Padrão: Em Análise
+                let corSelect = 'text-amber-600 bg-amber-50 border-amber-200';
                 if(data.status === 'CONFIRMADO') corSelect = 'text-blue-600 bg-blue-50 border-blue-200';
                 else if(data.status === 'REALIZADO') corSelect = 'text-green-600 bg-green-50 border-green-200';
                 else if(data.status === 'CANCELADO') corSelect = 'text-red-600 bg-red-50 border-red-200';
+
+                // Formatar Data ISO para PT-BR
+                const [ano, mes, dia] = data.dataConsulta.split('-');
+                const dataFmt = `${dia}/${mes}/${ano}`;
 
                 const card = `
                     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 flex flex-col gap-3">
@@ -348,7 +401,7 @@
                                 <span class="text-[9px] font-black text-red-500 mb-0.5 block uppercase truncate"><i class="fa-solid fa-hashtag mr-0.5"></i> Protocolo: ${protocoloTexto}</span>
                                 <h4 class="font-bold text-gray-800 text-sm leading-tight truncate">${data.especialidade || 'Consulta Médica'}</h4>
                                 <p class="text-xs text-gray-500 mt-0.5 truncate"><i class="fa-regular fa-user mr-1 text-gray-400"></i> ${data.nomeCidadao || 'Não informado'}</p>
-                                <p class="text-[10px] font-bold text-blue-600 mt-1"><i class="fa-regular fa-calendar mr-1"></i> ${data.dataConsulta || 'S/D'} às ${data.horaConsulta || 'S/H'}</p>
+                                <p class="text-[10px] font-bold text-blue-600 mt-1"><i class="fa-regular fa-calendar mr-1"></i> ${dataFmt} às ${data.horaConsulta || 'S/H'}</p>
                             </div>
                         </div>
                         <div class="flex justify-between items-center border-t border-gray-50 pt-2 mt-1">
@@ -395,8 +448,9 @@
             const dataFormatadaRegistro = new Date(data.dataRegistro).toLocaleDateString('pt-BR', {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit'});
             document.getElementById('detalhe-data-registro').innerText = dataFormatadaRegistro;
             
+            const [ano, mes, dia] = data.dataConsulta.split('-');
             document.getElementById('detalhe-especialidade').innerText = data.especialidade || 'Consulta Médica';
-            document.getElementById('detalhe-data-consulta').innerText = data.dataConsulta || 'Não definida';
+            document.getElementById('detalhe-data-consulta').innerText = `${dia}/${mes}/${ano}`;
             document.getElementById('detalhe-hora-consulta').innerText = data.horaConsulta || 'Não definida';
             
             const desc = document.getElementById('detalhe-sintomas');
@@ -435,18 +489,100 @@
             }, 300); 
         };
 
-        // --- 2. GESTÃO DE AVISOS (CRUD - FILTRO SAÚDE) ---
+        // --- 2. GESTÃO DE HORÁRIOS / VAGAS (NOVO) ---
+        const agendasRef = collection(db, "agendas_saude");
+        // Escuta apenas vagas ativas ordenadas por data
+        const qVagas = query(agendasRef, where("disponivel", "==", true), orderBy("dataISO", "asc"));
+
+        onSnapshot(qVagas, (snapshot) => {
+            const container = document.getElementById("lista-vagas");
+            if (snapshot.empty) {
+                container.innerHTML = `<p class="text-center text-xs text-gray-400 py-4">Nenhuma vaga aberta no momento.</p>`;
+                return;
+            }
+            container.innerHTML = "";
+            snapshot.forEach((docSnap) => {
+                const vaga = docSnap.data();
+                const id = docSnap.id;
+                
+                const [ano, mes, dia] = vaga.dataISO.split('-');
+                
+                const card = `
+                    <div class="bg-white rounded-lg shadow-sm border border-blue-100 p-2 flex justify-between items-center">
+                        <div class="flex gap-3 items-center w-full">
+                            <div class="bg-blue-50 text-blue-600 font-black text-[10px] px-2 py-1.5 rounded uppercase w-12 text-center shrink-0">
+                                ${vaga.hora}
+                            </div>
+                            <div class="flex-grow">
+                                <h4 class="font-bold text-gray-800 text-xs">${vaga.especialidade}</h4>
+                                <span class="text-[9px] text-gray-500"><i class="fa-regular fa-calendar mr-1"></i> ${dia}/${mes}/${ano}</span>
+                            </div>
+                            <button onclick="excluirVaga('${id}')" class="text-red-400 hover:text-red-600 bg-red-50 p-1.5 rounded transition-colors" title="Excluir Horário">
+                                <i class="fa-solid fa-trash text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += card;
+            });
+        }, (error) => {
+            console.error("Erro ao puxar vagas:", error);
+        });
+
+        window.adicionarVagaSaude = async function(event) {
+            event.preventDefault();
+            const btn = document.getElementById('btn-salvar-vaga');
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Abrindo...';
+
+            const especialidade = document.getElementById('vaga-especialidade').value;
+            const dataISO = document.getElementById('vaga-data').value;
+            const hora = document.getElementById('vaga-hora').value;
+
+            try {
+                await addDoc(agendasRef, {
+                    especialidade: especialidade,
+                    dataISO: dataISO,
+                    hora: hora,
+                    disponivel: true, // Disponível para o cidadão ver
+                    dataRegistro: new Date().toISOString()
+                });
+                mostrarAviso("Vaga adicionada com sucesso!");
+                
+                // Limpa os campos, mantendo a especialidade pra facilitar cadastrar vários
+                document.getElementById('vaga-hora').value = '';
+            } catch (error) {
+                console.error(error);
+                mostrarAviso("Erro ao conectar ao servidor.", "erro");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-plus"></i> Abrir Horário';
+            }
+        };
+
+        window.excluirVaga = async function(id) {
+            if(confirm("Deseja cancelar a disponibilidade desta vaga?")) {
+                try {
+                    await deleteDoc(doc(db, "agendas_saude", id));
+                    mostrarAviso("Vaga removida!");
+                } catch (error) {
+                    mostrarAviso("Erro ao excluir vaga.", "erro");
+                }
+            }
+        };
+
+
+        // --- 3. GESTÃO DE AVISOS (CRUD - FILTRO SAÚDE) ---
         const avisosRef = collection(db, "avisos");
         const qAvisos = query(avisosRef, orderBy("dataPublicacao", "desc"));
 
         onSnapshot(qAvisos, (snapshot) => {
             const container = document.getElementById("lista-avisos");
-            
             if (snapshot.empty) {
                 container.innerHTML = `<p class="text-center text-xs text-gray-400 py-4">Nenhum aviso publicado.</p>`;
                 return;
             }
-            
             container.innerHTML = "";
             let encontrouAvisos = false;
 
@@ -454,7 +590,6 @@
                 const aviso = docSnap.data();
                 const id = docSnap.id;
                 
-                // Exclusivo da Secretaria de Saúde
                 if(aviso.secretaria !== "Saúde") return;
                 
                 encontrouAvisos = true;
@@ -467,7 +602,6 @@
                             <span class="text-[9px] text-gray-400 whitespace-nowrap">${dataFormatada}</span>
                         </div>
                         <p class="text-xs text-gray-500 mt-1.5 line-clamp-2">${aviso.descricao}</p>
-                        
                         <div class="flex justify-end gap-2 mt-3 pt-2 border-t border-gray-100">
                             <button onclick="prepararEdicao('${id}', '${aviso.titulo.replace(/'/g, "\\'")}', '${aviso.descricao.replace(/'/g, "\\'")}')" class="text-blue-500 bg-blue-50 hover:bg-blue-100 px-3 py-1 rounded-md text-[10px] font-bold transition-colors">
                                 <i class="fa-solid fa-pen mr-1"></i> Editar
@@ -485,7 +619,6 @@
                 container.innerHTML = `<p class="text-center text-xs text-gray-400 py-4">Nenhum aviso publicado.</p>`;
             }
         }, (error) => {
-            console.error("Erro ao puxar avisos:", error);
             document.getElementById("lista-avisos").innerHTML = `<p class="text-center text-xs text-red-500 py-4">Erro ao carregar o mural.</p>`;
         });
 
@@ -510,7 +643,7 @@
                     cancelarEdicao(); 
                 } else {
                     await addDoc(avisosRef, {
-                        secretaria: "Saúde", // Salva como Saúde!
+                        secretaria: "Saúde", 
                         titulo: titulo,
                         descricao: descricao,
                         dataPublicacao: new Date().toISOString()
@@ -520,7 +653,6 @@
                     document.getElementById('aviso-descricao').value = '';
                 }
             } catch (error) {
-                console.error(error);
                 mostrarAviso("Erro ao conectar ao servidor.", "erro");
             } finally {
                 btn.disabled = false;
@@ -542,7 +674,6 @@
             document.getElementById('texto-btn-salvar').innerText = "Salvar Alteração";
             document.getElementById('btn-salvar-aviso').classList.replace('bg-red-600', 'bg-blue-600');
             document.getElementById('btn-salvar-aviso').classList.replace('hover:bg-red-700', 'hover:bg-blue-700');
-            
             document.getElementById('aba-avisos').scrollTo(0,0);
         };
 
@@ -563,7 +694,6 @@
                 try {
                     await deleteDoc(doc(db, "avisos", id));
                     mostrarAviso("Aviso excluído com sucesso!");
-                    
                     if(document.getElementById('aviso-id').value === id) {
                         cancelarEdicao();
                     }
