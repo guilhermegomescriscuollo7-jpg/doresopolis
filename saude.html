@@ -6,7 +6,7 @@
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#dc2626"> <!-- Vermelho da Saúde -->
+    <meta name="theme-color" content="#dc2626"> 
     <meta name="mobile-web-app-capable" content="yes">
     
     <title>Saúde - App Doresópolis</title>
@@ -37,16 +37,13 @@
 
 <body class="bg-gray-200 font-sans text-gray-800 flex justify-center items-center min-h-screen">
 
-    <!-- NOTIFICAÇÃO NO APP (TOAST) -->
     <div id="toast-aviso" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-[100] bg-green-600 text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-3 transition-all duration-300 opacity-0 pointer-events-none translate-y-[-20px] w-11/12 max-w-sm">
         <i id="toast-icone" class="fa-solid fa-circle-check text-lg"></i>
         <span id="toast-mensagem" class="text-sm font-medium leading-snug"></span>
     </div>
 
-    <!-- CONTAINER PRINCIPAL DO APP -->
     <div class="bg-gray-50 w-full max-w-md h-[100dvh] flex flex-col relative shadow-2xl overflow-hidden sm:rounded-xl sm:h-[95vh] sm:border sm:border-gray-300">
         
-        <!-- HEADER COM MENUS NO TOPO -->
         <header class="bg-white shadow-sm z-10 flex-shrink-0">
             <div class="bg-red-600 h-2 w-full"></div> 
             
@@ -62,7 +59,6 @@
                 </div>
             </div>
 
-            <!-- TRÊS BOTÕES DE NAVEGAÇÃO NO TOPO -->
             <div class="flex border-t border-b border-gray-200 bg-gray-100">
                 <a href="index.html" class="flex-1 py-2 flex flex-col items-center justify-center text-gray-500 hover:text-red-600 transition-colors border-r border-gray-200">
                     <i class="fa-solid fa-house text-lg mb-0.5"></i>
@@ -81,12 +77,9 @@
             </div>
         </header>
 
-        <!-- ========================================== -->
-        <!-- ABA 1: AGENDAR CONSULTA                    -->
-        <!-- ========================================== -->
+        <!-- ABA 1: AGENDAR CONSULTA -->
         <main id="aba-nova" class="flex-grow overflow-y-auto p-4 pb-6 scroll-smooth block bg-gray-50">
             
-            <!-- CARTÃO DE VACINA (Link Externo) -->
             <a href="https://meususdigital.saude.gov.br/login" target="_blank" rel="noopener noreferrer" class="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-center justify-between shadow-sm active:scale-95 transition-all mb-6 block">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-lg shadow-sm shrink-0">
@@ -102,18 +95,18 @@
 
             <div class="mb-5 border-l-4 border-red-500 pl-2">
                 <h2 class="text-lg font-bold text-gray-800">Agendar Atendimento</h2>
-                <p class="text-gray-500 text-xs leading-snug">Selecione a especialidade, a data e o horário desejado.</p>
+                <p class="text-gray-500 text-xs leading-snug">Selecione a especialidade para ver os dias disponíveis no posto.</p>
             </div>
 
             <form id="form-agendamento" onsubmit="agendarConsulta(event)" class="space-y-5">
                 
                 <input type="hidden" id="paciente-nome">
 
-                <!-- 1. Especialidade -->
+                <!-- Especialidade -->
                 <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
                     <label class="block text-xs font-bold text-gray-700 mb-2"><i class="fa-solid fa-user-doctor text-red-500 mr-1"></i> Qual é a especialidade?</label>
                     <div class="relative">
-                        <select id="form-especialidade" required class="w-full pl-3 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-sm appearance-none text-gray-700">
+                        <select id="form-especialidade" required onchange="filtrarDias()" class="w-full pl-3 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-sm appearance-none text-gray-700">
                             <option value="" disabled selected>Selecione o serviço...</option>
                             <option value="Clínico Geral">Clínico Geral</option>
                             <option value="Pediatria">Pediatria</option>
@@ -128,48 +121,23 @@
                     </div>
                 </div>
 
-                <!-- 2. Calendário (Dias Disponíveis) -->
+                <!-- Dias Disponíveis (Dinamico) -->
                 <div>
-                    <label class="block text-xs font-bold text-gray-700 mb-2 pl-1"><i class="fa-regular fa-calendar text-blue-500 mr-1"></i> Escolha o Dia</label>
-                    <!-- Scroll horizontal de dias gerado por JS -->
+                    <label class="block text-xs font-bold text-gray-700 mb-2 pl-1"><i class="fa-regular fa-calendar text-blue-500 mr-1"></i> Dias Disponíveis</label>
                     <div id="calendario-dias" class="flex gap-2 overflow-x-auto pb-2 snap-x hide-scrollbar px-1">
-                        <!-- Dias serão injetados aqui -->
+                        <div class="text-xs text-gray-400 italic">Selecione uma especialidade primeiro.</div>
                     </div>
                 </div>
 
-                <!-- 3. Horários Disponíveis -->
+                <!-- Horários Disponíveis (Dinamico) -->
                 <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
                     <label class="block text-xs font-bold text-gray-700 mb-3"><i class="fa-regular fa-clock text-amber-500 mr-1"></i> Horários Disponíveis</label>
-                    <div class="grid grid-cols-3 gap-2">
-                        <!-- Horários fixos para demonstração -->
-                        <label class="cursor-pointer">
-                            <input type="radio" name="horario" value="08:00" class="peer sr-only" required>
-                            <div class="text-center py-2 rounded-lg border border-gray-200 peer-checked:bg-red-50 peer-checked:border-red-500 peer-checked:text-red-700 text-gray-600 text-sm font-bold transition-all">08:00</div>
-                        </label>
-                        <label class="cursor-pointer">
-                            <input type="radio" name="horario" value="09:00" class="peer sr-only">
-                            <div class="text-center py-2 rounded-lg border border-gray-200 peer-checked:bg-red-50 peer-checked:border-red-500 peer-checked:text-red-700 text-gray-600 text-sm font-bold transition-all">09:00</div>
-                        </label>
-                        <label class="cursor-pointer">
-                            <input type="radio" name="horario" value="10:00" class="peer sr-only">
-                            <div class="text-center py-2 rounded-lg border border-gray-200 peer-checked:bg-red-50 peer-checked:border-red-500 peer-checked:text-red-700 text-gray-600 text-sm font-bold transition-all">10:00</div>
-                        </label>
-                        <label class="cursor-pointer">
-                            <input type="radio" name="horario" value="13:30" class="peer sr-only">
-                            <div class="text-center py-2 rounded-lg border border-gray-200 peer-checked:bg-red-50 peer-checked:border-red-500 peer-checked:text-red-700 text-gray-600 text-sm font-bold transition-all">13:30</div>
-                        </label>
-                        <label class="cursor-pointer">
-                            <input type="radio" name="horario" value="14:30" class="peer sr-only">
-                            <div class="text-center py-2 rounded-lg border border-gray-200 peer-checked:bg-red-50 peer-checked:border-red-500 peer-checked:text-red-700 text-gray-600 text-sm font-bold transition-all">14:30</div>
-                        </label>
-                        <label class="cursor-pointer">
-                            <input type="radio" name="horario" value="15:30" class="peer sr-only">
-                            <div class="text-center py-2 rounded-lg border border-gray-200 peer-checked:bg-red-50 peer-checked:border-red-500 peer-checked:text-red-700 text-gray-600 text-sm font-bold transition-all">15:30</div>
-                        </label>
+                    <div id="grade-horarios" class="grid grid-cols-3 gap-2">
+                        <div class="col-span-3 text-xs text-gray-400 italic">Selecione um dia disponível.</div>
                     </div>
                 </div>
 
-                <!-- 4. Motivo / Sintomas -->
+                <!-- Sintomas -->
                 <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
                     <label class="block text-xs font-bold text-gray-700 mb-2"><i class="fa-solid fa-stethoscope text-gray-500 mr-1"></i> Descreva o motivo (Sintomas)</label>
                     <textarea id="form-sintomas" rows="2" placeholder="Ex: Dor de cabeça forte há 2 dias, febre..." class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-sm resize-none"></textarea>
@@ -181,16 +149,13 @@
             </form>
         </main>
 
-        <!-- ========================================== -->
-        <!-- ABA 2: ACOMPANHAR CONSULTAS                -->
-        <!-- ========================================== -->
+        <!-- ABA 2: ACOMPANHAR CONSULTAS -->
         <main id="aba-acompanhar" class="flex-grow overflow-y-auto p-4 pb-8 scroll-smooth hidden bg-gray-100">
             <div class="mb-5 border-l-4 border-red-500 pl-2">
                 <h2 class="text-lg font-bold text-gray-800">Minhas Consultas</h2>
                 <p class="text-gray-500 mt-1 text-xs leading-snug">Acompanhe seus agendamentos no Posto de Saúde.</p>
             </div>
 
-            <!-- Lista onde os cards de acompanhamento aparecerão -->
             <div id="lista-meus-agendamentos" class="flex flex-col gap-4">
                 <div class="text-center py-8 text-gray-400 text-sm">
                     <i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i><br>
@@ -201,10 +166,9 @@
 
     </div>
 
-    <!-- SCRIPT DE LÓGICA E FIREBASE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, getDocs, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, getDocs, where, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCpaNuC1IUkteO4fHzFPiNS7s580EyTleU",
@@ -219,7 +183,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app); 
 
-        // --- SISTEMA DE TOAST (AVISOS) ---
         window.mostrarAviso = function(mensagem, tipo = 'sucesso') {
             const toast = document.getElementById('toast-aviso');
             const icone = document.getElementById('toast-icone');
@@ -248,7 +211,6 @@
             }, 4000);
         };
 
-        // --- NAVEGAÇÃO DE ABAS SUPERIORES ---
         window.trocarAbaSaude = function(aba) {
             const abaNova = document.getElementById('aba-nova');
             const abaAcompanhar = document.getElementById('aba-acompanhar');
@@ -258,19 +220,15 @@
             if (aba === 'nova') {
                 abaNova.classList.remove('hidden');
                 abaAcompanhar.classList.add('hidden');
-                
                 btnNova.classList.add('text-red-600', 'bg-white', 'border-red-600');
                 btnNova.classList.remove('text-gray-400', 'bg-gray-100', 'border-transparent');
-                
                 btnAcompanhar.classList.add('text-gray-400', 'bg-gray-100', 'border-transparent');
                 btnAcompanhar.classList.remove('text-red-600', 'bg-white', 'border-red-600');
             } else {
                 abaAcompanhar.classList.remove('hidden');
                 abaNova.classList.add('hidden');
-                
                 btnAcompanhar.classList.add('text-red-600', 'bg-white', 'border-red-600');
                 btnAcompanhar.classList.remove('text-gray-400', 'bg-gray-100', 'border-transparent');
-                
                 btnNova.classList.add('text-gray-400', 'bg-gray-100', 'border-transparent');
                 btnNova.classList.remove('text-red-600', 'bg-white', 'border-red-600');
             }
@@ -278,43 +236,11 @@
 
         let usuarioNomePrimeiro = "";
         let usuarioNomeCompleto = "";
+        
+        // Memória das vagas cadastradas pelo painel da Saúde
+        window.vagasSaude = [];
 
-        // Gerar os dias no calendário dinamicamente (ignora sábado e domingo)
-        function gerarCalendario() {
-            const container = document.getElementById('calendario-dias');
-            let html = '';
-            let diasAdicionados = 0;
-            let dataAtual = new Date();
-
-            // Adiciona os próximos 14 dias úteis
-            while(diasAdicionados < 14) {
-                dataAtual.setDate(dataAtual.getDate() + 1);
-                
-                // Pula Fim de Semana (0 = Domingo, 6 = Sábado)
-                if(dataAtual.getDay() === 0 || dataAtual.getDay() === 6) continue;
-                
-                let diaStr = dataAtual.toLocaleDateString('pt-BR', {day:'2-digit', month:'2-digit', year:'numeric'});
-                let diaApresentacao = dataAtual.getDate();
-                let diaSemana = dataAtual.toLocaleDateString('pt-BR', {weekday:'short'}).replace('.','');
-                
-                html += `
-                <label class="cursor-pointer shrink-0 snap-center">
-                    <input type="radio" name="dataReserva" value="${diaStr}" class="peer sr-only" required>
-                    <div class="flex flex-col items-center justify-center w-16 h-20 bg-white rounded-xl border border-gray-200 peer-checked:bg-red-600 peer-checked:text-white peer-checked:border-red-600 text-gray-500 shadow-sm transition-all hover:border-red-300">
-                        <span class="text-[10px] uppercase font-bold tracking-widest">${diaSemana}</span>
-                        <span class="text-2xl font-black leading-none my-0.5">${diaApresentacao}</span>
-                        <span class="text-[9px] uppercase font-bold opacity-80">${dataAtual.toLocaleDateString('pt-BR', {month:'short'}).replace('.','')}</span>
-                    </div>
-                </label>`;
-                diasAdicionados++;
-            }
-            container.innerHTML = html;
-        }
-
-        // Inicialização
         document.addEventListener('DOMContentLoaded', async () => {
-            gerarCalendario();
-
             usuarioNomePrimeiro = localStorage.getItem('usuarioDoresopolis');
             const telefoneSalvo = localStorage.getItem('userTelefone');
 
@@ -322,49 +248,132 @@
                 try {
                     const qUser = query(collection(db, "usuarios"), where("telefone", "==", telefoneSalvo));
                     const snapUser = await getDocs(qUser);
-                    
                     if(!snapUser.empty) {
                         usuarioNomeCompleto = snapUser.docs[0].data().nomeCompleto;
                     } else {
                         usuarioNomeCompleto = usuarioNomePrimeiro;
                     }
-                } catch(e) {
-                    usuarioNomeCompleto = usuarioNomePrimeiro;
-                }
+                } catch(e) { usuarioNomeCompleto = usuarioNomePrimeiro; }
 
                 document.getElementById('paciente-nome').value = usuarioNomeCompleto;
                 carregarMinhasConsultas(); 
+                escutarVagas(); // Busca vagas abertas
             } else {
                 alert("Você precisa estar logado para agendar consultas.");
                 window.location.href = "index.html";
             }
         });
 
-        // --- ACOMPANHAR CONSULTAS ---
+        // Puxa as vagas marcadas como "disponível" no Firebase
+        function escutarVagas() {
+            const agendasRef = collection(db, "agendas_saude");
+            const qAgendas = query(agendasRef, where("disponivel", "==", true));
+
+            onSnapshot(qAgendas, (snapshot) => {
+                window.vagasSaude = [];
+                snapshot.forEach(docSnap => {
+                    const data = docSnap.data();
+                    window.vagasSaude.push({
+                        id: docSnap.id,
+                        especialidade: data.especialidade,
+                        data: data.dataISO, // Ex: '2026-06-15'
+                        hora: data.hora // Ex: '14:30'
+                    });
+                });
+                
+                // Se já houver especialidade selecionada, atualiza o calendário
+                if(document.getElementById('form-especialidade').value) {
+                    filtrarDias();
+                }
+            });
+        }
+
+        // Filtra os dias de acordo com a especialidade escolhida
+        window.filtrarDias = function() {
+            const especialidade = document.getElementById('form-especialidade').value;
+            const container = document.getElementById('calendario-dias');
+            const gradeHorarios = document.getElementById('grade-horarios');
+            
+            // Reseta horários
+            gradeHorarios.innerHTML = '<div class="col-span-3 text-xs text-gray-400 italic">Selecione um dia disponível.</div>';
+            
+            if(!especialidade) return;
+
+            // Busca os dias únicos em que há vaga para essa especialidade
+            const vagasFiltradas = window.vagasSaude.filter(v => v.especialidade === especialidade);
+            const diasUnicos = [...new Set(vagasFiltradas.map(v => v.data))].sort(); // Organiza por data
+
+            if(diasUnicos.length === 0) {
+                container.innerHTML = '<div class="text-xs text-red-500 font-bold p-2 bg-red-50 rounded-lg border border-red-200">Não há vagas disponíveis para esta especialidade no momento.</div>';
+                return;
+            }
+
+            let html = '';
+            diasUnicos.forEach(dataISO => {
+                // Parse seguro da data para evitar fuso horário puxando 1 dia atrás
+                const [ano, mes, dia] = dataISO.split('-');
+                const dataObj = new Date(ano, mes - 1, dia); 
+                
+                const diaApresentacao = dataObj.getDate().toString().padStart(2, '0');
+                const diaSemana = dataObj.toLocaleDateString('pt-BR', {weekday:'short'}).replace('.','');
+                const mesApresentacao = dataObj.toLocaleDateString('pt-BR', {month:'short'}).replace('.','');
+
+                html += `
+                <label class="cursor-pointer shrink-0 snap-center">
+                    <input type="radio" name="dataReserva" value="${dataISO}" class="peer sr-only" onchange="filtrarHorarios()" required>
+                    <div class="flex flex-col items-center justify-center w-16 h-20 bg-white rounded-xl border border-gray-200 peer-checked:bg-red-600 peer-checked:text-white peer-checked:border-red-600 text-gray-500 shadow-sm transition-all hover:border-red-300">
+                        <span class="text-[10px] uppercase font-bold tracking-widest">${diaSemana}</span>
+                        <span class="text-2xl font-black leading-none my-0.5">${diaApresentacao}</span>
+                        <span class="text-[9px] uppercase font-bold opacity-80">${mesApresentacao}</span>
+                    </div>
+                </label>`;
+            });
+            container.innerHTML = html;
+        };
+
+        // Mostra os horários abertos para a data e especialidade selecionadas
+        window.filtrarHorarios = function() {
+            const especialidade = document.getElementById('form-especialidade').value;
+            const dataSelecionada = document.querySelector('input[name="dataReserva"]:checked').value;
+            const gradeHorarios = document.getElementById('grade-horarios');
+
+            const vagasDoDia = window.vagasSaude.filter(v => v.especialidade === especialidade && v.data === dataSelecionada).sort((a,b) => a.hora.localeCompare(b.hora));
+
+            if(vagasDoDia.length === 0) {
+                gradeHorarios.innerHTML = '<div class="col-span-3 text-xs text-red-500">Nenhum horário disponível.</div>';
+                return;
+            }
+
+            let html = '';
+            vagasDoDia.forEach(vaga => {
+                html += `
+                <label class="cursor-pointer">
+                    <input type="radio" name="horario" value="${vaga.hora}" data-id="${vaga.id}" class="peer sr-only" required>
+                    <div class="text-center py-2 rounded-lg border border-gray-200 peer-checked:bg-red-50 peer-checked:border-red-500 peer-checked:text-red-700 text-gray-600 text-sm font-bold transition-all">${vaga.hora}</div>
+                </label>`;
+            });
+            gradeHorarios.innerHTML = html;
+        };
+
         function carregarMinhasConsultas() {
             const consultasRef = collection(db, "solicitacoes_saude");
             const qConsultas = query(consultasRef, orderBy("dataRegistro", "desc"));
 
             onSnapshot(qConsultas, (snapshot) => {
                 const container = document.getElementById("lista-meus-agendamentos");
-                
                 if (snapshot.empty) {
                     container.innerHTML = `<div class="text-center py-8 text-gray-500 text-sm bg-white rounded-xl shadow-sm border border-gray-200">Você não tem agendamentos recentes.</div>`;
                     return;
                 }
-
                 container.innerHTML = "";
                 let encontrouConsultas = false;
 
                 snapshot.forEach((docSnap) => {
                     const data = docSnap.data();
-                    
                     if(data.nomeCidadao !== usuarioNomeCompleto && data.nomeCidadao !== usuarioNomePrimeiro) return;
-                    
                     encontrouConsultas = true;
                     
                     const protocoloTexto = data.protocolo ? `#${data.protocolo}` : 'Pendente';
-
                     let statusHtml = '';
                     if(data.status === 'CONFIRMADO') {
                         statusHtml = `<span class="bg-blue-100 text-blue-700 px-2 py-1 rounded-md text-[10px] font-black uppercase"><i class="fa-regular fa-calendar-check mr-1"></i> Confirmado</span>`;
@@ -376,10 +385,13 @@
                         statusHtml = `<span class="bg-amber-100 text-amber-700 px-2 py-1 rounded-md text-[10px] font-black uppercase border border-amber-200"><i class="fa-regular fa-clock mr-1"></i> Em Análise</span>`;
                     }
 
+                    // Formata Data ISO para exibição no card
+                    const [ano, mes, dia] = data.dataConsulta.split('-');
+                    const dataFmt = `${dia}/${mes}/${ano}`;
+
                     const card = `
                         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 relative overflow-hidden">
                             <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-red-500"></div>
-                            
                             <div class="flex justify-between items-start mb-3 pl-3 gap-2 border-b border-gray-50 pb-3">
                                 <div>
                                     <span class="text-[10px] font-black text-red-500 mb-1 block uppercase"><i class="fa-solid fa-hashtag mr-0.5"></i> Protocolo: ${protocoloTexto}</span>
@@ -387,26 +399,22 @@
                                 </div>
                                 <div class="shrink-0 mt-1">${statusHtml}</div>
                             </div>
-                            
                             <div class="pl-3 space-y-1.5 bg-gray-50 p-2 rounded-lg border border-gray-100">
-                                <p class="text-xs font-bold text-gray-700"><i class="fa-regular fa-calendar text-blue-500 w-4"></i> Data: ${data.dataConsulta}</p>
+                                <p class="text-xs font-bold text-gray-700"><i class="fa-regular fa-calendar text-blue-500 w-4"></i> Data: ${dataFmt}</p>
                                 <p class="text-xs font-bold text-gray-700"><i class="fa-regular fa-clock text-amber-500 w-4"></i> Hora: ${data.horaConsulta}</p>
                             </div>
                         </div>
                     `;
                     container.innerHTML += card;
                 });
-
                 if(!encontrouConsultas) {
                     container.innerHTML = `<div class="text-center py-8 text-gray-500 text-sm bg-white rounded-xl shadow-sm border border-gray-200">Você não tem agendamentos recentes.</div>`;
                 }
             }, (error) => {
-                console.error("Erro ao puxar consultas:", error);
                 document.getElementById("lista-meus-agendamentos").innerHTML = `<div class="text-center py-8 text-red-500 text-sm">Erro de conexão.</div>`;
             });
         }
 
-        // --- ENVIAR AGENDAMENTO ---
         window.agendarConsulta = async function(event) {
             event.preventDefault();
 
@@ -418,18 +426,19 @@
             const especialidade = document.getElementById('form-especialidade').value;
             const sintomas = document.getElementById('form-sintomas').value;
             
-            // Pega os valores dos radio buttons (Data e Hora)
             const dataSelecionada = document.querySelector('input[name="dataReserva"]:checked');
-            const horaSelecionada = document.querySelector('input[name="horario"]:checked');
+            const horaRadio = document.querySelector('input[name="horario"]:checked');
 
-            if(!dataSelecionada || !horaSelecionada) {
+            if(!dataSelecionada || !horaRadio) {
                 mostrarAviso("Por favor, selecione o dia e o horário desejado.", "erro");
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fa-regular fa-calendar-check"></i> Confirmar Agendamento';
                 return;
             }
 
-            // GERAÇÃO DE PROTOCOLO DA SAÚDE
+            const horaSelecionada = horaRadio.value;
+            const agendaId = horaRadio.dataset.id; // O ID da vaga que acabamos de ocupar
+
             const dataAtual = new Date();
             const ano = dataAtual.getFullYear().toString().slice(-2);
             const mes = (dataAtual.getMonth() + 1).toString().padStart(2, '0');
@@ -437,12 +446,17 @@
             const numeroProtocolo = `SAU${ano}${mes}-${aleatorio}`;
 
             try {
+                // 1. Atualiza a vaga no banco, marcando como indisponível
+                const agendaRef = doc(db, "agendas_saude", agendaId);
+                await updateDoc(agendaRef, { disponivel: false });
+
+                // 2. Registra a solicitação de consulta do cidadão
                 await addDoc(collection(db, "solicitacoes_saude"), {
                     protocolo: numeroProtocolo, 
                     nomeCidadao: nome,
                     especialidade: especialidade,
-                    dataConsulta: dataSelecionada.value,
-                    horaConsulta: horaSelecionada.value,
+                    dataConsulta: dataSelecionada.value, // YYYY-MM-DD
+                    horaConsulta: horaSelecionada,
                     sintomas: sintomas,
                     status: "EM ANÁLISE", 
                     dataRegistro: dataAtual.toISOString()
@@ -452,6 +466,8 @@
                 
                 setTimeout(() => {
                     document.getElementById('form-agendamento').reset();
+                    document.getElementById('calendario-dias').innerHTML = '<div class="text-xs text-gray-400 italic">Selecione uma especialidade primeiro.</div>';
+                    document.getElementById('grade-horarios').innerHTML = '<div class="col-span-3 text-xs text-gray-400 italic">Selecione um dia disponível.</div>';
                     trocarAbaSaude('acompanhar');
                     btn.disabled = false;
                     btn.innerHTML = '<i class="fa-regular fa-calendar-check"></i> Confirmar Agendamento';
