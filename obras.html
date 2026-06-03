@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0b5c3b">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <title>Obras - App Doresópolis</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        doresopolis: {
+                            green: '#0b5c3b',
+                            dark: '#3f3f46',
+                            light: '#f8fafc'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-gray-200 font-sans text-gray-800 flex justify-center items-center min-h-screen">
+
+    <!-- NOTIFICAÇÃO NO APP (TOAST) -->
+    <div id="toast-aviso" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-[100] bg-green-600 text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-3 transition-all duration-300 opacity-0 pointer-events-none translate-y-[-20px] w-11/12 max-w-sm">
+        <i id="toast-icone" class="fa-solid fa-circle-check text-lg"></i>
+        <span id="toast-mensagem" class="text-sm font-medium leading-snug"></span>
+    </div>
+
+    <!-- CONTAINER PRINCIPAL DO APP -->
+    <div class="bg-gray-50 w-full max-w-md h-[100dvh] flex flex-col relative shadow-2xl overflow-hidden sm:rounded-xl sm:h-[95vh] sm:border sm:border-gray-300">
+        
+        <!-- HEADER COM MENUS NO TOPO -->
+        <header class="bg-white shadow-sm z-10 flex-shrink-0">
+            <div class="bg-amber-500 h-2 w-full"></div> 
+            
+            <div class="px-4 py-3 flex items-center justify-center bg-white relative">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center shrink-0 shadow-inner">
+                        <i class="fa-solid fa-helmet-safety text-lg"></i>
+                    </div>
+                    <div>
+                        <p class="text-[9px] tracking-[0.1em] text-gray-500 uppercase font-semibold leading-none">Serviços e Manutenção</p>
+                        <h1 class="text-xl font-black text-gray-700 tracking-tight uppercase leading-none mt-1">Sec. Obras</h1>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TRÊS BOTÕES DE NAVEGAÇÃO NO TOPO -->
+            <div class="flex border-t border-b border-gray-200 bg-gray-100">
+                <a href="index.html" class="flex-1 py-2 flex flex-col items-center justify-center text-gray-500 hover:text-doresopolis-green transition-colors border-r border-gray-200">
+                    <i class="fa-solid fa-house text-lg mb-0.5"></i>
+                    <span class="text-[10px] font-bold uppercase">Início</span>
+                </a>
+                
+                <button onclick="trocarAbaObras('nova')" id="btn-aba-nova" class="flex-1 py-2 flex flex-col items-center justify-center text-amber-600 bg-white border-b-2 border-amber-500 transition-all border-r border-gray-200">
+                    <i class="fa-solid fa-circle-plus text-lg mb-0.5"></i>
+                    <span class="text-[10px] font-bold uppercase">Novo Chamado</span>
+                </button>
+
+                <button onclick="trocarAbaObras('acompanhar')" id="btn-aba-acompanhar" class="flex-1 py-2 flex flex-col items-center justify-center text-gray-400 bg-gray-100 border-b-2 border-transparent transition-all">
+                    <i class="fa-solid fa-list-check text-lg mb-0.5"></i>
+                    <span class="text-[10px] font-bold uppercase">Acompanhar</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- ========================================== -->
+        <!-- ABA 1: NOVO CHAMADO (FORMULÁRIO)           -->
+        <!-- ========================================== -->
+        <main id="aba-nova" class="flex-grow overflow-y-auto p-4 pb-6 scroll-smooth block bg-gray-50">
+            
+            <div class="mb-5">
+                <h2 class="text-lg font-bold text-gray-800">Solicitar Reparo</h2>
+                <p class="text-gray-500 mt-1 text-xs leading-snug">Preencha os dados abaixo para enviar uma solicitação diretamente para a equipe de obras da prefeitura.</p>
+            </div>
+
+            <form id="form-solicitacao" onsubmit="enviarSolicitacao(event)" class="space-y-4">
+                
+                <input type="hidden" id="solicitante-nome">
+
+                <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                    <label class="block text-xs font-bold text-gray-700 mb-2"><i class="fa-solid fa-list-check text-amber-500 mr-1"></i> Qual é o problema?</label>
+                    <div class="relative">
+                        <select id="form-servico" required class="w-full pl-3 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm appearance-none text-gray-700">
+                            <option value="" disabled selected>Selecione uma opção...</option>
+                            <option value="Tapa-Buraco (Asfalto/Calçamento)">Tapa-Buraco (Asfalto/Calçamento)</option>
+                            <option value="Iluminação Pública (Lâmpada Queimada)">Iluminação Pública (Lâmpada Queimada)</option>
+                            <option value="Limpeza de Via Pública">Limpeza de Via Pública</option>
+                            <option value="Manutenção de Bueiro/Boca de Lobo">Manutenção de Bueiro/Boca de Lobo</option>
+                            <option value="Estrada Rural (Patrolamento)">Estrada Rural (Patrolamento)</option>
+                            <option value="Retirada de Entulho/Galhos">Retirada de Entulho/Galhos</option>
+                            <option value="Outros">Outros (Descrever abaixo)</option>
+                        </select>
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                            <i class="fa-solid fa-chevron-down text-gray-400 text-xs"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm space-y-3">
+                    <label class="block text-xs font-bold text-gray-700"><i class="fa-solid fa-location-dot text-red-500 mr-1"></i> Onde é o local?</label>
+                    <input type="text" id="form-endereco" required placeholder="Ex: Rua Piumhi, Próximo ao nº 150" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm">
+                    <input type="text" id="form-referencia" placeholder="Ponto de referência (Opcional)" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm">
+                </div>
+
+                <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                    <label class="block text-xs font-bold text-gray-700 mb-2"><i class="fa-solid fa-gauge-high text-blue-500 mr-1"></i> Nível de Urgência</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="urgencia" value="BAIXA" class="peer sr-only" required>
+                            <div class="text-center px-2 py-2 rounded-lg border border-gray-200 peer-checked:bg-green-100 peer-checked:border-green-500 peer-checked:text-green-700 text-gray-500 text-xs font-bold transition-all">Baixa</div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="urgencia" value="MÉDIA" class="peer sr-only">
+                            <div class="text-center px-2 py-2 rounded-lg border border-gray-200 peer-checked:bg-amber-100 peer-checked:border-amber-500 peer-checked:text-amber-700 text-gray-500 text-xs font-bold transition-all">Média</div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="urgencia" value="ALTA" class="peer sr-only">
+                            <div class="text-center px-2 py-2 rounded-lg border border-gray-200 peer-checked:bg-red-100 peer-checked:border-red-500 peer-checked:text-red-700 text-gray-500 text-xs font-bold transition-all">Alta</div>
+                        </label>
+                    </div>
+                    <p class="text-[9px] text-gray-400 mt-2 italic">* Use "Alta" apenas para situações de risco à comunidade.</p>
+                </div>
+
+                <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                    <label class="block text-xs font-bold text-gray-700 mb-2"><i class="fa-solid fa-camera text-gray-500 mr-1"></i> Anexar Foto (Recomendado)</label>
+                    
+                    <div id="preview-container" class="hidden mb-3 relative rounded-lg overflow-hidden border border-gray-200 h-48 bg-gray-100">
+                        <img id="imagem-preview" src="" alt="Sua foto" class="w-full h-full object-cover">
+                        <button type="button" onclick="removerFoto()" class="absolute top-2 right-2 bg-red-600 text-white w-8 h-8 rounded-full flex items-center justify-center shadow-md active:scale-95">
+                            <i class="fa-solid fa-trash text-sm"></i>
+                        </button>
+                    </div>
+
+                    <label id="upload-label" class="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                            <i class="fa-solid fa-cloud-arrow-up text-2xl text-gray-400 mb-1"></i>
+                            <p class="text-xs text-gray-500 font-medium mt-1">Tirar foto ou abrir galeria</p>
+                        </div>
+                        <input id="form-foto" type="file" accept="image/*" capture="environment" class="hidden" onchange="processarFoto(event)" />
+                    </label>
+                    <input type="hidden" id="foto-base64">
+                </div>
+
+                <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                    <label class="block text-xs font-bold text-gray-700 mb-2"><i class="fa-solid fa-comment-dots text-gray-500 mr-1"></i> Detalhes Adicionais</label>
+                    <textarea id="form-descricao" rows="3" placeholder="Descreva mais detalhes que possam ajudar a equipe..." class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm resize-none"></textarea>
+                </div>
+
+                <button type="submit" id="btn-enviar" class="w-full bg-amber-500 text-white font-bold py-3.5 rounded-xl shadow-md hover:bg-amber-600 active:scale-[0.98] transition-all flex justify-center items-center gap-2 mt-6">
+                    <i class="fa-solid fa-paper-plane"></i> Gerar Solicitação
+                </button>
+            </form>
+        </main>
+
+        <!-- ========================================== -->
+        <!-- ABA 2: ACOMPANHAR CHAMADOS                 -->
+        <!-- ========================================== -->
+        <main id="aba-acompanhar" class="flex-grow overflow-y-auto p-4 pb-8 scroll-smooth hidden bg-gray-100">
+            <div class="mb-5">
+                <h2 class="text-lg font-bold text-gray-800">Meus Chamados</h2>
+                <p class="text-gray-500 mt-1 text-xs leading-snug">Acompanhe o status e o número de protocolo das solicitações que você enviou para Obras.</p>
+            </div>
+
+            <div id="lista-meus-chamados" class="flex flex-col gap-4">
+                <div class="text-center py-8 text-gray-400 text-sm">
+                    <i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i><br>
+                    Buscando seu histórico...
+                </div>
+            </div>
+        </main>
+
+    </div>
+
+    <!-- SCRIPT DE LÓGICA E FIREBASE -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        // Importadas as funções getDocs e where para buscar o nome completo
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, getDocs, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCpaNuC1IUkteO4fHzFPiNS7s580EyTleU",
+            authDomain: "doresopolis.firebaseapp.com",
+            projectId: "doresopolis",
+            storageBucket: "doresopolis.firebasestorage.app",
+            messagingSenderId: "465119846468",
+            appId: "1:465119846468:web:8b292481fec10132cf9c11",
+            measurementId: "G-WXWGXEWY53"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app); 
+
+        window.mostrarAviso = function(mensagem, tipo = 'sucesso') {
+            const toast = document.getElementById('toast-aviso');
+            const icone = document.getElementById('toast-icone');
+            document.getElementById('toast-mensagem').innerText = mensagem;
+
+            if(tipo === 'sucesso') {
+                toast.classList.remove('bg-red-600', 'bg-amber-500');
+                toast.classList.add('bg-green-600');
+                icone.className = 'fa-solid fa-circle-check text-lg';
+            } else if (tipo === 'info') {
+                toast.classList.remove('bg-red-600', 'bg-green-600');
+                toast.classList.add('bg-amber-500');
+                icone.className = 'fa-solid fa-circle-info text-lg';
+            } else {
+                toast.classList.remove('bg-green-600', 'bg-amber-500');
+                toast.classList.add('bg-red-600');
+                icone.className = 'fa-solid fa-circle-exclamation text-lg';
+            }
+
+            toast.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-[-20px]');
+            toast.classList.add('opacity-100', 'translate-y-0');
+
+            setTimeout(() => {
+                toast.classList.remove('opacity-100', 'translate-y-0');
+                toast.classList.add('opacity-0', 'pointer-events-none', 'translate-y-[-20px]');
+            }, 4000);
+        };
+
+        window.trocarAbaObras = function(aba) {
+            const abaNova = document.getElementById('aba-nova');
+            const abaAcompanhar = document.getElementById('aba-acompanhar');
+            const btnNova = document.getElementById('btn-aba-nova');
+            const btnAcompanhar = document.getElementById('btn-aba-acompanhar');
+
+            if (aba === 'nova') {
+                abaNova.classList.remove('hidden');
+                abaAcompanhar.classList.add('hidden');
+                
+                btnNova.classList.add('text-amber-600', 'bg-white', 'border-amber-500');
+                btnNova.classList.remove('text-gray-400', 'bg-gray-100', 'border-transparent');
+                
+                btnAcompanhar.classList.add('text-gray-400', 'bg-gray-100', 'border-transparent');
+                btnAcompanhar.classList.remove('text-amber-600', 'bg-white', 'border-amber-500');
+            } else {
+                abaAcompanhar.classList.remove('hidden');
+                abaNova.classList.add('hidden');
+                
+                btnAcompanhar.classList.add('text-amber-600', 'bg-white', 'border-amber-500');
+                btnAcompanhar.classList.remove('text-gray-400', 'bg-gray-100', 'border-transparent');
+                
+                btnNova.classList.add('text-gray-400', 'bg-gray-100', 'border-transparent');
+                btnNova.classList.remove('text-amber-600', 'bg-white', 'border-amber-500');
+            }
+        };
+
+        let usuarioNomePrimeiro = "";
+        let usuarioNomeCompleto = "";
+
+        // Inicialização Avançada: Busca o nome completo no banco para enviar o chamado perfeitamente
+        document.addEventListener('DOMContentLoaded', async () => {
+            usuarioNomePrimeiro = localStorage.getItem('usuarioDoresopolis');
+            const telefoneSalvo = localStorage.getItem('userTelefone');
+
+            if (usuarioNomePrimeiro && telefoneSalvo) {
+                try {
+                    // Consulta o banco para pegar o nome completo vinculado a este telefone
+                    const qUser = query(collection(db, "usuarios"), where("telefone", "==", telefoneSalvo));
+                    const snapUser = await getDocs(qUser);
+                    
+                    if(!snapUser.empty) {
+                        usuarioNomeCompleto = snapUser.docs[0].data().nomeCompleto;
+                    } else {
+                        usuarioNomeCompleto = usuarioNomePrimeiro; // Fallback de segurança
+                    }
+                } catch(e) {
+                    console.error(e);
+                    usuarioNomeCompleto = usuarioNomePrimeiro;
+                }
+
+                // Salva o NOME COMPLETO no input escondido para enviar junto com a solicitação
+                document.getElementById('solicitante-nome').value = usuarioNomeCompleto;
+                carregarMeusChamados(); 
+            } else {
+                alert("Você precisa estar logado para abrir um chamado.");
+                window.location.href = "index.html";
+            }
+        });
+
+        function carregarMeusChamados() {
+            const solicitacoesRef = collection(db, "solicitacoes_obras");
+            const qSolicitacoes = query(solicitacoesRef, orderBy("dataRegistro", "desc"));
+
+            onSnapshot(qSolicitacoes, (snapshot) => {
+                const container = document.getElementById("lista-meus-chamados");
+                
+                if (snapshot.empty) {
+                    container.innerHTML = `<div class="text-center py-8 text-gray-500 text-sm bg-white rounded-xl shadow-sm border border-gray-200">Você ainda não possui solicitações abertas.</div>`;
+                    return;
+                }
+
+                container.innerHTML = "";
+                let encontrouChamados = false;
+
+                snapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    
+                    // Mostra solicitações se o nome bater com o nome completo ou o primeiro nome (retrocompatibilidade)
+                    if(data.nomeCidadao !== usuarioNomeCompleto && data.nomeCidadao !== usuarioNomePrimeiro) return;
+                    
+                    encontrouChamados = true;
+                    
+                    const dataFormatada = new Date(data.dataRegistro).toLocaleDateString('pt-BR', {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit'});
+                    const protocoloTexto = data.protocolo ? `#${data.protocolo}` : 'Pendente';
+
+                    let statusHtml = '';
+                    if(data.status === 'EM ANDAMENTO') {
+                        statusHtml = `<span class="bg-blue-100 text-blue-700 px-2 py-1 rounded-md text-[10px] font-black"><i class="fa-solid fa-person-digging mr-1"></i> ANDAMENTO</span>`;
+                    } else if(data.status === 'CONCLUÍDO') {
+                        statusHtml = `<span class="bg-green-100 text-green-700 px-2 py-1 rounded-md text-[10px] font-black"><i class="fa-solid fa-check mr-1"></i> CONCLUÍDO</span>`;
+                    } else {
+                        statusHtml = `<span class="bg-gray-100 text-gray-600 px-2 py-1 rounded-md text-[10px] font-black border border-gray-200"><i class="fa-regular fa-clock mr-1"></i> PENDENTE</span>`;
+                    }
+
+                    const card = `
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 relative overflow-hidden">
+                            <div class="absolute left-0 top-0 bottom-0 w-1.5 ${data.urgencia === 'ALTA' ? 'bg-red-500' : (data.urgencia === 'MÉDIA' ? 'bg-amber-500' : 'bg-green-500')}"></div>
+                            
+                            <div class="flex justify-between items-start mb-3 pl-3 gap-2 border-b border-gray-50 pb-3">
+                                <div>
+                                    <span class="text-[10px] font-black text-amber-500 mb-1 block uppercase"><i class="fa-solid fa-hashtag mr-0.5"></i> Protocolo: ${protocoloTexto}</span>
+                                    <h3 class="font-bold text-gray-800 text-sm leading-tight">${data.tipoServico}</h3>
+                                </div>
+                                <div class="shrink-0 mt-1">${statusHtml}</div>
+                            </div>
+                            
+                            <div class="pl-3 space-y-1.5">
+                                <p class="text-xs text-gray-500 truncate"><i class="fa-solid fa-location-dot text-red-400 w-4"></i> ${data.endereco}</p>
+                                <p class="text-[10px] text-gray-400"><i class="fa-regular fa-calendar w-4"></i> Enviado em ${dataFormatada}</p>
+                            </div>
+                        </div>
+                    `;
+                    container.innerHTML += card;
+                });
+
+                if(!encontrouChamados) {
+                    container.innerHTML = `<div class="text-center py-8 text-gray-500 text-sm bg-white rounded-xl shadow-sm border border-gray-200">Você ainda não enviou nenhuma solicitação.</div>`;
+                }
+            }, (error) => {
+                console.error("Erro ao puxar chamados:", error);
+                document.getElementById("lista-meus-chamados").innerHTML = `<div class="text-center py-8 text-red-500 text-sm">Erro de conexão ao buscar chamados.</div>`;
+            });
+        }
+
+        window.processarFoto = function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            mostrarAviso("Processando imagem...", "info");
+
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function(e) {
+                const img = new Image();
+                img.src = e.target.result;
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 800;
+                    const scaleSize = MAX_WIDTH / img.width;
+                    
+                    if(scaleSize < 1) {
+                        canvas.width = MAX_WIDTH;
+                        canvas.height = img.height * scaleSize;
+                    } else {
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                    }
+
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    
+                    const fotoComprimida = canvas.toDataURL('image/jpeg', 0.6);
+                    
+                    document.getElementById('foto-base64').value = fotoComprimida;
+                    document.getElementById('imagem-preview').src = fotoComprimida;
+                    
+                    document.getElementById('preview-container').classList.remove('hidden');
+                    document.getElementById('upload-label').classList.add('hidden');
+                };
+            };
+        };
+
+        window.removerFoto = function() {
+            document.getElementById('foto-base64').value = '';
+            document.getElementById('form-foto').value = '';
+            document.getElementById('preview-container').classList.add('hidden');
+            document.getElementById('upload-label').classList.remove('hidden');
+            document.getElementById('upload-label').classList.add('flex');
+        };
+
+        window.enviarSolicitacao = async function(event) {
+            event.preventDefault();
+
+            const btn = document.getElementById('btn-enviar');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Gerando Protocolo...';
+
+            const nome = document.getElementById('solicitante-nome').value;
+            const servico = document.getElementById('form-servico').value;
+            const endereco = document.getElementById('form-endereco').value;
+            const referencia = document.getElementById('form-referencia').value;
+            const urgencia = document.querySelector('input[name="urgencia"]:checked').value;
+            const fotoBase64 = document.getElementById('foto-base64').value;
+            const descricao = document.getElementById('form-descricao').value;
+
+            let enderecoFinal = endereco;
+            if (referencia) {
+                enderecoFinal += ` (Ref: ${referencia})`;
+            }
+
+            const dataAtual = new Date();
+            const ano = dataAtual.getFullYear().toString().slice(-2);
+            const mes = (dataAtual.getMonth() + 1).toString().padStart(2, '0');
+            const aleatorio = Math.random().toString(36).substring(2, 6).toUpperCase();
+            const numeroProtocolo = `OBR${ano}${mes}-${aleatorio}`;
+
+            try {
+                await addDoc(collection(db, "solicitacoes_obras"), {
+                    protocolo: numeroProtocolo, 
+                    nomeCidadao: nome, // Agora vai salvar o nome completo perfeitamente
+                    tipoServico: servico,
+                    endereco: enderecoFinal,
+                    urgencia: urgencia,
+                    fotoUrl: fotoBase64, 
+                    descricao: descricao,
+                    status: "PENDENTE", 
+                    dataRegistro: dataAtual.toISOString()
+                });
+                
+                mostrarAviso(`Solicitação enviada! Protocolo: #${numeroProtocolo}`, "sucesso");
+                
+                setTimeout(() => {
+                    document.getElementById('form-solicitacao').reset();
+                    removerFoto();
+                    trocarAbaObras('acompanhar');
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Gerar Solicitação';
+                }, 1500);
+
+            } catch (error) {
+                console.error("Erro ao enviar chamado: ", error);
+                mostrarAviso("Ocorreu um erro ao enviar. Verifique a internet.", "erro");
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Gerar Solicitação';
+            }
+        };
+    </script>
+</body>
+</html>

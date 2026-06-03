@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#7c3aed">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Transporte - App Doresópolis</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        doresopolis: { green: '#0b5c3b' }
+      }
+    }
+  }
+}
+</script>
+</head>
+<body class="bg-gray-200 font-sans text-gray-800 flex justify-center items-center min-h-screen">
+
+<div class="bg-gray-50 w-full max-w-md h-[100dvh] flex flex-col relative shadow-2xl overflow-hidden sm:rounded-xl sm:h-[95vh] sm:border sm:border-gray-300">
+
+  <!-- HEADER -->
+  <header class="bg-white shadow-sm z-10 flex-shrink-0">
+    <div class="bg-purple-600 h-1.5 w-full"></div>
+    <div class="px-4 py-3 flex items-center gap-3">
+      <a href="index.html" class="w-9 h-9 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center shrink-0 hover:bg-gray-200 transition-colors">
+        <i class="fa-solid fa-arrow-left text-sm"></i>
+      </a>
+      <div class="flex items-center gap-3 flex-grow">
+        <div class="w-9 h-9 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
+          <i class="fa-solid fa-bus"></i>
+        </div>
+        <div>
+          <p class="text-[9px] tracking-widest text-gray-400 uppercase font-semibold leading-none">Mobilidade Urbana e Rural</p>
+          <h1 class="text-lg font-black text-gray-800 uppercase tracking-tight leading-none">Sec. Transporte</h1>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTEÚDO -->
+  <main class="flex-grow flex flex-col items-center justify-center px-8 text-center">
+
+    <div class="w-24 h-24 rounded-full bg-purple-50 border-2 border-purple-100 flex items-center justify-center mb-6 shadow-inner">
+      <i class="fa-solid fa-screwdriver-wrench text-4xl text-purple-400"></i>
+    </div>
+
+    <h2 class="text-2xl font-black text-gray-800 uppercase tracking-tight mb-2">Em Desenvolvimento</h2>
+
+    <p class="text-sm text-gray-500 leading-relaxed max-w-xs">
+      A página de <span class="font-bold text-purple-600">Transporte</span> está sendo construída e em breve estará disponível com horários, rotas e solicitações de transporte escolar e rural.
+    </p>
+
+    <div class="mt-8 flex flex-col gap-3 w-full max-w-xs">
+      <div class="flex items-center gap-3 bg-white border border-gray-100 rounded-xl p-3 shadow-sm opacity-50">
+        <div class="w-9 h-9 rounded-lg bg-purple-50 text-purple-400 flex items-center justify-center shrink-0">
+          <i class="fa-solid fa-clock"></i>
+        </div>
+        <div class="text-left">
+          <p class="text-xs font-bold text-gray-600">Horários de Ônibus</p>
+          <p class="text-[10px] text-gray-400">Em breve</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3 bg-white border border-gray-100 rounded-xl p-3 shadow-sm opacity-50">
+        <div class="w-9 h-9 rounded-lg bg-purple-50 text-purple-400 flex items-center justify-center shrink-0">
+          <i class="fa-solid fa-bus-school"></i>
+        </div>
+        <div class="text-left">
+          <p class="text-xs font-bold text-gray-600">Transporte Escolar</p>
+          <p class="text-[10px] text-gray-400">Em breve</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3 bg-white border border-gray-100 rounded-xl p-3 shadow-sm opacity-50">
+        <div class="w-9 h-9 rounded-lg bg-purple-50 text-purple-400 flex items-center justify-center shrink-0">
+          <i class="fa-solid fa-road"></i>
+        </div>
+        <div class="text-left">
+          <p class="text-xs font-bold text-gray-600">Estradas Rurais</p>
+          <p class="text-[10px] text-gray-400">Em breve</p>
+        </div>
+      </div>
+    </div>
+
+    <a href="index.html" class="mt-8 inline-flex items-center gap-2 bg-purple-600 text-white font-bold px-6 py-3 rounded-xl shadow-md hover:bg-purple-700 active:scale-[0.98] transition-all text-sm">
+      <i class="fa-solid fa-arrow-left"></i> Voltar ao Início
+    </a>
+
+  </main>
+
+</div>
+
+</body>
+</html>

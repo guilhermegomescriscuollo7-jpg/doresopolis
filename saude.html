@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#dc2626">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Saúde - App Doresópolis</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        doresopolis: { green: '#0b5c3b' }
+      }
+    }
+  }
+}
+</script>
+<style>
+  .hide-scrollbar::-webkit-scrollbar { display: none; }
+  .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  .fade-in { animation: fadeIn 0.2s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+  .esp-card.selecionado { border-color: #dc2626; background: #fef2f2; }
+  .esp-card.selecionado .esp-icon { background: #dc2626; color: white; }
+</style>
+</head>
+<body class="bg-gray-200 font-sans text-gray-800 flex justify-center items-center min-h-screen">
+
+<div id="toast-aviso" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-[100] bg-green-600 text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-3 transition-all duration-300 opacity-0 pointer-events-none translate-y-[-20px] w-11/12 max-w-sm">
+  <i id="toast-icone" class="fa-solid fa-circle-check text-lg"></i>
+  <span id="toast-mensagem" class="text-sm font-medium leading-snug"></span>
+</div>
+
+<div class="bg-gray-50 w-full max-w-md h-[100dvh] flex flex-col relative shadow-2xl overflow-hidden sm:rounded-xl sm:h-[95vh] sm:border sm:border-gray-300">
+
+  <!-- HEADER -->
+  <header class="bg-white shadow-sm z-10 flex-shrink-0">
+    <div class="bg-red-600 h-1.5 w-full"></div>
+    <div class="px-4 py-3 flex items-center gap-3">
+      <a href="index.html" class="w-9 h-9 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center shrink-0 hover:bg-gray-200 transition-colors">
+        <i class="fa-solid fa-arrow-left text-sm"></i>
+      </a>
+      <div class="flex items-center gap-3 flex-grow">
+        <div class="w-9 h-9 rounded-full bg-red-50 text-red-600 flex items-center justify-center shrink-0">
+          <i class="fa-solid fa-heart-pulse"></i>
+        </div>
+        <div>
+          <p class="text-[9px] tracking-widest text-gray-400 uppercase font-semibold leading-none">Atenção Básica</p>
+          <h1 class="text-lg font-black text-gray-800 uppercase tracking-tight leading-none">Sec. Saúde</h1>
+        </div>
+      </div>
+    </div>
+    <!-- TABS -->
+    <div class="flex border-t border-gray-100">
+      <button onclick="trocarAba('agendar')" id="tab-agendar" class="flex-1 py-2.5 text-red-600 border-b-2 border-red-600 bg-white text-[11px] font-bold uppercase flex flex-col items-center gap-0.5 transition-all">
+        <i class="fa-solid fa-calendar-plus text-base"></i> Agendar
+      </button>
+      <button onclick="trocarAba('minhas')" id="tab-minhas" class="flex-1 py-2.5 text-gray-400 border-b-2 border-transparent bg-gray-50 text-[11px] font-bold uppercase flex flex-col items-center gap-0.5 transition-all">
+        <i class="fa-solid fa-clipboard-list text-base"></i> Minhas Consultas
+      </button>
+    </div>
+  </header>
+
+  <!-- ===== ABA: AGENDAR ===== -->
+  <main id="aba-agendar" class="flex-grow overflow-y-auto p-4 pb-6 block">
+
+    <!-- Link Meu SUS Digital -->
+    <a href="https://meususdigital.saude.gov.br/login" target="_blank" rel="noopener noreferrer"
+       class="flex items-center gap-3 bg-blue-50 border border-blue-200 rounded-xl p-3 mb-5 active:scale-[0.98] transition-all">
+      <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center shrink-0">
+        <i class="fa-solid fa-syringe"></i>
+      </div>
+      <div class="flex-grow">
+        <h3 class="font-bold text-blue-800 text-sm">Cartão de Vacina Digital</h3>
+        <p class="text-[10px] text-blue-500 mt-0.5">Acesse pelo Meu SUS Digital</p>
+      </div>
+      <i class="fa-solid fa-arrow-up-right-from-square text-blue-300"></i>
+    </a>
+
+    <!-- PASSO 1: Especialidade -->
+    <div class="mb-5">
+      <div class="flex items-center gap-2 mb-3">
+        <div class="w-6 h-6 rounded-full bg-red-600 text-white flex items-center justify-center text-xs font-black">1</div>
+        <h2 class="font-bold text-gray-800 text-sm">Escolha a especialidade</h2>
+      </div>
+      <div id="lista-especialidades" class="grid grid-cols-1 gap-2">
+        <div class="text-center py-6 text-gray-400 text-sm col-span-1">
+          <i class="fa-solid fa-spinner fa-spin mb-1 block text-xl"></i> Carregando...
+        </div>
+      </div>
+    </div>
+
+    <!-- PASSO 2: Dias disponíveis -->
+    <div id="secao-dias" class="mb-5 hidden fade-in">
+      <div class="flex items-center gap-2 mb-3">
+        <div class="w-6 h-6 rounded-full bg-red-600 text-white flex items-center justify-center text-xs font-black">2</div>
+        <h2 class="font-bold text-gray-800 text-sm">Escolha o dia</h2>
+        <span class="text-[10px] text-gray-400 ml-auto"><i class="fa-solid fa-arrows-left-right mr-1"></i>deslize</span>
+      </div>
+      <div id="calendário-dias" class="flex gap-2 overflow-x-auto pb-2 hide-scrollbar"></div>
+    </div>
+
+    <!-- PASSO 3: Horários -->
+    <div id="secao-horarios" class="mb-5 hidden fade-in">
+      <div class="flex items-center gap-2 mb-3">
+        <div class="w-6 h-6 rounded-full bg-red-600 text-white flex items-center justify-center text-xs font-black">3</div>
+        <h2 class="font-bold text-gray-800 text-sm">Escolha o horário</h2>
+      </div>
+      <div id="grade-horarios" class="grid grid-cols-3 gap-2"></div>
+    </div>
+
+    <!-- PASSO 4: Motivo e confirmação -->
+    <div id="secao-confirmar" class="hidden fade-in">
+      <div class="flex items-center gap-2 mb-3">
+        <div class="w-6 h-6 rounded-full bg-red-600 text-white flex items-center justify-center text-xs font-black">4</div>
+        <h2 class="font-bold text-gray-800 text-sm">Motivo da consulta</h2>
+      </div>
+      <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4 mb-4">
+        <!-- Resumo da seleção -->
+        <div id="resumo-selecao" class="bg-red-50 border border-red-100 rounded-lg p-3 mb-3 text-xs text-red-800 font-bold"></div>
+        <label class="block text-xs font-bold text-gray-600 mb-2">Descreva seus sintomas ou motivo</label>
+        <textarea id="form-sintomas" rows="3" placeholder="Ex: Dor de cabeça há 2 dias, febre..." class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-red-400"></textarea>
+      </div>
+      <button id="btn-confirmar" onclick="agendarConsulta()" class="w-full bg-red-600 text-white font-bold py-3.5 rounded-xl shadow-md hover:bg-red-700 active:scale-[0.98] transition-all flex justify-center items-center gap-2">
+        <i class="fa-regular fa-calendar-check"></i> Confirmar Agendamento
+      </button>
+      <p class="text-center text-[10px] text-gray-400 mt-2">Seu agendamento ficará aguardando confirmação da equipe de saúde.</p>
+    </div>
+  </main>
+
+  <!-- ===== ABA: MINHAS CONSULTAS ===== -->
+  <main id="aba-minhas" class="flex-grow overflow-y-auto p-4 pb-6 hidden">
+    <div class="mb-4">
+      <h2 class="text-lg font-bold text-gray-800">Minhas Consultas</h2>
+      <p class="text-xs text-gray-500 mt-0.5">Acompanhe seus agendamentos no Posto de Saúde.</p>
+    </div>
+    <div id="lista-consultas" class="flex flex-col gap-3">
+      <div class="text-center py-10 text-gray-400 text-sm">
+        <i class="fa-solid fa-spinner fa-spin text-2xl mb-2 block"></i> Buscando...
+      </div>
+    </div>
+  </main>
+
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, addDoc, query, orderBy, where, onSnapshot, getDocs, doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCpaNuC1IUkteO4fHzFPiNS7s580EyTleU",
+  authDomain: "doresopolis.firebaseapp.com",
+  projectId: "doresopolis",
+  storageBucket: "doresopolis.firebasestorage.app",
+  messagingSenderId: "465119846468",
+  appId: "1:465119846468:web:8b292481fec10132cf9c11"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// Estado da seleção
+let selecao = {
+  especialidadeId: null,
+  especialidadeNome: null,
+  profissional: null,
+  dataISO: null,
+  hora: null,
+  agendaId: null,
+};
+let vagasDisponiveis = []; // todos os slots abertos
+let usuarioNomeCompleto = '';
+let usuarioNomePrimeiro = '';
+
+// ===== TOAST =====
+window.mostrarAviso = function(msg, tipo = 'sucesso') {
+  const t = document.getElementById('toast-aviso');
+  const i = document.getElementById('toast-icone');
+  document.getElementById('toast-mensagem').innerText = msg;
+  if (tipo === 'sucesso') { t.className = t.className.replace(/bg-\w+-\d+/g,''); t.classList.add('bg-green-600'); i.className = 'fa-solid fa-circle-check text-lg'; }
+  else if (tipo === 'info') { t.className = t.className.replace(/bg-\w+-\d+/g,''); t.classList.add('bg-blue-600'); i.className = 'fa-solid fa-circle-info text-lg'; }
+  else { t.className = t.className.replace(/bg-\w+-\d+/g,''); t.classList.add('bg-red-600'); i.className = 'fa-solid fa-circle-exclamation text-lg'; }
+  t.classList.remove('opacity-0','pointer-events-none','translate-y-[-20px]');
+  t.classList.add('opacity-100','translate-y-0');
+  setTimeout(() => { t.classList.add('opacity-0','pointer-events-none','translate-y-[-20px]'); t.classList.remove('opacity-100','translate-y-0'); }, 4000);
+};
+
+// ===== ABAS =====
+window.trocarAba = function(aba) {
+  ['agendar','minhas'].forEach(n => {
+    document.getElementById(`aba-${n}`).classList.add('hidden');
+    document.getElementById(`aba-${n}`).classList.remove('block');
+    const tab = document.getElementById(`tab-${n}`);
+    tab.classList.remove('text-red-600','border-red-600','bg-white');
+    tab.classList.add('text-gray-400','border-transparent','bg-gray-50');
+  });
+  document.getElementById(`aba-${aba}`).classList.remove('hidden');
+  document.getElementById(`aba-${aba}`).classList.add('block');
+  const tabAtiva = document.getElementById(`tab-${aba}`);
+  tabAtiva.classList.add('text-red-600','border-red-600','bg-white');
+  tabAtiva.classList.remove('text-gray-400','border-transparent','bg-gray-50');
+};
+
+// ===== INICIALIZAÇÃO =====
+document.addEventListener('DOMContentLoaded', async () => {
+  usuarioNomePrimeiro = localStorage.getItem('usuarioDoresopolis') || '';
+  const telefone = localStorage.getItem('userTelefone');
+  if (!usuarioNomePrimeiro || !telefone) {
+    alert('Você precisa estar logado.');
+    window.location.href = 'index.html';
+    return;
+  }
+  try {
+    const qUser = query(collection(db, "usuarios"), where("telefone", "==", telefone));
+    const snap = await getDocs(qUser);
+    usuarioNomeCompleto = !snap.empty ? snap.docs[0].data().nomeCompleto : usuarioNomePrimeiro;
+  } catch(e) { usuarioNomeCompleto = usuarioNomePrimeiro; }
+
+  carregarEspecialidades();
+  escutarVagas();
+  carregarMinhasConsultas();
+});
+
+// ===== ESPECIALIDADES DINÂMICAS =====
+function carregarEspecialidades() {
+  const qEsp = query(collection(db, "especialidades_saude"), orderBy("nome", "asc"));
+  onSnapshot(qEsp, (snap) => {
+    const container = document.getElementById('lista-especialidades');
+    if (snap.empty) {
+      container.innerHTML = `<div class="col-span-2 text-center py-6 text-gray-400 text-sm bg-white rounded-xl border border-gray-100">Nenhuma especialidade disponível no momento.</div>`;
+      return;
+    }
+    const especialidades = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    container.innerHTML = especialidades.map(esp => `
+      <div onclick="selecionarEspecialidade('${esp.id}','${esp.nome.replace(/'/g,"\\'")}','${(esp.profissional||'').replace(/'/g,"\\'")}')"
+           id="esp-card-${esp.id}"
+           class="esp-card bg-white rounded-xl border-2 border-gray-100 p-3 flex items-center gap-3 cursor-pointer active:scale-[0.98] transition-all hover:border-red-200">
+        <div class="esp-icon w-10 h-10 rounded-xl bg-red-50 text-red-500 flex items-center justify-center shrink-0 transition-all">
+          <i class="fa-solid fa-stethoscope"></i>
+        </div>
+        <div class="flex-grow min-w-0">
+          <h3 class="font-bold text-gray-800 text-sm truncate">${esp.nome}</h3>
+          <p class="text-[11px] text-gray-500 truncate">${esp.profissional || ''}</p>
+          ${esp.descricao ? `<p class="text-[10px] text-gray-400 truncate">${esp.descricao}</p>` : ''}
+        </div>
+        <i class="fa-solid fa-chevron-right text-gray-300 text-xs shrink-0"></i>
+      </div>
+    `).join('');
+  });
+}
+
+// ===== VAGAS EM TEMPO REAL =====
+function escutarVagas() {
+  const agendasRef = collection(db, "agendas_saude");
+  onSnapshot(agendasRef, (snap) => {
+    vagasDisponiveis = snap.docs
+      .filter(d => d.data().disponivel === true && (d.data().vagasOcupadas || 0) < (d.data().limiteVagas || 1))
+      .map(d => ({ id: d.id, ...d.data() }));
+    // Atualiza se já tiver especialidade selecionada
+    if (selecao.especialidadeId) atualizarDias();
+  });
+}
+
+// ===== SELEÇÃO DE ESPECIALIDADE =====
+window.selecionarEspecialidade = function(id, nome, profissional) {
+  // Limpar seleção anterior
+  document.querySelectorAll('.esp-card').forEach(c => c.classList.remove('selecionado'));
+  document.getElementById(`esp-card-${id}`)?.classList.add('selecionado');
+
+  selecao.especialidadeId = id;
+  selecao.especialidadeNome = nome;
+  selecao.profissional = profissional;
+  selecao.dataISO = null;
+  selecao.hora = null;
+  selecao.agendaId = null;
+
+  atualizarDias();
+  document.getElementById('secao-horarios').classList.add('hidden');
+  document.getElementById('secao-confirmar').classList.add('hidden');
+};
+
+function atualizarDias() {
+  const vagasDaEsp = vagasDisponiveis.filter(v => v.especialidadeId === selecao.especialidadeId || v.especialidade === selecao.especialidadeNome);
+  const secaoDias = document.getElementById('secao-dias');
+  const container = document.getElementById('calendário-dias');
+
+  if (vagasDaEsp.length === 0) {
+    secaoDias.classList.remove('hidden');
+    container.innerHTML = `<div class="text-xs text-red-500 font-bold p-3 bg-red-50 rounded-xl border border-red-200 w-full">Sem vagas disponíveis para esta especialidade no momento.</div>`;
+    return;
+  }
+
+  secaoDias.classList.remove('hidden');
+  const diasUnicos = [...new Set(vagasDaEsp.map(v => v.dataISO))].sort();
+  container.innerHTML = diasUnicos.map(dataISO => {
+    const [ano, mes, dia] = dataISO.split('-');
+    const dataObj = new Date(parseInt(ano), parseInt(mes)-1, parseInt(dia));
+    const diaSemana = dataObj.toLocaleDateString('pt-BR',{weekday:'short'}).replace('.','');
+    const mesStr = dataObj.toLocaleDateString('pt-BR',{month:'short'}).replace('.','');
+    const isSelected = selecao.dataISO === dataISO;
+    return `
+    <label class="cursor-pointer shrink-0">
+      <input type="radio" name="dataReserva" value="${dataISO}" class="peer sr-only" ${isSelected ? 'checked' : ''} onchange="selecionarDia('${dataISO}')">
+      <div class="flex flex-col items-center justify-center w-16 h-20 bg-white rounded-xl border-2 border-gray-100 peer-checked:bg-red-600 peer-checked:text-white peer-checked:border-red-600 text-gray-500 shadow-sm transition-all hover:border-red-300">
+        <span class="text-[9px] uppercase font-bold tracking-widest">${diaSemana}</span>
+        <span class="text-2xl font-black leading-none my-0.5">${dia}</span>
+        <span class="text-[9px] uppercase font-bold opacity-80">${mesStr}</span>
+      </div>
+    </label>`;
+  }).join('');
+
+  // Se dia já estava selecionado, re-renderiza os horários
+  if (selecao.dataISO && diasUnicos.includes(selecao.dataISO)) {
+    atualizarHorarios();
+  }
+}
+
+window.selecionarDia = function(dataISO) {
+  selecao.dataISO = dataISO;
+  selecao.hora = null;
+  selecao.agendaId = null;
+  document.getElementById('secao-confirmar').classList.add('hidden');
+  atualizarHorarios();
+};
+
+function atualizarHorarios() {
+  const vagasDoDia = vagasDisponiveis
+    .filter(v => (v.especialidadeId === selecao.especialidadeId || v.especialidade === selecao.especialidadeNome) && v.dataISO === selecao.dataISO)
+    .sort((a,b) => a.hora.localeCompare(b.hora));
+
+  const secao = document.getElementById('secao-horarios');
+  const container = document.getElementById('grade-horarios');
+
+  if (vagasDoDia.length === 0) {
+    secao.classList.remove('hidden');
+    container.innerHTML = `<div class="col-span-3 text-xs text-red-500 text-center py-4">Nenhum horário disponível neste dia.</div>`;
+    return;
+  }
+
+  secao.classList.remove('hidden');
+  container.innerHTML = vagasDoDia.map(vaga => {
+    const livres = (vaga.limiteVagas || 1) - (vaga.vagasOcupadas || 0);
+    const isSelected = selecao.agendaId === vaga.id;
+    return `
+    <label class="cursor-pointer">
+      <input type="radio" name="horario" value="${vaga.hora}" data-id="${vaga.id}" class="peer sr-only" ${isSelected ? 'checked' : ''} onchange="selecionarHorario('${vaga.hora}','${vaga.id}')">
+      <div class="text-center py-2.5 px-1 rounded-xl border-2 border-gray-100 peer-checked:bg-red-50 peer-checked:border-red-500 peer-checked:text-red-700 text-gray-600 text-sm font-bold transition-all">
+        ${vaga.hora}
+        <div class="text-[9px] font-normal mt-0.5 ${livres <= 2 ? 'text-orange-500' : 'text-gray-400'}">${livres} vaga${livres !== 1 ? 's' : ''}</div>
+      </div>
+    </label>`;
+  }).join('');
+}
+
+window.selecionarHorario = function(hora, agendaId) {
+  selecao.hora = hora;
+  selecao.agendaId = agendaId;
+
+  // Atualiza resumo
+  const [ano, mes, dia] = selecao.dataISO.split('-');
+  document.getElementById('resumo-selecao').innerHTML = `
+    <div class="flex items-center gap-2 mb-1">
+      <i class="fa-solid fa-stethoscope text-red-500"></i>
+      <span>${selecao.especialidadeNome}</span>
+    </div>
+    <div class="flex gap-4 text-red-600">
+      <span><i class="fa-regular fa-calendar mr-1"></i>${dia}/${mes}/${ano}</span>
+      <span><i class="fa-regular fa-clock mr-1"></i>${hora}</span>
+    </div>
+    ${selecao.profissional ? `<div class="text-red-500 mt-0.5"><i class="fa-solid fa-user-doctor mr-1"></i>${selecao.profissional}</div>` : ''}
+  `;
+  document.getElementById('secao-confirmar').classList.remove('hidden');
+  setTimeout(() => document.getElementById('secao-confirmar').scrollIntoView({behavior:'smooth',block:'start'}), 100);
+};
+
+// ===== AGENDAR =====
+window.agendarConsulta = async function() {
+  if (!selecao.especialidadeId || !selecao.dataISO || !selecao.hora || !selecao.agendaId) {
+    mostrarAviso('Selecione especialidade, dia e horário.', 'erro');
+    return;
+  }
+  const btn = document.getElementById('btn-confirmar');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processando...';
+
+  const sintomas = document.getElementById('form-sintomas').value.trim();
+  const agRef = doc(db, "agendas_saude", selecao.agendaId);
+
+  try {
+    // Verifica se ainda há vagas (prevenção de condição de corrida)
+    const agSnap = await getDoc(agRef);
+    if (!agSnap.exists()) throw new Error('Vaga não encontrada.');
+    const agData = agSnap.data();
+    const ocupadas = agData.vagasOcupadas || 0;
+    const limite = agData.limiteVagas || 1;
+    if (ocupadas >= limite) {
+      mostrarAviso('Esta vaga acaba de ser preenchida. Escolha outro horário.', 'erro');
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa-regular fa-calendar-check"></i> Confirmar Agendamento';
+      selecao.hora = null; selecao.agendaId = null;
+      if (selecao.dataISO) atualizarHorarios();
+      document.getElementById('secao-confirmar').classList.add('hidden');
+      return;
+    }
+
+    const novasOcupadas = ocupadas + 1;
+    const novoDisponivel = novasOcupadas < limite;
+
+    // Protocolo
+    const now = new Date();
+    const protocolo = `SAU${now.getFullYear().toString().slice(-2)}${String(now.getMonth()+1).padStart(2,'0')}-${Math.random().toString(36).substring(2,6).toUpperCase()}`;
+
+    // Transação: atualiza vaga e registra agendamento
+    await updateDoc(agRef, { vagasOcupadas: novasOcupadas, disponivel: novoDisponivel });
+    await addDoc(collection(db, "solicitacoes_saude"), {
+      protocolo,
+      nomeCidadao: usuarioNomeCompleto,
+      especialidade: selecao.especialidadeNome,
+      especialidadeId: selecao.especialidadeId,
+      profissional: selecao.profissional || '',
+      dataConsulta: selecao.dataISO,
+      horaConsulta: selecao.hora,
+      agendaId: selecao.agendaId,
+      sintomas,
+      status: 'EM ANÁLISE',
+      dataRegistro: now.toISOString()
+    });
+
+    mostrarAviso(`Agendamento enviado! Protocolo: #${protocolo}`, 'sucesso');
+
+    // Reset
+    selecao = { especialidadeId: null, especialidadeNome: null, profissional: null, dataISO: null, hora: null, agendaId: null };
+    document.querySelectorAll('.esp-card').forEach(c => c.classList.remove('selecionado'));
+    document.getElementById('form-sintomas').value = '';
+    document.getElementById('secao-dias').classList.add('hidden');
+    document.getElementById('secao-horarios').classList.add('hidden');
+    document.getElementById('secao-confirmar').classList.add('hidden');
+
+    setTimeout(() => trocarAba('minhas'), 1500);
+
+  } catch(e) {
+    console.error(e);
+    mostrarAviso('Erro ao enviar. Tente novamente.', 'erro');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fa-regular fa-calendar-check"></i> Confirmar Agendamento';
+  }
+};
+
+// ===== MINHAS CONSULTAS =====
+function carregarMinhasConsultas() {
+  const qConsultas = query(collection(db, "solicitacoes_saude"), orderBy("dataRegistro", "desc"));
+  onSnapshot(qConsultas, (snap) => {
+    const container = document.getElementById('lista-consultas');
+    const minhas = snap.docs.filter(d => {
+      const data = d.data();
+      return data.nomeCidadao === usuarioNomeCompleto || data.nomeCidadao === usuarioNomePrimeiro;
+    });
+
+    if (minhas.length === 0) {
+      container.innerHTML = `<div class="text-center py-12 text-gray-400 text-sm bg-white rounded-xl border border-gray-100">
+        <i class="fa-regular fa-calendar-xmark text-3xl mb-3 block"></i>
+        Você não tem agendamentos ainda.
+      </div>`;
+      return;
+    }
+
+    container.innerHTML = minhas.map(docSnap => {
+      const data = docSnap.data();
+      const [ano, mes, dia] = (data.dataConsulta||'---').split('-');
+      const dataFmt = data.dataConsulta ? `${dia}/${mes}/${ano}` : '---';
+
+      const statusConfig = {
+        'EM ANÁLISE': { color: 'bg-amber-100 text-amber-700', icon: 'fa-clock', label: 'Em Análise' },
+        'CONFIRMADO': { color: 'bg-blue-100 text-blue-700', icon: 'fa-calendar-check', label: 'Confirmado' },
+        'REALIZADO':  { color: 'bg-green-100 text-green-700', icon: 'fa-check', label: 'Realizado' },
+        'CANCELADO':  { color: 'bg-red-100 text-red-700', icon: 'fa-ban', label: 'Cancelado' },
+      }[data.status] || { color: 'bg-gray-100 text-gray-600', icon: 'fa-circle', label: data.status };
+
+      return `
+      <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-4 relative overflow-hidden">
+        <div class="absolute left-0 top-0 bottom-0 w-1.5 ${data.status === 'CONFIRMADO' ? 'bg-blue-500' : data.status === 'REALIZADO' ? 'bg-green-500' : data.status === 'CANCELADO' ? 'bg-red-400' : 'bg-amber-400'}"></div>
+        <div class="pl-3">
+          <div class="flex justify-between items-start mb-2">
+            <div>
+              <span class="text-[9px] font-black text-red-400 uppercase block">#${data.protocolo || 'S/N'}</span>
+              <h3 class="font-bold text-gray-800 text-sm">${data.especialidade}</h3>
+              ${data.profissional ? `<p class="text-[11px] text-gray-500"><i class="fa-solid fa-user-doctor mr-1"></i>${data.profissional}</p>` : ''}
+            </div>
+            <span class="text-[10px] font-bold px-2 py-1 rounded-full ${statusConfig.color} flex items-center gap-1 shrink-0 ml-2">
+              <i class="fa-regular ${statusConfig.icon}"></i> ${statusConfig.label}
+            </span>
+          </div>
+          <div class="flex gap-4 bg-gray-50 rounded-lg p-2 border border-gray-100">
+            <div class="text-center">
+              <p class="text-[9px] text-gray-400 uppercase font-bold">Data</p>
+              <p class="text-xs font-bold text-gray-700">${dataFmt}</p>
+            </div>
+            <div class="text-center">
+              <p class="text-[9px] text-gray-400 uppercase font-bold">Horário</p>
+              <p class="text-xs font-bold text-gray-700">${data.horaConsulta || '--:--'}</p>
+            </div>
+          </div>
+          ${data.status === 'EM ANÁLISE' ? `<p class="text-[10px] text-amber-600 mt-2"><i class="fa-regular fa-clock mr-1"></i>Aguardando confirmação da equipe de saúde.</p>` : ''}
+          ${data.status === 'CONFIRMADO' ? `<p class="text-[10px] text-blue-600 mt-2"><i class="fa-solid fa-circle-check mr-1"></i>Consulta confirmada! Compareça no dia e horário agendados.</p>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+  });
+}
+</script>
+</body>
+</html>
