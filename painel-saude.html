@@ -639,7 +639,7 @@ onSnapshot(qHorarios, (snap) => {
 window.criarHorario = async function(event) {
   event.preventDefault();
   const btn = document.getElementById('btn-criar-horario');
-  btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Criando...';
+  btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verificando...';
   const sel = document.getElementById('h-especialidade');
   const espId = sel.value;
   const espOpt = sel.options[sel.selectedIndex];
@@ -649,6 +649,20 @@ window.criarHorario = async function(event) {
   const hora = document.getElementById('h-hora').value;
   const limiteVagas = parseInt(document.getElementById('h-vagas').value) || 1;
   try {
+    // Verifica se já existe horário igual para a mesma especialidade no mesmo dia e hora
+    const qDuplicado = query(
+      collection(db, "agendas_saude"),
+      where("especialidadeId", "==", espId),
+      where("dataISO", "==", dataISO),
+      where("hora", "==", hora)
+    );
+    const snapDuplicado = await getDocs(qDuplicado);
+    if (!snapDuplicado.empty) {
+      mostrarAviso(`Já existe um horário de ${hora} para esta especialidade em ${dataISO.split('-').reverse().join('/')}.`, 'erro');
+      btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-plus"></i> Criar Horário';
+      return;
+    }
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Criando...';
     await addDoc(collection(db, "agendas_saude"), {
       especialidadeId: espId,
       especialidade: nomeEsp,
