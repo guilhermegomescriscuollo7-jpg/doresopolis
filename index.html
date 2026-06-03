@@ -43,13 +43,26 @@
 
 <body class="bg-gray-200 font-sans text-gray-800 flex justify-center items-center min-h-screen">
 
+    <!-- NOTIFICAÇÃO NO APP (TOAST) -->
     <div id="toast-aviso" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-[100] bg-red-600 text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-3 transition-all duration-300 opacity-0 pointer-events-none translate-y-[-20px] w-11/12 max-w-sm">
         <i id="toast-icone" class="fa-solid fa-circle-exclamation text-lg"></i>
         <span id="toast-mensagem" class="text-sm font-medium leading-snug"></span>
     </div>
 
+    <!-- TELA DE MANUTENÇÃO (Ativada pela TI) -->
+    <div id="tela-manutencao" class="fixed inset-0 bg-slate-900 z-[200] hidden flex-col items-center justify-center text-white px-6 text-center transition-opacity duration-300">
+        <div class="w-20 h-20 bg-slate-800 rounded-full flex items-center justify-center mb-6 shadow-lg border border-slate-700">
+            <i class="fa-solid fa-screwdriver-wrench text-4xl text-amber-500 animate-pulse"></i>
+        </div>
+        <h2 class="text-2xl font-black mb-2 uppercase tracking-wide text-amber-500">App em Manutenção</h2>
+        <p class="text-slate-300 text-sm">Estamos realizando melhorias no sistema da prefeitura. Por favor, tente acessar novamente mais tarde.</p>
+    </div>
+
     <div class="bg-gray-50 w-full max-w-md h-[100dvh] flex flex-col relative shadow-2xl overflow-hidden sm:rounded-xl sm:h-[95vh] sm:border sm:border-gray-300">
         
+        <!-- ========================================== -->
+        <!-- TELA 1: LOGIN                              -->
+        <!-- ========================================== -->
         <div id="tela-login" class="flex flex-col h-full w-full bg-white z-20 absolute inset-0 transition-opacity duration-300">
             <div class="flex-grow flex flex-col justify-center px-8">
                 
@@ -94,6 +107,9 @@
             </div>
         </div>
 
+        <!-- ========================================== -->
+        <!-- TELA 2: CADASTRO                           -->
+        <!-- ========================================== -->
         <div id="tela-cadastro" class="flex flex-col h-full w-full bg-white z-30 absolute inset-0 hidden overflow-y-auto transition-opacity duration-300">
             <div class="p-6">
                 <button onclick="mostrarTela('tela-login')" class="text-gray-500 hover:text-doresopolis-green flex items-center mb-6">
@@ -143,23 +159,9 @@
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <i class="fa-solid fa-road text-gray-400"></i>
                             </div>
+                            <!-- Ruas Carregadas Dinamicamente do Firebase -->
                             <select id="cad-rua" required class="w-full pl-10 pr-10 py-3 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-doresopolis-green text-sm appearance-none text-gray-700">
-                                <option value="" disabled selected>Selecione a rua...</option>
-                                <option value="Avenida Gonçalves de Melo">Avenida Gonçalves de Melo</option>
-                                <option value="Praça da Matriz">Praça da Matriz</option>
-                                <option value="Praça Tiradentes">Praça Tiradentes</option>
-                                <option value="Rua Alberto Mourão">Rua Alberto Mourão</option>
-                                <option value="Rua Bela Vista">Rua Bela Vista</option>
-                                <option value="Rua Farnésio Paim Pamplona">Rua Farnésio Paim Pamplona</option>
-                                <option value="Rua Higino Pinto Vidal">Rua Higino Pinto Vidal</option>
-                                <option value="Rua Joaquim Murtinho">Rua Joaquim Murtinho</option>
-                                <option value="Rua João Batista Veloso">Rua João Batista Veloso</option>
-                                <option value="Rua João Lourenço Gomide">Rua João Lourenço Gomide</option>
-                                <option value="Rua Padre José Venâncio">Rua Padre José Venâncio</option>
-                                <option value="Rua Pedro da Costa Lopes">Rua Pedro da Costa Lopes</option>
-                                <option value="Rua Piumhi">Rua Piumhi</option>
-                                <option value="Travessa Afonso Goulart">Travessa Afonso Goulart</option>
-                                <option value="Travessa Doresópolis">Travessa Doresópolis</option>
+                                <option value="" disabled selected>Carregando ruas...</option>
                             </select>
                             <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                                 <i class="fa-solid fa-chevron-down text-gray-400 text-xs"></i>
@@ -193,7 +195,11 @@
             </div>
         </div>
 
+        <!-- ========================================== -->
+        <!-- TELA 3: PAINEL PRINCIPAL (APP INTERNO)     -->
+        <!-- ========================================== -->
         <div id="tela-principal" class="hidden flex-col h-full w-full z-10">
+            <!-- HEADER -->
             <header class="bg-white shadow-sm border-b border-gray-200 z-10 flex-shrink-0">
                 <div class="bg-doresopolis-green h-2 w-full"></div>
                 <div class="px-4 py-3 flex items-center justify-between">
@@ -209,7 +215,19 @@
 
             <main class="flex-grow overflow-y-auto overflow-x-hidden p-4 pb-24 scroll-smooth">
                 
+                <!-- CONTEÚDO 1: ABA INÍCIO -->
                 <div id="aba-inicio" class="block">
+                    
+                    <!-- ALERTA GLOBAL DA TI (Oculto por padrão) -->
+                    <div id="alerta-global" class="hidden bg-amber-50 border border-amber-200 p-3 rounded-xl shadow-sm mb-4 relative overflow-hidden">
+                        <div class="absolute left-0 top-0 bottom-0 w-1 bg-amber-500"></div>
+                        <div class="flex items-center gap-2 mb-1 pl-1">
+                            <i class="fa-solid fa-triangle-exclamation text-amber-600 animate-pulse"></i>
+                            <h3 id="alerta-titulo" class="font-black text-amber-800 text-sm uppercase">Aviso Urgente</h3>
+                        </div>
+                        <p id="alerta-mensagem" class="text-xs text-amber-700 pl-1 leading-snug"></p>
+                    </div>
+
                     <div class="flex justify-between items-center mb-6 mt-1">
                         <div>
                             <h2 class="text-xl font-bold text-gray-800">Olá, <span id="nome-usuario-logado" class="text-doresopolis-green"></span>!</h2>
@@ -217,6 +235,7 @@
                         </div>
                     </div>
 
+                    <!-- MURAL DE AVISOS OFICIAIS DINÂMICO -->
                     <div class="mb-6">
                         <div class="flex items-center justify-between mb-3">
                             <h3 class="font-bold text-gray-800 text-sm border-l-4 border-doresopolis-green pl-2">
@@ -232,6 +251,7 @@
                         </div>
                     </div>
 
+                    <!-- SECRETARIAS -->
                     <div class="mb-8">
                         <h3 class="font-bold text-gray-800 text-sm mb-3 border-l-4 border-blue-500 pl-2">Serviços por Secretaria</h3>
                         <div class="flex flex-col gap-3">
@@ -263,6 +283,7 @@
                         </div>
                     </div>
 
+                    <!-- TELEFONES ÚTEIS E EMERGÊNCIA -->
                     <div class="mb-4">
                         <h3 class="font-bold text-gray-800 text-sm mb-3 border-l-4 border-red-500 pl-2">Telefones Úteis e Emergência</h3>
                         <div class="grid grid-cols-2 gap-3">
@@ -306,6 +327,7 @@
                     </div>
                 </div>
 
+                <!-- CONTEÚDO 2: ABA PERFIL -->
                 <div id="aba-perfil" class="hidden">
                     <div class="mb-6 mt-1 flex items-center justify-between">
                         <div>
@@ -317,6 +339,7 @@
                         </div>
                     </div>
 
+                    <!-- Formulário de Edição de Perfil -->
                     <form onsubmit="salvarPerfil(event)" class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 space-y-4">
                         <input type="hidden" id="perfil-doc-id">
 
@@ -372,6 +395,7 @@
 
             </main>
 
+            <!-- BARRA DE NAVEGAÇÃO INFERIOR -->
             <nav class="absolute bottom-0 w-full bg-white border-t border-gray-200 z-50 pb-safe">
                 <div class="flex justify-around items-center h-16">
                     
@@ -393,10 +417,10 @@
 
     </div>
 
+    <!-- SCRIPT DE LÓGICA E FIREBASE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        // Importando funções para atualizar perfil
-        import { getFirestore, collection, addDoc, query, where, getDocs, orderBy, limit, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, query, where, getDocs, orderBy, limit, doc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCpaNuC1IUkteO4fHzFPiNS7s580EyTleU",
@@ -411,6 +435,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app); 
 
+        // --- SISTEMA DE TOAST (AVISOS) ---
         window.mostrarAviso = function(mensagem, tipo = 'erro') {
             const toast = document.getElementById('toast-aviso');
             const icone = document.getElementById('toast-icone');
@@ -452,6 +477,52 @@
             }
         };
 
+        // --- ESCUTA CONFIGURAÇÕES DO SISTEMA (Manutenção e Ruas) ---
+        const configAppRef = doc(db, "config", "app");
+        onSnapshot(configAppRef, (docSnap) => {
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                
+                // 1. Manutenção: Mostra ou esconde a tela de bloqueio
+                if (data.manutencao === true) {
+                    document.getElementById('tela-manutencao').classList.remove('hidden');
+                    document.getElementById('tela-manutencao').classList.add('flex');
+                } else {
+                    document.getElementById('tela-manutencao').classList.add('hidden');
+                    document.getElementById('tela-manutencao').classList.remove('flex');
+                }
+
+                // 2. Ruas Dinâmicas no Cadastro
+                const selectRua = document.getElementById('cad-rua');
+                const ruas = data.ruas || [];
+                selectRua.innerHTML = '<option value="" disabled selected>Selecione a rua...</option>';
+                
+                ruas.sort().forEach(rua => {
+                    const opt = document.createElement('option');
+                    opt.value = rua;
+                    opt.innerText = rua;
+                    selectRua.appendChild(opt);
+                });
+            }
+        });
+
+        // --- ESCUTA ALERTA GLOBAL (Push/Banner) ---
+        const alertaRef = doc(db, "config", "alerta");
+        onSnapshot(alertaRef, (docSnap) => {
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                const containerAlerta = document.getElementById('alerta-global');
+                
+                if (data.ativo === true) {
+                    document.getElementById('alerta-titulo').innerText = data.titulo || 'Aviso Urgente';
+                    document.getElementById('alerta-mensagem').innerText = data.mensagem || '';
+                    containerAlerta.classList.remove('hidden');
+                } else {
+                    containerAlerta.classList.add('hidden');
+                }
+            }
+        });
+
         // --- SISTEMA DE NAVEGAÇÃO ENTRE INÍCIO E PERFIL ---
         window.mudarAbaPrincipal = function(aba) {
             const abaInicio = document.getElementById('aba-inicio');
@@ -476,7 +547,7 @@
             }
         };
 
-        // --- CARREGAR AVISOS ---
+        // --- CARREGAR MURAL DE AVISOS DAS SECRETARIAS ---
         window.carregarAvisos = async function() {
             const container = document.getElementById('mural-avisos-conteudo');
             try {
@@ -522,7 +593,7 @@
             }
         };
 
-        // --- VERIFICAÇÃO INICIAL E REDIRECIONAMENTO DE ADMINS ---
+        // --- VERIFICAÇÃO INICIAL E REDIRECIONAMENTO ---
         document.addEventListener('DOMContentLoaded', () => {
             const sessaoSalva = localStorage.getItem('usuarioDoresopolis');
             const telefoneSalvo = localStorage.getItem('userTelefone');
@@ -530,13 +601,11 @@
 
             if (sessaoSalva && telefoneSalvo) {
                 
-                // SE O USUÁRIO LOGADO FOR ADMIN, JOGA PRO PAINEL DELE!
                 if (acessoSalvo === 'Admin - Obras') {
                     window.location.href = 'painel-obras.html';
                 } else if (acessoSalvo === 'TI') {
                     window.location.href = 'painel-ti.html';
                 } else {
-                    // Cidadão comum fica na tela principal do index
                     document.getElementById('nome-usuario-logado').innerText = sessaoSalva;
                     mostrarTela('tela-principal');
                     carregarAvisos();
@@ -565,7 +634,7 @@
 
             const enderecoCompleto = `${rua}, ${numero} - ${bairro}`;
             const primeiroNome = nome.split(' ')[0];
-            const tipoAcesso = "Cidadão"; // Todo novo cadastro é cidadão por padrão
+            const tipoAcesso = "Cidadão"; 
 
             try {
                 const usuariosRef = collection(db, "usuarios");
@@ -596,7 +665,8 @@
                     email: email,
                     endereco: enderecoCompleto,
                     senha: senha,
-                    tipoAcesso: tipoAcesso, // Salva o acesso como cidadão
+                    tipoAcesso: tipoAcesso, 
+                    bloqueado: false, // Novo campo padrão
                     dataRegistro: new Date().toISOString()
                 });
                 
@@ -621,7 +691,7 @@
             }
         };
 
-        // --- LOGIN INTELIGENTE (VERIFICA CARGO) ---
+        // --- LOGIN INTELIGENTE ---
         window.realizarLogin = async function(event) {
             event.preventDefault();
             
@@ -634,7 +704,6 @@
 
             try {
                 const usuariosRef = collection(db, "usuarios");
-                
                 const qLogin = query(usuariosRef, where("telefone", "==", telefone), where("senha", "==", senha));
                 const snapshot = await getDocs(qLogin);
                 
@@ -642,21 +711,25 @@
                     mostrarAviso("Telefone ou senha incorretos.");
                 } else {
                     const usuarioData = snapshot.docs[0].data();
-                    const primeiroNome = usuarioData.nomeCompleto.split(' ')[0];
-                    const acessoSalvoNoBanco = usuarioData.tipoAcesso || 'Cidadão'; // Se não tiver nada, é cidadão
                     
-                    // Salva na memória do celular
+                    // Bloqueio no Login (Se o TI suspendeu a conta)
+                    if (usuarioData.bloqueado === true) {
+                        mostrarAviso("Conta suspensa. Procure a prefeitura para mais informações.", "erro");
+                        return;
+                    }
+
+                    const primeiroNome = usuarioData.nomeCompleto.split(' ')[0];
+                    const acessoSalvoNoBanco = usuarioData.tipoAcesso || 'Cidadão'; 
+                    
                     localStorage.setItem('usuarioDoresopolis', primeiroNome);
                     localStorage.setItem('userTelefone', telefone); 
                     localStorage.setItem('userAcesso', acessoSalvoNoBanco); 
                     
-                    // LÓGICA DE REDIRECIONAMENTO
                     if (acessoSalvoNoBanco === 'Admin - Obras') {
                         window.location.href = 'painel-obras.html';
                     } else if (acessoSalvoNoBanco === 'TI') {
                         window.location.href = 'painel-ti.html';
                     } else {
-                        // Cidadão acessa o menu principal normalmente
                         document.getElementById('nome-usuario-logado').innerText = primeiroNome;
                         mostrarTela('tela-principal');
                         mostrarAviso(`Bem-vindo de volta, ${primeiroNome}!`, 'sucesso');
@@ -668,7 +741,9 @@
                 mostrarAviso("Erro de conexão ao tentar fazer login. Tente novamente.");
             } finally {
                 btn.disabled = false;
-                btn.innerText = "Entrar no App";
+                if (btn.innerText === "Entrando...") {
+                    btn.innerText = "Entrar no App";
+                }
             }
         };
 
@@ -749,7 +824,7 @@
             if(confirm("Deseja realmente sair da sua conta?")) {
                 localStorage.removeItem('usuarioDoresopolis');
                 localStorage.removeItem('userTelefone');
-                localStorage.removeItem('userAcesso'); // Limpa a permissão
+                localStorage.removeItem('userAcesso'); 
                 
                 mudarAbaPrincipal('inicio');
                 mostrarTela('tela-login');
