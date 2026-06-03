@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#dc2626"> <!-- Vermelho da Saúde -->
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <title>Saúde - App Doresópolis</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        doresopolis: {
+                            green: '#0b5c3b',
+                            dark: '#3f3f46',
+                            light: '#f8fafc'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+
+<body class="bg-gray-200 font-sans text-gray-800 flex justify-center items-center min-h-screen">
+
+    <!-- NOTIFICAÇÃO NO APP (TOAST) -->
+    <div id="toast-aviso" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-[100] bg-green-600 text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-3 transition-all duration-300 opacity-0 pointer-events-none translate-y-[-20px] w-11/12 max-w-sm">
+        <i id="toast-icone" class="fa-solid fa-circle-check text-lg"></i>
+        <span id="toast-mensagem" class="text-sm font-medium leading-snug"></span>
+    </div>
+
+    <!-- CONTAINER PRINCIPAL DO APP -->
+    <div class="bg-gray-50 w-full max-w-md h-[100dvh] flex flex-col relative shadow-2xl overflow-hidden sm:rounded-xl sm:h-[95vh] sm:border sm:border-gray-300">
+        
+        <!-- HEADER COM MENUS NO TOPO -->
+        <header class="bg-white shadow-sm z-10 flex-shrink-0">
+            <div class="bg-red-600 h-2 w-full"></div> 
+            
+            <div class="px-4 py-3 flex items-center justify-center bg-white relative">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-full bg-red-50 text-red-600 flex items-center justify-center shrink-0 shadow-inner">
+                        <i class="fa-solid fa-heart-pulse text-lg"></i>
+                    </div>
+                    <div>
+                        <p class="text-[9px] tracking-[0.1em] text-gray-500 uppercase font-semibold leading-none">Atenção Básica e Cuidado</p>
+                        <h1 class="text-xl font-black text-gray-700 tracking-tight uppercase leading-none mt-1">Sec. Saúde</h1>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TRÊS BOTÕES DE NAVEGAÇÃO NO TOPO -->
+            <div class="flex border-t border-b border-gray-200 bg-gray-100">
+                <a href="index.html" class="flex-1 py-2 flex flex-col items-center justify-center text-gray-500 hover:text-red-600 transition-colors border-r border-gray-200">
+                    <i class="fa-solid fa-house text-lg mb-0.5"></i>
+                    <span class="text-[10px] font-bold uppercase">Início</span>
+                </a>
+                
+                <button onclick="trocarAbaSaude('nova')" id="btn-aba-nova" class="flex-1 py-2 flex flex-col items-center justify-center text-red-600 bg-white border-b-2 border-red-600 transition-all border-r border-gray-200">
+                    <i class="fa-solid fa-calendar-plus text-lg mb-0.5"></i>
+                    <span class="text-[10px] font-bold uppercase">Agendar</span>
+                </button>
+
+                <button onclick="trocarAbaSaude('acompanhar')" id="btn-aba-acompanhar" class="flex-1 py-2 flex flex-col items-center justify-center text-gray-400 bg-gray-100 border-b-2 border-transparent transition-all">
+                    <i class="fa-solid fa-clipboard-list text-lg mb-0.5"></i>
+                    <span class="text-[10px] font-bold uppercase">Minhas Consultas</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- ========================================== -->
+        <!-- ABA 1: AGENDAR CONSULTA                    -->
+        <!-- ========================================== -->
+        <main id="aba-nova" class="flex-grow overflow-y-auto p-4 pb-6 scroll-smooth block bg-gray-50">
+            
+            <!-- CARTÃO DE VACINA (Link Externo) -->
+            <a href="https://meususdigital.saude.gov.br/login" target="_blank" rel="noopener noreferrer" class="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-center justify-between shadow-sm active:scale-95 transition-all mb-6 block">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-lg shadow-sm shrink-0">
+                        <i class="fa-solid fa-syringe"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-blue-800 text-sm leading-tight">Meu Cartão de Vacina</h3>
+                        <p class="text-[10px] text-blue-600 mt-0.5 leading-snug">Acesse o Meu SUS Digital para ver seu histórico vacinal e emitir comprovantes.</p>
+                    </div>
+                </div>
+                <i class="fa-solid fa-arrow-up-right-from-square text-blue-400 ml-2"></i>
+            </a>
+
+            <div class="mb-5 border-l-4 border-red-500 pl-2">
+                <h2 class="text-lg font-bold text-gray-800">Agendar Atendimento</h2>
+                <p class="text-gray-500 text-xs leading-snug">Selecione a especialidade, a data e o horário desejado.</p>
+            </div>
+
+            <form id="form-agendamento" onsubmit="agendarConsulta(event)" class="space-y-5">
+                
+                <input type="hidden" id="paciente-nome">
+
+                <!-- 1. Especialidade -->
+                <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                    <label class="block text-xs font-bold text-gray-700 mb-2"><i class="fa-solid fa-user-doctor text-red-500 mr-1"></i> Qual é a especialidade?</label>
+                    <div class="relative">
+                        <select id="form-especialidade" required class="w-full pl-3 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-sm appearance-none text-gray-700">
+                            <option value="" disabled selected>Selecione o serviço...</option>
+                            <option value="Clínico Geral">Clínico Geral</option>
+                            <option value="Pediatria">Pediatria</option>
+                            <option value="Odontologia">Odontologia (Dentista)</option>
+                            <option value="Ginecologia">Ginecologia</option>
+                            <option value="Psicologia">Psicologia</option>
+                            <option value="Enfermagem (Triagem/Curativo)">Enfermagem (Triagem/Curativo)</option>
+                        </select>
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                            <i class="fa-solid fa-chevron-down text-gray-400 text-xs"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Calendário (Dias Disponíveis) -->
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-2 pl-1"><i class="fa-regular fa-calendar text-blue-500 mr-1"></i> Escolha o Dia</label>
+                    <!-- Scroll horizontal de dias gerado por JS -->
+                    <div id="calendario-dias" class="flex gap-2 overflow-x-auto pb-2 snap-x hide-scrollbar px-1">
+                        <!-- Dias serão injetados aqui -->
+                    </div>
+                </div>
+
+                <!-- 3. Horários Disponíveis -->
+                <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                    <label class="block text-xs font-bold text-gray-700 mb-3"><i class="fa-regular fa-clock text-amber-500 mr-1"></i> Horários Disponíveis</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <!-- Horários fixos para demonstração -->
+                        <label class="cursor-pointer">
+                            <input type="radio" name="horario" value="08:00" class="peer sr-only" required>
+                            <div class="text-center py-2 rounded-lg border border-gray-200 peer-checked:bg-red-50 peer-checked:border-red-500 peer-checked:text-red-700 text-gray-600 text-sm font-bold transition-all">08:00</div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="horario" value="09:00" class="peer sr-only">
+                            <div class="text-center py-2 rounded-lg border border-gray-200 peer-checked:bg-red-50 peer-checked:border-red-500 peer-checked:text-red-700 text-gray-600 text-sm font-bold transition-all">09:00</div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="horario" value="10:00" class="peer sr-only">
+                            <div class="text-center py-2 rounded-lg border border-gray-200 peer-checked:bg-red-50 peer-checked:border-red-500 peer-checked:text-red-700 text-gray-600 text-sm font-bold transition-all">10:00</div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="horario" value="13:30" class="peer sr-only">
+                            <div class="text-center py-2 rounded-lg border border-gray-200 peer-checked:bg-red-50 peer-checked:border-red-500 peer-checked:text-red-700 text-gray-600 text-sm font-bold transition-all">13:30</div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="horario" value="14:30" class="peer sr-only">
+                            <div class="text-center py-2 rounded-lg border border-gray-200 peer-checked:bg-red-50 peer-checked:border-red-500 peer-checked:text-red-700 text-gray-600 text-sm font-bold transition-all">14:30</div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="horario" value="15:30" class="peer sr-only">
+                            <div class="text-center py-2 rounded-lg border border-gray-200 peer-checked:bg-red-50 peer-checked:border-red-500 peer-checked:text-red-700 text-gray-600 text-sm font-bold transition-all">15:30</div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 4. Motivo / Sintomas -->
+                <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                    <label class="block text-xs font-bold text-gray-700 mb-2"><i class="fa-solid fa-stethoscope text-gray-500 mr-1"></i> Descreva o motivo (Sintomas)</label>
+                    <textarea id="form-sintomas" rows="2" placeholder="Ex: Dor de cabeça forte há 2 dias, febre..." class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-sm resize-none"></textarea>
+                </div>
+
+                <button type="submit" id="btn-enviar" class="w-full bg-red-600 text-white font-bold py-3.5 rounded-xl shadow-md hover:bg-red-700 active:scale-[0.98] transition-all flex justify-center items-center gap-2 mt-2">
+                    <i class="fa-regular fa-calendar-check"></i> Confirmar Agendamento
+                </button>
+            </form>
+        </main>
+
+        <!-- ========================================== -->
+        <!-- ABA 2: ACOMPANHAR CONSULTAS                -->
+        <!-- ========================================== -->
+        <main id="aba-acompanhar" class="flex-grow overflow-y-auto p-4 pb-8 scroll-smooth hidden bg-gray-100">
+            <div class="mb-5 border-l-4 border-red-500 pl-2">
+                <h2 class="text-lg font-bold text-gray-800">Minhas Consultas</h2>
+                <p class="text-gray-500 mt-1 text-xs leading-snug">Acompanhe seus agendamentos no Posto de Saúde.</p>
+            </div>
+
+            <!-- Lista onde os cards de acompanhamento aparecerão -->
+            <div id="lista-meus-agendamentos" class="flex flex-col gap-4">
+                <div class="text-center py-8 text-gray-400 text-sm">
+                    <i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i><br>
+                    Buscando sua agenda...
+                </div>
+            </div>
+        </main>
+
+    </div>
+
+    <!-- SCRIPT DE LÓGICA E FIREBASE -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, getDocs, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCpaNuC1IUkteO4fHzFPiNS7s580EyTleU",
+            authDomain: "doresopolis.firebaseapp.com",
+            projectId: "doresopolis",
+            storageBucket: "doresopolis.firebasestorage.app",
+            messagingSenderId: "465119846468",
+            appId: "1:465119846468:web:8b292481fec10132cf9c11",
+            measurementId: "G-WXWGXEWY53"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app); 
+
+        // --- SISTEMA DE TOAST (AVISOS) ---
+        window.mostrarAviso = function(mensagem, tipo = 'sucesso') {
+            const toast = document.getElementById('toast-aviso');
+            const icone = document.getElementById('toast-icone');
+            document.getElementById('toast-mensagem').innerText = mensagem;
+
+            if(tipo === 'sucesso') {
+                toast.classList.remove('bg-red-600', 'bg-amber-500');
+                toast.classList.add('bg-green-600');
+                icone.className = 'fa-solid fa-circle-check text-lg';
+            } else if (tipo === 'info') {
+                toast.classList.remove('bg-red-600', 'bg-green-600');
+                toast.classList.add('bg-amber-500');
+                icone.className = 'fa-solid fa-circle-info text-lg';
+            } else {
+                toast.classList.remove('bg-green-600', 'bg-amber-500');
+                toast.classList.add('bg-red-600');
+                icone.className = 'fa-solid fa-circle-exclamation text-lg';
+            }
+
+            toast.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-[-20px]');
+            toast.classList.add('opacity-100', 'translate-y-0');
+
+            setTimeout(() => {
+                toast.classList.remove('opacity-100', 'translate-y-0');
+                toast.classList.add('opacity-0', 'pointer-events-none', 'translate-y-[-20px]');
+            }, 4000);
+        };
+
+        // --- NAVEGAÇÃO DE ABAS SUPERIORES ---
+        window.trocarAbaSaude = function(aba) {
+            const abaNova = document.getElementById('aba-nova');
+            const abaAcompanhar = document.getElementById('aba-acompanhar');
+            const btnNova = document.getElementById('btn-aba-nova');
+            const btnAcompanhar = document.getElementById('btn-aba-acompanhar');
+
+            if (aba === 'nova') {
+                abaNova.classList.remove('hidden');
+                abaAcompanhar.classList.add('hidden');
+                
+                btnNova.classList.add('text-red-600', 'bg-white', 'border-red-600');
+                btnNova.classList.remove('text-gray-400', 'bg-gray-100', 'border-transparent');
+                
+                btnAcompanhar.classList.add('text-gray-400', 'bg-gray-100', 'border-transparent');
+                btnAcompanhar.classList.remove('text-red-600', 'bg-white', 'border-red-600');
+            } else {
+                abaAcompanhar.classList.remove('hidden');
+                abaNova.classList.add('hidden');
+                
+                btnAcompanhar.classList.add('text-red-600', 'bg-white', 'border-red-600');
+                btnAcompanhar.classList.remove('text-gray-400', 'bg-gray-100', 'border-transparent');
+                
+                btnNova.classList.add('text-gray-400', 'bg-gray-100', 'border-transparent');
+                btnNova.classList.remove('text-red-600', 'bg-white', 'border-red-600');
+            }
+        };
+
+        let usuarioNomePrimeiro = "";
+        let usuarioNomeCompleto = "";
+
+        // Gerar os dias no calendário dinamicamente (ignora sábado e domingo)
+        function gerarCalendario() {
+            const container = document.getElementById('calendario-dias');
+            let html = '';
+            let diasAdicionados = 0;
+            let dataAtual = new Date();
+
+            // Adiciona os próximos 14 dias úteis
+            while(diasAdicionados < 14) {
+                dataAtual.setDate(dataAtual.getDate() + 1);
+                
+                // Pula Fim de Semana (0 = Domingo, 6 = Sábado)
+                if(dataAtual.getDay() === 0 || dataAtual.getDay() === 6) continue;
+                
+                let diaStr = dataAtual.toLocaleDateString('pt-BR', {day:'2-digit', month:'2-digit', year:'numeric'});
+                let diaApresentacao = dataAtual.getDate();
+                let diaSemana = dataAtual.toLocaleDateString('pt-BR', {weekday:'short'}).replace('.','');
+                
+                html += `
+                <label class="cursor-pointer shrink-0 snap-center">
+                    <input type="radio" name="dataReserva" value="${diaStr}" class="peer sr-only" required>
+                    <div class="flex flex-col items-center justify-center w-16 h-20 bg-white rounded-xl border border-gray-200 peer-checked:bg-red-600 peer-checked:text-white peer-checked:border-red-600 text-gray-500 shadow-sm transition-all hover:border-red-300">
+                        <span class="text-[10px] uppercase font-bold tracking-widest">${diaSemana}</span>
+                        <span class="text-2xl font-black leading-none my-0.5">${diaApresentacao}</span>
+                        <span class="text-[9px] uppercase font-bold opacity-80">${dataAtual.toLocaleDateString('pt-BR', {month:'short'}).replace('.','')}</span>
+                    </div>
+                </label>`;
+                diasAdicionados++;
+            }
+            container.innerHTML = html;
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', async () => {
+            gerarCalendario();
+
+            usuarioNomePrimeiro = localStorage.getItem('usuarioDoresopolis');
+            const telefoneSalvo = localStorage.getItem('userTelefone');
+
+            if (usuarioNomePrimeiro && telefoneSalvo) {
+                try {
+                    const qUser = query(collection(db, "usuarios"), where("telefone", "==", telefoneSalvo));
+                    const snapUser = await getDocs(qUser);
+                    
+                    if(!snapUser.empty) {
+                        usuarioNomeCompleto = snapUser.docs[0].data().nomeCompleto;
+                    } else {
+                        usuarioNomeCompleto = usuarioNomePrimeiro;
+                    }
+                } catch(e) {
+                    usuarioNomeCompleto = usuarioNomePrimeiro;
+                }
+
+                document.getElementById('paciente-nome').value = usuarioNomeCompleto;
+                carregarMinhasConsultas(); 
+            } else {
+                alert("Você precisa estar logado para agendar consultas.");
+                window.location.href = "index.html";
+            }
+        });
+
+        // --- ACOMPANHAR CONSULTAS ---
+        function carregarMinhasConsultas() {
+            const consultasRef = collection(db, "solicitacoes_saude");
+            const qConsultas = query(consultasRef, orderBy("dataRegistro", "desc"));
+
+            onSnapshot(qConsultas, (snapshot) => {
+                const container = document.getElementById("lista-meus-agendamentos");
+                
+                if (snapshot.empty) {
+                    container.innerHTML = `<div class="text-center py-8 text-gray-500 text-sm bg-white rounded-xl shadow-sm border border-gray-200">Você não tem agendamentos recentes.</div>`;
+                    return;
+                }
+
+                container.innerHTML = "";
+                let encontrouConsultas = false;
+
+                snapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    
+                    if(data.nomeCidadao !== usuarioNomeCompleto && data.nomeCidadao !== usuarioNomePrimeiro) return;
+                    
+                    encontrouConsultas = true;
+                    
+                    const protocoloTexto = data.protocolo ? `#${data.protocolo}` : 'Pendente';
+
+                    let statusHtml = '';
+                    if(data.status === 'CONFIRMADO') {
+                        statusHtml = `<span class="bg-blue-100 text-blue-700 px-2 py-1 rounded-md text-[10px] font-black uppercase"><i class="fa-regular fa-calendar-check mr-1"></i> Confirmado</span>`;
+                    } else if(data.status === 'REALIZADO') {
+                        statusHtml = `<span class="bg-green-100 text-green-700 px-2 py-1 rounded-md text-[10px] font-black uppercase"><i class="fa-solid fa-check mr-1"></i> Realizado</span>`;
+                    } else if(data.status === 'CANCELADO') {
+                        statusHtml = `<span class="bg-red-100 text-red-700 px-2 py-1 rounded-md text-[10px] font-black uppercase"><i class="fa-solid fa-ban mr-1"></i> Cancelado</span>`;
+                    } else {
+                        statusHtml = `<span class="bg-amber-100 text-amber-700 px-2 py-1 rounded-md text-[10px] font-black uppercase border border-amber-200"><i class="fa-regular fa-clock mr-1"></i> Em Análise</span>`;
+                    }
+
+                    const card = `
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 relative overflow-hidden">
+                            <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-red-500"></div>
+                            
+                            <div class="flex justify-between items-start mb-3 pl-3 gap-2 border-b border-gray-50 pb-3">
+                                <div>
+                                    <span class="text-[10px] font-black text-red-500 mb-1 block uppercase"><i class="fa-solid fa-hashtag mr-0.5"></i> Protocolo: ${protocoloTexto}</span>
+                                    <h3 class="font-bold text-gray-800 text-sm leading-tight">${data.especialidade}</h3>
+                                </div>
+                                <div class="shrink-0 mt-1">${statusHtml}</div>
+                            </div>
+                            
+                            <div class="pl-3 space-y-1.5 bg-gray-50 p-2 rounded-lg border border-gray-100">
+                                <p class="text-xs font-bold text-gray-700"><i class="fa-regular fa-calendar text-blue-500 w-4"></i> Data: ${data.dataConsulta}</p>
+                                <p class="text-xs font-bold text-gray-700"><i class="fa-regular fa-clock text-amber-500 w-4"></i> Hora: ${data.horaConsulta}</p>
+                            </div>
+                        </div>
+                    `;
+                    container.innerHTML += card;
+                });
+
+                if(!encontrouConsultas) {
+                    container.innerHTML = `<div class="text-center py-8 text-gray-500 text-sm bg-white rounded-xl shadow-sm border border-gray-200">Você não tem agendamentos recentes.</div>`;
+                }
+            }, (error) => {
+                console.error("Erro ao puxar consultas:", error);
+                document.getElementById("lista-meus-agendamentos").innerHTML = `<div class="text-center py-8 text-red-500 text-sm">Erro de conexão.</div>`;
+            });
+        }
+
+        // --- ENVIAR AGENDAMENTO ---
+        window.agendarConsulta = async function(event) {
+            event.preventDefault();
+
+            const btn = document.getElementById('btn-enviar');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processando...';
+
+            const nome = document.getElementById('paciente-nome').value;
+            const especialidade = document.getElementById('form-especialidade').value;
+            const sintomas = document.getElementById('form-sintomas').value;
+            
+            // Pega os valores dos radio buttons (Data e Hora)
+            const dataSelecionada = document.querySelector('input[name="dataReserva"]:checked');
+            const horaSelecionada = document.querySelector('input[name="horario"]:checked');
+
+            if(!dataSelecionada || !horaSelecionada) {
+                mostrarAviso("Por favor, selecione o dia e o horário desejado.", "erro");
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-regular fa-calendar-check"></i> Confirmar Agendamento';
+                return;
+            }
+
+            // GERAÇÃO DE PROTOCOLO DA SAÚDE
+            const dataAtual = new Date();
+            const ano = dataAtual.getFullYear().toString().slice(-2);
+            const mes = (dataAtual.getMonth() + 1).toString().padStart(2, '0');
+            const aleatorio = Math.random().toString(36).substring(2, 6).toUpperCase();
+            const numeroProtocolo = `SAU${ano}${mes}-${aleatorio}`;
+
+            try {
+                await addDoc(collection(db, "solicitacoes_saude"), {
+                    protocolo: numeroProtocolo, 
+                    nomeCidadao: nome,
+                    especialidade: especialidade,
+                    dataConsulta: dataSelecionada.value,
+                    horaConsulta: horaSelecionada.value,
+                    sintomas: sintomas,
+                    status: "EM ANÁLISE", 
+                    dataRegistro: dataAtual.toISOString()
+                });
+                
+                mostrarAviso(`Agendamento enviado! Protocolo: #${numeroProtocolo}`, "sucesso");
+                
+                setTimeout(() => {
+                    document.getElementById('form-agendamento').reset();
+                    trocarAbaSaude('acompanhar');
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fa-regular fa-calendar-check"></i> Confirmar Agendamento';
+                }, 1500);
+
+            } catch (error) {
+                console.error("Erro ao enviar agenda: ", error);
+                mostrarAviso("Ocorreu um erro ao enviar. Verifique a internet.", "erro");
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-regular fa-calendar-check"></i> Confirmar Agendamento';
+            }
+        };
+    </script>
+</body>
+</html>
