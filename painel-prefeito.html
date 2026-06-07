@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0b5c3b">
+<title>Painel do Prefeito | Doresópolis</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        doresopolis: { green: '#0b5c3b', dark: '#3f3f46', light: '#f8fafc' }
+      }
+    }
+  }
+}
+</script>
+<style>
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+.card-secretaria { transition: all .18s ease; }
+.card-secretaria:active { transform: scale(0.98); }
+.pulse-dot { animation: pulse-dot 2s infinite; }
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.3); }
+}
+.numero-animado { transition: all 0.4s ease; }
+</style>
+</head>
+<body class="bg-gray-100 font-sans text-gray-800 flex justify-center items-center min-h-screen">
+
+<!-- TOAST -->
+<div id="toast" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-[100] bg-green-600 text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-3 transition-all duration-300 opacity-0 pointer-events-none translate-y-[-20px] w-11/12 max-w-sm">
+  <i class="fa-solid fa-circle-check text-lg"></i>
+  <span id="toast-msg" class="text-sm font-medium"></span>
+</div>
+
+<!-- TELA DE LOGIN -->
+<div id="tela-login" class="flex fixed inset-0 z-50 bg-doresopolis-green flex-col items-center justify-center px-6">
+  <div class="w-full max-w-xs">
+    <div class="text-center mb-8">
+      <div class="w-16 h-16 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+        <i class="fa-solid fa-landmark text-white text-3xl"></i>
+      </div>
+      <h1 class="text-white text-2xl font-black tracking-tight">Painel do Prefeito</h1>
+      <p class="text-green-200 text-xs mt-1">Prefeitura de Doresópolis</p>
+    </div>
+    <div class="space-y-3">
+      <input id="login-senha" type="password" placeholder="Senha de acesso"
+        class="w-full px-4 py-3 rounded-xl bg-white bg-opacity-20 text-white placeholder-green-200 border border-white border-opacity-30 focus:outline-none focus:border-white text-sm">
+      <button onclick="fazerLogin()"
+        class="w-full bg-white text-doresopolis-green font-black py-3 rounded-xl text-sm hover:bg-green-50 active:scale-[0.98] transition-all">
+        Entrar
+      </button>
+    </div>
+    <p id="login-erro" class="text-red-300 text-xs text-center mt-3 hidden">Senha incorreta.</p>
+  </div>
+</div>
+
+<!-- CONTAINER PRINCIPAL -->
+<div id="app" class="hidden bg-gray-50 w-full max-w-md h-[100dvh] flex flex-col relative shadow-2xl overflow-hidden sm:rounded-xl sm:h-[95vh] sm:border sm:border-gray-300">
+
+  <!-- HEADER -->
+  <header class="bg-doresopolis-green flex-shrink-0 z-10">
+    <div class="px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
+          <i class="fa-solid fa-landmark text-white text-base"></i>
+        </div>
+        <div>
+          <p class="text-green-200 text-[9px] uppercase tracking-widest font-semibold leading-none">Painel do</p>
+          <h1 class="text-white text-lg font-black tracking-tight leading-tight">Prefeito</h1>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="flex items-center gap-1.5 bg-white bg-opacity-20 px-2.5 py-1.5 rounded-full">
+          <span class="w-2 h-2 bg-green-300 rounded-full pulse-dot"></span>
+          <span class="text-white text-[10px] font-medium">Ao vivo</span>
+        </div>
+        <button onclick="sair()" class="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+          <i class="fa-solid fa-right-from-bracket text-white text-sm"></i>
+        </button>
+      </div>
+    </div>
+    <!-- DATA E HORA -->
+    <div class="px-4 pb-3">
+      <p id="data-hora" class="text-green-200 text-[11px]"></p>
+    </div>
+  </header>
+
+  <!-- CONTEÚDO -->
+  <main class="flex-grow overflow-y-auto p-4 pb-6 hide-scrollbar">
+
+    <!-- CARDS DE TOTAIS GERAIS -->
+    <div class="grid grid-cols-2 gap-3 mb-5">
+      <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 col-span-2">
+        <div class="flex items-center justify-between mb-2">
+          <p class="text-xs font-bold text-gray-500 uppercase tracking-wide">Total de demandas abertas</p>
+          <i class="fa-solid fa-chart-line text-doresopolis-green text-sm"></i>
+        </div>
+        <div class="flex items-end gap-3">
+          <span id="total-geral" class="text-4xl font-black text-doresopolis-green numero-animado">—</span>
+          <div class="pb-1">
+            <p class="text-xs text-gray-500 leading-tight">em análise ou</p>
+            <p class="text-xs text-gray-500 leading-tight">em andamento</p>
+          </div>
+        </div>
+        <!-- BARRA DE PROGRESSO POR SECRETARIA -->
+        <div id="barra-secretarias" class="flex gap-1 mt-3 h-2 rounded-full overflow-hidden">
+          <div class="bg-gray-100 flex-1 rounded-full"></div>
+        </div>
+        <div id="legenda-barra" class="flex flex-wrap gap-x-3 gap-y-1 mt-2"></div>
+      </div>
+
+      <div class="bg-white rounded-2xl p-3.5 shadow-sm border border-gray-100">
+        <p class="text-[10px] font-bold text-gray-400 uppercase mb-1">Concluídas hoje</p>
+        <span id="total-concluidas" class="text-2xl font-black text-green-600">—</span>
+        <p class="text-[10px] text-gray-400 mt-0.5">resolvidas</p>
+      </div>
+
+      <div class="bg-white rounded-2xl p-3.5 shadow-sm border border-gray-100">
+        <p class="text-[10px] font-bold text-gray-400 uppercase mb-1">Urgentes</p>
+        <span id="total-urgentes" class="text-2xl font-black text-red-500">—</span>
+        <p class="text-[10px] text-gray-400 mt-0.5">aguardando</p>
+      </div>
+    </div>
+
+    <!-- SECRETARIAS -->
+    <h3 class="font-bold text-gray-700 text-sm mb-3 border-l-4 border-doresopolis-green pl-2">Por Secretaria</h3>
+
+    <div class="flex flex-col gap-3 mb-5">
+
+      <!-- SAÚDE -->
+      <div class="card-secretaria bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="flex items-center p-3.5 border-b border-gray-50">
+          <div class="w-9 h-9 bg-red-50 text-red-500 rounded-xl flex items-center justify-center mr-3 flex-shrink-0">
+            <i class="fa-solid fa-heart-pulse text-base"></i>
+          </div>
+          <div class="flex-grow">
+            <h4 class="font-black text-gray-800 text-sm">Saúde</h4>
+            <p class="text-[10px] text-gray-400">Consultas e agendamentos</p>
+          </div>
+          <div class="text-right">
+            <span id="saude-em-analise" class="text-xl font-black text-red-500">—</span>
+            <p class="text-[9px] text-gray-400">abertas</p>
+          </div>
+        </div>
+        <div class="grid grid-cols-3 divide-x divide-gray-50">
+          <div class="p-2.5 text-center">
+            <p class="text-[10px] text-amber-500 font-bold" id="saude-analise-num">—</p>
+            <p class="text-[9px] text-gray-400 mt-0.5">Em análise</p>
+          </div>
+          <div class="p-2.5 text-center">
+            <p class="text-[10px] text-blue-500 font-bold" id="saude-andamento-num">—</p>
+            <p class="text-[9px] text-gray-400 mt-0.5">Andamento</p>
+          </div>
+          <div class="p-2.5 text-center">
+            <p class="text-[10px] text-green-500 font-bold" id="saude-concluida-num">—</p>
+            <p class="text-[9px] text-gray-400 mt-0.5">Concluídas</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- EDUCAÇÃO -->
+      <div class="card-secretaria bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="flex items-center p-3.5 border-b border-gray-50">
+          <div class="w-9 h-9 bg-blue-50 text-blue-500 rounded-xl flex items-center justify-center mr-3 flex-shrink-0">
+            <i class="fa-solid fa-graduation-cap text-base"></i>
+          </div>
+          <div class="flex-grow">
+            <h4 class="font-black text-gray-800 text-sm">Educação</h4>
+            <p class="text-[10px] text-gray-400">Matrículas e históricos</p>
+          </div>
+          <div class="text-right">
+            <span id="edu-em-analise" class="text-xl font-black text-blue-500">—</span>
+            <p class="text-[9px] text-gray-400">abertas</p>
+          </div>
+        </div>
+        <div class="grid grid-cols-3 divide-x divide-gray-50">
+          <div class="p-2.5 text-center">
+            <p class="text-[10px] text-amber-500 font-bold" id="edu-analise-num">—</p>
+            <p class="text-[9px] text-gray-400 mt-0.5">Em análise</p>
+          </div>
+          <div class="p-2.5 text-center">
+            <p class="text-[10px] text-blue-500 font-bold" id="edu-andamento-num">—</p>
+            <p class="text-[9px] text-gray-400 mt-0.5">Andamento</p>
+          </div>
+          <div class="p-2.5 text-center">
+            <p class="text-[10px] text-green-500 font-bold" id="edu-concluida-num">—</p>
+            <p class="text-[9px] text-gray-400 mt-0.5">Concluídas</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- OBRAS -->
+      <div class="card-secretaria bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="flex items-center p-3.5 border-b border-gray-50">
+          <div class="w-9 h-9 bg-amber-50 text-amber-500 rounded-xl flex items-center justify-center mr-3 flex-shrink-0">
+            <i class="fa-solid fa-helmet-safety text-base"></i>
+          </div>
+          <div class="flex-grow">
+            <h4 class="font-black text-gray-800 text-sm">Obras</h4>
+            <p class="text-[10px] text-gray-400">Iluminação e manutenção</p>
+          </div>
+          <div class="text-right">
+            <span id="obras-em-analise" class="text-xl font-black text-amber-500">—</span>
+            <p class="text-[9px] text-gray-400">abertas</p>
+          </div>
+        </div>
+        <div class="grid grid-cols-3 divide-x divide-gray-50">
+          <div class="p-2.5 text-center">
+            <p class="text-[10px] text-amber-500 font-bold" id="obras-analise-num">—</p>
+            <p class="text-[9px] text-gray-400 mt-0.5">Em análise</p>
+          </div>
+          <div class="p-2.5 text-center">
+            <p class="text-[10px] text-blue-500 font-bold" id="obras-andamento-num">—</p>
+            <p class="text-[9px] text-gray-400 mt-0.5">Andamento</p>
+          </div>
+          <div class="p-2.5 text-center">
+            <p class="text-[10px] text-green-500 font-bold" id="obras-concluida-num">—</p>
+            <p class="text-[9px] text-gray-400 mt-0.5">Concluídas</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- TRIBUTOS -->
+      <div class="card-secretaria bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="flex items-center p-3.5 border-b border-gray-50">
+          <div class="w-9 h-9 bg-green-50 text-green-600 rounded-xl flex items-center justify-center mr-3 flex-shrink-0">
+            <i class="fa-solid fa-file-invoice-dollar text-base"></i>
+          </div>
+          <div class="flex-grow">
+            <h4 class="font-black text-gray-800 text-sm">Tributos</h4>
+            <p class="text-[10px] text-gray-400">IPTU e taxas municipais</p>
+          </div>
+          <div class="text-right">
+            <span id="trib-em-analise" class="text-xl font-black text-green-600">—</span>
+            <p class="text-[9px] text-gray-400">abertas</p>
+          </div>
+        </div>
+        <div class="grid grid-cols-3 divide-x divide-gray-50">
+          <div class="p-2.5 text-center">
+            <p class="text-[10px] text-amber-500 font-bold" id="trib-analise-num">—</p>
+            <p class="text-[9px] text-gray-400 mt-0.5">Em análise</p>
+          </div>
+          <div class="p-2.5 text-center">
+            <p class="text-[10px] text-blue-500 font-bold" id="trib-andamento-num">—</p>
+            <p class="text-[9px] text-gray-400 mt-0.5">Andamento</p>
+          </div>
+          <div class="p-2.5 text-center">
+            <p class="text-[10px] text-green-500 font-bold" id="trib-concluida-num">—</p>
+            <p class="text-[9px] text-gray-400 mt-0.5">Concluídas</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- TRANSPORTE -->
+      <div class="card-secretaria bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="flex items-center p-3.5 border-b border-gray-50">
+          <div class="w-9 h-9 bg-purple-50 text-purple-500 rounded-xl flex items-center justify-center mr-3 flex-shrink-0">
+            <i class="fa-solid fa-bus text-base"></i>
+          </div>
+          <div class="flex-grow">
+            <h4 class="font-black text-gray-800 text-sm">Transporte</h4>
+            <p class="text-[10px] text-gray-400">Estradas e transporte rural</p>
+          </div>
+          <div class="text-right">
+            <span id="transp-em-analise" class="text-xl font-black text-purple-500">—</span>
+            <p class="text-[9px] text-gray-400">abertas</p>
+          </div>
+        </div>
+        <div class="grid grid-cols-3 divide-x divide-gray-50">
+          <div class="p-2.5 text-center">
+            <p class="text-[10px] text-amber-500 font-bold" id="transp-analise-num">—</p>
+            <p class="text-[9px] text-gray-400 mt-0.5">Em análise</p>
+          </div>
+          <div class="p-2.5 text-center">
+            <p class="text-[10px] text-blue-500 font-bold" id="transp-andamento-num">—</p>
+            <p class="text-[9px] text-gray-400 mt-0.5">Andamento</p>
+          </div>
+          <div class="p-2.5 text-center">
+            <p class="text-[10px] text-green-500 font-bold" id="transp-concluida-num">—</p>
+            <p class="text-[9px] text-gray-400 mt-0.5">Concluídas</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ÚLTIMAS DEMANDAS (FEED GLOBAL) -->
+    <h3 class="font-bold text-gray-700 text-sm mb-3 border-l-4 border-gray-300 pl-2">Últimas demandas recebidas</h3>
+    <div id="feed-demandas" class="flex flex-col gap-2.5 mb-4">
+      <div class="text-center py-6 text-gray-400 text-xs">
+        <i class="fa-solid fa-spinner fa-spin text-xl mb-2 block"></i>
+        Carregando demandas...
+      </div>
+    </div>
+
+    <!-- AVISOS PUBLICADOS -->
+    <h3 class="font-bold text-gray-700 text-sm mb-3 border-l-4 border-gray-300 pl-2">Avisos publicados</h3>
+    <div id="lista-avisos" class="flex flex-col gap-2.5 mb-4">
+      <div class="text-center py-4 text-gray-400 text-xs">
+        <i class="fa-solid fa-spinner fa-spin mr-1"></i> Carregando...
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, query, orderBy, limit, onSnapshot, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCpaNuC1IUkteO4fHzFPiNS7s580EyTleU",
+  authDomain: "doresopolis.firebaseapp.com",
+  projectId: "doresopolis",
+  storageBucket: "doresopolis.firebasestorage.app",
+  messagingSenderId: "465119846468",
+  appId: "1:465119846468:web:8b292481fec10132cf9c11"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+// ─── SENHA ────────────────────────────────────────────────
+const SENHA = "prefeito2025";
+
+window.fazerLogin = function() {
+  const s = document.getElementById('login-senha').value;
+  if (s === SENHA) {
+    sessionStorage.setItem('prefeito_auth', '1');
+    document.getElementById('tela-login').classList.add('hidden');
+    document.getElementById('app').classList.remove('hidden');
+    document.getElementById('app').classList.add('flex', 'flex-col');
+    iniciar();
+  } else {
+    document.getElementById('login-erro').classList.remove('hidden');
+  }
+};
+
+document.getElementById('login-senha').addEventListener('keydown', e => {
+  if (e.key === 'Enter') window.fazerLogin();
+});
+
+window.sair = function() {
+  sessionStorage.removeItem('prefeito_auth');
+  document.getElementById('tela-login').classList.remove('hidden');
+  document.getElementById('app').classList.add('hidden');
+};
+
+// ─── CLOCK ───────────────────────────────────────────────
+function atualizarRelogio() {
+  const agora = new Date();
+  const opts = { weekday:'long', day:'2-digit', month:'long', hour:'2-digit', minute:'2-digit' };
+  document.getElementById('data-hora').textContent =
+    agora.toLocaleDateString('pt-BR', opts).replace(',', ' •') + 'h';
+}
+setInterval(atualizarRelogio, 30000);
+
+// ─── SECRETARIAS CONFIG ───────────────────────────────────
+const secretarias = [
+  { id: 'saude',     colecao: 'solicitacoes_saude',     prefix: 'saude',  cor: '#ef4444', label: 'Saúde' },
+  { id: 'edu',       colecao: 'solicitacoes_educacao',  prefix: 'edu',    cor: '#3b82f6', label: 'Educação' },
+  { id: 'obras',     colecao: 'solicitacoes_obras',     prefix: 'obras',  cor: '#f59e0b', label: 'Obras' },
+  { id: 'trib',      colecao: 'solicitacoes_tributos',  prefix: 'trib',   cor: '#16a34a', label: 'Tributos' },
+  { id: 'transp',    colecao: 'solicitacoes_transporte',prefix: 'transp', cor: '#8b5cf6', label: 'Transporte' },
+];
+
+// Estado global dos contadores
+const contadores = {};
+secretarias.forEach(s => { contadores[s.id] = { analise: 0, andamento: 0, concluida: 0 }; });
+
+function atualizarTotaisGerais() {
+  let totalAberto = 0, totalConcluido = 0;
+  secretarias.forEach(s => {
+    totalAberto    += contadores[s.id].analise + contadores[s.id].andamento;
+    totalConcluido += contadores[s.id].concluida;
+  });
+  document.getElementById('total-geral').textContent      = totalAberto;
+  document.getElementById('total-concluidas').textContent = totalConcluido;
+  document.getElementById('total-urgentes').textContent   =
+    contadores['saude'].analise + contadores['obras'].analise;
+
+  // Barra proporcional
+  const barra   = document.getElementById('barra-secretarias');
+  const legenda = document.getElementById('legenda-barra');
+  const total   = secretarias.reduce((a,s) =>
+    a + contadores[s.id].analise + contadores[s.id].andamento, 0) || 1;
+
+  barra.innerHTML = '';
+  legenda.innerHTML = '';
+  secretarias.forEach(s => {
+    const v = contadores[s.id].analise + contadores[s.id].andamento;
+    const p = Math.round((v / total) * 100);
+    if (p > 0) {
+      barra.innerHTML += `<div style="background:${s.cor};width:${p}%;" class="h-full first:rounded-l-full last:rounded-r-full"></div>`;
+      legenda.innerHTML += `<span class="flex items-center gap-1 text-[9px] text-gray-500">
+        <span style="background:${s.cor}" class="w-2 h-2 rounded-full inline-block"></span>${s.label} ${v}
+      </span>`;
+    }
+  });
+}
+
+// ─── OUVIR CADA SECRETARIA ───────────────────────────────
+function ouvirSecretaria(sec) {
+  const q = query(collection(db, sec.colecao), orderBy('dataRegistro', 'desc'));
+  onSnapshot(q, snap => {
+    let analise = 0, andamento = 0, concluida = 0;
+    snap.forEach(d => {
+      const st = (d.data().status || '').toUpperCase();
+      if (st === 'EM ANÁLISE')    analise++;
+      if (st === 'EM ANDAMENTO')  andamento++;
+      if (st === 'CONCLUÍDO')     concluida++;
+    });
+    contadores[sec.prefix] = { analise, andamento, concluida };
+
+    const total = analise + andamento;
+    document.getElementById(`${sec.prefix}-em-analise`).textContent   = total;
+    document.getElementById(`${sec.prefix}-analise-num`).textContent   = analise;
+    document.getElementById(`${sec.prefix}-andamento-num`).textContent = andamento;
+    document.getElementById(`${sec.prefix}-concluida-num`).textContent = concluida;
+
+    atualizarTotaisGerais();
+  });
+}
+
+// ─── FEED GLOBAL DE DEMANDAS ─────────────────────────────
+const corSecretaria = {
+  saude:     { bg: 'bg-red-50',    text: 'text-red-500',    icon: 'fa-heart-pulse',        label: 'Saúde' },
+  educacao:  { bg: 'bg-blue-50',   text: 'text-blue-500',   icon: 'fa-graduation-cap',     label: 'Educação' },
+  obras:     { bg: 'bg-amber-50',  text: 'text-amber-500',  icon: 'fa-helmet-safety',      label: 'Obras' },
+  tributos:  { bg: 'bg-green-50',  text: 'text-green-600',  icon: 'fa-file-invoice-dollar',label: 'Tributos' },
+  transporte:{ bg: 'bg-purple-50', text: 'text-purple-500', icon: 'fa-bus',                label: 'Transporte' },
+};
+
+function corStatus(status) {
+  const s = (status || '').toUpperCase();
+  if (s === 'EM ANÁLISE')   return 'text-amber-600 bg-amber-50 border-amber-200';
+  if (s === 'EM ANDAMENTO') return 'text-blue-600 bg-blue-50 border-blue-200';
+  if (s === 'CONCLUÍDO')    return 'text-green-600 bg-green-50 border-green-200';
+  if (s === 'CANCELADO')    return 'text-red-600 bg-red-50 border-red-200';
+  return 'text-gray-500 bg-gray-50 border-gray-200';
+}
+
+async function carregarFeed() {
+  const feed = document.getElementById('feed-demandas');
+  const todasDemandas = [];
+
+  for (const sec of secretarias) {
+    const q = query(collection(db, sec.colecao), orderBy('dataRegistro', 'desc'), limit(5));
+    const snap = await getDocs(q);
+    snap.forEach(d => {
+      const data = d.data();
+      const chave = sec.colecao.replace('solicitacoes_', '');
+      todasDemandas.push({ ...data, _secretaria: chave, _id: d.id });
+    });
+  }
+
+  todasDemandas.sort((a, b) => new Date(b.dataRegistro) - new Date(a.dataRegistro));
+  const recentes = todasDemandas.slice(0, 15);
+
+  if (recentes.length === 0) {
+    feed.innerHTML = '<p class="text-xs text-gray-400 text-center py-4">Nenhuma demanda encontrada.</p>';
+    return;
+  }
+
+  feed.innerHTML = '';
+  recentes.forEach(d => {
+    const sec  = corSecretaria[d._secretaria] || { bg:'bg-gray-50', text:'text-gray-500', icon:'fa-circle', label: d._secretaria };
+    const data = new Date(d.dataRegistro).toLocaleDateString('pt-BR');
+    const hora = new Date(d.dataRegistro).toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
+    const nome = d.nomeAluno || d.nomeCidadao || d.nome || 'Cidadão';
+    const tipo = d.tipoLabel || d.tipoServico || d.tipo || 'Solicitação';
+
+    feed.innerHTML += `
+      <div class="bg-white rounded-xl border border-gray-100 p-3 shadow-sm">
+        <div class="flex items-start gap-2.5">
+          <div class="w-8 h-8 ${sec.bg} ${sec.text} rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+            <i class="fa-solid ${sec.icon} text-xs"></i>
+          </div>
+          <div class="flex-grow min-w-0">
+            <div class="flex justify-between items-start gap-1">
+              <div>
+                <p class="text-[10px] font-bold ${sec.text} uppercase">${sec.label}</p>
+                <p class="font-bold text-gray-800 text-xs leading-tight truncate">${nome}</p>
+                <p class="text-[10px] text-gray-500 mt-0.5">${tipo}</p>
+              </div>
+              <span class="text-[9px] font-bold border rounded-full px-2 py-0.5 shrink-0 ${corStatus(d.status)}">${d.status || 'EM ANÁLISE'}</span>
+            </div>
+            <div class="flex items-center gap-2 mt-1.5">
+              <span class="text-[9px] text-gray-400"><i class="fa-regular fa-calendar mr-0.5"></i>${data} às ${hora}</span>
+              ${d.protocolo ? `<span class="text-[9px] text-gray-400"><i class="fa-solid fa-hashtag mr-0.5"></i>${d.protocolo}</span>` : ''}
+            </div>
+          </div>
+        </div>
+      </div>`;
+  });
+
+  // Atualiza o feed a cada 60 segundos
+  setTimeout(carregarFeed, 60000);
+}
+
+// ─── AVISOS ──────────────────────────────────────────────
+function ouvirAvisos() {
+  const q = query(collection(db, 'avisos'), orderBy('dataPublicacao', 'desc'), limit(5));
+  onSnapshot(q, snap => {
+    const container = document.getElementById('lista-avisos');
+    if (snap.empty) {
+      container.innerHTML = '<p class="text-xs text-gray-400 text-center py-3">Nenhum aviso publicado.</p>';
+      return;
+    }
+    container.innerHTML = '';
+    snap.forEach(d => {
+      const aviso = d.data();
+      const data  = new Date(aviso.dataPublicacao).toLocaleDateString('pt-BR');
+      container.innerHTML += `
+        <div class="bg-white rounded-xl border border-gray-100 p-3 shadow-sm">
+          <div class="flex justify-between items-start">
+            <div>
+              <span class="text-[9px] font-bold text-white bg-doresopolis-green px-2 py-0.5 rounded-full">${aviso.secretaria || 'GERAL'}</span>
+              <p class="font-bold text-gray-800 text-xs mt-1.5">${aviso.titulo}</p>
+              <p class="text-[10px] text-gray-500 mt-0.5 line-clamp-2">${aviso.descricao}</p>
+            </div>
+          </div>
+          <p class="text-[9px] text-gray-400 mt-1.5"><i class="fa-regular fa-clock mr-0.5"></i>${data}</p>
+        </div>`;
+    });
+  });
+}
+
+// ─── INICIAR ─────────────────────────────────────────────
+function iniciar() {
+  atualizarRelogio();
+  secretarias.forEach(ouvirSecretaria);
+  carregarFeed();
+  ouvirAvisos();
+}
+
+// Auto-login se sessão ativa
+if (sessionStorage.getItem('prefeito_auth') === '1') {
+  document.getElementById('tela-login').classList.add('hidden');
+  document.getElementById('app').classList.remove('hidden');
+  document.getElementById('app').classList.add('flex', 'flex-col');
+  iniciar();
+}
+</script>
+</body>
+</html>
