@@ -134,6 +134,20 @@
                         </div>
                     </div>
 
+                    <!-- MINHAS SOLICITAÇÕES EM ANDAMENTO -->
+                    <div id="card-sol-skeleton" class="hidden mb-6 h-[76px] rounded-2xl bg-gray-100 animate-pulse"></div>
+                    <a id="card-solicitacoes" href="solicitacoes.html" class="hidden mb-6 bg-white rounded-2xl shadow-sm border border-gray-100 p-4 items-center gap-3 active:scale-[0.98] transition-all">
+                        <div id="card-sol-icone-wrap" class="w-11 h-11 rounded-xl bg-doresopolis-green/10 text-doresopolis-green flex items-center justify-center shrink-0">
+                            <i id="card-sol-icone" class="fa-solid fa-list-check text-lg"></i>
+                        </div>
+                        <div class="flex-grow min-w-0">
+                            <p id="card-sol-titulo" class="font-bold text-gray-800 text-sm leading-tight">—</p>
+                            <p id="card-sol-sub" class="text-[11px] text-gray-500 mt-0.5 truncate">—</p>
+                        </div>
+                        <span id="card-sol-badge" class="shrink-0 hidden text-[9px] font-black uppercase px-2 py-0.5 rounded-full"></span>
+                        <i class="fa-solid fa-chevron-right text-gray-300 text-xs shrink-0"></i>
+                    </a>
+
                     <!-- MURAL DE AVISOS OFICIAIS DINÂMICO -->
                     <div class="mb-6">
                         <div class="flex items-center justify-between mb-3">
@@ -624,6 +638,105 @@
         }
 
         // ======================================================
+        // MINHAS SOLICITAÇÕES EM ANDAMENTO
+        // Vincula pelo nome do cidadão (mesma lógica da página de solicitações)
+        // ======================================================
+        const COLECOES_SOL = ['solicitacoes_obras', 'solicitacoes_saude', 'solicitacoes_educacao', 'solicitacoes_tributos'];
+
+        function corStatus(status) {
+            if (status === 'EM ANÁLISE')   return 'bg-amber-100 text-amber-700';
+            if (status === 'EM ANDAMENTO') return 'bg-blue-100 text-blue-700';
+            return 'bg-gray-100 text-gray-600'; // PENDENTE e demais
+        }
+
+        async function carregarMinhasSolicitacoes() {
+            const skeleton = document.getElementById('card-sol-skeleton');
+            const card     = document.getElementById('card-solicitacoes');
+            const telefone = localStorage.getItem('userTelefone');
+
+            // Sem telefone = cidadão não cadastrado nesta sessão → não mostra o card
+            if (!telefone) { skeleton.classList.add('hidden'); return; }
+
+            skeleton.classList.remove('hidden');
+
+            try {
+                // Descobre o nome completo vinculado ao telefone
+                let nomeCompleto = '';
+                const snapUser = await getDocs(query(collection(db, 'usuarios'), where('telefone', '==', telefone)));
+                if (!snapUser.empty) nomeCompleto = (snapUser.docs[0].data().nomeCompleto || '').trim();
+                const primeiroNome = (localStorage.getItem('usuarioDoresopolis') || nomeCompleto.split(' ')[0] || '').trim();
+
+                const ehDoUsuario = (n) => {
+                    if (!n) return false;
+                    n = String(n).trim();
+                    return (nomeCompleto && n === nomeCompleto) || (primeiroNome && n === primeiroNome);
+                };
+
+                // Busca as 4 coleções e filtra as que estão em aberto
+                const abertas = [];
+                const resultados = await Promise.all(
+                    COLECOES_SOL.map(col => getDocs(collection(db, col)).catch(() => null))
+                );
+
+                resultados.forEach((snap, i) => {
+                    if (!snap) return;
+                    const secNome = ['Obras', 'Saúde', 'Educação', 'Tributos'][i];
+                    snap.forEach(docSnap => {
+                        const data = docSnap.data();
+                        if (!ehDoUsuario(data.nomeCidadao)) return;
+                        const status = (data.status || 'PENDENTE').toUpperCase();
+                        if (status === 'CONCLUÍDO' || status === 'CANCELADO') return;
+                        abertas.push({
+                            status,
+                            secretaria: secNome,
+                            protocolo: data.protocolo || null,
+                            titulo: data.tipoServico || data.tipoSolicitacao || data.especialidade || 'Solicitação',
+                            dataRegistro: data.dataRegistro || null
+                        });
+                    });
+                });
+
+                skeleton.classList.add('hidden');
+                card.classList.remove('hidden');
+                card.classList.add('flex');
+
+                const iconeWrap = document.getElementById('card-sol-icone-wrap');
+                const icone     = document.getElementById('card-sol-icone');
+                const titulo    = document.getElementById('card-sol-titulo');
+                const sub       = document.getElementById('card-sol-sub');
+                const badge     = document.getElementById('card-sol-badge');
+
+                if (abertas.length === 0) {
+                    // Estado "tudo em dia"
+                    iconeWrap.className = 'w-11 h-11 rounded-xl bg-green-50 text-green-600 flex items-center justify-center shrink-0';
+                    icone.className = 'fa-solid fa-circle-check text-lg';
+                    titulo.innerText = 'Tudo em dia';
+                    sub.innerText = 'Nenhuma solicitação em andamento';
+                    badge.classList.add('hidden');
+                } else {
+                    // Ordena pela mais recente
+                    abertas.sort((a, b) => new Date(b.dataRegistro || 0) - new Date(a.dataRegistro || 0));
+                    const ultima = abertas[0];
+                    const n = abertas.length;
+
+                    iconeWrap.className = 'w-11 h-11 rounded-xl bg-doresopolis-green/10 text-doresopolis-green flex items-center justify-center shrink-0';
+                    icone.className = 'fa-solid fa-list-check text-lg';
+                    titulo.innerText = n === 1 ? '1 solicitação em andamento' : `${n} solicitações em andamento`;
+
+                    const proto = ultima.protocolo ? `#${ultima.protocolo} · ` : '';
+                    sub.innerText = `${ultima.secretaria}: ${proto}${ultima.titulo}`;
+
+                    badge.innerText = ultima.status;
+                    badge.className = `shrink-0 text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${corStatus(ultima.status)}`;
+                    badge.classList.remove('hidden');
+                }
+            } catch (e) {
+                console.error('Erro ao carregar solicitações:', e);
+                skeleton.classList.add('hidden');
+            }
+        }
+
+        // ======================================================
         // BOTÃO DE EMERGÊNCIA FLUTUANTE
         // ======================================================
         let emergenciaAberta = false;
@@ -810,6 +923,7 @@
                 document.getElementById('nome-usuario-logado').innerText = sessaoSalva;
                 definirSaudacaoEData();
                 carregarClima();
+                carregarMinhasSolicitacoes();
                 carregarAvisos();
             }
         });
