@@ -265,11 +265,23 @@ onAuthStateChanged(auth, async (user) => {
   clearTimeout(authTimeout);
   if (!user) { mostrarEstado('e-acesso-negado'); return; }
 
-  const admSnap = await getDoc(doc(db, 'secretarios_transporte', user.uid));
-  if (!admSnap.exists()) { mostrarEstado('e-acesso-negado'); return; }
+  // Verifica no novo sistema (contas_secretaria)
+  const novoSnap = await getDoc(doc(db, 'contas_secretaria', user.uid));
+  if (novoSnap.exists() && novoSnap.data().secretaria === 'transporte' && novoSnap.data().ativo !== false) {
+    mostrarEstado('e-painel');
+    carregarInscricoes();
+    return;
+  }
 
-  mostrarEstado('e-painel');
-  carregarInscricoes();
+  // Fallback: sistema antigo (secretarios_transporte)
+  const antigoSnap = await getDoc(doc(db, 'secretarios_transporte', user.uid));
+  if (antigoSnap.exists()) {
+    mostrarEstado('e-painel');
+    carregarInscricoes();
+    return;
+  }
+
+  mostrarEstado('e-acesso-negado');
 });
 
 // ── INSCRIÇÕES ──────────────────────────────────────────────────────────────

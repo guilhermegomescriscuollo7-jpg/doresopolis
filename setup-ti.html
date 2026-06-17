@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#1e40af">
+<title>Setup TI - Doresópolis</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>input{outline:none;}input:focus{box-shadow:0 0 0 2px #1e40af;}</style>
+</head>
+<body class="bg-gray-100 font-sans flex justify-center items-center min-h-screen px-4">
+<div class="bg-white w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden">
+
+  <div class="bg-blue-800 px-6 py-6 text-center">
+    <div class="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-3">
+      <i class="fa-solid fa-laptop-code text-white text-2xl"></i>
+    </div>
+    <p class="text-blue-200 text-[11px] uppercase tracking-widest font-semibold">Configuração Inicial</p>
+    <h1 class="text-white font-black text-lg uppercase tracking-tight mt-0.5">Cadastro TI</h1>
+  </div>
+
+  <!-- Carregando -->
+  <div id="e-loading" class="px-6 py-8 text-center">
+    <div class="w-8 h-8 border-4 border-blue-200 border-t-blue-700 rounded-full animate-spin mx-auto mb-3"></div>
+    <p class="text-sm text-gray-400">Verificando...</p>
+  </div>
+
+  <!-- Já existe admin TI -->
+  <div id="e-ja-existe" class="hidden px-6 py-8 text-center">
+    <i class="fa-solid fa-shield-halved text-4xl text-blue-700 mb-3"></i>
+    <p class="font-black text-gray-800 text-lg mb-1">Acesso já configurado</p>
+    <p class="text-sm text-gray-500 mb-5">O administrador TI já foi cadastrado. Esta página está bloqueada por segurança.</p>
+    <a href="login-secretaria.html" class="inline-block bg-blue-700 text-white font-bold px-6 py-3 rounded-xl text-sm">
+      <i class="fa-solid fa-right-to-bracket mr-1"></i> Ir para o Login
+    </a>
+  </div>
+
+  <!-- Formulário de criação -->
+  <div id="e-form" class="hidden px-6 py-5 space-y-4">
+    <div class="bg-amber-50 border border-amber-100 rounded-xl px-4 py-3 flex items-start gap-2">
+      <i class="fa-solid fa-triangle-exclamation text-amber-500 text-sm mt-0.5 shrink-0"></i>
+      <p class="text-[11px] text-amber-700 leading-relaxed">Use esta página apenas uma vez para criar o primeiro acesso da TI. Após o cadastro, ela ficará bloqueada.</p>
+    </div>
+
+    <div>
+      <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Nome completo *</label>
+      <input id="f-nome" type="text" placeholder="Nome do responsável pela TI"
+        class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-300">
+    </div>
+    <div>
+      <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">E-mail *</label>
+      <input id="f-email" type="email" placeholder="ti@doresopolis.mg.gov.br"
+        class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-300">
+    </div>
+    <div>
+      <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Senha *</label>
+      <input id="f-senha" type="password" placeholder="Mínimo 6 caracteres"
+        class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-300">
+    </div>
+
+    <div id="msg-erro" class="hidden bg-red-50 border border-red-100 rounded-xl px-4 py-3 text-sm text-red-600"></div>
+
+    <button onclick="criarAdmin()"
+      class="w-full bg-blue-700 text-white font-black py-4 rounded-2xl text-sm uppercase tracking-wide">
+      <span id="btn-txt"><i class="fa-solid fa-user-shield mr-2"></i>Criar Administrador TI</span>
+      <span id="btn-load" class="hidden"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Criando...</span>
+    </button>
+  </div>
+
+  <!-- Sucesso -->
+  <div id="e-ok" class="hidden px-6 py-8 text-center">
+    <i class="fa-solid fa-circle-check text-4xl text-green-500 mb-3"></i>
+    <p class="font-black text-gray-800 text-lg mb-1">Administrador criado!</p>
+    <p id="ok-nome" class="text-sm text-gray-500 mb-5"></p>
+    <a href="login-secretaria.html" class="inline-block bg-blue-700 text-white font-bold px-6 py-3 rounded-xl text-sm">
+      <i class="fa-solid fa-right-to-bracket mr-1"></i> Fazer Login
+    </a>
+  </div>
+
+</div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getFirestore, collection, query, where, getDocs, doc, setDoc, serverTimestamp }
+  from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+const API_KEY = "AIzaSyAskgM5cxiR4DI2PXrccBxOvPZzMPDKdCo";
+const app = initializeApp({
+  apiKey: API_KEY,
+  authDomain: "gen-lang-client-0963611393.firebaseapp.com",
+  projectId: "gen-lang-client-0963611393",
+  storageBucket: "gen-lang-client-0963611393.firebasestorage.app",
+  messagingSenderId: "158833761867",
+  appId: "1:158833761867:web:f9db6cb6dc6b5785cfb7ce"
+});
+const db = getFirestore(app);
+
+function mostrar(id) {
+  ['e-loading','e-ja-existe','e-form','e-ok'].forEach(s =>
+    document.getElementById(s).classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+}
+
+// Verifica se já existe algum admin TI
+async function verificar() {
+  try {
+    const snap = await getDocs(query(
+      collection(db, 'contas_secretaria'),
+      where('secretaria', '==', 'ti')
+    ));
+    if (!snap.empty) { mostrar('e-ja-existe'); }
+    else             { mostrar('e-form'); }
+  } catch(e) {
+    // Se falhar a query (ex: índice), mostra o form mesmo assim
+    mostrar('e-form');
+  }
+}
+verificar();
+
+window.criarAdmin = async () => {
+  const nome  = document.getElementById('f-nome').value.trim();
+  const email = document.getElementById('f-email').value.trim();
+  const senha = document.getElementById('f-senha').value;
+
+  if (!nome || !email || senha.length < 6) {
+    mostrarErro('Preencha todos os campos. Senha mínima de 6 caracteres.');
+    return;
+  }
+
+  document.getElementById('btn-txt').classList.add('hidden');
+  document.getElementById('btn-load').classList.remove('hidden');
+  document.getElementById('msg-erro').classList.add('hidden');
+
+  try {
+    // Cria conta Firebase Auth
+    const res  = await fetch(
+      `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${API_KEY}`,
+      { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password: senha, returnSecureToken: false }) }
+    );
+    const data = await res.json();
+    if (data.error) {
+      const msgs = {
+        'EMAIL_EXISTS': 'Este e-mail já está cadastrado.',
+        'INVALID_EMAIL': 'E-mail inválido.',
+      };
+      mostrarErro(msgs[data.error.message] || data.error.message);
+      resetBtn(); return;
+    }
+
+    const uid = data.localId;
+    await setDoc(doc(db, 'contas_secretaria', uid), {
+      nome, email, secretaria: 'ti', ativo: true, dataCriacao: serverTimestamp()
+    });
+
+    document.getElementById('ok-nome').textContent = nome + ' — ' + email;
+    mostrar('e-ok');
+  } catch(e) {
+    mostrarErro('Erro ao criar conta. Tente novamente.');
+    resetBtn();
+  }
+};
+
+function mostrarErro(msg) {
+  document.getElementById('msg-erro').textContent = msg;
+  document.getElementById('msg-erro').classList.remove('hidden');
+}
+function resetBtn() {
+  document.getElementById('btn-txt').classList.remove('hidden');
+  document.getElementById('btn-load').classList.add('hidden');
+}
+</script>
+</body>
+</html>

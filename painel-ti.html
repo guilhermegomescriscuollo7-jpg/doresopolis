@@ -1,882 +1,403 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#0f172a">
-    <meta name="mobile-web-app-capable" content="yes">
-    
-    <title>Painel TI Avançado | Doresópolis</title>
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        doresopolis: {
-                            green: '#0b5c3b',
-                            dark: '#3f3f46',
-                            light: '#f8fafc'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        .toggle-checkbox:checked { right: 0; border-color: #3b82f6; }
-        .toggle-checkbox:checked + .toggle-label { background-color: #3b82f6; }
-        .toggle-checkbox { right: 0; z-index: 1; border-color: #e2e8f0; transition: all 0.3s; }
-        .toggle-label { width: 3rem; height: 1.5rem; background-color: #cbd5e1; border-radius: 9999px; transition: all 0.3s; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#1e40af">
+<title>Painel TI - Doresópolis</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script>tailwind.config={theme:{extend:{colors:{doresopolis:{green:'#0b5c3b'}}}}}</script>
+<style>input,select{outline:none;}input:focus,select:focus{box-shadow:0 0 0 2px #1e40af;}</style>
 </head>
+<body class="bg-gray-200 font-sans text-gray-800 flex justify-center items-center min-h-screen">
+<div class="bg-gray-50 w-full max-w-md h-[100dvh] flex flex-col shadow-2xl overflow-hidden sm:rounded-xl sm:h-[95vh] sm:border sm:border-gray-300">
 
-<body class="bg-slate-900 font-sans text-gray-800 flex justify-center items-center min-h-screen">
+  <header class="bg-blue-800 flex-shrink-0 px-4 py-3 flex items-center gap-3">
+    <a href="index.html" class="w-9 h-9 rounded-full bg-white/10 text-white flex items-center justify-center shrink-0">
+      <i class="fa-solid fa-arrow-left text-sm"></i>
+    </a>
+    <div class="flex items-center gap-3 flex-grow">
+      <div class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center shrink-0">
+        <i class="fa-solid fa-laptop-code text-white"></i>
+      </div>
+      <div>
+        <p class="text-[9px] tracking-widest text-blue-200 uppercase font-semibold leading-none">Administrativo</p>
+        <h1 class="text-base font-black text-white uppercase tracking-tight leading-none">Painel TI</h1>
+      </div>
+    </div>
+    <button onclick="sair()" class="w-9 h-9 rounded-full bg-white/10 text-white flex items-center justify-center shrink-0">
+      <i class="fa-solid fa-right-from-bracket text-sm"></i>
+    </button>
+  </header>
 
-    <!-- TELA DE LOGIN TI -->
-    <div id="tela-login-ti" class="hidden fixed inset-0 z-[300] bg-slate-900 flex-col items-center justify-center px-6">
-        <div class="w-full max-w-xs">
-            <div class="text-center mb-8">
-                <div class="w-16 h-16 bg-slate-800 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-slate-700">
-                    <i class="fa-solid fa-terminal text-blue-400 text-3xl"></i>
-                </div>
-                <h1 class="text-white text-2xl font-black tracking-tight">Painel TI</h1>
-                <p class="text-slate-400 text-xs mt-1">Acesso restrito</p>
-            </div>
-            <div class="space-y-3">
-                <input id="ti-senha" type="password" placeholder="Senha de acesso"
-                    class="w-full px-4 py-3 rounded-xl bg-slate-800 text-white placeholder-slate-500 border border-slate-700 focus:outline-none focus:border-blue-500 text-sm">
-                <button onclick="fazerLoginTI()"
-                    class="w-full bg-blue-600 text-white font-black py-3 rounded-xl text-sm hover:bg-blue-700 active:scale-[0.98] transition-all">
-                    Entrar
-                </button>
-            </div>
-            <p id="ti-login-erro" class="text-red-400 text-xs text-center mt-3 hidden">Senha incorreta.</p>
+  <div id="e-loading" class="flex-grow flex flex-col items-center justify-center gap-3">
+    <div class="w-10 h-10 border-4 border-blue-200 border-t-blue-700 rounded-full animate-spin"></div>
+    <p class="text-sm text-gray-400">Verificando permissões...</p>
+  </div>
+
+  <div id="e-negado" class="hidden flex-grow flex flex-col items-center justify-center px-8 text-center">
+    <div class="w-20 h-20 rounded-full bg-red-50 border-2 border-red-100 flex items-center justify-center mb-5">
+      <i class="fa-solid fa-ban text-3xl text-red-400"></i>
+    </div>
+    <h2 class="text-xl font-black text-gray-800 mb-2">Acesso Negado</h2>
+    <p class="text-sm text-gray-500 mb-6">Você não tem permissão para acessar este painel.</p>
+    <a href="login-secretaria.html" class="flex items-center gap-2 bg-blue-700 text-white font-bold px-6 py-3 rounded-xl text-sm">
+      <i class="fa-solid fa-right-to-bracket"></i> Fazer Login
+    </a>
+  </div>
+
+  <div id="e-painel" class="hidden flex-grow flex flex-col overflow-hidden">
+    <div class="bg-blue-50 border-b border-blue-100 px-4 py-2.5 flex items-center justify-between flex-shrink-0">
+      <p class="text-xs text-blue-700"><i class="fa-solid fa-user mr-1.5"></i><span id="nome-admin">TI</span></p>
+      <button onclick="abrirModalNovaConta()"
+        class="flex items-center gap-1.5 bg-blue-700 text-white text-xs font-bold px-3 py-2 rounded-xl active:scale-[0.97] transition-all">
+        <i class="fa-solid fa-plus"></i> Nova Conta
+      </button>
+    </div>
+
+    <div id="lista-loading" class="flex-grow flex items-center justify-center">
+      <div class="w-8 h-8 border-4 border-gray-200 border-t-blue-700 rounded-full animate-spin"></div>
+    </div>
+    <div id="lista-vazia" class="hidden flex-grow flex flex-col items-center justify-center px-8 text-center">
+      <i class="fa-solid fa-users text-4xl text-gray-200 mb-3"></i>
+      <p class="text-sm text-gray-400">Nenhuma conta cadastrada ainda.</p>
+      <p class="text-xs text-gray-300 mt-1">Clique em "Nova Conta" para começar.</p>
+    </div>
+    <div id="lista-contas" class="hidden flex-grow overflow-y-auto px-4 py-3 space-y-3"></div>
+  </div>
+</div>
+
+<!-- MODAL: Nova / Editar Conta -->
+<div id="modal-conta" class="hidden fixed inset-0 bg-black/50 z-50 flex items-end justify-center">
+  <div class="bg-white w-full max-w-md rounded-t-3xl p-5 space-y-3 max-h-[90vh] overflow-y-auto">
+    <div class="flex items-center justify-between mb-1">
+      <h3 id="modal-titulo" class="font-black text-gray-800 text-base">Nova Conta</h3>
+      <button onclick="fecharModal()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+        <i class="fa-solid fa-xmark text-gray-500 text-sm"></i>
+      </button>
+    </div>
+    <input type="hidden" id="conta-uid">
+    <div>
+      <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Nome completo *</label>
+      <input id="c-nome" type="text" placeholder="Nome do secretário(a)"
+        class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-300">
+    </div>
+    <div>
+      <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">E-mail *</label>
+      <input id="c-email" type="email" placeholder="email@doresopolis.mg.gov.br"
+        class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-300">
+    </div>
+    <div>
+      <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">
+        Senha * <span id="label-senha-edit" class="hidden normal-case font-normal text-gray-400">(deixe em branco para manter)</span>
+      </label>
+      <div class="relative">
+        <input id="c-senha" type="password" placeholder="Mínimo 6 caracteres"
+          class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 pr-10 text-sm text-gray-800 placeholder-gray-300">
+        <button type="button" onclick="toggleSenhaModal()"
+          class="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-300 text-sm">
+          <i id="icon-senha" class="fa-solid fa-eye"></i>
+        </button>
+      </div>
+    </div>
+    <div>
+      <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Secretaria *</label>
+      <select id="c-secretaria"
+        class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800">
+        <option value="">Selecione...</option>
+        <option value="transporte">Secretaria de Transporte</option>
+        <option value="saude">Secretaria de Saúde</option>
+        <option value="educacao">Secretaria de Educação</option>
+        <option value="tributos">Secretaria de Tributos</option>
+        <option value="obras">Secretaria de Obras</option>
+        <option value="ti">TI / Administrador</option>
+      </select>
+    </div>
+    <div id="modal-erro" class="hidden bg-red-50 border border-red-100 rounded-xl px-4 py-3 text-sm text-red-600"></div>
+    <button onclick="salvarConta()"
+      class="w-full bg-blue-700 text-white font-black py-4 rounded-2xl text-sm uppercase tracking-wide">
+      <span id="modal-btn-txt"><i class="fa-solid fa-floppy-disk mr-2"></i>Salvar</span>
+      <span id="modal-btn-load" class="hidden"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Salvando...</span>
+    </button>
+  </div>
+</div>
+
+<!-- MODAL: Redefinir Senha -->
+<div id="modal-senha" class="hidden fixed inset-0 bg-black/50 z-50 flex items-end justify-center">
+  <div class="bg-white w-full max-w-md rounded-t-3xl p-5 space-y-3">
+    <div class="flex items-center justify-between mb-1">
+      <h3 class="font-black text-gray-800 text-base">Redefinir Senha</h3>
+      <button onclick="document.getElementById('modal-senha').classList.add('hidden')"
+        class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+        <i class="fa-solid fa-xmark text-gray-500 text-sm"></i>
+      </button>
+    </div>
+    <p id="reset-nome" class="text-sm text-gray-500"></p>
+    <div>
+      <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Nova senha *</label>
+      <input id="reset-nova-senha" type="password" placeholder="Mínimo 6 caracteres"
+        class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-300">
+    </div>
+    <div id="reset-erro" class="hidden bg-red-50 border border-red-100 rounded-xl px-4 py-3 text-sm text-red-600"></div>
+    <button onclick="confirmarResetSenha()"
+      class="w-full bg-blue-700 text-white font-black py-4 rounded-2xl text-sm uppercase tracking-wide">
+      <span id="reset-btn-txt"><i class="fa-solid fa-key mr-2"></i>Redefinir Senha</span>
+      <span id="reset-btn-load" class="hidden"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Salvando...</span>
+    </button>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import { getFirestore, collection, getDocs, doc, getDoc, setDoc, updateDoc, serverTimestamp }
+  from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+const API_KEY = "AIzaSyAskgM5cxiR4DI2PXrccBxOvPZzMPDKdCo";
+const firebaseConfig = {
+  apiKey: API_KEY,
+  authDomain: "gen-lang-client-0963611393.firebaseapp.com",
+  projectId: "gen-lang-client-0963611393",
+  storageBucket: "gen-lang-client-0963611393.firebasestorage.app",
+  messagingSenderId: "158833761867",
+  appId: "1:158833761867:web:f9db6cb6dc6b5785cfb7ce"
+};
+
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+const nomesSecretaria = {
+  transporte:'Sec. Transporte', saude:'Sec. Saúde', educacao:'Sec. Educação',
+  tributos:'Sec. Tributos', obras:'Sec. Obras', ti:'TI / Admin'
+};
+const coresSecretaria = {
+  transporte:'bg-purple-100 text-purple-700', saude:'bg-red-100 text-red-600',
+  educacao:'bg-blue-100 text-blue-700', tributos:'bg-emerald-100 text-emerald-700',
+  obras:'bg-amber-100 text-amber-700', ti:'bg-blue-800 text-white'
+};
+
+let contasCache = [];
+let contaEditando = null;
+let resetUID = null;
+
+function mostrar(id) {
+  ['e-loading','e-negado','e-painel'].forEach(s => {
+    const el = document.getElementById(s); el.classList.add('hidden'); el.classList.remove('flex');
+  });
+  const t = document.getElementById(id); t.classList.remove('hidden');
+  if (id !== 'e-painel') t.classList.add('flex');
+}
+
+window.fecharModal    = () => document.getElementById('modal-conta').classList.add('hidden');
+window.sair           = () => signOut(auth).then(() => window.location.href = 'login-secretaria.html');
+window.toggleSenhaModal = () => {
+  const inp = document.getElementById('c-senha');
+  const ico = document.getElementById('icon-senha');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+  ico.className = inp.type === 'password' ? 'fa-solid fa-eye' : 'fa-solid fa-eye-slash';
+};
+
+const authTimeout = setTimeout(() => mostrar('e-negado'), 8000);
+
+onAuthStateChanged(auth, async (user) => {
+  clearTimeout(authTimeout);
+  if (!user) { mostrar('e-negado'); return; }
+  const snap = await getDoc(doc(db, 'contas_secretaria', user.uid));
+  if (!snap.exists() || snap.data().secretaria !== 'ti' || snap.data().ativo === false) {
+    mostrar('e-negado'); return;
+  }
+  document.getElementById('nome-admin').textContent = snap.data().nome || user.email;
+  mostrar('e-painel');
+  carregarContas();
+});
+
+async function carregarContas() {
+  ['lista-vazia','lista-contas'].forEach(id => document.getElementById(id).classList.add('hidden'));
+  document.getElementById('lista-loading').classList.remove('hidden');
+  document.getElementById('lista-loading').classList.add('flex');
+  try {
+    const snap = await getDocs(collection(db, 'contas_secretaria'));
+    contasCache = snap.docs.map(d => ({ uid: d.id, ...d.data() }));
+    document.getElementById('lista-loading').classList.add('hidden');
+    document.getElementById('lista-loading').classList.remove('flex');
+    if (contasCache.length === 0) {
+      document.getElementById('lista-vazia').classList.remove('hidden');
+      document.getElementById('lista-vazia').classList.add('flex');
+    } else {
+      document.getElementById('lista-contas').classList.remove('hidden');
+      renderContas();
+    }
+  } catch(e) {
+    document.getElementById('lista-loading').classList.add('hidden');
+  }
+}
+
+function renderContas() {
+  document.getElementById('lista-contas').innerHTML = contasCache.map(c => `
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+      <div class="flex items-start justify-between mb-2">
+        <div class="flex items-center gap-2.5">
+          <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center shrink-0 font-black text-base">
+            ${(c.nome||'?')[0].toUpperCase()}
+          </div>
+          <div>
+            <p class="font-bold text-gray-800 text-sm leading-tight">${c.nome||'—'}</p>
+            <p class="text-[11px] text-gray-400 mt-0.5">${c.email||'—'}</p>
+          </div>
         </div>
-    </div>
-
-    <!-- MODAL DE CONFIRMAÇÃO -->
-    <div id="modal-confirm" class="fixed inset-0 z-[400] hidden items-center justify-center bg-black bg-opacity-60 px-6">
-        <div class="bg-white rounded-2xl p-6 w-full max-w-xs shadow-2xl">
-            <p id="confirm-msg" class="text-sm font-bold text-slate-800 text-center mb-5 leading-snug"></p>
-            <div class="flex gap-3">
-                <button id="confirm-cancel" class="flex-1 bg-slate-100 text-slate-700 font-bold py-2.5 rounded-xl text-sm">Cancelar</button>
-                <button id="confirm-ok" class="flex-1 bg-red-600 text-white font-bold py-2.5 rounded-xl text-sm">Confirmar</button>
-            </div>
+        <div class="flex flex-col items-end gap-1.5">
+          <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${coresSecretaria[c.secretaria]||'bg-gray-100 text-gray-500'}">
+            ${nomesSecretaria[c.secretaria]||c.secretaria||'—'}
+          </span>
+          <span class="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full ${c.ativo!==false?'bg-green-100 text-green-600':'bg-red-100 text-red-500'}">
+            ${c.ativo!==false?'Ativo':'Inativo'}
+          </span>
         </div>
-    </div>
-
-    <!-- MODAL DE INPUT (substitui prompt) -->
-    <div id="modal-prompt" class="fixed inset-0 z-[400] hidden items-center justify-center bg-black bg-opacity-60 px-6">
-        <div class="bg-white rounded-2xl p-6 w-full max-w-xs shadow-2xl">
-            <p id="prompt-msg" class="text-sm font-bold text-slate-800 text-center mb-3 leading-snug"></p>
-            <input id="prompt-input" type="text" class="w-full px-3 py-2.5 border border-slate-200 rounded-lg text-sm mb-4 outline-none focus:border-blue-500">
-            <div class="flex gap-3">
-                <button id="prompt-cancel" class="flex-1 bg-slate-100 text-slate-700 font-bold py-2.5 rounded-xl text-sm">Cancelar</button>
-                <button id="prompt-ok" class="flex-1 bg-blue-600 text-white font-bold py-2.5 rounded-xl text-sm">Confirmar</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="toast-aviso" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-[100] bg-green-600 text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-3 transition-all duration-300 opacity-0 pointer-events-none translate-y-[-20px] w-11/12 max-w-sm">
-        <i id="toast-icone" class="fa-solid fa-circle-check text-lg"></i>
-        <span id="toast-mensagem" class="text-sm font-medium leading-snug"></span>
-    </div>
-
-    <div class="bg-gray-50 w-full max-w-md h-[100dvh] flex flex-col relative shadow-2xl overflow-hidden sm:rounded-xl sm:h-[95vh] sm:border sm:border-slate-700">
-        
-        <header class="bg-slate-900 shadow-md z-10 flex-shrink-0 text-white border-b border-slate-800">
-            <div class="bg-blue-500 h-1.5 w-full"></div> 
-            
-            <div class="px-4 py-3 flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 rounded-full bg-slate-800 text-blue-400 flex items-center justify-center shrink-0 border border-slate-700">
-                        <i class="fa-solid fa-terminal text-lg"></i>
-                    </div>
-                    <div>
-                        <p class="text-[9px] tracking-[0.1em] text-slate-400 uppercase font-bold leading-none">Super Admin</p>
-                        <h1 class="text-xl font-black text-white tracking-tight uppercase leading-none mt-1">Painel TI</h1>
-                    </div>
-                </div>
-                <button onclick="fazerLogout()" class="text-slate-400 hover:text-red-400 transition-colors" title="Sair do Painel TI">
-                    <i class="fa-solid fa-power-off text-xl"></i>
-                </button>
-            </div>
-
-            <div class="flex bg-slate-800 border-t border-slate-700">
-                <button onclick="mudarAbaTi('usuarios')" id="aba-btn-usuarios" class="flex-1 py-2 text-[9px] font-bold uppercase tracking-wider text-blue-400 border-b-2 border-blue-500 transition-all flex flex-col items-center">
-                    <i class="fa-solid fa-users text-sm mb-1 mt-1"></i> Usuários
-                </button>
-                <button onclick="mudarAbaTi('sistema')" id="aba-btn-sistema" class="flex-1 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-400 border-b-2 border-transparent transition-all flex flex-col items-center">
-                    <i class="fa-solid fa-gears text-sm mb-1 mt-1"></i> Sistema
-                </button>
-                <button onclick="mudarAbaTi('relatorios')" id="aba-btn-relatorios" class="flex-1 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-400 border-b-2 border-transparent transition-all flex flex-col items-center">
-                    <i class="fa-solid fa-chart-pie text-sm mb-1 mt-1"></i> Relatórios
-                </button>
-                <button onclick="mudarAbaTi('auditoria')" id="aba-btn-auditoria" class="flex-1 py-2 text-[9px] font-bold uppercase tracking-wider text-slate-400 border-b-2 border-transparent transition-all flex flex-col items-center">
-                    <i class="fa-solid fa-clock-rotate-left text-sm mb-1 mt-1"></i> Auditoria
-                </button>
-            </div>
-        </header>
-
-        <main id="aba-usuarios" class="flex-grow overflow-y-auto p-4 pb-6 scroll-smooth block bg-slate-50">
-            
-            <div class="flex justify-between items-center mb-4">
-                <div>
-                    <h2 class="text-lg font-black text-slate-800">Controle de Acessos</h2>
-                    <p class="text-slate-500 text-[10px] uppercase font-bold tracking-wider mt-0.5">Gerenciamento Geral</p>
-                </div>
-                <div class="text-right">
-                    <span id="stat-total" class="text-xl font-black text-blue-600 block leading-none">0</span>
-                    <span class="text-[9px] text-slate-400 uppercase font-bold">Cadastros</span>
-                </div>
-            </div>
-
-            <div class="relative mb-5">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <i class="fa-solid fa-magnifying-glass text-slate-400"></i>
-                </div>
-                <input type="text" id="input-pesquisa" onkeyup="filtrarUsuarios()" placeholder="Buscar por nome ou telefone..." class="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm shadow-sm">
-            </div>
-
-            <div id="lista-usuarios" class="flex flex-col gap-3">
-                <div class="text-center py-10 bg-white rounded-xl shadow-sm border border-slate-200">
-                    <i class="fa-solid fa-spinner fa-spin text-2xl text-slate-400 mb-3"></i>
-                    <p class="text-xs text-slate-500 font-medium">Sincronizando banco de dados...</p>
-                </div>
-            </div>
-        </main>
-
-        <main id="aba-sistema" class="flex-grow overflow-y-auto p-4 pb-6 scroll-smooth hidden bg-slate-50">
-            
-            <div class="mb-5">
-                <h2 class="text-lg font-black text-slate-800">Configurações Globais</h2>
-                <p class="text-slate-500 text-[10px] uppercase font-bold tracking-wider mt-0.5">Ações Críticas do App</p>
-            </div>
-
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 mb-4">
-                <div class="flex justify-between items-center">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-red-50 text-red-600 flex items-center justify-center">
-                            <i class="fa-solid fa-triangle-exclamation"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-slate-800 text-sm">Modo Manutenção</h3>
-                            <p class="text-[10px] text-slate-500 mt-0.5">Bloqueia o acesso de todos os cidadãos.</p>
-                        </div>
-                    </div>
-                    <div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
-                        <input type="checkbox" name="toggle" id="toggle-manutencao" onchange="salvarConfigApp(event)" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
-                        <label for="toggle-manutencao" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 mb-4">
-                <div class="flex items-center gap-2 mb-3 border-b border-slate-100 pb-2">
-                    <i class="fa-solid fa-bell text-amber-500"></i>
-                    <h3 class="font-bold text-slate-800 text-sm">Alerta Push (Tela Inicial)</h3>
-                </div>
-                <div class="space-y-3">
-                    <input type="text" id="sys-alerta-titulo" placeholder="Título do Alerta (Ex: Aviso Urgente)" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:border-blue-400">
-                    <textarea id="sys-alerta-texto" rows="2" placeholder="Mensagem do alerta para a população..." class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:border-blue-400 resize-none"></textarea>
-                    
-                    <div class="flex gap-2">
-                        <button onclick="salvarAlertaGlobal(true)" class="flex-1 bg-amber-500 text-white font-bold py-2 rounded-lg text-xs hover:bg-amber-600 transition-colors"><i class="fa-solid fa-broadcast-tower mr-1"></i> Publicar Alerta</button>
-                        <button onclick="salvarAlertaGlobal(false)" class="bg-slate-200 text-slate-600 font-bold px-4 py-2 rounded-lg text-xs hover:bg-slate-300 transition-colors"><i class="fa-solid fa-xmark mr-1"></i> Ocultar</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-                <div class="flex items-center gap-2 mb-3 border-b border-slate-100 pb-2">
-                    <i class="fa-solid fa-road text-slate-600"></i>
-                    <h3 class="font-bold text-slate-800 text-sm">Ruas Cadastradas</h3>
-                </div>
-                <div class="flex gap-2 mb-3">
-                    <input type="text" id="sys-nova-rua" placeholder="Nome da nova rua..." class="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:border-blue-400">
-                    <button onclick="adicionarRua()" class="bg-slate-800 text-white px-3 py-2 rounded-lg text-sm font-bold"><i class="fa-solid fa-plus"></i></button>
-                </div>
-                <div id="lista-ruas" class="space-y-2 max-h-56 overflow-y-auto pr-1 hide-scrollbar">
-                    <div class="text-center py-4 text-xs text-slate-400">Carregando vias...</div>
-                </div>
-            </div>
-
-        </main>
-
-        <main id="aba-relatorios" class="flex-grow overflow-y-auto p-4 pb-6 scroll-smooth hidden bg-slate-50">
-            
-            <div class="mb-5">
-                <h2 class="text-lg font-black text-slate-800">Relatórios de Atendimento</h2>
-                <p class="text-slate-500 text-[10px] uppercase font-bold tracking-wider mt-0.5">Desempenho das Secretarias</p>
-            </div>
-
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 mb-4 relative overflow-hidden">
-                <div class="absolute left-0 top-0 bottom-0 w-1 bg-amber-500"></div>
-
-                <div class="flex items-center gap-2 mb-3 border-b border-slate-50 pb-3">
-                    <div class="w-8 h-8 rounded-md bg-amber-50 text-amber-600 flex items-center justify-center">
-                        <i class="fa-solid fa-helmet-safety"></i>
-                    </div>
-                    <h3 class="font-black text-slate-800 text-sm uppercase tracking-tight">Sec. de Obras</h3>
-                </div>
-
-                <div class="grid grid-cols-4 gap-2 mb-4">
-                    <div class="bg-slate-50 py-2 rounded-lg border border-slate-100 text-center">
-                        <p id="rel-obras-total" class="text-lg font-black text-slate-800">0</p>
-                        <p class="text-[8px] text-slate-500 font-bold uppercase mt-0.5">Total</p>
-                    </div>
-                    <div class="bg-slate-50 py-2 rounded-lg border border-slate-100 text-center">
-                        <p id="rel-obras-pendentes" class="text-lg font-black text-slate-600">0</p>
-                        <p class="text-[8px] text-slate-500 font-bold uppercase mt-0.5">Pendente</p>
-                    </div>
-                    <div class="bg-blue-50 py-2 rounded-lg border border-blue-100 text-center">
-                        <p id="rel-obras-andamento" class="text-lg font-black text-blue-700">0</p>
-                        <p class="text-[8px] text-blue-600 font-bold uppercase mt-0.5">Andamento</p>
-                    </div>
-                    <div class="bg-green-50 py-2 rounded-lg border border-green-100 text-center">
-                        <p id="rel-obras-concluidos" class="text-lg font-black text-green-700">0</p>
-                        <p class="text-[8px] text-green-600 font-bold uppercase mt-0.5">Concluído</p>
-                    </div>
-                </div>
-
-                <div>
-                    <div class="flex justify-between items-end mb-1">
-                        <span class="text-[10px] font-bold text-slate-500 uppercase">Taxa de Conclusão</span>
-                        <span class="text-xs font-black text-slate-800"><span id="rel-obras-taxa">0</span>%</span>
-                    </div>
-                    <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden flex">
-                        <div id="rel-obras-bar-concluido" class="bg-green-500 h-full transition-all duration-500" style="width: 0%"></div>
-                        <div id="rel-obras-bar-andamento" class="bg-blue-400 h-full transition-all duration-500" style="width: 0%"></div>
-                        <div id="rel-obras-bar-pendente" class="bg-slate-300 h-full transition-all duration-500" style="width: 0%"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 mb-4 relative overflow-hidden opacity-60 grayscale-[50%]">
-                <div class="absolute left-0 top-0 bottom-0 w-1 bg-red-500"></div>
-                <div class="flex items-center gap-2 mb-2 pb-2">
-                    <div class="w-8 h-8 rounded-md bg-red-50 text-red-600 flex items-center justify-center">
-                        <i class="fa-solid fa-heart-pulse"></i>
-                    </div>
-                    <h3 class="font-black text-slate-800 text-sm uppercase tracking-tight">Sec. de Saúde</h3>
-                    <span class="ml-auto text-[8px] bg-slate-200 text-slate-600 px-2 py-0.5 rounded font-bold uppercase">Em Breve</span>
-                </div>
-            </div>
-
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 relative overflow-hidden opacity-60 grayscale-[50%]">
-                <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-500"></div>
-                <div class="flex items-center gap-2 mb-2 pb-2">
-                    <div class="w-8 h-8 rounded-md bg-blue-50 text-blue-600 flex items-center justify-center">
-                        <i class="fa-solid fa-graduation-cap"></i>
-                    </div>
-                    <h3 class="font-black text-slate-800 text-sm uppercase tracking-tight">Sec. Educação</h3>
-                    <span class="ml-auto text-[8px] bg-slate-200 text-slate-600 px-2 py-0.5 rounded font-bold uppercase">Em Breve</span>
-                </div>
-            </div>
-
-        </main>
-
-        <main id="aba-auditoria" class="flex-grow overflow-y-auto p-4 pb-6 scroll-smooth hidden bg-slate-900 text-white">
-            <div class="mb-5">
-                <h2 class="text-lg font-black text-white">Logs do Sistema</h2>
-                <p class="text-blue-400 text-[10px] uppercase font-bold tracking-wider mt-0.5">Auditoria de Segurança</p>
-            </div>
-            
-            <div id="lista-logs" class="space-y-3 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-slate-700 before:to-transparent">
-                <div class="text-center py-10 text-slate-500 text-xs font-mono">Lendo registros de auditoria...</div>
-            </div>
-        </main>
-
-        <div id="modal-acesso" class="absolute inset-0 z-[150] hidden flex-col justify-end">
-            <div id="modal-overlay" class="absolute inset-0 bg-black bg-opacity-0 transition-opacity duration-300" onclick="fecharModal()"></div>
-            
-            <div id="modal-content" class="bg-white rounded-t-3xl max-h-[90vh] overflow-y-auto w-full relative z-10 transform translate-y-full transition-transform duration-300 flex flex-col shadow-[0_-10px_40px_rgba(0,0,0,0.3)] pb-safe">
-                
-                <div class="sticky top-0 bg-white px-5 py-4 border-b border-slate-100 flex justify-between items-center z-20">
-                    <h3 class="font-black text-slate-800 text-lg">Gerenciar Perfil</h3>
-                    <button onclick="fecharModal()" class="w-8 h-8 bg-slate-100 text-slate-600 rounded-full hover:bg-slate-200 flex items-center justify-center transition-colors">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                </div>
-                
-                <div class="p-5 space-y-5">
-                    
-                    <div class="flex items-center gap-4">
-                        <div id="modal-user-avatar" class="w-14 h-14 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center border border-blue-100 shadow-sm shrink-0 text-2xl font-bold">
-                        </div>
-                        <div class="overflow-hidden">
-                            <h4 id="modal-user-nome" class="font-bold text-slate-800 text-base truncate">Nome</h4>
-                            <p id="modal-user-telefone" class="text-xs text-slate-500 truncate mt-0.5 font-medium">Telefone</p>
-                            <span id="modal-user-status" class="inline-block mt-1 px-2 py-0.5 bg-green-100 text-green-700 text-[9px] font-black uppercase rounded">Ativo</span>
-                        </div>
-                    </div>
-
-                    <form onsubmit="salvarNovaPermissao(event)" class="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                        <input type="hidden" id="modal-user-id">
-                        
-                        <label class="block text-xs font-bold text-slate-700 mb-2"><i class="fa-solid fa-key text-blue-500 mr-1"></i> Nível de Acesso no Sistema</label>
-                        <div class="relative mb-3">
-                            <select id="modal-user-acesso" required class="w-full pl-3 pr-10 py-3 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm appearance-none font-bold text-slate-800">
-                                <option value="Cidadão">👤 Cidadão (Padrão)</option>
-                                <option value="Admin - Obras">👷‍♂️ Admin - Secretaria de Obras</option>
-                                <option value="Admin - Saúde">🏥 Admin - Secretaria de Saúde</option>
-                                <option value="Admin - Educação">🎓 Admin - Secretaria de Educação</option>
-                                <option value="Admin - Tributos">📄 Admin - Sec. Tributos/Finanças</option>
-                                <option value="Admin - Transporte">🚌 Admin - Sec. Transporte</option>
-                                <option value="TI">💻 TI / Super Admin</option>
-                            </select>
-                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                <i class="fa-solid fa-chevron-down text-slate-400 text-xs"></i>
-                            </div>
-                        </div>
-                        <button type="submit" id="btn-salvar-acesso" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg shadow-sm hover:bg-blue-700 active:scale-[0.98] transition-all flex justify-center items-center gap-2 text-sm">
-                            Atualizar Nível de Acesso
-                        </button>
-                    </form>
-
-                    <div>
-                        <h4 class="text-xs font-bold text-slate-800 mb-3 border-b border-slate-200 pb-2">Ações de Segurança</h4>
-                        <div class="space-y-2">
-                            <button id="btn-bloquear" onclick="bloquearUsuario()" class="w-full bg-white border border-amber-300 text-amber-600 font-bold py-2.5 rounded-lg hover:bg-amber-50 active:scale-[0.98] transition-all text-xs flex items-center justify-center gap-2">
-                                <i class="fa-solid fa-ban"></i> Suspender Acesso Temporariamente
-                            </button>
-                            
-                            <button onclick="resetarSenha()" class="w-full bg-white border border-slate-300 text-slate-700 font-bold py-2.5 rounded-lg hover:bg-slate-100 active:scale-[0.98] transition-all text-xs flex items-center justify-center gap-2">
-                                <i class="fa-solid fa-unlock-keyhole"></i> Redefinir Senha (123456)
-                            </button>
-                            
-                            <button onclick="excluirUsuario()" class="w-full bg-red-50 border border-red-200 text-red-600 font-bold py-2.5 rounded-lg hover:bg-red-100 active:scale-[0.98] transition-all text-xs flex items-center justify-center gap-2 mt-4">
-                                <i class="fa-solid fa-trash-can"></i> Excluir Cadastro Definitivamente
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, query, orderBy, onSnapshot, getDoc, setDoc, arrayUnion, arrayRemove, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-        async function hashSenha(senha) {
-            const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(senha));
-            return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2,'0')).join('');
-        }
-
-        function esc(s) {
-            return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-        }
-
-        function confirmar(msg) {
-            return new Promise(resolve => {
-                const modal = document.getElementById('modal-confirm');
-                document.getElementById('confirm-msg').textContent = msg;
-                modal.classList.remove('hidden'); modal.classList.add('flex');
-                document.getElementById('confirm-ok').onclick = () => { modal.classList.add('hidden'); modal.classList.remove('flex'); resolve(true); };
-                document.getElementById('confirm-cancel').onclick = () => { modal.classList.add('hidden'); modal.classList.remove('flex'); resolve(false); };
-            });
-        }
-
-        function pergunta(msg, valorInicial = '') {
-            return new Promise(resolve => {
-                const modal = document.getElementById('modal-prompt');
-                const input = document.getElementById('prompt-input');
-                document.getElementById('prompt-msg').textContent = msg;
-                input.value = valorInicial;
-                modal.classList.remove('hidden'); modal.classList.add('flex');
-                input.focus();
-                document.getElementById('prompt-ok').onclick = () => { modal.classList.add('hidden'); modal.classList.remove('flex'); resolve(input.value || null); };
-                document.getElementById('prompt-cancel').onclick = () => { modal.classList.add('hidden'); modal.classList.remove('flex'); resolve(null); };
-            });
-        }
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyAskgM5cxiR4DI2PXrccBxOvPZzMPDKdCo",
-            authDomain: "gen-lang-client-0963611393.firebaseapp.com",
-            projectId: "gen-lang-client-0963611393",
-            storageBucket: "gen-lang-client-0963611393.firebasestorage.app",
-            messagingSenderId: "158833761867",
-            appId: "1:158833761867:web:f9db6cb6dc6b5785cfb7ce"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        const authRef = doc(db, 'config', 'auth');
-
-        window.fazerLoginTI = async function() {
-            const s = document.getElementById('ti-senha').value;
-            if (!s) return;
-            document.getElementById('ti-login-erro').classList.add('hidden');
-            try {
-                const snap = await getDoc(authRef);
-                let hashEsperado;
-                if (snap.exists() && snap.data().hashTI) {
-                    hashEsperado = snap.data().hashTI;
-                } else {
-                    hashEsperado = await hashSenha('ti2025');
-                    await setDoc(authRef, { hashTI: hashEsperado }, { merge: true });
-                }
-                if (await hashSenha(s) === hashEsperado) {
-                    sessionStorage.setItem('ti_auth', '1');
-                    document.getElementById('tela-login-ti').classList.add('hidden');
-                    document.getElementById('tela-login-ti').classList.remove('flex');
-                } else {
-                    document.getElementById('ti-login-erro').classList.remove('hidden');
-                }
-            } catch(e) {
-                console.error(e);
-                document.getElementById('ti-login-erro').classList.remove('hidden');
-            }
-        };
-
-        document.getElementById('ti-senha').addEventListener('keydown', e => {
-            if (e.key === 'Enter') window.fazerLoginTI();
-        });
-
-        if (sessionStorage.getItem('ti_auth') !== '1') {
-            const loginEl = document.getElementById('tela-login-ti');
-            loginEl.classList.remove('hidden');
-            loginEl.classList.add('flex');
-        }
-
-        window.todosUsuarios = [];
-        window.ruasAtuais = [];
-        window.adminLogado = localStorage.getItem('usuarioDoresopolis') || "Super Admin";
-
-        window.mostrarAviso = function(mensagem, tipo = 'sucesso') {
-            const toast = document.getElementById('toast-aviso');
-            const icone = document.getElementById('toast-icone');
-            document.getElementById('toast-mensagem').innerText = mensagem;
-
-            if(tipo === 'sucesso') {
-                toast.classList.replace('bg-red-600', 'bg-green-600');
-                icone.className = 'fa-solid fa-circle-check text-lg';
-            } else {
-                toast.classList.replace('bg-green-600', 'bg-red-600');
-                icone.className = 'fa-solid fa-circle-exclamation text-lg';
-            }
-
-            toast.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-[-20px]');
-            toast.classList.add('opacity-100', 'translate-y-0');
-
-            setTimeout(() => {
-                toast.classList.remove('opacity-100', 'translate-y-0');
-                toast.classList.add('opacity-0', 'pointer-events-none', 'translate-y-[-20px]');
-            }, 3500);
-        };
-
-        window.mudarAbaTi = function(aba) {
-            ['usuarios', 'sistema', 'relatorios', 'auditoria'].forEach(nome => {
-                const docAba = document.getElementById(`aba-${nome}`);
-                const docBtn = document.getElementById(`aba-btn-${nome}`);
-                if(nome === aba) {
-                    docAba.classList.replace('hidden', 'block');
-                    docBtn.classList.add('text-blue-400', 'border-blue-500');
-                    docBtn.classList.remove('text-slate-400', 'border-transparent');
-                } else {
-                    docAba.classList.replace('block', 'hidden');
-                    docBtn.classList.remove('text-blue-400', 'border-blue-500');
-                    docBtn.classList.add('text-slate-400', 'border-transparent');
-                }
-            });
-        };
-
-        window.fazerLogout = function() {
-            if(confirm("Deseja fechar o Painel TI?")) {
-                window.location.href = "index.html";
-            }
-        };
-
-        window.registrarLog = async function(acaoDetalhada) {
-            try {
-                await addDoc(collection(db, "logs"), {
-                    admin: window.adminLogado,
-                    acao: acaoDetalhada,
-                    data: new Date().toISOString()
-                });
-            } catch(e) { console.error("Erro ao gerar log", e); }
-        };
-
-        const qLogs = query(collection(db, "logs"), orderBy("data", "desc"), limit(20));
-        onSnapshot(qLogs, (snapshot) => {
-            const container = document.getElementById("lista-logs");
-            if (snapshot.empty) {
-                container.innerHTML = `<div class="text-center py-6 text-slate-500 text-xs font-mono">Sem registros de auditoria.</div>`;
-                return;
-            }
-            container.innerHTML = "";
-            snapshot.forEach((docSnap) => {
-                const data = docSnap.data();
-                const d = new Date(data.data);
-                const stringData = `${d.toLocaleDateString('pt-BR')} ${d.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'})}`;
-                
-                container.innerHTML += `
-                    <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
-                        <div class="flex items-center justify-center w-6 h-6 rounded-full border border-white bg-slate-800 text-blue-400 shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10 ml-2">
-                            <i class="fa-solid fa-code-commit text-[10px]"></i>
-                        </div>
-                        <div class="w-[calc(100%-3rem)] bg-slate-800 p-3 rounded-xl border border-slate-700 shadow-sm ml-2">
-                            <div class="flex items-center justify-between mb-1">
-                                <span class="font-bold text-blue-400 text-xs">${esc(data.admin)}</span>
-                                <time class="font-mono text-[9px] text-slate-500">${stringData}</time>
-                            </div>
-                            <div class="text-slate-300 text-[11px] leading-snug">${esc(data.acao)}</div>
-                        </div>
-                    </div>
-                `;
-            });
-        });
-
-        // --- SISTEMA DE RELATÓRIOS (NOVO) ---
-        const solicitacoesObrasRef = collection(db, "solicitacoes_obras");
-        onSnapshot(solicitacoesObrasRef, (snapshot) => {
-            let total = 0, concluidos = 0, andamento = 0, pendentes = 0;
-            
-            snapshot.forEach(doc => {
-                total++;
-                const status = doc.data().status;
-                if(status === 'CONCLUÍDO') concluidos++;
-                else if(status === 'EM ANDAMENTO') andamento++;
-                else pendentes++;
-            });
-
-            document.getElementById('rel-obras-total').innerText = total;
-            document.getElementById('rel-obras-concluidos').innerText = concluidos;
-            document.getElementById('rel-obras-andamento').innerText = andamento;
-            document.getElementById('rel-obras-pendentes').innerText = pendentes;
-
-            let taxa = total > 0 ? Math.round((concluidos / total) * 100) : 0;
-            document.getElementById('rel-obras-taxa').innerText = taxa;
-
-            if(total > 0) {
-                // Preenche as barras baseadas na porcentagem de cada status
-                document.getElementById('rel-obras-bar-concluido').style.width = (concluidos/total*100) + '%';
-                document.getElementById('rel-obras-bar-andamento').style.width = (andamento/total*100) + '%';
-                document.getElementById('rel-obras-bar-pendente').style.width = (pendentes/total*100) + '%';
-            } else {
-                document.getElementById('rel-obras-bar-concluido').style.width = '0%';
-                document.getElementById('rel-obras-bar-andamento').style.width = '0%';
-                document.getElementById('rel-obras-bar-pendente').style.width = '100%';
-            }
-        });
-
-        const usuariosRef = collection(db, "usuarios");
-        const qUsuarios = query(usuariosRef, orderBy("nomeCompleto", "asc"));
-
-        onSnapshot(qUsuarios, (snapshot) => {
-            window.todosUsuarios = []; 
-            let totalAdmins = 0;
-
-            snapshot.forEach((docSnap) => {
-                const data = docSnap.data();
-                const id = docSnap.id;
-                const tipoAcesso = data.tipoAcesso || 'Cidadão';
-                const bloqueado = data.bloqueado || false;
-                
-                if (tipoAcesso !== 'Cidadão') totalAdmins++;
-
-                window.todosUsuarios.push({
-                    id: id,
-                    nome: data.nomeCompleto || 'Sem Nome',
-                    telefone: data.telefone || 'Sem Telefone',
-                    acesso: tipoAcesso,
-                    bloqueado: bloqueado
-                });
-            });
-
-            document.getElementById("stat-total").innerText = window.todosUsuarios.length;
-            renderizarLista(window.todosUsuarios);
-        });
-
-        window.renderizarLista = function(arrayUsuarios) {
-            const container = document.getElementById("lista-usuarios");
-            container.innerHTML = "";
-
-            if (arrayUsuarios.length === 0) {
-                container.innerHTML = `<div class="text-center py-6 text-slate-500 text-xs">Nenhum resultado.</div>`;
-                return;
-            }
-
-            arrayUsuarios.forEach(user => {
-                let badgeAcesso = '';
-                if (user.bloqueado) {
-                    badgeAcesso = `<span class="bg-red-100 text-red-700 border border-red-200 px-2 py-0.5 rounded text-[9px] font-black uppercase"><i class="fa-solid fa-ban mr-1"></i> Bloqueado</span>`;
-                } else if (user.acesso === 'Cidadão') {
-                    badgeAcesso = `<span class="bg-slate-100 text-slate-600 border border-slate-200 px-2 py-0.5 rounded text-[9px] font-bold uppercase"><i class="fa-regular fa-user mr-1"></i> Cidadão</span>`;
-                } else if (user.acesso === 'TI') {
-                    badgeAcesso = `<span class="bg-blue-100 text-blue-700 border border-blue-200 px-2 py-0.5 rounded text-[9px] font-black uppercase"><i class="fa-solid fa-code mr-1"></i> TI</span>`;
-                } else {
-                    badgeAcesso = `<span class="bg-amber-100 text-amber-700 border border-amber-200 px-2 py-0.5 rounded text-[9px] font-black uppercase"><i class="fa-solid fa-user-tie mr-1"></i> ${user.acesso}</span>`;
-                }
-
-                const iconeLado = user.bloqueado ? 'text-red-300' : 'text-slate-300';
-
-                const card = `
-                    <div onclick="abrirModal('${user.id}')" class="bg-white rounded-xl shadow-sm border ${user.bloqueado ? 'border-red-200' : 'border-slate-200'} p-3 flex justify-between items-center hover:border-blue-300 cursor-pointer transition-all active:scale-[0.99]">
-                        <div class="flex flex-col w-5/6 pr-2">
-                            <h4 class="font-bold ${user.bloqueado ? 'text-red-700 line-through' : 'text-slate-800'} text-sm truncate">${esc(user.nome)}</h4>
-                            <p class="text-[11px] text-slate-500 mt-0.5 mb-1.5 font-medium tracking-wide"><i class="fa-solid fa-phone text-slate-400 text-[9px] mr-1"></i> ${esc(user.telefone)}</p>
-                            <div>${badgeAcesso}</div>
-                        </div>
-                        <i class="fa-solid fa-chevron-right ${iconeLado} text-sm"></i>
-                    </div>
-                `;
-                container.innerHTML += card;
-            });
-        };
-
-        window.filtrarUsuarios = function() {
-            const termo = document.getElementById('input-pesquisa').value.toLowerCase();
-            const usuariosFiltrados = window.todosUsuarios.filter(user => 
-                user.nome.toLowerCase().includes(termo) || 
-                user.telefone.includes(termo)
-            );
-            renderizarLista(usuariosFiltrados);
-        };
-
-        let userSendoEditado = null;
-
-        window.abrirModal = function(id) {
-            const user = window.todosUsuarios.find(u => u.id === id);
-            if(!user) return;
-            userSendoEditado = user;
-
-            document.getElementById('modal-user-id').value = user.id;
-            document.getElementById('modal-user-nome').innerText = user.nome;
-            document.getElementById('modal-user-telefone').innerText = user.telefone;
-            document.getElementById('modal-user-acesso').value = user.acesso;
-            
-            document.getElementById('modal-user-avatar').innerText = user.nome.charAt(0).toUpperCase();
-
-            const statusSpan = document.getElementById('modal-user-status');
-            const btnBloquear = document.getElementById('btn-bloquear');
-            if(user.bloqueado) {
-                statusSpan.className = "inline-block mt-1 px-2 py-0.5 bg-red-100 text-red-700 text-[9px] font-black uppercase rounded";
-                statusSpan.innerText = "Conta Suspensa";
-                btnBloquear.innerHTML = '<i class="fa-solid fa-unlock"></i> Desbloquear Acesso';
-                btnBloquear.className = "w-full bg-green-50 border border-green-300 text-green-700 font-bold py-2.5 rounded-lg hover:bg-green-100 active:scale-[0.98] transition-all text-xs flex items-center justify-center gap-2";
-            } else {
-                statusSpan.className = "inline-block mt-1 px-2 py-0.5 bg-green-100 text-green-700 text-[9px] font-black uppercase rounded";
-                statusSpan.innerText = "Acesso Liberado";
-                btnBloquear.innerHTML = '<i class="fa-solid fa-ban"></i> Suspender Acesso Temporariamente';
-                btnBloquear.className = "w-full bg-white border border-amber-300 text-amber-600 font-bold py-2.5 rounded-lg hover:bg-amber-50 active:scale-[0.98] transition-all text-xs flex items-center justify-center gap-2";
-            }
-
-            const modal = document.getElementById('modal-acesso');
-            const overlay = document.getElementById('modal-overlay');
-            const content = document.getElementById('modal-content');
-            
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            void modal.offsetWidth;
-            overlay.classList.replace('bg-opacity-0', 'bg-opacity-60');
-            content.classList.remove('translate-y-full');
-        };
-
-        window.fecharModal = function() {
-            const modal = document.getElementById('modal-acesso');
-            const overlay = document.getElementById('modal-overlay');
-            const content = document.getElementById('modal-content');
-
-            overlay.classList.replace('bg-opacity-60', 'bg-opacity-0');
-            content.classList.add('translate-y-full');
-
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-                userSendoEditado = null;
-            }, 300); 
-        };
-
-        window.salvarNovaPermissao = async function(event) {
-            event.preventDefault();
-            const btn = document.getElementById('btn-salvar-acesso');
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Atualizando...';
-
-            const idUser = document.getElementById('modal-user-id').value;
-            const novoAcesso = document.getElementById('modal-user-acesso').value;
-
-            try {
-                await updateDoc(doc(db, "usuarios", idUser), { tipoAcesso: novoAcesso });
-                registrarLog(`Alterou permissão de '${userSendoEditado.nome}' para '${novoAcesso}'`);
-                mostrarAviso("Permissão atualizada com sucesso!");
-                fecharModal();
-            } catch (e) {
-                mostrarAviso("Erro ao atualizar.", "erro");
-            } finally {
-                btn.innerHTML = 'Atualizar Nível de Acesso';
-            }
-        };
-
-        window.bloquearUsuario = async function() {
-            if(!userSendoEditado) return;
-            const novoEstado = !userSendoEditado.bloqueado;
-            const verbo = novoEstado ? "suspender" : "liberar";
-            if(await confirmar(`Deseja ${verbo} o acesso de ${userSendoEditado.nome}?`)) {
-                try {
-                    await updateDoc(doc(db, "usuarios", userSendoEditado.id), { bloqueado: novoEstado });
-                    registrarLog(`Acesso de '${userSendoEditado.nome}' foi ${novoEstado ? 'suspenso' : 'liberado'}`);
-                    mostrarAviso(`Conta ${novoEstado ? 'suspensa' : 'liberada'} com sucesso.`);
-                    fecharModal();
-                } catch(e) { mostrarAviso("Erro ao alterar status", "erro"); }
-            }
-        };
-
-        window.resetarSenha = async function() {
-            if(!userSendoEditado) return;
-            if(await confirmar(`Redefinir a senha de ${userSendoEditado.nome} para '123456'?`)) {
-                try {
-                    const hashTemp = await hashSenha('123456');
-                    await updateDoc(doc(db, "usuarios", userSendoEditado.id), { senha: hashTemp });
-                    registrarLog(`Senha provisória gerada para '${userSendoEditado.nome}'`);
-                    mostrarAviso("Senha redefinida para 123456.");
-                    fecharModal();
-                } catch(e) { mostrarAviso("Erro ao redefinir", "erro"); }
-            }
-        };
-
-        window.excluirUsuario = async function() {
-            if(!userSendoEditado) return;
-            const digitado = await pergunta(`Ação irreversível. Digite EXCLUIR para apagar ${userSendoEditado.nome}:`);
-            if(digitado === 'EXCLUIR') {
-                try {
-                    await deleteDoc(doc(db, "usuarios", userSendoEditado.id));
-                    registrarLog(`Usuário '${userSendoEditado.nome}' foi excluído do sistema.`);
-                    mostrarAviso("Conta excluída definitivamente.");
-                    fecharModal();
-                } catch(e) { mostrarAviso("Erro ao excluir", "erro"); }
-            } else if (digitado !== null) {
-                mostrarAviso("Palavra de segurança incorreta. Ação cancelada.", "erro");
-            }
-        };
-
-        const configRef = doc(db, "config", "app");
-        const alertaRef = doc(db, "config", "alerta");
-        
-        const ruasIniciais = [
-            "Avenida Gonçalves de Melo", "Praça da Matriz", "Praça Tiradentes",
-            "Rua Alberto Mourão", "Rua Bela Vista", "Rua Farnésio Paim Pamplona",
-            "Rua Higino Pinto Vidal", "Rua Joaquim Murtinho", "Rua João Batista Veloso",
-            "Rua João Lourenço Gomide", "Rua Padre José Venâncio", "Rua Pedro da Costa Lopes",
-            "Rua Piumhi", "Travessa Afonso Goulart", "Travessa Doresópolis"
-        ];
-
-        getDoc(configRef).then(async snap => {
-            if(!snap.exists()) {
-                await setDoc(configRef, { manutencao: false, ruas: ruasIniciais });
-            }
-        });
-
-        onSnapshot(configRef, (docSnap) => {
-            if(docSnap.exists()) {
-                const data = docSnap.data();
-                
-                document.getElementById('toggle-manutencao').checked = data.manutencao || false;
-                
-                window.ruasAtuais = data.ruas || [];
-                const listaRuas = document.getElementById('lista-ruas');
-                
-                if(window.ruasAtuais.length === 0) {
-                    listaRuas.innerHTML = `<div class="text-center py-2 text-xs text-slate-400 border border-dashed border-slate-200 rounded">Nenhuma via cadastrada.</div>`;
-                } else {
-                    listaRuas.innerHTML = [...window.ruasAtuais].sort().map((rua, idx) => {
-                        return `
-                        <div class="flex justify-between items-center bg-white border border-slate-200 p-2 rounded text-xs font-medium text-slate-700">
-                            <span class="truncate pr-2">${esc(rua)}</span>
-                            <div class="shrink-0 flex gap-2">
-                                <button onclick="editarRua(${idx})" class="text-blue-500 hover:text-blue-700" title="Editar"><i class="fa-solid fa-pen"></i></button>
-                                <button onclick="removerRua(${idx})" class="text-red-400 hover:text-red-600" title="Excluir"><i class="fa-solid fa-trash"></i></button>
-                            </div>
-                        </div>
-                    `}).join('');
-                }
-            }
-        });
-
-        onSnapshot(alertaRef, (docSnap) => {
-            if(docSnap.exists()) {
-                document.getElementById('sys-alerta-titulo').value = docSnap.data().titulo || '';
-                document.getElementById('sys-alerta-texto').value = docSnap.data().mensagem || '';
-            }
-        });
-
-        window.salvarConfigApp = async function(event) {
-            const manutencaoAtiva = event.target.checked;
-            try {
-                await updateDoc(configRef, { manutencao: manutencaoAtiva });
-                registrarLog(`Modo de manutenção do aplicativo foi ${manutencaoAtiva ? 'ATIVADO' : 'DESATIVADO'}.`);
-            } catch(e) { console.error("Erro ao alternar manutenção", e); }
-        };
-
-        window.salvarAlertaGlobal = async function(ativo) {
-            const titulo = document.getElementById('sys-alerta-titulo').value;
-            const mensagem = document.getElementById('sys-alerta-texto').value;
-            try {
-                await setDoc(alertaRef, { ativo, titulo, mensagem });
-                if(ativo) {
-                    mostrarAviso("Alerta global enviado para todos!");
-                    registrarLog(`Enviou um alerta global Push: ${titulo}`);
-                } else {
-                    mostrarAviso("Alerta recolhido da tela inicial.");
-                    registrarLog("Recolheu o alerta global da tela.");
-                }
-            } catch(e) { mostrarAviso("Erro ao atualizar alerta", "erro"); }
-        };
-
-        window.adicionarRua = async function() {
-            const input = document.getElementById('sys-nova-rua');
-            const nomeRua = input.value.trim();
-            if(nomeRua.length < 3) return mostrarAviso("Digite um nome de rua válido.", "erro");
-            try {
-                await updateDoc(configRef, { ruas: arrayUnion(nomeRua) });
-                input.value = '';
-                registrarLog(`Adicionou a rua '${nomeRua}' no sistema.`);
-                mostrarAviso("Rua adicionada!");
-            } catch(e) { mostrarAviso("Erro ao adicionar via.", "erro"); }
-        };
-
-        window.editarRua = async function(idx) {
-            const ruasOrdenadas = [...window.ruasAtuais].sort();
-            const nomeAntigo = ruasOrdenadas[idx];
-            if (!nomeAntigo) return;
-            const novoNome = await pergunta("Editar nome da rua:", nomeAntigo);
-            if(novoNome && novoNome.trim() !== "" && novoNome.trim() !== nomeAntigo) {
-                try {
-                    const novoArray = window.ruasAtuais.filter(r => r !== nomeAntigo);
-                    novoArray.push(novoNome.trim());
-                    await updateDoc(configRef, { ruas: novoArray });
-                    registrarLog(`Editou a rua '${nomeAntigo}' para '${novoNome.trim()}'.`);
-                    mostrarAviso("Rua editada com sucesso!");
-                } catch(e) { mostrarAviso("Erro ao editar via.", "erro"); }
-            }
-        };
-
-        window.removerRua = async function(idx) {
-            const ruasOrdenadas = [...window.ruasAtuais].sort();
-            const nomeRua = ruasOrdenadas[idx];
-            if (!nomeRua) return;
-            if(await confirmar(`Excluir a via "${nomeRua}" do cadastro?`)) {
-                try {
-                    await updateDoc(configRef, { ruas: arrayRemove(nomeRua) });
-                    registrarLog(`Removeu a rua '${nomeRua}' do sistema.`);
-                    mostrarAviso("Via removida.");
-                } catch(e) { mostrarAviso("Erro ao remover via.", "erro"); }
-            }
-        };
-
-    </script>
+      </div>
+      <div class="flex gap-2 mt-3">
+        <button onclick="abrirModalEditar('${c.uid}')"
+          class="flex-1 text-xs font-bold text-blue-700 border border-blue-100 bg-blue-50 py-2 rounded-xl active:scale-[0.97] transition-all">
+          <i class="fa-solid fa-pen mr-1"></i> Editar
+        </button>
+        <button onclick="abrirResetSenha('${c.uid}')"
+          class="flex-1 text-xs font-bold text-amber-600 border border-amber-100 bg-amber-50 py-2 rounded-xl active:scale-[0.97] transition-all">
+          <i class="fa-solid fa-key mr-1"></i> Senha
+        </button>
+        <button onclick="toggleAtivo('${c.uid}')"
+          class="flex-1 text-xs font-bold ${c.ativo!==false?'text-red-500 border-red-100 bg-red-50':'text-green-600 border-green-100 bg-green-50'} border py-2 rounded-xl active:scale-[0.97] transition-all">
+          <i class="fa-solid ${c.ativo!==false?'fa-ban':'fa-circle-check'} mr-1"></i>
+          ${c.ativo!==false?'Bloquear':'Ativar'}
+        </button>
+      </div>
+    </div>`).join('');
+}
+
+window.abrirModalNovaConta = () => {
+  contaEditando = null;
+  document.getElementById('modal-titulo').textContent = 'Nova Conta';
+  document.getElementById('conta-uid').value = '';
+  document.getElementById('c-nome').value = '';
+  document.getElementById('c-email').value = '';
+  document.getElementById('c-email').readOnly = false;
+  document.getElementById('c-senha').value = '';
+  document.getElementById('c-secretaria').value = '';
+  document.getElementById('label-senha-edit').classList.add('hidden');
+  document.getElementById('modal-erro').classList.add('hidden');
+  document.getElementById('modal-btn-txt').classList.remove('hidden');
+  document.getElementById('modal-btn-load').classList.add('hidden');
+  document.getElementById('modal-conta').classList.remove('hidden');
+};
+
+window.abrirModalEditar = (uid) => {
+  contaEditando = contasCache.find(c => c.uid === uid);
+  if (!contaEditando) return;
+  document.getElementById('modal-titulo').textContent = 'Editar Conta';
+  document.getElementById('conta-uid').value = uid;
+  document.getElementById('c-nome').value = contaEditando.nome||'';
+  document.getElementById('c-email').value = contaEditando.email||'';
+  document.getElementById('c-email').readOnly = true;
+  document.getElementById('c-senha').value = '';
+  document.getElementById('c-secretaria').value = contaEditando.secretaria||'';
+  document.getElementById('label-senha-edit').classList.remove('hidden');
+  document.getElementById('modal-erro').classList.add('hidden');
+  document.getElementById('modal-btn-txt').classList.remove('hidden');
+  document.getElementById('modal-btn-load').classList.add('hidden');
+  document.getElementById('modal-conta').classList.remove('hidden');
+};
+
+window.salvarConta = async () => {
+  const nome       = document.getElementById('c-nome').value.trim();
+  const email      = document.getElementById('c-email').value.trim();
+  const senha      = document.getElementById('c-senha').value;
+  const secretaria = document.getElementById('c-secretaria').value;
+  if (!nome || !secretaria) { mostrarErroModal('Preencha nome e secretaria.'); return; }
+
+  document.getElementById('modal-btn-txt').classList.add('hidden');
+  document.getElementById('modal-btn-load').classList.remove('hidden');
+  document.getElementById('modal-erro').classList.add('hidden');
+
+  try {
+    let uid = document.getElementById('conta-uid').value;
+
+    if (!uid) {
+      if (!email || senha.length < 6) { mostrarErroModal('E-mail e senha (mín. 6 caracteres) são obrigatórios.'); resetBtnModal(); return; }
+      const res  = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${API_KEY}`,
+        { method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ email, password: senha, returnSecureToken: false }) });
+      const data = await res.json();
+      if (data.error) { mostrarErroModal(traduzirErro(data.error.message)); resetBtnModal(); return; }
+      uid = data.localId;
+    }
+
+    await setDoc(doc(db, 'contas_secretaria', uid), {
+      nome, email: email || contaEditando?.email || '', secretaria, ativo: true,
+      dataCriacao: serverTimestamp()
+    });
+
+    document.getElementById('modal-conta').classList.add('hidden');
+    await carregarContas();
+  } catch(e) {
+    mostrarErroModal('Erro ao salvar. Tente novamente.'); resetBtnModal();
+  }
+};
+
+window.abrirResetSenha = (uid) => {
+  resetUID = uid;
+  const c = contasCache.find(x => x.uid === uid);
+  document.getElementById('reset-nome').textContent = c?.nome || '';
+  document.getElementById('reset-nova-senha').value = '';
+  document.getElementById('reset-erro').classList.add('hidden');
+  document.getElementById('reset-btn-txt').classList.remove('hidden');
+  document.getElementById('reset-btn-load').classList.add('hidden');
+  document.getElementById('modal-senha').classList.remove('hidden');
+};
+
+window.confirmarResetSenha = async () => {
+  const nova = document.getElementById('reset-nova-senha').value;
+  if (nova.length < 6) {
+    document.getElementById('reset-erro').textContent = 'Senha mínima de 6 caracteres.';
+    document.getElementById('reset-erro').classList.remove('hidden'); return;
+  }
+  document.getElementById('reset-btn-txt').classList.add('hidden');
+  document.getElementById('reset-btn-load').classList.remove('hidden');
+  try {
+    const res  = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:update?key=${API_KEY}`,
+      { method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ localId: resetUID, password: nova, returnSecureToken: false }) });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+    document.getElementById('modal-senha').classList.add('hidden');
+  } catch(e) {
+    document.getElementById('reset-erro').textContent = 'Erro ao redefinir. Tente novamente.';
+    document.getElementById('reset-erro').classList.remove('hidden');
+    document.getElementById('reset-btn-txt').classList.remove('hidden');
+    document.getElementById('reset-btn-load').classList.add('hidden');
+  }
+};
+
+window.toggleAtivo = async (uid) => {
+  const c = contasCache.find(x => x.uid === uid);
+  if (!c) return;
+  c.ativo = c.ativo === false ? true : false;
+  await updateDoc(doc(db, 'contas_secretaria', uid), { ativo: c.ativo });
+  renderContas();
+};
+
+function mostrarErroModal(msg) {
+  document.getElementById('modal-erro').textContent = msg;
+  document.getElementById('modal-erro').classList.remove('hidden');
+}
+function resetBtnModal() {
+  document.getElementById('modal-btn-txt').classList.remove('hidden');
+  document.getElementById('modal-btn-load').classList.add('hidden');
+}
+function traduzirErro(code) {
+  return { 'EMAIL_EXISTS':'E-mail já cadastrado.', 'INVALID_EMAIL':'E-mail inválido.',
+    'WEAK_PASSWORD : Password should be at least 6 characters':'Senha fraca (mín. 6 caracteres).' }[code] || code;
+}
+</script>
 </body>
 </html>
