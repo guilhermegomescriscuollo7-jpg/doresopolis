@@ -4,56 +4,50 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#eab308">
-<title>Inscrição Transporte Escolar - App Doresópolis</title>
+<meta name="theme-color" content="#ea580c">
+<title>Inscrição Transporte Trabalhador - App Doresópolis</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <script>tailwind.config={theme:{extend:{colors:{doresopolis:{green:'#0b5c3b'}}}}}</script>
-<style>
-  input,select,textarea{outline:none;}
-  input:focus,select:focus,textarea:focus{box-shadow:0 0 0 2px #eab308;}
-</style>
+<style>input,select,textarea{outline:none;}input:focus,select:focus,textarea:focus{box-shadow:0 0 0 2px #ea580c;}</style>
 </head>
 <body class="bg-gray-200 font-sans text-gray-800 flex justify-center items-center min-h-screen">
 <div class="bg-gray-50 w-full max-w-md h-[100dvh] flex flex-col shadow-2xl overflow-hidden sm:rounded-xl sm:h-[95vh] sm:border sm:border-gray-300">
 
   <header class="bg-white shadow-sm z-10 flex-shrink-0">
-    <div class="bg-yellow-400 h-1.5 w-full"></div>
+    <div class="bg-orange-500 h-1.5 w-full"></div>
     <div class="px-4 py-3 flex items-center gap-3">
       <a href="transporte-inscricoes.html" class="w-9 h-9 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center shrink-0">
         <i class="fa-solid fa-arrow-left text-sm"></i>
       </a>
       <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-full bg-yellow-50 text-yellow-500 flex items-center justify-center shrink-0">
-          <i class="fa-solid fa-bus-school"></i>
+        <div class="w-9 h-9 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center shrink-0">
+          <i class="fa-solid fa-helmet-safety"></i>
         </div>
         <div>
-          <p class="text-[9px] tracking-widest text-gray-400 uppercase font-semibold leading-none">Transporte Escolar · 2026</p>
+          <p class="text-[9px] tracking-widest text-gray-400 uppercase font-semibold leading-none">Transporte Trabalhador · 2026</p>
           <h1 class="text-base font-black text-gray-800 uppercase tracking-tight leading-none">Inscrição</h1>
         </div>
       </div>
     </div>
   </header>
 
-  <!-- Carregando auth -->
   <div id="estado-carregando" class="flex-grow flex flex-col items-center justify-center gap-3">
-    <div class="w-10 h-10 border-4 border-yellow-200 border-t-yellow-400 rounded-full animate-spin"></div>
+    <div class="w-10 h-10 border-4 border-orange-200 border-t-orange-500 rounded-full animate-spin"></div>
     <p class="text-sm text-gray-400">Verificando acesso...</p>
   </div>
 
-  <!-- Não logado -->
   <div id="estado-nao-logado" class="hidden flex-grow flex flex-col items-center justify-center px-8 text-center">
-    <div class="w-20 h-20 rounded-full bg-yellow-50 border-2 border-yellow-100 flex items-center justify-center mb-5">
-      <i class="fa-solid fa-lock text-3xl text-yellow-300"></i>
+    <div class="w-20 h-20 rounded-full bg-orange-50 border-2 border-orange-100 flex items-center justify-center mb-5">
+      <i class="fa-solid fa-lock text-3xl text-orange-300"></i>
     </div>
     <h2 class="text-xl font-black text-gray-800 mb-2">Login Necessário</h2>
-    <p class="text-sm text-gray-500 leading-relaxed mb-6">Faça login para realizar sua inscrição no transporte escolar.</p>
-    <a href="index.html" class="flex items-center gap-2 bg-yellow-400 text-yellow-900 font-bold px-6 py-3 rounded-xl shadow-md active:scale-[0.98] transition-all text-sm">
+    <p class="text-sm text-gray-500 leading-relaxed mb-6">Faça login para realizar sua inscrição no transporte do trabalhador.</p>
+    <a href="index.html" class="flex items-center gap-2 bg-orange-500 text-white font-bold px-6 py-3 rounded-xl shadow-md active:scale-[0.98] transition-all text-sm">
       <i class="fa-solid fa-right-to-bracket"></i> Ir para o Login
     </a>
   </div>
 
-  <!-- Já inscrito -->
   <div id="estado-ja-inscrito" class="hidden flex-grow flex flex-col items-center justify-center px-8 text-center">
     <div class="w-20 h-20 rounded-full bg-green-50 border-2 border-green-100 flex items-center justify-center mb-5">
       <i class="fa-solid fa-circle-check text-3xl text-green-500"></i>
@@ -65,19 +59,24 @@
     </a>
   </div>
 
-  <!-- Formulário -->
   <main id="estado-form" class="hidden flex-grow overflow-y-auto px-4 py-4">
 
-    <div class="bg-yellow-400 rounded-2xl p-4 mb-4 flex items-start gap-3">
-      <i class="fa-solid fa-circle-info text-yellow-800 text-sm mt-0.5 shrink-0"></i>
-      <p class="text-[11px] text-yellow-900 leading-relaxed">Preencha os dados abaixo. Após análise da Secretaria de Transporte, sua carteirinha digital será liberada.</p>
+    <div class="bg-orange-500 rounded-2xl p-4 mb-4 flex items-start gap-3">
+      <i class="fa-solid fa-circle-info text-white text-sm mt-0.5 shrink-0"></i>
+      <p class="text-[11px] text-white leading-relaxed">Preencha os dados abaixo. Após análise da Secretaria de Transporte, sua carteirinha digital será liberada.</p>
     </div>
 
     <form id="form-inscricao" class="space-y-3">
 
       <div>
-        <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Nome completo do aluno *</label>
-        <input id="f-nome" type="text" placeholder="Nome do aluno" required
+        <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Nome completo *</label>
+        <input id="f-nome" type="text" placeholder="Seu nome completo" required
+          class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-300">
+      </div>
+
+      <div>
+        <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">CPF *</label>
+        <input id="f-cpf" type="text" placeholder="000.000.000-00" required maxlength="14"
           class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-300">
       </div>
 
@@ -88,38 +87,25 @@
       </div>
 
       <div>
-        <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Escola *</label>
-        <input id="f-escola" type="text" placeholder="Nome da escola" required
-          class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-300">
-      </div>
-
-      <div>
-        <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Série / Turma *</label>
-        <input id="f-serie" type="text" placeholder="Ex: 5º ano A" required
-          class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-300">
-      </div>
-
-      <div>
-        <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Turno *</label>
-        <select id="f-turno" required class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800">
-          <option value="">Selecione...</option>
-          <option value="Manhã">Manhã</option>
-          <option value="Tarde">Tarde</option>
-          <option value="Noite">Noite</option>
-          <option value="Integral">Integral</option>
-        </select>
-      </div>
-
-      <div>
         <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Endereço / Ponto de embarque *</label>
         <input id="f-endereco" type="text" placeholder="Rua, número, bairro" required
           class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-300">
       </div>
 
       <div>
-        <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Nome do responsável *</label>
-        <input id="f-responsavel" type="text" placeholder="Nome completo do responsável" required
+        <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Local de trabalho / Destino *</label>
+        <input id="f-trabalho" type="text" placeholder="Empresa ou local de destino" required
           class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-300">
+      </div>
+
+      <div>
+        <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Horário necessário *</label>
+        <select id="f-turno" required class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800">
+          <option value="">Selecione o turno...</option>
+          <option value="Manhã (saída ~05h30)">Manhã (saída ~05h30)</option>
+          <option value="Tarde (saída ~11h30)">Tarde (saída ~11h30)</option>
+          <option value="Noite (saída ~16h00)">Noite (saída ~16h00)</option>
+        </select>
       </div>
 
       <div>
@@ -130,14 +116,14 @@
 
       <div>
         <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Observações</label>
-        <textarea id="f-obs" rows="2" placeholder="Necessidades especiais, informações adicionais..."
+        <textarea id="f-obs" rows="2" placeholder="Informações adicionais..."
           class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-300 resize-none"></textarea>
       </div>
 
       <div id="msg-erro" class="hidden bg-red-50 border border-red-100 rounded-xl px-4 py-3 text-sm text-red-600"></div>
 
       <button type="submit" id="btn-enviar"
-        class="w-full bg-yellow-400 text-yellow-900 font-black py-4 rounded-2xl shadow-md active:scale-[0.98] transition-all text-sm uppercase tracking-wide mt-2">
+        class="w-full bg-orange-500 text-white font-black py-4 rounded-2xl shadow-md active:scale-[0.98] transition-all text-sm uppercase tracking-wide mt-2">
         <span id="btn-texto"><i class="fa-solid fa-paper-plane mr-2"></i>Enviar Inscrição</span>
         <span id="btn-loading" class="hidden"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Enviando...</span>
       </button>
@@ -166,26 +152,29 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-
 let currentUser = null;
 
 function mostrar(id) {
   ['estado-carregando','estado-nao-logado','estado-ja-inscrito','estado-form']
-    .forEach(s => {
-      const el = document.getElementById(s);
-      el.classList.add('hidden');
-      el.classList.remove('flex');
-    });
-  const target = document.getElementById(id);
-  target.classList.remove('hidden');
-  if (id !== 'estado-form') target.classList.add('flex');
+    .forEach(s => { const el = document.getElementById(s); el.classList.add('hidden'); el.classList.remove('flex'); });
+  const t = document.getElementById(id);
+  t.classList.remove('hidden');
+  if (id !== 'estado-form') t.classList.add('flex');
 }
+
+// Máscara CPF
+document.getElementById('f-cpf').addEventListener('input', function() {
+  let v = this.value.replace(/\D/g,'').slice(0,11);
+  if (v.length > 9) v = v.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2})/,'$1.$2.$3-$4');
+  else if (v.length > 6) v = v.replace(/(\d{3})(\d{3})(\d{1,3})/,'$1.$2.$3');
+  else if (v.length > 3) v = v.replace(/(\d{3})(\d{1,3})/,'$1.$2');
+  this.value = v;
+});
 
 onAuthStateChanged(auth, async (user) => {
   if (!user) { mostrar('estado-nao-logado'); return; }
   currentUser = user;
-
-  const snap = await getDoc(doc(db, 'inscricoes_transporte', user.uid + '_escolar'));
+  const snap = await getDoc(doc(db, 'inscricoes_transporte', user.uid + '_trabalhador'));
   if (snap.exists()) {
     const d = snap.data();
     const msgs = {
@@ -202,24 +191,21 @@ onAuthStateChanged(auth, async (user) => {
 
 document.getElementById('form-inscricao').addEventListener('submit', async (e) => {
   e.preventDefault();
-  const btn = document.getElementById('btn-enviar');
   document.getElementById('btn-texto').classList.add('hidden');
   document.getElementById('btn-loading').classList.remove('hidden');
-  btn.disabled = true;
+  document.getElementById('btn-enviar').disabled = true;
   document.getElementById('msg-erro').classList.add('hidden');
-
   try {
-    await setDoc(doc(db, 'inscricoes_transporte', currentUser.uid + '_escolar'), {
-      tipo: 'escolar',
+    await setDoc(doc(db, 'inscricoes_transporte', currentUser.uid + '_trabalhador'), {
+      tipo: 'trabalhador',
       uid: currentUser.uid,
       email: currentUser.email || '',
-      nomeAluno: document.getElementById('f-nome').value.trim(),
+      nome: document.getElementById('f-nome').value.trim(),
+      cpf: document.getElementById('f-cpf').value.trim(),
       dataNascimento: document.getElementById('f-nascimento').value,
-      escola: document.getElementById('f-escola').value.trim(),
-      serie: document.getElementById('f-serie').value.trim(),
-      turno: document.getElementById('f-turno').value,
       endereco: document.getElementById('f-endereco').value.trim(),
-      responsavel: document.getElementById('f-responsavel').value.trim(),
+      localTrabalho: document.getElementById('f-trabalho').value.trim(),
+      turno: document.getElementById('f-turno').value,
       telefone: document.getElementById('f-telefone').value.trim(),
       observacoes: document.getElementById('f-obs').value.trim(),
       status: 'pendente',
@@ -232,7 +218,7 @@ document.getElementById('form-inscricao').addEventListener('submit', async (e) =
     el.classList.remove('hidden');
     document.getElementById('btn-texto').classList.remove('hidden');
     document.getElementById('btn-loading').classList.add('hidden');
-    btn.disabled = false;
+    document.getElementById('btn-enviar').disabled = false;
   }
 });
 </script>

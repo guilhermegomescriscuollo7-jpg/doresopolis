@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#3b82f6">
+<title>Horários - Transporte</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script>tailwind.config={theme:{extend:{colors:{doresopolis:{green:'#0b5c3b'}}}}}</script>
+</head>
+<body class="bg-gray-200 font-sans text-gray-800 flex justify-center items-center min-h-screen">
+<div class="bg-gray-50 w-full max-w-md h-[100dvh] flex flex-col shadow-2xl overflow-hidden sm:rounded-xl sm:h-[95vh] sm:border sm:border-gray-300">
+
+  <header class="bg-white shadow-sm z-10 flex-shrink-0">
+    <div class="bg-blue-500 h-1.5 w-full"></div>
+    <div class="px-4 py-3 flex items-center gap-3">
+      <a href="transporte.html" class="w-9 h-9 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center shrink-0">
+        <i class="fa-solid fa-arrow-left text-sm"></i>
+      </a>
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center shrink-0">
+          <i class="fa-solid fa-clock"></i>
+        </div>
+        <div>
+          <p class="text-[9px] tracking-widest text-gray-400 uppercase font-semibold leading-none">Sec. Transporte</p>
+          <h1 class="text-lg font-black text-gray-800 uppercase tracking-tight leading-none">Horários</h1>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Carregando -->
+  <div id="estado-carregando" class="flex-grow flex flex-col items-center justify-center gap-3">
+    <div class="w-10 h-10 border-4 border-blue-200 border-t-blue-500 rounded-full animate-spin"></div>
+    <p class="text-sm text-gray-400">Carregando horários...</p>
+  </div>
+
+  <!-- Vazio -->
+  <div id="estado-vazio" class="hidden flex-grow flex flex-col items-center justify-center px-8 text-center">
+    <div class="w-20 h-20 rounded-full bg-blue-50 border-2 border-blue-100 flex items-center justify-center mb-5">
+      <i class="fa-solid fa-clock text-3xl text-blue-200"></i>
+    </div>
+    <h2 class="text-xl font-black text-gray-800 mb-2">Sem horários cadastrados</h2>
+    <p class="text-sm text-gray-400 leading-relaxed">Os horários serão publicados em breve pela Secretaria de Transporte.</p>
+  </div>
+
+  <!-- Lista de horários -->
+  <main id="estado-lista" class="hidden flex-grow overflow-y-auto px-4 py-4 space-y-3" id="lista-horarios"></main>
+
+</div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getFirestore, collection, getDocs, orderBy, query } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAskgM5cxiR4DI2PXrccBxOvPZzMPDKdCo",
+  authDomain: "gen-lang-client-0963611393.firebaseapp.com",
+  projectId: "gen-lang-client-0963611393",
+  storageBucket: "gen-lang-client-0963611393.firebasestorage.app",
+  messagingSenderId: "158833761867",
+  appId: "1:158833761867:web:f9db6cb6dc6b5785cfb7ce"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const cores = {
+  urbano:        { bg: 'bg-blue-50',   border: 'border-blue-100',   header: 'bg-blue-50 border-blue-100',   icon: 'text-blue-500',   badge: 'bg-blue-100 text-blue-600' },
+  rural:         { bg: 'bg-green-50',  border: 'border-green-100',  header: 'bg-green-50 border-green-100', icon: 'text-green-600',  badge: 'bg-green-100 text-green-700' },
+  intermunicipal:{ bg: 'bg-orange-50', border: 'border-orange-100', header: 'bg-orange-50 border-orange-100',icon: 'text-orange-500', badge: 'bg-orange-100 text-orange-600' },
+  universitario: { bg: 'bg-purple-50', border: 'border-purple-100', header: 'bg-purple-50 border-purple-100',icon: 'text-purple-500', badge: 'bg-purple-100 text-purple-600' },
+};
+
+const labels = { urbano:'Urbano', rural:'Rural', intermunicipal:'Intermunicipal', universitario:'Universitário' };
+
+async function carregar() {
+  try {
+    const snap = await getDocs(query(collection(db, 'horarios_transporte'), orderBy('ordem')));
+    if (snap.empty) { mostrar('estado-vazio'); return; }
+
+    const lista = document.getElementById('estado-lista');
+    lista.innerHTML = '';
+
+    snap.forEach(docSnap => {
+      const d = docSnap.data();
+      const c = cores[d.tipo] || cores.urbano;
+      const lbl = labels[d.tipo] || d.tipo;
+
+      // Monta linhas de horário
+      const linhasHtml = (d.horarios || []).map(h => `
+        <div class="px-4 py-2.5 flex items-center justify-between">
+          <p class="text-xs text-gray-600">${h.periodo || '—'}</p>
+          <p class="text-xs font-bold text-gray-800">${(h.saidas || []).join(' · ') || '—'}</p>
+        </div>
+      `).join('<div class="border-t border-gray-50"></div>');
+
+      lista.insertAdjacentHTML('beforeend', `
+        <div class="bg-white rounded-2xl border ${c.border} shadow-sm overflow-hidden">
+          <div class="px-4 py-3 ${c.header} border-b flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <i class="fa-solid fa-bus ${c.icon} text-sm"></i>
+              <p class="font-bold text-gray-700 text-sm">${d.nome || 'Linha'}</p>
+            </div>
+            <span class="text-[9px] font-black uppercase ${c.badge} px-2 py-0.5 rounded-full">${lbl}</span>
+          </div>
+          <div class="divide-y divide-gray-50">${linhasHtml}</div>
+          ${d.observacao ? `<div class="px-4 py-2 bg-amber-50 border-t border-amber-100 flex items-start gap-2">
+            <i class="fa-solid fa-triangle-exclamation text-amber-500 text-xs mt-0.5 shrink-0"></i>
+            <p class="text-[10px] text-amber-700">${d.observacao}</p>
+          </div>` : ''}
+        </div>
+      `);
+    });
+
+    mostrar('estado-lista');
+  } catch (e) {
+    mostrar('estado-vazio');
+  }
+}
+
+function mostrar(id) {
+  ['estado-carregando','estado-vazio','estado-lista'].forEach(s => {
+    const el = document.getElementById(s);
+    el.classList.add('hidden');
+    el.classList.remove('flex');
+  });
+  const t = document.getElementById(id);
+  t.classList.remove('hidden');
+  if (id !== 'estado-lista') t.classList.add('flex');
+}
+
+carregar();
+</script>
+</body>
+</html>

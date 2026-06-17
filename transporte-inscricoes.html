@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#16a34a">
+<title>Inscrições - Transporte</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script>tailwind.config={theme:{extend:{colors:{doresopolis:{green:'#0b5c3b'}}}}}</script>
+</head>
+<body class="bg-gray-200 font-sans text-gray-800 flex justify-center items-center min-h-screen">
+<div class="bg-gray-50 w-full max-w-md h-[100dvh] flex flex-col shadow-2xl overflow-hidden sm:rounded-xl sm:h-[95vh] sm:border sm:border-gray-300">
+
+  <header class="bg-white shadow-sm z-10 flex-shrink-0">
+    <div class="bg-green-600 h-1.5 w-full"></div>
+    <div class="px-4 py-3 flex items-center gap-3">
+      <a href="transporte.html" class="w-9 h-9 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center shrink-0">
+        <i class="fa-solid fa-arrow-left text-sm"></i>
+      </a>
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-full bg-green-50 text-green-600 flex items-center justify-center shrink-0">
+          <i class="fa-solid fa-file-pen"></i>
+        </div>
+        <div>
+          <p class="text-[9px] tracking-widest text-gray-400 uppercase font-semibold leading-none">Sec. Transporte</p>
+          <h1 class="text-lg font-black text-gray-800 uppercase tracking-tight leading-none">Inscrições</h1>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-grow flex flex-col px-4 py-6 gap-4">
+
+    <a href="transporte-inscricao.html" class="flex items-center gap-4 bg-white rounded-2xl border border-gray-100 shadow-sm p-5 active:scale-[0.97] transition-all">
+      <div class="w-14 h-14 bg-yellow-50 rounded-2xl flex items-center justify-center shrink-0">
+        <i class="fa-solid fa-bus-school text-yellow-500 text-2xl"></i>
+      </div>
+      <div class="flex-grow">
+        <p class="font-black text-gray-800 text-base leading-tight">Inscrição Transporte Escolar 2026</p>
+        <p class="text-[12px] text-gray-400 mt-0.5">Para alunos da rede pública</p>
+      </div>
+      <i class="fa-solid fa-chevron-right text-gray-300 shrink-0"></i>
+    </a>
+
+    <a href="transporte-inscricao-trabalhador.html" class="flex items-center gap-4 bg-white rounded-2xl border border-gray-100 shadow-sm p-5 active:scale-[0.97] transition-all">
+      <div class="w-14 h-14 bg-orange-50 rounded-2xl flex items-center justify-center shrink-0">
+        <i class="fa-solid fa-helmet-safety text-orange-500 text-2xl"></i>
+      </div>
+      <div class="flex-grow">
+        <p class="font-black text-gray-800 text-base leading-tight">Inscrição Transporte Trabalhador</p>
+        <p class="text-[12px] text-gray-400 mt-0.5">Para trabalhadores do município</p>
+      </div>
+      <i class="fa-solid fa-chevron-right text-gray-300 shrink-0"></i>
+    </a>
+
+  </main>
+</div>
+</body>
+</html>
