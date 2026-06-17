@@ -182,6 +182,7 @@ const coresSecretaria = {
 let contasCache = [];
 let contaEditando = null;
 let resetUID = null;
+let panelAtivo = false;
 
 function mostrar(id) {
   ['e-loading','e-negado','e-painel'].forEach(s => {
@@ -203,18 +204,30 @@ window.toggleSenhaModal = () => {
   ico.className = inp.type === 'password' ? 'fa-solid fa-eye' : 'fa-solid fa-eye-slash';
 };
 
-const authTimeout = setTimeout(() => mostrar('e-negado'), 8000);
+const authTimeout = setTimeout(() => {
+  if (!panelAtivo) mostrar('e-negado');
+}, 8000);
 
 onAuthStateChanged(auth, async (user) => {
   clearTimeout(authTimeout);
-  if (!user) { mostrar('e-negado'); return; }
-  const snap = await get(ref(db, 'contas_secretaria/' + user.uid));
-  if (!snap.exists() || snap.val().secretaria !== 'ti' || snap.val().ativo === false) {
-    mostrar('e-negado'); return;
+  if (!user) {
+    if (!panelAtivo) mostrar('e-negado');
+    return;
   }
-  document.getElementById('nome-admin').textContent = snap.val().nome || user.email;
-  mostrar('e-painel');
-  carregarContas();
+  try {
+    const snap = await get(ref(db, 'contas_secretaria/' + user.uid));
+    if (!snap.exists() || snap.val().secretaria !== 'ti' || snap.val().ativo === false) {
+      if (!panelAtivo) mostrar('e-negado');
+      return;
+    }
+    document.getElementById('nome-admin').textContent = snap.val().nome || user.email;
+    panelAtivo = true;
+    mostrar('e-painel');
+    carregarContas();
+  } catch(e) {
+    console.error('Erro na verificação de acesso:', e);
+    if (!panelAtivo) mostrar('e-negado');
+  }
 });
 
 async function carregarContas() {
