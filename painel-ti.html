@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -152,13 +152,13 @@
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import { getFirestore, collection, getDocs, doc, getDoc, setDoc, updateDoc, serverTimestamp }
-  from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { getDatabase, ref, get, set, update } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
 
 const API_KEY = "AIzaSyAskgM5cxiR4DI2PXrccBxOvPZzMPDKdCo";
 const firebaseConfig = {
   apiKey: API_KEY,
   authDomain: "gen-lang-client-0963611393.firebaseapp.com",
+  databaseURL: "https://gen-lang-client-0963611393-default-rtdb.firebaseio.com",
   projectId: "gen-lang-client-0963611393",
   storageBucket: "gen-lang-client-0963611393.firebasestorage.app",
   messagingSenderId: "158833761867",
@@ -167,7 +167,7 @@ const firebaseConfig = {
 
 const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const db   = getFirestore(app, 'ai-studio-effa6aaf-05b1-45f1-96b5-43601bcc0a4');
+const db   = getDatabase(app);
 
 const nomesSecretaria = {
   transporte:'Sec. Transporte', saude:'Sec. Saúde', educacao:'Sec. Educação',
@@ -205,11 +205,11 @@ const authTimeout = setTimeout(() => mostrar('e-negado'), 8000);
 onAuthStateChanged(auth, async (user) => {
   clearTimeout(authTimeout);
   if (!user) { mostrar('e-negado'); return; }
-  const snap = await getDoc(doc(db, 'contas_secretaria', user.uid));
-  if (!snap.exists() || snap.data().secretaria !== 'ti' || snap.data().ativo === false) {
+  const snap = await get(ref(db, 'contas_secretaria/' + user.uid));
+  if (!snap.exists() || snap.val().secretaria !== 'ti' || snap.val().ativo === false) {
     mostrar('e-negado'); return;
   }
-  document.getElementById('nome-admin').textContent = snap.data().nome || user.email;
+  document.getElementById('nome-admin').textContent = snap.val().nome || user.email;
   mostrar('e-painel');
   carregarContas();
 });
@@ -219,10 +219,15 @@ async function carregarContas() {
   document.getElementById('lista-loading').classList.remove('hidden');
   document.getElementById('lista-loading').classList.add('flex');
   try {
-    const snap = await getDocs(collection(db, 'contas_secretaria'));
-    contasCache = snap.docs.map(d => ({ uid: d.id, ...d.data() }));
+    const snap = await get(ref(db, 'contas_secretaria'));
     document.getElementById('lista-loading').classList.add('hidden');
     document.getElementById('lista-loading').classList.remove('flex');
+    contasCache = [];
+    if (snap.exists()) {
+      snap.forEach(child => {
+        contasCache.push({ uid: child.key, ...child.val() });
+      });
+    }
     if (contasCache.length === 0) {
       document.getElementById('lista-vazia').classList.remove('hidden');
       document.getElementById('lista-vazia').classList.add('flex');
@@ -332,9 +337,9 @@ window.salvarConta = async () => {
       uid = data.localId;
     }
 
-    await setDoc(doc(db, 'contas_secretaria', uid), {
+    await set(ref(db, 'contas_secretaria/' + uid), {
       nome, email: email || contaEditando?.email || '', secretaria, ativo: true,
-      dataCriacao: serverTimestamp()
+      dataCriacao: Date.now()
     });
 
     document.getElementById('modal-conta').classList.add('hidden');
@@ -381,8 +386,9 @@ window.confirmarResetSenha = async () => {
 window.toggleAtivo = async (uid) => {
   const c = contasCache.find(x => x.uid === uid);
   if (!c) return;
-  c.ativo = c.ativo === false ? true : false;
-  await updateDoc(doc(db, 'contas_secretaria', uid), { ativo: c.ativo });
+  const novoAtivo = c.ativo === false ? true : false;
+  await update(ref(db, 'contas_secretaria/' + uid), { ativo: novoAtivo });
+  c.ativo = novoAtivo;
   renderContas();
 };
 

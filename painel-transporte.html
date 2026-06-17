@@ -213,13 +213,13 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import {
-  getFirestore, collection, getDocs, doc, getDoc, updateDoc, setDoc, addDoc,
-  deleteDoc, serverTimestamp, orderBy, query
-} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+  getDatabase, ref, get, set, update, remove, push, query, orderByChild
+} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
 
 const firebaseConfig = {
   apiKey: "AIzaSyAskgM5cxiR4DI2PXrccBxOvPZzMPDKdCo",
   authDomain: "gen-lang-client-0963611393.firebaseapp.com",
+  databaseURL: "https://gen-lang-client-0963611393-default-rtdb.firebaseio.com",
   projectId: "gen-lang-client-0963611393",
   storageBucket: "gen-lang-client-0963611393.firebasestorage.app",
   messagingSenderId: "158833761867",
@@ -228,7 +228,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const db  = getFirestore(app, 'ai-studio-effa6aaf-05b1-45f1-96b5-43601bcc0a4');
+const db  = getDatabase(app);
 
 const authTimeout = setTimeout(() => mostrarEstado('e-acesso-negado'), 8000);
 
@@ -265,17 +265,8 @@ onAuthStateChanged(auth, async (user) => {
   clearTimeout(authTimeout);
   if (!user) { mostrarEstado('e-acesso-negado'); return; }
 
-  // Verifica no novo sistema (contas_secretaria)
-  const novoSnap = await getDoc(doc(db, 'contas_secretaria', user.uid));
-  if (novoSnap.exists() && novoSnap.data().secretaria === 'transporte' && novoSnap.data().ativo !== false) {
-    mostrarEstado('e-painel');
-    carregarInscricoes();
-    return;
-  }
-
-  // Fallback: sistema antigo (secretarios_transporte)
-  const antigoSnap = await getDoc(doc(db, 'secretarios_transporte', user.uid));
-  if (antigoSnap.exists()) {
+  const snap = await get(ref(db, 'contas_secretaria/' + user.uid));
+  if (snap.exists() && snap.val().secretaria === 'transporte' && snap.val().ativo !== false) {
     mostrarEstado('e-painel');
     carregarInscricoes();
     return;
@@ -292,8 +283,9 @@ async function carregarInscricoes() {
   document.getElementById('insc-lista').classList.add('hidden');
 
   try {
-    const snap = await getDocs(collection(db, 'inscricoes_transporte'));
-    inscricoesCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const snap = await get(ref(db, 'inscricoes_transporte'));
+    inscricoesCache = [];
+    if (snap.exists()) snap.forEach(child => inscricoesCache.push({ id: child.key, ...child.val() }));
     renderizarInscricoes();
   } catch(e) {
     document.getElementById('insc-loading').classList.add('hidden');
@@ -332,7 +324,7 @@ function renderizarInscricoes() {
     const tp  = tipoCfg[ins.tipo]     || tipoCfg.escolar;
     const nome = ins.nomeAluno || ins.nome || '—';
     const dest = ins.escola || ins.localTrabalho || '—';
-    const data = ins.dataCriacao?.toDate?.()?.toLocaleDateString('pt-BR') || '—';
+    const data = ins.dataCriacao ? new Date(ins.dataCriacao).toLocaleDateString('pt-BR') : '—';
 
     const btns = ins.status === 'pendente' ? `
       <div class="flex gap-2 mt-3">
@@ -420,10 +412,10 @@ window.confirmarAprovacao = async () => {
   try {
     const ins = inscricaoSelecionada;
     // Atualiza status da inscrição
-    await updateDoc(doc(db, 'inscricoes_transporte', ins.id), { status: 'aprovado' });
+    await update(ref(db, 'inscricoes_transporte/' + ins.id), { status: 'aprovado' });
 
     // Cria carteirinha
-    await setDoc(doc(db, 'carteirinhas_transporte', ins.uid), {
+    await set(ref(db, 'carteirinhas_transporte/' + ins.uid), {
       tipo:          ins.tipo,
       uid:           ins.uid,
       email:         ins.email || '',
@@ -437,7 +429,7 @@ window.confirmarAprovacao = async () => {
       observacoes:   document.getElementById('apr-obs').value.trim(),
       status:        'ativo',
       validadeAno:   '2026',
-      dataAprovacao: serverTimestamp()
+      dataAprovacao: Date.now()
     });
 
     // Atualiza cache local
@@ -457,7 +449,7 @@ window.confirmarAprovacao = async () => {
 
 window.negar = async (id) => {
   if (!confirm('Negar esta inscrição?')) return;
-  await updateDoc(doc(db, 'inscricoes_transporte', id), { status: 'negado' });
+  await update(ref(db, 'inscricoes_transporte/' + id), { status: 'negado' });
   const idx = inscricoesCache.findIndex(i => i.id === id);
   if (idx >= 0) inscricoesCache[idx].status = 'negado';
   renderizarInscricoes();
@@ -474,14 +466,12 @@ async function carregarHorarios() {
   document.getElementById('hor-loading').classList.add('flex');
 
   try {
-    let snap;
-    try { snap = await getDocs(query(collection(db, 'horarios_transporte'), orderBy('ordem'))); }
-    catch { snap = await getDocs(collection(db, 'horarios_transporte')); }
+    const snap = await get(query(ref(db, 'horarios_transporte'), orderByChild('ordem')));
 
     document.getElementById('hor-loading').classList.add('hidden');
     document.getElementById('hor-loading').classList.remove('flex');
 
-    if (snap.empty) {
+    if (!snap.exists()) {
       document.getElementById('hor-vazio').classList.remove('hidden');
       document.getElementById('hor-vazio').classList.add('flex');
       return;
@@ -491,8 +481,9 @@ async function carregarHorarios() {
     el.classList.remove('hidden');
     el.innerHTML = '';
 
-    snap.forEach(d => {
-      const data = d.data();
+    snap.forEach(child => {
+      const d = child;
+      const data = child.val();
       const linhasHtml = (data.horarios || []).map(h =>
         `<div class="text-[11px] text-gray-600"><span class="font-bold">${h.periodo}:</span> ${(h.saidas||[]).join(' · ')}</div>`
       ).join('');
@@ -506,11 +497,11 @@ async function carregarHorarios() {
           <div class="space-y-0.5 mb-3">${linhasHtml || '<p class="text-[11px] text-gray-400">Sem horários</p>'}</div>
           ${data.observacao ? `<p class="text-[10px] text-amber-600 mb-2"><i class="fa-solid fa-triangle-exclamation mr-1"></i>${data.observacao}</p>` : ''}
           <div class="flex gap-2">
-            <button onclick="abrirModalHorario('${d.id}')"
+            <button onclick="abrirModalHorario('${child.key}')"
               class="flex-1 text-xs font-bold text-doresopolis-green border border-doresopolis-green py-2 rounded-xl active:bg-green-50 transition-all">
               <i class="fa-solid fa-pen mr-1"></i> Editar
             </button>
-            <button onclick="excluirHorario('${d.id}')"
+            <button onclick="excluirHorario('${child.key}')"
               class="flex-1 text-xs font-bold text-red-500 border border-red-100 py-2 rounded-xl active:bg-red-50 transition-all">
               <i class="fa-solid fa-trash mr-1"></i> Excluir
             </button>
@@ -558,9 +549,9 @@ window.abrirModalHorario = async (id) => {
   document.getElementById('hor-btn-load').classList.add('hidden');
 
   if (id) {
-    const snap = await getDoc(doc(db, 'horarios_transporte', id));
+    const snap = await get(ref(db, 'horarios_transporte/' + id));
     if (snap.exists()) {
-      const d = snap.data();
+      const d = snap.val();
       document.getElementById('hor-nome').value = d.nome || '';
       document.getElementById('hor-tipo').value = d.tipo || 'urbano';
       document.getElementById('hor-ordem').value = d.ordem || '';
@@ -609,8 +600,8 @@ window.salvarHorario = async () => {
 
   try {
     const id = document.getElementById('hor-doc-id').value;
-    if (id) { await updateDoc(doc(db, 'horarios_transporte', id), dados); }
-    else     { await addDoc(collection(db, 'horarios_transporte'), dados); }
+    if (id) { await update(ref(db, 'horarios_transporte/' + id), dados); }
+    else     { await set(push(ref(db, 'horarios_transporte')), dados); }
     document.getElementById('modal-horario').classList.add('hidden');
     carregarHorarios();
   } catch(e) {
@@ -624,7 +615,7 @@ window.salvarHorario = async () => {
 
 window.excluirHorario = async (id) => {
   if (!confirm('Excluir esta linha?')) return;
-  await deleteDoc(doc(db, 'horarios_transporte', id));
+  await remove(ref(db, 'horarios_transporte/' + id));
   carregarHorarios();
 };
 </script>

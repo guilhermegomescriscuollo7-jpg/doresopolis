@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -83,20 +83,21 @@
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { getAuth, signInWithEmailAndPassword, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import { getFirestore, collection, query, where, getDocs, doc, setDoc, serverTimestamp }
-  from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { getDatabase, ref, get, set, query, orderByChild, equalTo }
+  from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
 
 const API_KEY = "AIzaSyAskgM5cxiR4DI2PXrccBxOvPZzMPDKdCo";
 const app = initializeApp({
   apiKey: API_KEY,
   authDomain: "gen-lang-client-0963611393.firebaseapp.com",
+  databaseURL: "https://gen-lang-client-0963611393-default-rtdb.firebaseio.com",
   projectId: "gen-lang-client-0963611393",
   storageBucket: "gen-lang-client-0963611393.firebasestorage.app",
   messagingSenderId: "158833761867",
   appId: "1:158833761867:web:f9db6cb6dc6b5785cfb7ce"
 });
 const auth = getAuth(app);
-const db = getFirestore(app, 'ai-studio-effa6aaf-05b1-45f1-96b5-43601bcc0a4');
+const db   = getDatabase(app);
 
 function mostrar(id) {
   ['e-loading','e-ja-existe','e-form','e-ok'].forEach(s =>
@@ -104,17 +105,16 @@ function mostrar(id) {
   document.getElementById(id).classList.remove('hidden');
 }
 
-// Verifica se já existe algum admin TI
 async function verificar() {
   try {
-    const snap = await getDocs(query(
-      collection(db, 'contas_secretaria'),
-      where('secretaria', '==', 'ti')
+    const snap = await get(query(
+      ref(db, 'contas_secretaria'),
+      orderByChild('secretaria'),
+      equalTo('ti')
     ));
-    if (!snap.empty) { mostrar('e-ja-existe'); }
-    else             { mostrar('e-form'); }
+    if (snap.exists()) { mostrar('e-ja-existe'); }
+    else               { mostrar('e-form'); }
   } catch(e) {
-    // Se falhar a query (ex: índice), mostra o form mesmo assim
     mostrar('e-form');
   }
 }
@@ -135,8 +135,7 @@ window.criarAdmin = async () => {
   document.getElementById('msg-erro').classList.add('hidden');
 
   try {
-    // Cria conta Firebase Auth
-    const res  = await fetch(
+    const res = await fetch(
       `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${API_KEY}`,
       { method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password: senha, returnSecureToken: false }) }
@@ -152,17 +151,16 @@ window.criarAdmin = async () => {
     }
 
     const uid = data.localId;
-    // Autentica com as credenciais criadas para poder escrever no Firestore
     await signInWithEmailAndPassword(auth, email, senha);
-    await setDoc(doc(db, 'contas_secretaria', uid), {
-      nome, email, secretaria: 'ti', ativo: true, dataCriacao: serverTimestamp()
+    await set(ref(db, 'contas_secretaria/' + uid), {
+      nome, email, secretaria: 'ti', ativo: true, dataCriacao: Date.now()
     });
     await signOut(auth);
 
     document.getElementById('ok-nome').textContent = nome + ' — ' + email;
     mostrar('e-ok');
   } catch(e) {
-    mostrarErro('Erro ao criar conta. Tente novamente.');
+    mostrarErro('Erro ao criar conta: ' + e.message);
     resetBtn();
   }
 };
