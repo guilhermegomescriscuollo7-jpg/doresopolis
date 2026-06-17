@@ -566,7 +566,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getFirestore, collection, query, where, getDocs, orderBy, limit, doc, onSnapshot, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, updatePassword, deleteUser, onAuthStateChanged, signOut, updateProfile, EmailAuthProvider, reauthenticateWithCredential, updateEmail } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+        import { getAuth, signInWithPopup, signInWithRedirect, getRedirectResult, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, updatePassword, deleteUser, onAuthStateChanged, signOut, updateProfile, EmailAuthProvider, reauthenticateWithCredential, updateEmail } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAskgM5cxiR4DI2PXrccBxOvPZzMPDKdCo",
@@ -1005,16 +1005,25 @@
             }
         }
 
-        // ---- Entrar com Google ----
+        // ---- Entrar com Google (redirect — funciona em mobile e PWA) ----
         window.entrarComGoogle = async function() {
             try {
-                await signInWithPopup(auth, googleProvider);
+                await signInWithRedirect(auth, googleProvider);
             } catch (e) {
-                if (e.code !== 'auth/popup-closed-by-user' && e.code !== 'auth/cancelled-popup-request') {
-                    mostrarAviso('Erro ao entrar com Google. Tente novamente.');
-                }
+                mostrarAviso('Erro ao iniciar login com Google. Tente novamente.');
             }
         };
+
+        // Captura o resultado do redirect do Google ao voltar para a página
+        getRedirectResult(auth).then((result) => {
+            if (result && result.user) {
+                mostrarAviso('Bem-vindo, ' + (result.user.displayName || result.user.email) + '!', 'sucesso');
+            }
+        }).catch((e) => {
+            if (e.code && e.code !== 'auth/no-current-user') {
+                mostrarAviso('Erro ao entrar com Google: ' + (e.message || e.code));
+            }
+        });
 
         // ---- Entrar com e-mail/senha ----
         window.entrarComEmail = async function() {
