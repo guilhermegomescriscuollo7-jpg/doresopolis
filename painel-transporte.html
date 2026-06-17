@@ -230,6 +230,8 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db  = getFirestore(app);
 
+const authTimeout = setTimeout(() => mostrarEstado('e-acesso-negado'), 8000);
+
 let filtroAtual = 'pendente';
 let inscricoesCache = [];
 let inscricaoSelecionada = null;
@@ -260,6 +262,7 @@ window.abrirAba = (aba) => {
 
 // ── Auth / Permissão ────────────────────────────────────────────────────────
 onAuthStateChanged(auth, async (user) => {
+  clearTimeout(authTimeout);
   if (!user) { mostrarEstado('e-acesso-negado'); return; }
 
   const admSnap = await getDoc(doc(db, 'secretarios_transporte', user.uid));
