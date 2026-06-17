@@ -135,17 +135,17 @@
                     </div>
 
                     <!-- MINHAS SOLICITAÇÕES EM ANDAMENTO -->
-                    <div id="card-sol-skeleton" class="hidden mb-6 h-[76px] rounded-2xl bg-gray-100 animate-pulse"></div>
-                    <a id="card-solicitacoes" href="solicitacoes.html" class="hidden mb-6 bg-white rounded-2xl shadow-sm border border-gray-100 p-4 items-center gap-3 active:scale-[0.98] transition-all">
-                        <div id="card-sol-icone-wrap" class="w-11 h-11 rounded-xl bg-doresopolis-green/10 text-doresopolis-green flex items-center justify-center shrink-0">
+                    <div id="card-sol-skeleton" class="hidden mb-4 h-[76px] rounded-2xl bg-gray-100 animate-pulse"></div>
+                    <a id="card-solicitacoes" href="solicitacoes.html" class="hidden mb-4 bg-doresopolis-green rounded-2xl p-4 items-center gap-3 active:scale-[0.97] transition-all">
+                        <div id="card-sol-icone-wrap" class="w-11 h-11 rounded-xl bg-white/20 text-white flex items-center justify-center shrink-0">
                             <i id="card-sol-icone" class="fa-solid fa-list-check text-lg"></i>
                         </div>
                         <div class="flex-grow min-w-0">
-                            <p id="card-sol-titulo" class="font-bold text-gray-800 text-sm leading-tight">—</p>
-                            <p id="card-sol-sub" class="text-[11px] text-gray-500 mt-0.5 truncate">—</p>
+                            <p id="card-sol-titulo" class="font-bold text-white text-sm leading-tight">—</p>
+                            <p id="card-sol-sub" class="text-[11px] text-white/70 mt-0.5 truncate">—</p>
                         </div>
                         <span id="card-sol-badge" class="shrink-0 hidden text-[9px] font-black uppercase px-2 py-0.5 rounded-full"></span>
-                        <i class="fa-solid fa-chevron-right text-gray-300 text-xs shrink-0"></i>
+                        <i class="fa-solid fa-chevron-right text-white/50 text-xs shrink-0"></i>
                     </a>
 
                     <!-- MURAL DE AVISOS OFICIAIS DINÂMICO -->
@@ -183,195 +183,211 @@
                         </div>
                     </div>
 
-                    <!-- SECRETARIAS -->
-                    <div class="mb-8">
-                        <h3 class="font-bold text-gray-800 text-sm mb-3 border-l-4 border-blue-500 pl-2">Serviços por Secretaria</h3>
-                        <div class="flex flex-col gap-3">
-                            <button onclick="window.location.href='saude.html'" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 active:bg-gray-50 active:scale-[0.98] transition-all text-left">
-                                <div class="p-3 bg-red-50 text-red-600 rounded-lg"><i class="fa-solid fa-heart-pulse text-lg w-5 text-center"></i></div>
-                                <div class="ml-4 flex-grow"><h3 class="font-bold text-gray-800 text-sm">Saúde</h3><p class="text-[10px] text-gray-500 mt-0.5">Consultas, vacinas e remédios</p></div>
-                                <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
+                    <!-- SECRETARIAS — Grid 2×3 -->
+                    <div class="mb-6">
+                        <h3 class="font-bold text-gray-800 text-sm mb-3 border-l-4 border-doresopolis-green pl-2">Serviços</h3>
+                        <div class="grid grid-cols-2 gap-3">
+                            <button onclick="window.location.href='saude.html'" class="flex flex-col p-4 bg-red-50 rounded-2xl border border-red-100 active:scale-[0.97] transition-all text-left">
+                                <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center mb-3 shadow-sm">
+                                    <i class="fa-solid fa-heart-pulse text-red-500 text-lg"></i>
+                                </div>
+                                <p class="font-bold text-gray-800 text-sm">Saúde</p>
+                                <p class="text-[10px] text-red-500 mt-0.5">Consultas e vacinas</p>
                             </button>
-                            <button onclick="window.location.href='educacao.html'" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 active:bg-gray-50 active:scale-[0.98] transition-all text-left">
-                                <div class="p-3 bg-blue-50 text-blue-600 rounded-lg"><i class="fa-solid fa-graduation-cap text-lg w-5 text-center"></i></div>
-                                <div class="ml-4 flex-grow"><h3 class="font-bold text-gray-800 text-sm">Educação</h3><p class="text-[10px] text-gray-500 mt-0.5">Matrículas e transporte escolar</p></div>
-                                <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
+                            <button onclick="window.location.href='educacao.html'" class="flex flex-col p-4 bg-blue-50 rounded-2xl border border-blue-100 active:scale-[0.97] transition-all text-left">
+                                <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center mb-3 shadow-sm">
+                                    <i class="fa-solid fa-graduation-cap text-blue-500 text-lg"></i>
+                                </div>
+                                <p class="font-bold text-gray-800 text-sm">Educação</p>
+                                <p class="text-[10px] text-blue-500 mt-0.5">Matrículas e transporte</p>
                             </button>
-                            <button onclick="window.location.href='tributos.html'" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 active:bg-gray-50 active:scale-[0.98] transition-all text-left">
-                                <div class="p-3 bg-green-50 text-green-600 rounded-lg"><i class="fa-solid fa-file-invoice-dollar text-lg w-5 text-center"></i></div>
-                                <div class="ml-4 flex-grow"><h3 class="font-bold text-gray-800 text-sm">Tributos</h3><p class="text-[10px] text-gray-500 mt-0.5">Emissão de IPTU e taxas</p></div>
-                                <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
+                            <button onclick="window.location.href='tributos.html'" class="flex flex-col p-4 bg-emerald-50 rounded-2xl border border-emerald-100 active:scale-[0.97] transition-all text-left">
+                                <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center mb-3 shadow-sm">
+                                    <i class="fa-solid fa-file-invoice-dollar text-emerald-600 text-lg"></i>
+                                </div>
+                                <p class="font-bold text-gray-800 text-sm">Tributos</p>
+                                <p class="text-[10px] text-emerald-600 mt-0.5">IPTU e taxas</p>
                             </button>
-                            <button onclick="window.location.href='obras.html'" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 active:bg-gray-50 active:scale-[0.98] transition-all text-left">
-                                <div class="p-3 bg-amber-50 text-amber-600 rounded-lg"><i class="fa-solid fa-helmet-safety text-lg w-5 text-center"></i></div>
-                                <div class="ml-4 flex-grow"><h3 class="font-bold text-gray-800 text-sm">Obras</h3><p class="text-[10px] text-gray-500 mt-0.5">Iluminação e manutenção</p></div>
-                                <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
+                            <button onclick="window.location.href='obras.html'" class="flex flex-col p-4 bg-amber-50 rounded-2xl border border-amber-100 active:scale-[0.97] transition-all text-left">
+                                <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center mb-3 shadow-sm">
+                                    <i class="fa-solid fa-helmet-safety text-amber-500 text-lg"></i>
+                                </div>
+                                <p class="font-bold text-gray-800 text-sm">Obras</p>
+                                <p class="text-[10px] text-amber-500 mt-0.5">Iluminação e vias</p>
                             </button>
-                            <button onclick="window.location.href='transporte.html'" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 active:bg-gray-50 active:scale-[0.98] transition-all text-left">
-                                <div class="p-3 bg-purple-50 text-purple-600 rounded-lg"><i class="fa-solid fa-bus text-lg w-5 text-center"></i></div>
-                                <div class="ml-4 flex-grow"><h3 class="font-bold text-gray-800 text-sm">Transporte</h3><p class="text-[10px] text-gray-500 mt-0.5">Horários e estradas rurais</p></div>
-                                <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
+                            <button onclick="window.location.href='transporte.html'" class="flex flex-col p-4 bg-purple-50 rounded-2xl border border-purple-100 active:scale-[0.97] transition-all text-left">
+                                <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center mb-3 shadow-sm">
+                                    <i class="fa-solid fa-bus text-purple-500 text-lg"></i>
+                                </div>
+                                <p class="font-bold text-gray-800 text-sm">Transporte</p>
+                                <p class="text-[10px] text-purple-500 mt-0.5">Horários e estradas</p>
                             </button>
+                            <a href="solicitacoes.html" class="flex flex-col p-4 bg-doresopolis-green rounded-2xl active:scale-[0.97] transition-all">
+                                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center mb-3">
+                                    <i class="fa-solid fa-plus text-white text-lg"></i>
+                                </div>
+                                <p class="font-bold text-white text-sm">Nova</p>
+                                <p class="text-[10px] text-white/75 mt-0.5">Solicitação</p>
+                            </a>
                         </div>
                     </div>
 
                     <!-- TELEFONES ÚTEIS E EMERGÊNCIA -->
                     <div class="mb-4">
-                        <h3 class="font-bold text-gray-800 text-sm mb-3 border-l-4 border-red-500 pl-2">Telefones Úteis e Emergência</h3>
+                        <h3 class="font-bold text-gray-800 text-sm mb-3 border-l-4 border-red-500 pl-2">Emergências</h3>
 
-                        <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-2 pl-1">Emergências</p>
-                        <div class="grid grid-cols-2 gap-2 mb-4">
-                            <a href="tel:190" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 hover:border-red-300 active:bg-red-50 transition-all">
-                                <div class="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center mr-3 shrink-0">
-                                    <i class="fa-solid fa-shield-halved text-sm"></i>
-                                </div>
-                                <div>
-                                    <p class="font-bold text-gray-800 text-xs leading-tight">Polícia</p>
-                                    <p class="text-[10px] text-red-600 font-bold">Ligar 190</p>
-                                </div>
+                        <!-- Destaque 190 / 192 -->
+                        <div class="grid grid-cols-2 gap-2 mb-3">
+                            <a href="tel:190" class="flex flex-col items-center justify-center p-4 bg-red-600 rounded-2xl active:scale-[0.97] transition-all">
+                                <i class="fa-solid fa-shield-halved text-white text-2xl mb-1"></i>
+                                <p class="font-black text-white text-lg leading-none">190</p>
+                                <p class="text-[10px] text-red-200 mt-0.5">Polícia</p>
                             </a>
-                            <a href="tel:192" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 hover:border-red-300 active:bg-red-50 transition-all">
-                                <div class="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center mr-3 shrink-0">
-                                    <i class="fa-solid fa-truck-medical text-sm"></i>
-                                </div>
-                                <div>
-                                    <p class="font-bold text-gray-800 text-xs leading-tight">Ambulância</p>
-                                    <p class="text-[10px] text-red-600 font-bold">Ligar 192</p>
-                                </div>
-                            </a>
-                            <a href="tel:37344110010" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 hover:border-red-300 active:bg-red-50 transition-all col-span-2">
-                                <div class="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center mr-3 shrink-0">
-                                    <i class="fa-solid fa-car-burst text-sm"></i>
-                                </div>
-                                <div>
-                                    <p class="font-bold text-gray-800 text-xs leading-tight">Polícia Militar</p>
-                                    <p class="text-[9px] text-gray-500 font-medium">(37) 3441-0010</p>
-                                </div>
+                            <a href="tel:192" class="flex flex-col items-center justify-center p-4 bg-red-600 rounded-2xl active:scale-[0.97] transition-all">
+                                <i class="fa-solid fa-truck-medical text-white text-2xl mb-1"></i>
+                                <p class="font-black text-white text-lg leading-none">192</p>
+                                <p class="text-[10px] text-red-200 mt-0.5">SAMU</p>
                             </a>
                         </div>
+                        <a href="tel:37344110010" class="flex items-center p-3 bg-white rounded-xl border border-gray-100 active:bg-red-50 transition-all mb-4">
+                            <div class="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center mr-3 shrink-0">
+                                <i class="fa-solid fa-car-burst text-sm"></i>
+                            </div>
+                            <div>
+                                <p class="font-bold text-gray-800 text-xs leading-tight">Polícia Militar</p>
+                                <p class="text-[9px] text-gray-500 font-medium">(37) 3441-0010</p>
+                            </div>
+                        </a>
 
-                        <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-2 pl-1">Prefeitura Municipal</p>
-                        <div class="grid grid-cols-2 gap-2 mb-4">
-                            <a href="tel:3734410000" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 hover:border-green-300 active:bg-green-50 transition-all col-span-2">
-                                <div class="w-8 h-8 rounded-full bg-green-100 text-doresopolis-green flex items-center justify-center mr-3 shrink-0">
-                                    <i class="fa-solid fa-building-columns text-sm"></i>
-                                </div>
-                                <div>
-                                    <p class="font-bold text-gray-800 text-xs leading-tight">Prefeitura Municipal</p>
-                                    <p class="text-[9px] text-gray-500 font-medium">(37) 3441-0000 · Pça. Tiradentes, 19 · Seg–Sex 08h–12h / 13h–17h</p>
-                                </div>
-                            </a>
-                            <a href="tel:3734410003" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 hover:border-blue-300 active:bg-blue-50 transition-all">
-                                <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mr-3 shrink-0">
-                                    <i class="fa-solid fa-graduation-cap text-sm"></i>
-                                </div>
-                                <div>
-                                    <p class="font-bold text-gray-800 text-xs leading-tight">Sec. Educação</p>
-                                    <p class="text-[9px] text-gray-500 font-medium">(37) 3441-0003</p>
-                                </div>
-                            </a>
-                            <a href="tel:3734410002" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 hover:border-red-300 active:bg-red-50 transition-all">
-                                <div class="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center mr-3 shrink-0">
-                                    <i class="fa-solid fa-heart-pulse text-sm"></i>
-                                </div>
-                                <div>
-                                    <p class="font-bold text-gray-800 text-xs leading-tight">Sec. Saúde</p>
-                                    <p class="text-[9px] text-gray-500 font-medium">(37) 3441-0002</p>
-                                </div>
-                            </a>
-                            <a href="tel:3734410011" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 hover:border-gray-300 active:bg-gray-50 transition-all">
-                                <div class="w-8 h-8 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center mr-3 shrink-0">
-                                    <i class="fa-solid fa-boxes-stacked text-sm"></i>
-                                </div>
-                                <div>
-                                    <p class="font-bold text-gray-800 text-xs leading-tight">Almoxarifado</p>
-                                    <p class="text-[9px] text-gray-500 font-medium">(37) 3441-0011</p>
-                                </div>
-                            </a>
-                            <a href="tel:3734410007" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 hover:border-green-300 active:bg-green-50 transition-all">
-                                <div class="w-8 h-8 rounded-full bg-green-100 text-green-600 flex items-center justify-center mr-3 shrink-0">
-                                    <i class="fa-solid fa-pills text-sm"></i>
-                                </div>
-                                <div>
-                                    <p class="font-bold text-gray-800 text-xs leading-tight">Farmácia Municipal</p>
-                                    <p class="text-[9px] text-gray-500 font-medium">(37) 3441-0007</p>
-                                </div>
-                            </a>
-                        </div>
+                        <!-- Outros contatos (expansível) -->
+                        <button onclick="this.nextElementSibling.classList.toggle('hidden');this.querySelector('i').classList.toggle('rotate-180')" class="w-full flex items-center justify-between text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-2 pl-1 active:opacity-70">
+                            <span>Outros contatos úteis</span>
+                            <i class="fa-solid fa-chevron-down text-gray-300 text-xs transition-transform duration-200"></i>
+                        </button>
+                        <div class="hidden">
+                            <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-2 pl-1">Prefeitura Municipal</p>
+                            <div class="grid grid-cols-2 gap-2 mb-4">
+                                <a href="tel:3734410000" class="flex items-center p-3 bg-white rounded-xl border border-gray-100 active:bg-green-50 transition-all col-span-2">
+                                    <div class="w-8 h-8 rounded-full bg-green-100 text-doresopolis-green flex items-center justify-center mr-3 shrink-0">
+                                        <i class="fa-solid fa-building-columns text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-gray-800 text-xs leading-tight">Prefeitura Municipal</p>
+                                        <p class="text-[9px] text-gray-500 font-medium">(37) 3441-0000 · Seg–Sex 08h–12h / 13h–17h</p>
+                                    </div>
+                                </a>
+                                <a href="tel:3734410003" class="flex items-center p-3 bg-white rounded-xl border border-gray-100 active:bg-blue-50 transition-all">
+                                    <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mr-3 shrink-0">
+                                        <i class="fa-solid fa-graduation-cap text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-gray-800 text-xs leading-tight">Sec. Educação</p>
+                                        <p class="text-[9px] text-gray-500 font-medium">(37) 3441-0003</p>
+                                    </div>
+                                </a>
+                                <a href="tel:3734410002" class="flex items-center p-3 bg-white rounded-xl border border-gray-100 active:bg-red-50 transition-all">
+                                    <div class="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center mr-3 shrink-0">
+                                        <i class="fa-solid fa-heart-pulse text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-gray-800 text-xs leading-tight">Sec. Saúde</p>
+                                        <p class="text-[9px] text-gray-500 font-medium">(37) 3441-0002</p>
+                                    </div>
+                                </a>
+                                <a href="tel:3734410011" class="flex items-center p-3 bg-white rounded-xl border border-gray-100 active:bg-gray-50 transition-all">
+                                    <div class="w-8 h-8 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center mr-3 shrink-0">
+                                        <i class="fa-solid fa-boxes-stacked text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-gray-800 text-xs leading-tight">Almoxarifado</p>
+                                        <p class="text-[9px] text-gray-500 font-medium">(37) 3441-0011</p>
+                                    </div>
+                                </a>
+                                <a href="tel:3734410007" class="flex items-center p-3 bg-white rounded-xl border border-gray-100 active:bg-green-50 transition-all">
+                                    <div class="w-8 h-8 rounded-full bg-green-100 text-green-600 flex items-center justify-center mr-3 shrink-0">
+                                        <i class="fa-solid fa-pills text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-gray-800 text-xs leading-tight">Farmácia Municipal</p>
+                                        <p class="text-[9px] text-gray-500 font-medium">(37) 3441-0007</p>
+                                    </div>
+                                </a>
+                            </div>
 
-                        <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-2 pl-1">Saúde e Assistência</p>
-                        <div class="grid grid-cols-2 gap-2 mb-4">
-                            <a href="tel:3734410009" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 hover:border-red-300 active:bg-red-50 transition-all">
-                                <div class="w-8 h-8 rounded-full bg-red-50 text-red-500 flex items-center justify-center mr-3 shrink-0">
-                                    <i class="fa-solid fa-house-medical text-sm"></i>
-                                </div>
-                                <div>
-                                    <p class="font-bold text-gray-800 text-xs leading-tight">Creche Municipal</p>
-                                    <p class="text-[9px] text-gray-500 font-medium">(37) 3441-0009</p>
-                                </div>
-                            </a>
-                            <a href="tel:3734410006" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 hover:border-orange-300 active:bg-orange-50 transition-all">
-                                <div class="w-8 h-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center mr-3 shrink-0">
-                                    <i class="fa-solid fa-hands-holding-child text-sm"></i>
-                                </div>
-                                <div>
-                                    <p class="font-bold text-gray-800 text-xs leading-tight">CRAS</p>
-                                    <p class="text-[9px] text-gray-500 font-medium">(37) 3441-0006</p>
-                                </div>
-                            </a>
-                            <a href="tel:3734410004" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 hover:border-purple-300 active:bg-purple-50 transition-all">
-                                <div class="w-8 h-8 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center mr-3 shrink-0">
-                                    <i class="fa-solid fa-child-reaching text-sm"></i>
-                                </div>
-                                <div>
-                                    <p class="font-bold text-gray-800 text-xs leading-tight">Conselho Tutelar</p>
-                                    <p class="text-[9px] text-gray-500 font-medium">(37) 3441-0004</p>
-                                </div>
-                            </a>
-                            <a href="tel:37998049213" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 hover:border-purple-300 active:bg-purple-50 transition-all">
-                                <div class="w-8 h-8 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center mr-3 shrink-0">
-                                    <i class="fa-solid fa-moon text-sm"></i>
-                                </div>
-                                <div>
-                                    <p class="font-bold text-gray-800 text-xs leading-tight">Cons. Tutelar Plantão</p>
-                                    <p class="text-[9px] text-gray-500 font-medium">(37) 99804-9213</p>
-                                </div>
-                            </a>
-                        </div>
+                            <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-2 pl-1">Saúde e Assistência</p>
+                            <div class="grid grid-cols-2 gap-2 mb-4">
+                                <a href="tel:3734410009" class="flex items-center p-3 bg-white rounded-xl border border-gray-100 active:bg-red-50 transition-all">
+                                    <div class="w-8 h-8 rounded-full bg-red-50 text-red-500 flex items-center justify-center mr-3 shrink-0">
+                                        <i class="fa-solid fa-house-medical text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-gray-800 text-xs leading-tight">Creche Municipal</p>
+                                        <p class="text-[9px] text-gray-500 font-medium">(37) 3441-0009</p>
+                                    </div>
+                                </a>
+                                <a href="tel:3734410006" class="flex items-center p-3 bg-white rounded-xl border border-gray-100 active:bg-orange-50 transition-all">
+                                    <div class="w-8 h-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center mr-3 shrink-0">
+                                        <i class="fa-solid fa-hands-holding-child text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-gray-800 text-xs leading-tight">CRAS</p>
+                                        <p class="text-[9px] text-gray-500 font-medium">(37) 3441-0006</p>
+                                    </div>
+                                </a>
+                                <a href="tel:3734410004" class="flex items-center p-3 bg-white rounded-xl border border-gray-100 active:bg-purple-50 transition-all">
+                                    <div class="w-8 h-8 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center mr-3 shrink-0">
+                                        <i class="fa-solid fa-child-reaching text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-gray-800 text-xs leading-tight">Conselho Tutelar</p>
+                                        <p class="text-[9px] text-gray-500 font-medium">(37) 3441-0004</p>
+                                    </div>
+                                </a>
+                                <a href="tel:37998049213" class="flex items-center p-3 bg-white rounded-xl border border-gray-100 active:bg-purple-50 transition-all">
+                                    <div class="w-8 h-8 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center mr-3 shrink-0">
+                                        <i class="fa-solid fa-moon text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-gray-800 text-xs leading-tight">Cons. Tutelar Plantão</p>
+                                        <p class="text-[9px] text-gray-500 font-medium">(37) 99804-9213</p>
+                                    </div>
+                                </a>
+                            </div>
 
-                        <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-2 pl-1">Educação</p>
-                        <div class="grid grid-cols-2 gap-2 mb-4">
-                            <a href="tel:3734410008" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 hover:border-blue-300 active:bg-blue-50 transition-all">
-                                <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mr-3 shrink-0">
-                                    <i class="fa-solid fa-school text-sm"></i>
-                                </div>
-                                <div>
-                                    <p class="font-bold text-gray-800 text-xs leading-tight">CEI Adelina</p>
-                                    <p class="text-[9px] text-gray-500 font-medium">(37) 3441-0008</p>
-                                </div>
-                            </a>
-                            <a href="tel:3734410005" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 hover:border-blue-300 active:bg-blue-50 transition-all">
-                                <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mr-3 shrink-0">
-                                    <i class="fa-solid fa-book-open text-sm"></i>
-                                </div>
-                                <div>
-                                    <p class="font-bold text-gray-800 text-xs leading-tight">E.M. Maria Eulália</p>
-                                    <p class="text-[9px] text-gray-500 font-medium">(37) 3441-0005</p>
-                                </div>
-                            </a>
-                        </div>
+                            <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-2 pl-1">Educação</p>
+                            <div class="grid grid-cols-2 gap-2 mb-4">
+                                <a href="tel:3734410008" class="flex items-center p-3 bg-white rounded-xl border border-gray-100 active:bg-blue-50 transition-all">
+                                    <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mr-3 shrink-0">
+                                        <i class="fa-solid fa-school text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-gray-800 text-xs leading-tight">CEI Adelina</p>
+                                        <p class="text-[9px] text-gray-500 font-medium">(37) 3441-0008</p>
+                                    </div>
+                                </a>
+                                <a href="tel:3734410005" class="flex items-center p-3 bg-white rounded-xl border border-gray-100 active:bg-blue-50 transition-all">
+                                    <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mr-3 shrink-0">
+                                        <i class="fa-solid fa-book-open text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-gray-800 text-xs leading-tight">E.M. Maria Eulália</p>
+                                        <p class="text-[9px] text-gray-500 font-medium">(37) 3441-0005</p>
+                                    </div>
+                                </a>
+                            </div>
 
-                        <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-2 pl-1">Infraestrutura</p>
-                        <div class="grid grid-cols-2 gap-2">
-                            <a href="tel:37998229479" class="flex items-center p-3 bg-white rounded-xl shadow-sm border border-gray-100 hover:border-cyan-300 active:bg-cyan-50 transition-all col-span-2">
-                                <div class="w-8 h-8 rounded-full bg-cyan-100 text-cyan-600 flex items-center justify-center mr-3 shrink-0">
-                                    <i class="fa-solid fa-faucet-drip text-sm"></i>
-                                </div>
-                                <div>
-                                    <p class="font-bold text-gray-800 text-xs leading-tight">DAE – Depto. de Água e Esgoto</p>
-                                    <p class="text-[9px] text-gray-500 font-medium">(37) 99822-9479</p>
-                                </div>
-                            </a>
+                            <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-2 pl-1">Infraestrutura</p>
+                            <div class="grid grid-cols-2 gap-2 mb-2">
+                                <a href="tel:37998229479" class="flex items-center p-3 bg-white rounded-xl border border-gray-100 active:bg-cyan-50 transition-all col-span-2">
+                                    <div class="w-8 h-8 rounded-full bg-cyan-100 text-cyan-600 flex items-center justify-center mr-3 shrink-0">
+                                        <i class="fa-solid fa-faucet-drip text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-gray-800 text-xs leading-tight">DAE – Água e Esgoto</p>
+                                        <p class="text-[9px] text-gray-500 font-medium">(37) 99822-9479</p>
+                                    </div>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -769,7 +785,7 @@
 
                 if (abertas.length === 0) {
                     // Estado "tudo em dia"
-                    iconeWrap.className = 'w-11 h-11 rounded-xl bg-green-50 text-green-600 flex items-center justify-center shrink-0';
+                    iconeWrap.className = 'w-11 h-11 rounded-xl bg-white/20 text-white flex items-center justify-center shrink-0';
                     icone.className = 'fa-solid fa-circle-check text-lg';
                     titulo.innerText = 'Tudo em dia';
                     sub.innerText = 'Nenhuma solicitação em andamento';
@@ -780,7 +796,7 @@
                     const ultima = abertas[0];
                     const n = abertas.length;
 
-                    iconeWrap.className = 'w-11 h-11 rounded-xl bg-doresopolis-green/10 text-doresopolis-green flex items-center justify-center shrink-0';
+                    iconeWrap.className = 'w-11 h-11 rounded-xl bg-white/20 text-white flex items-center justify-center shrink-0';
                     icone.className = 'fa-solid fa-list-check text-lg';
                     titulo.innerText = n === 1 ? '1 solicitação em andamento' : `${n} solicitações em andamento`;
 
