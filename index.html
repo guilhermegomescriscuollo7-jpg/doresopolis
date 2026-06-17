@@ -1008,24 +1008,18 @@
         // ---- Entrar com Google (redirect — funciona em mobile e PWA) ----
         window.entrarComGoogle = async function() {
             try {
-                console.log('[Google] Iniciando signInWithRedirect...');
                 await signInWithRedirect(auth, googleProvider);
-                console.log('[Google] signInWithRedirect chamado com sucesso');
             } catch (e) {
-                console.error('[Google] Erro em signInWithRedirect:', e.code, e.message);
                 mostrarAviso('Erro ao iniciar login com Google. Tente novamente.');
             }
         };
 
         // Captura o resultado do redirect do Google ao voltar para a página
-        console.log('[Google] Verificando getRedirectResult...');
         getRedirectResult(auth).then((result) => {
-            console.log('[Google] getRedirectResult resultado:', result);
             if (result && result.user) {
                 mostrarAviso('Bem-vindo, ' + (result.user.displayName || result.user.email) + '!', 'sucesso');
             }
         }).catch((e) => {
-            console.error('[Google] getRedirectResult erro:', e.code, e.message);
             if (e.code && e.code !== 'auth/no-current-user') {
                 mostrarAviso('Erro ao entrar com Google: ' + (e.message || e.code));
             }
