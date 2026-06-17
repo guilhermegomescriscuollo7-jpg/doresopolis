@@ -1005,16 +1005,25 @@
             }
         }
 
-        // ---- Entrar com Google (redirect — funciona em mobile e PWA) ----
+        // ---- Entrar com Google (popup com fallback para redirect em PWA/mobile) ----
         window.entrarComGoogle = async function() {
             try {
-                await signInWithRedirect(auth, googleProvider);
+                const result = await signInWithPopup(auth, googleProvider);
+                mostrarAviso('Bem-vindo, ' + (result.user.displayName || result.user.email) + '!', 'sucesso');
             } catch (e) {
-                mostrarAviso('Erro ao iniciar login com Google. Tente novamente.');
+                if (e.code === 'auth/popup-blocked' || e.code === 'auth/popup-closed-by-user') {
+                    try {
+                        await signInWithRedirect(auth, googleProvider);
+                    } catch (e2) {
+                        mostrarAviso('Erro ao entrar com Google. Tente novamente.');
+                    }
+                } else if (e.code !== 'auth/cancelled-popup-request') {
+                    mostrarAviso('Erro ao entrar com Google: ' + (e.message || e.code));
+                }
             }
         };
 
-        // Captura o resultado do redirect do Google ao voltar para a página
+        // Captura resultado de redirect (fallback mobile/PWA)
         getRedirectResult(auth).then((result) => {
             if (result && result.user) {
                 mostrarAviso('Bem-vindo, ' + (result.user.displayName || result.user.email) + '!', 'sucesso');
