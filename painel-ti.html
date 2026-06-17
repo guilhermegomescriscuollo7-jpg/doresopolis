@@ -79,6 +79,13 @@
       </button>
     </div>
     <input type="hidden" id="conta-uid">
+    <input type="hidden" id="conta-vincular-modo" value="">
+
+    <div id="aviso-vincular" class="hidden bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm text-amber-800">
+      <p class="font-bold mb-1"><i class="fa-solid fa-triangle-exclamation mr-1.5"></i>Conta já existe no Firebase</p>
+      <p>Digite a <strong>senha atual</strong> dessa conta para vinculá-la ao painel e ela passará a aparecer na lista.</p>
+    </div>
+
     <div>
       <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Nome completo *</label>
       <input id="c-nome" type="text" placeholder="Nome do secretário(a)"
@@ -90,7 +97,7 @@
         class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-300">
     </div>
     <div>
-      <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">
+      <label id="label-senha" class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">
         Senha * <span id="label-senha-edit" class="hidden normal-case font-normal text-gray-400">(deixe em branco para manter)</span>
       </label>
       <div class="relative">
@@ -304,12 +311,15 @@ window.abrirModalNovaConta = () => {
   contaEditando = null;
   document.getElementById('modal-titulo').textContent = 'Nova Conta';
   document.getElementById('conta-uid').value = '';
+  document.getElementById('conta-vincular-modo').value = '';
   document.getElementById('c-nome').value = '';
   document.getElementById('c-email').value = '';
   document.getElementById('c-email').readOnly = false;
   document.getElementById('c-senha').value = '';
   document.getElementById('c-secretaria').value = '';
   document.getElementById('label-senha-edit').classList.add('hidden');
+  document.getElementById('label-senha').firstChild.textContent = 'Senha * ';
+  document.getElementById('aviso-vincular').classList.add('hidden');
   document.getElementById('modal-erro').classList.add('hidden');
   document.getElementById('modal-btn-txt').classList.remove('hidden');
   document.getElementById('modal-btn-load').classList.add('hidden');
@@ -347,29 +357,50 @@ window.salvarConta = async () => {
   try {
     let uid = document.getElementById('conta-uid').value;
 
+    const modoVincular = document.getElementById('conta-vincular-modo').value === '1';
+
     if (!uid) {
       if (!email || senha.length < 6) { mostrarErroModal('E-mail e senha (mín. 6 caracteres) são obrigatórios.'); resetBtnModal(); return; }
-      const res  = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${API_KEY}`,
-        { method:'POST', headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({ email, password: senha, returnSecureToken: false }) });
-      const data = await res.json();
-      if (data.error) {
-        if (data.error.message === 'EMAIL_EXISTS') {
-          // Conta já existe no Auth — tenta login com a senha fornecida para obter o UID
-          const siRes = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${API_KEY}`,
-            { method:'POST', headers:{'Content-Type':'application/json'},
-              body: JSON.stringify({ email, password: senha, returnSecureToken: true }) });
-          const siData = await siRes.json();
-          if (siData.error) {
-            mostrarErroModal('Conta já existe com outra senha. Digite a senha atual da conta para vincular ao painel.');
-            resetBtnModal(); return;
-          }
-          uid = siData.localId;
-        } else {
-          mostrarErroModal(traduzirErro(data.error.message)); resetBtnModal(); return;
+
+      if (modoVincular) {
+        // Modo vincular: conta já existe no Auth, faz login para obter o UID
+        const siRes = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${API_KEY}`,
+          { method:'POST', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({ email, password: senha, returnSecureToken: true }) });
+        const siData = await siRes.json();
+        if (siData.error) {
+          mostrarErroModal('Senha incorreta. Digite a senha atual dessa conta.');
+          resetBtnModal(); return;
         }
+        uid = siData.localId;
       } else {
-        uid = data.localId;
+        const res  = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${API_KEY}`,
+          { method:'POST', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({ email, password: senha, returnSecureToken: false }) });
+        const data = await res.json();
+        if (data.error) {
+          if (data.error.message === 'EMAIL_EXISTS') {
+            // Tenta login com a senha digitada para obter o UID
+            const siRes = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${API_KEY}`,
+              { method:'POST', headers:{'Content-Type':'application/json'},
+                body: JSON.stringify({ email, password: senha, returnSecureToken: true }) });
+            const siData = await siRes.json();
+            if (siData.error) {
+              // Senha errada — ativa modo vincular para próxima tentativa
+              document.getElementById('conta-vincular-modo').value = '1';
+              document.getElementById('aviso-vincular').classList.remove('hidden');
+              document.getElementById('c-senha').value = '';
+              document.getElementById('label-senha').childNodes[0].textContent = 'Senha atual da conta * ';
+              document.getElementById('modal-erro').classList.add('hidden');
+              resetBtnModal(); return;
+            }
+            uid = siData.localId;
+          } else {
+            mostrarErroModal(traduzirErro(data.error.message)); resetBtnModal(); return;
+          }
+        } else {
+          uid = data.localId;
+        }
       }
     }
 
