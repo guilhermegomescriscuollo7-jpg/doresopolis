@@ -185,10 +185,13 @@ let resetUID = null;
 
 function mostrar(id) {
   ['e-loading','e-negado','e-painel'].forEach(s => {
-    const el = document.getElementById(s); el.classList.add('hidden'); el.classList.remove('flex');
+    const el = document.getElementById(s);
+    el.classList.add('hidden');
+    el.classList.remove('flex');
   });
-  const t = document.getElementById(id); t.classList.remove('hidden');
-  if (id !== 'e-painel') t.classList.add('flex');
+  const t = document.getElementById(id);
+  t.classList.remove('hidden');
+  t.classList.add('flex');
 }
 
 window.fecharModal    = () => document.getElementById('modal-conta').classList.add('hidden');
@@ -236,7 +239,11 @@ async function carregarContas() {
       renderContas();
     }
   } catch(e) {
+    console.error('carregarContas error:', e);
     document.getElementById('lista-loading').classList.add('hidden');
+    document.getElementById('lista-loading').classList.remove('flex');
+    document.getElementById('lista-vazia').classList.remove('hidden');
+    document.getElementById('lista-vazia').classList.add('flex');
   }
 }
 
