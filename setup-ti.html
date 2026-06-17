@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -94,7 +94,7 @@ const app = initializeApp({
   messagingSenderId: "158833761867",
   appId: "1:158833761867:web:f9db6cb6dc6b5785cfb7ce"
 });
-const db = getFirestore(app);
+const db = getFirestore(app, 'ai-studio-effa6aaf-05b1-45f1-96b5-43601bcc0a4');
 
 function mostrar(id) {
   ['e-loading','e-ja-existe','e-form','e-ok'].forEach(s =>
