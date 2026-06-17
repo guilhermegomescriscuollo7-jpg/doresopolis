@@ -353,8 +353,24 @@ window.salvarConta = async () => {
         { method:'POST', headers:{'Content-Type':'application/json'},
           body: JSON.stringify({ email, password: senha, returnSecureToken: false }) });
       const data = await res.json();
-      if (data.error) { mostrarErroModal(traduzirErro(data.error.message)); resetBtnModal(); return; }
-      uid = data.localId;
+      if (data.error) {
+        if (data.error.message === 'EMAIL_EXISTS') {
+          // Conta já existe no Auth — tenta login com a senha fornecida para obter o UID
+          const siRes = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${API_KEY}`,
+            { method:'POST', headers:{'Content-Type':'application/json'},
+              body: JSON.stringify({ email, password: senha, returnSecureToken: true }) });
+          const siData = await siRes.json();
+          if (siData.error) {
+            mostrarErroModal('Conta já existe com outra senha. Digite a senha atual da conta para vincular ao painel.');
+            resetBtnModal(); return;
+          }
+          uid = siData.localId;
+        } else {
+          mostrarErroModal(traduzirErro(data.error.message)); resetBtnModal(); return;
+        }
+      } else {
+        uid = data.localId;
+      }
     }
 
     await set(ref(db, 'contas_secretaria/' + uid), {
