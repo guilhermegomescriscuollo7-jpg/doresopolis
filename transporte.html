@@ -46,51 +46,205 @@ tailwind.config = {
   </header>
 
   <!-- CONTEÚDO -->
-  <main class="flex-grow flex flex-col items-center justify-center px-8 text-center">
+  <main class="flex-grow overflow-y-auto px-4 py-4 space-y-4">
 
-    <div class="w-24 h-24 rounded-full bg-purple-50 border-2 border-purple-100 flex items-center justify-center mb-6 shadow-inner">
-      <i class="fa-solid fa-screwdriver-wrench text-4xl text-purple-400"></i>
-    </div>
+    <!-- TRANSPORTE UNIVERSITÁRIO -->
+    <section>
+      <div class="flex items-center gap-2 mb-3">
+        <div class="w-1 h-5 bg-purple-600 rounded-full"></div>
+        <h2 class="font-black text-gray-800 text-sm uppercase tracking-wide">Transporte Universitário</h2>
+      </div>
 
-    <h2 class="text-2xl font-black text-gray-800 uppercase tracking-tight mb-2">Em Desenvolvimento</h2>
-
-    <p class="text-sm text-gray-500 leading-relaxed max-w-xs">
-      A página de <span class="font-bold text-purple-600">Transporte</span> está sendo construída e em breve estará disponível com horários, rotas e solicitações de transporte escolar e rural.
-    </p>
-
-    <div class="mt-8 flex flex-col gap-3 w-full max-w-xs">
-      <div class="flex items-center gap-3 bg-white border border-gray-100 rounded-xl p-3 shadow-sm opacity-50">
-        <div class="w-9 h-9 rounded-lg bg-purple-50 text-purple-400 flex items-center justify-center shrink-0">
-          <i class="fa-solid fa-clock"></i>
+      <!-- Card info geral -->
+      <div class="bg-purple-600 rounded-2xl p-4 mb-3 text-white">
+        <div class="flex items-center gap-3 mb-2">
+          <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center shrink-0">
+            <i class="fa-solid fa-graduation-cap text-lg"></i>
+          </div>
+          <div>
+            <p class="font-bold text-sm leading-tight">Ônibus Universitário Municipal</p>
+            <p class="text-[11px] text-purple-200">Gratuito para estudantes cadastrados</p>
+          </div>
         </div>
-        <div class="text-left">
-          <p class="text-xs font-bold text-gray-600">Horários de Ônibus</p>
-          <p class="text-[10px] text-gray-400">Em breve</p>
+        <p class="text-[11px] text-purple-100 leading-relaxed">
+          O município disponibiliza transporte gratuito para estudantes matriculados em instituições de ensino superior. É necessário realizar o cadastro anualmente na Prefeitura.
+        </p>
+      </div>
+
+      <!-- Rotas -->
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden mb-3">
+        <div class="px-4 py-3 border-b border-gray-50 flex items-center gap-2">
+          <i class="fa-solid fa-route text-purple-500 text-sm"></i>
+          <p class="font-bold text-gray-700 text-sm">Rotas Disponíveis</p>
+        </div>
+        <div class="divide-y divide-gray-50">
+          <div class="px-4 py-3 flex items-center gap-3">
+            <div class="w-8 h-8 bg-purple-50 rounded-lg flex items-center justify-center shrink-0">
+              <i class="fa-solid fa-location-dot text-purple-500 text-xs"></i>
+            </div>
+            <div class="flex-grow">
+              <p class="font-bold text-gray-700 text-xs">Doresópolis → Divinópolis</p>
+              <p class="text-[10px] text-gray-400">UEMG · UNIDIVI · Faculdade Pitágoras</p>
+            </div>
+          </div>
+          <div class="px-4 py-3 flex items-center gap-3">
+            <div class="w-8 h-8 bg-purple-50 rounded-lg flex items-center justify-center shrink-0">
+              <i class="fa-solid fa-location-dot text-purple-500 text-xs"></i>
+            </div>
+            <div class="flex-grow">
+              <p class="font-bold text-gray-700 text-xs">Doresópolis → Formiga</p>
+              <p class="text-[10px] text-gray-400">UNIFOR-MG · UEMG Formiga</p>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="flex items-center gap-3 bg-white border border-gray-100 rounded-xl p-3 shadow-sm opacity-50">
-        <div class="w-9 h-9 rounded-lg bg-purple-50 text-purple-400 flex items-center justify-center shrink-0">
-          <i class="fa-solid fa-bus-school"></i>
-        </div>
-        <div class="text-left">
-          <p class="text-xs font-bold text-gray-600">Transporte Escolar</p>
-          <p class="text-[10px] text-gray-400">Em breve</p>
-        </div>
-      </div>
-      <div class="flex items-center gap-3 bg-white border border-gray-100 rounded-xl p-3 shadow-sm opacity-50">
-        <div class="w-9 h-9 rounded-lg bg-purple-50 text-purple-400 flex items-center justify-center shrink-0">
-          <i class="fa-solid fa-road"></i>
-        </div>
-        <div class="text-left">
-          <p class="text-xs font-bold text-gray-600">Estradas Rurais</p>
-          <p class="text-[10px] text-gray-400">Em breve</p>
-        </div>
-      </div>
-    </div>
 
-    <a href="index.html" class="mt-8 inline-flex items-center gap-2 bg-purple-600 text-white font-bold px-6 py-3 rounded-xl shadow-md hover:bg-purple-700 active:scale-[0.98] transition-all text-sm">
-      <i class="fa-solid fa-arrow-left"></i> Voltar ao Início
-    </a>
+      <!-- Horários universitário -->
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden mb-3">
+        <div class="px-4 py-3 border-b border-gray-50 flex items-center gap-2">
+          <i class="fa-solid fa-clock text-purple-500 text-sm"></i>
+          <p class="font-bold text-gray-700 text-sm">Horários — Dias Úteis</p>
+        </div>
+        <div class="divide-y divide-gray-50">
+          <div class="px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-green-400 shrink-0"></span>
+              <p class="text-xs text-gray-700 font-medium">Saída — Doresópolis</p>
+            </div>
+            <span class="font-black text-purple-600 text-sm">06h00</span>
+          </div>
+          <div class="px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-red-400 shrink-0"></span>
+              <p class="text-xs text-gray-700 font-medium">Retorno — Doresópolis</p>
+            </div>
+            <span class="font-black text-purple-600 text-sm">22h30</span>
+          </div>
+        </div>
+        <div class="px-4 py-2.5 bg-amber-50 border-t border-amber-100 flex items-start gap-2">
+          <i class="fa-solid fa-triangle-exclamation text-amber-500 text-xs mt-0.5 shrink-0"></i>
+          <p class="text-[10px] text-amber-700 leading-relaxed">Horários podem sofrer alterações. Confirme com a Secretaria de Transporte.</p>
+        </div>
+      </div>
+
+      <!-- Como se cadastrar -->
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <button onclick="this.nextElementSibling.classList.toggle('hidden');this.querySelector('.chevron').classList.toggle('rotate-180')" class="w-full px-4 py-3 flex items-center justify-between active:bg-gray-50 transition-colors">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-circle-info text-purple-500 text-sm"></i>
+            <p class="font-bold text-gray-700 text-sm">Como se cadastrar</p>
+          </div>
+          <i class="fa-solid fa-chevron-down chevron text-gray-300 text-xs transition-transform duration-200"></i>
+        </button>
+        <div class="hidden border-t border-gray-50 px-4 py-3 space-y-2">
+          <div class="flex gap-3">
+            <span class="w-5 h-5 rounded-full bg-purple-100 text-purple-600 text-[10px] font-black flex items-center justify-center shrink-0 mt-0.5">1</span>
+            <p class="text-xs text-gray-600">Compareça à Prefeitura Municipal com RG, CPF e comprovante de matrícula</p>
+          </div>
+          <div class="flex gap-3">
+            <span class="w-5 h-5 rounded-full bg-purple-100 text-purple-600 text-[10px] font-black flex items-center justify-center shrink-0 mt-0.5">2</span>
+            <p class="text-xs text-gray-600">Preencha o formulário de solicitação na Secretaria de Transporte</p>
+          </div>
+          <div class="flex gap-3">
+            <span class="w-5 h-5 rounded-full bg-purple-100 text-purple-600 text-[10px] font-black flex items-center justify-center shrink-0 mt-0.5">3</span>
+            <p class="text-xs text-gray-600">Cadastro renovado anualmente no início de cada semestre letivo</p>
+          </div>
+          <a href="tel:3737000000" class="mt-1 flex items-center gap-2 text-purple-600 text-xs font-bold">
+            <i class="fa-solid fa-phone text-[11px]"></i> Ligar para a Secretaria
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- HORÁRIOS DE ÔNIBUS -->
+    <section>
+      <div class="flex items-center gap-2 mb-3">
+        <div class="w-1 h-5 bg-blue-500 rounded-full"></div>
+        <h2 class="font-black text-gray-800 text-sm uppercase tracking-wide">Horários de Ônibus</h2>
+      </div>
+
+      <!-- Linha 1: Centro / Bairros -->
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden mb-3">
+        <div class="px-4 py-3 bg-blue-50 border-b border-blue-100 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-bus text-blue-500 text-sm"></i>
+            <p class="font-bold text-blue-700 text-sm">Linha 01 — Centro / Bairros</p>
+          </div>
+          <span class="text-[9px] font-black uppercase bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full">Circular</span>
+        </div>
+        <div class="divide-y divide-gray-50">
+          <div class="px-4 py-2.5 flex items-center justify-between">
+            <p class="text-xs text-gray-600">Segunda a Sexta</p>
+            <p class="text-xs font-bold text-gray-800">06h00 · 12h00 · 17h30</p>
+          </div>
+          <div class="px-4 py-2.5 flex items-center justify-between">
+            <p class="text-xs text-gray-600">Sábado</p>
+            <p class="text-xs font-bold text-gray-800">07h00 · 12h00</p>
+          </div>
+          <div class="px-4 py-2.5 flex items-center justify-between">
+            <p class="text-xs text-gray-600">Domingo e Feriado</p>
+            <p class="text-xs font-bold text-red-400">Sem serviço</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Linha 2: Zona Rural -->
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden mb-3">
+        <div class="px-4 py-3 bg-green-50 border-b border-green-100 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-bus text-green-600 text-sm"></i>
+            <p class="font-bold text-green-700 text-sm">Linha 02 — Zona Rural</p>
+          </div>
+          <span class="text-[9px] font-black uppercase bg-green-100 text-green-700 px-2 py-0.5 rounded-full">Rural</span>
+        </div>
+        <div class="divide-y divide-gray-50">
+          <div class="px-4 py-2.5 flex items-center justify-between">
+            <p class="text-xs text-gray-600">Segunda a Sexta</p>
+            <p class="text-xs font-bold text-gray-800">05h30 · 13h00</p>
+          </div>
+          <div class="px-4 py-2.5 flex items-center justify-between">
+            <p class="text-xs text-gray-600">Sábado</p>
+            <p class="text-xs font-bold text-gray-800">06h00</p>
+          </div>
+          <div class="px-4 py-2.5 flex items-center justify-between">
+            <p class="text-xs text-gray-600">Domingo e Feriado</p>
+            <p class="text-xs font-bold text-red-400">Sem serviço</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Linha Intermunicipal -->
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden mb-3">
+        <div class="px-4 py-3 bg-orange-50 border-b border-orange-100 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-bus text-orange-500 text-sm"></i>
+            <p class="font-bold text-orange-700 text-sm">Intermunicipal</p>
+          </div>
+          <span class="text-[9px] font-black uppercase bg-orange-100 text-orange-600 px-2 py-0.5 rounded-full">Divinópolis</span>
+        </div>
+        <div class="divide-y divide-gray-50">
+          <div class="px-4 py-2.5 flex items-center justify-between">
+            <p class="text-xs text-gray-600">Saída Doresópolis</p>
+            <p class="text-xs font-bold text-gray-800">05h00 · 11h30 · 16h00</p>
+          </div>
+          <div class="px-4 py-2.5 flex items-center justify-between">
+            <p class="text-xs text-gray-600">Saída Divinópolis</p>
+            <p class="text-xs font-bold text-gray-800">07h30 · 13h00 · 18h30</p>
+          </div>
+          <div class="px-4 py-2.5 flex items-center justify-between">
+            <p class="text-xs text-gray-600">Operadora</p>
+            <p class="text-xs font-bold text-gray-800">Viação Estrela</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-amber-50 border border-amber-100 rounded-2xl px-4 py-3 flex items-start gap-3 mb-4">
+        <i class="fa-solid fa-circle-info text-amber-500 text-sm mt-0.5 shrink-0"></i>
+        <p class="text-[11px] text-amber-700 leading-relaxed">
+          Os horários são de referência e podem ser alterados em feriados, períodos eleitorais ou por decisão administrativa. Em caso de dúvida, entre em contato com a Secretaria de Transporte.
+        </p>
+      </div>
+    </section>
 
   </main>
 
