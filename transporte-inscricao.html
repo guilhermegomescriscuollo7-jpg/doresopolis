@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#eab308">
+<title>Inscrição Transporte Escolar - App Doresópolis</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script>
+tailwind.config = {
+  theme: { extend: { colors: { doresopolis: { green: '#0b5c3b' } } } }
+}
+</script>
+</head>
+<body class="bg-gray-200 font-sans text-gray-800 flex justify-center items-center min-h-screen">
+
+<div class="bg-gray-50 w-full max-w-md h-[100dvh] flex flex-col relative shadow-2xl overflow-hidden sm:rounded-xl sm:h-[95vh] sm:border sm:border-gray-300">
+
+  <!-- HEADER -->
+  <header class="bg-white shadow-sm z-10 flex-shrink-0">
+    <div class="bg-yellow-400 h-1.5 w-full"></div>
+    <div class="px-4 py-3 flex items-center gap-3">
+      <a href="transporte.html" class="w-9 h-9 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center shrink-0">
+        <i class="fa-solid fa-arrow-left text-sm"></i>
+      </a>
+      <div class="flex items-center gap-3 flex-grow">
+        <div class="w-9 h-9 rounded-full bg-yellow-50 text-yellow-500 flex items-center justify-center shrink-0">
+          <i class="fa-solid fa-bus-school"></i>
+        </div>
+        <div>
+          <p class="text-[9px] tracking-widest text-gray-400 uppercase font-semibold leading-none">Sec. Transporte · 2026</p>
+          <h1 class="text-base font-black text-gray-800 uppercase tracking-tight leading-none">Inscrição Escolar</h1>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTEÚDO -->
+  <main class="flex-grow overflow-y-auto px-4 py-4 space-y-4" id="main-content">
+
+    <!-- Banner informativo -->
+    <div class="bg-yellow-400 rounded-2xl p-4 text-white">
+      <div class="flex items-center gap-3 mb-2">
+        <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center shrink-0">
+          <i class="fa-solid fa-bus-school text-lg"></i>
+        </div>
+        <div>
+          <p class="font-bold text-sm leading-tight text-yellow-900">Transporte Escolar 2026</p>
+          <p class="text-[11px] text-yellow-800">Inscrições abertas</p>
+        </div>
+      </div>
+      <p class="text-[11px] text-yellow-900 leading-relaxed">
+        O transporte escolar é gratuito para alunos da rede pública matriculados em escolas do município. A inscrição deve ser renovada anualmente.
+      </p>
+    </div>
+
+    <!-- Quem pode se inscrever -->
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+      <button onclick="this.nextElementSibling.classList.toggle('hidden');this.querySelector('.chevron').classList.toggle('rotate-180')" class="w-full px-4 py-3 flex items-center justify-between active:bg-gray-50">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-circle-check text-yellow-500 text-sm"></i>
+          <p class="font-bold text-gray-700 text-sm">Quem pode se inscrever?</p>
+        </div>
+        <i class="fa-solid fa-chevron-down chevron text-gray-300 text-xs transition-transform duration-200"></i>
+      </button>
+      <div class="hidden border-t border-gray-50 px-4 py-3 space-y-2">
+        <div class="flex items-start gap-2">
+          <i class="fa-solid fa-check text-green-500 text-xs mt-0.5 shrink-0"></i>
+          <p class="text-xs text-gray-600">Alunos matriculados na rede pública municipal ou estadual</p>
+        </div>
+        <div class="flex items-start gap-2">
+          <i class="fa-solid fa-check text-green-500 text-xs mt-0.5 shrink-0"></i>
+          <p class="text-xs text-gray-600">Residentes em zona rural ou sem acesso a pé à escola</p>
+        </div>
+        <div class="flex items-start gap-2">
+          <i class="fa-solid fa-check text-green-500 text-xs mt-0.5 shrink-0"></i>
+          <p class="text-xs text-gray-600">Crianças a partir de 4 anos (Educação Infantil ao Ensino Médio)</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Documentos necessários -->
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+      <button onclick="this.nextElementSibling.classList.toggle('hidden');this.querySelector('.chevron').classList.toggle('rotate-180')" class="w-full px-4 py-3 flex items-center justify-between active:bg-gray-50">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-file-lines text-yellow-500 text-sm"></i>
+          <p class="font-bold text-gray-700 text-sm">Documentos necessários</p>
+        </div>
+        <i class="fa-solid fa-chevron-down chevron text-gray-300 text-xs transition-transform duration-200"></i>
+      </button>
+      <div class="hidden border-t border-gray-50 px-4 py-3 space-y-2">
+        <div class="flex items-center gap-3">
+          <div class="w-7 h-7 bg-yellow-50 rounded-lg flex items-center justify-center shrink-0">
+            <i class="fa-solid fa-id-card text-yellow-500 text-xs"></i>
+          </div>
+          <p class="text-xs text-gray-600">RG e CPF do aluno (ou certidão de nascimento)</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="w-7 h-7 bg-yellow-50 rounded-lg flex items-center justify-center shrink-0">
+            <i class="fa-solid fa-school text-yellow-500 text-xs"></i>
+          </div>
+          <p class="text-xs text-gray-600">Comprovante de matrícula 2026</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="w-7 h-7 bg-yellow-50 rounded-lg flex items-center justify-center shrink-0">
+            <i class="fa-solid fa-house text-yellow-500 text-xs"></i>
+          </div>
+          <p class="text-xs text-gray-600">Comprovante de residência atualizado</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="w-7 h-7 bg-yellow-50 rounded-lg flex items-center justify-center shrink-0">
+            <i class="fa-solid fa-user text-yellow-500 text-xs"></i>
+          </div>
+          <p class="text-xs text-gray-600">RG e CPF do responsável (se menor de 18 anos)</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Onde e quando se inscrever -->
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+      <div class="px-4 py-3 border-b border-gray-50 flex items-center gap-2">
+        <i class="fa-solid fa-calendar-days text-yellow-500 text-sm"></i>
+        <p class="font-bold text-gray-700 text-sm">Onde e quando se inscrever</p>
+      </div>
+      <div class="px-4 py-3 space-y-3">
+        <div class="flex items-start gap-3">
+          <div class="w-8 h-8 bg-yellow-50 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
+            <i class="fa-solid fa-building-columns text-yellow-500 text-xs"></i>
+          </div>
+          <div>
+            <p class="text-xs font-bold text-gray-700">Local</p>
+            <p class="text-[11px] text-gray-500">Secretaria de Transporte — Prefeitura Municipal de Doresópolis</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <div class="w-8 h-8 bg-yellow-50 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
+            <i class="fa-solid fa-clock text-yellow-500 text-xs"></i>
+          </div>
+          <div>
+            <p class="text-xs font-bold text-gray-700">Horário de atendimento</p>
+            <p class="text-[11px] text-gray-500">Segunda a Sexta · 08h00 às 16h00</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <div class="w-8 h-8 bg-yellow-50 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
+            <i class="fa-solid fa-calendar-check text-yellow-500 text-xs"></i>
+          </div>
+          <div>
+            <p class="text-xs font-bold text-gray-700">Prazo de inscrição</p>
+            <p class="text-[11px] text-gray-500">Até 31 de janeiro de 2026</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botão ligar -->
+    <a href="tel:3737000000" class="flex items-center justify-center gap-2 bg-yellow-400 text-yellow-900 font-bold px-6 py-3.5 rounded-2xl shadow-md active:scale-[0.98] transition-all text-sm">
+      <i class="fa-solid fa-phone"></i> Ligar para a Secretaria de Transporte
+    </a>
+
+  </main>
+
+</div>
+
+</body>
+</html>
