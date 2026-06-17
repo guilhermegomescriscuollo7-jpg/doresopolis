@@ -377,7 +377,157 @@
                 </div>
 
 
+                <!-- ========================================================
+                     ABA USUÁRIO — CONTA DO CIDADÃO
+                     ======================================================== -->
+                <div id="aba-usuario" class="hidden">
+
+                    <!-- NÃO LOGADO -->
+                    <div id="usuario-nao-logado">
+                        <div class="text-center mb-6 pt-2">
+                            <div class="w-20 h-20 rounded-full bg-doresopolis-green/10 flex items-center justify-center mx-auto mb-4">
+                                <i class="fa-solid fa-user text-3xl text-doresopolis-green"></i>
+                            </div>
+                            <h2 class="text-lg font-bold text-gray-800">Sua Conta</h2>
+                            <p class="text-xs text-gray-500 mt-1 max-w-xs mx-auto">Entre ou crie uma conta para acompanhar suas solicitações</p>
+                        </div>
+
+                        <!-- Google Sign In -->
+                        <button onclick="entrarComGoogle()" class="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 rounded-xl py-3 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 active:scale-95 transition-all mb-4">
+                            <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                            </svg>
+                            Entrar com Google
+                        </button>
+
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="flex-1 h-px bg-gray-200"></div>
+                            <span class="text-xs text-gray-400">ou entre com e-mail</span>
+                            <div class="flex-1 h-px bg-gray-200"></div>
+                        </div>
+
+                        <!-- Tab switcher: Entrar / Criar Conta -->
+                        <div class="flex bg-gray-100 rounded-xl p-1 mb-4">
+                            <button id="tab-entrar-btn" onclick="toggleAuthTab('entrar')" class="flex-1 text-sm font-semibold py-2 rounded-lg bg-white shadow-sm text-gray-800 transition-all">Entrar</button>
+                            <button id="tab-registro-btn" onclick="toggleAuthTab('registro')" class="flex-1 text-sm font-semibold py-2 rounded-lg text-gray-500 transition-all">Criar Conta</button>
+                        </div>
+
+                        <!-- Form: Entrar -->
+                        <div id="form-entrar">
+                            <div class="space-y-3">
+                                <input id="login-email" type="email" autocomplete="email" inputmode="email" placeholder="E-mail" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-doresopolis-green bg-white">
+                                <input id="login-senha" type="password" autocomplete="current-password" placeholder="Senha" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-doresopolis-green bg-white">
+                                <button onclick="entrarComEmail()" class="w-full bg-doresopolis-green text-white font-bold py-3 rounded-xl text-sm hover:brightness-105 active:scale-95 transition-all">Entrar</button>
+                            </div>
+                            <button onclick="toggleAuthTab('reset')" class="text-sm text-doresopolis-green mt-3 w-full text-center py-1">Esqueci minha senha</button>
+                        </div>
+
+                        <!-- Form: Criar Conta -->
+                        <div id="form-registro" class="hidden space-y-3">
+                            <input id="reg-nome" type="text" autocomplete="name" placeholder="Nome completo" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-doresopolis-green bg-white">
+                            <input id="reg-email" type="email" autocomplete="email" inputmode="email" placeholder="E-mail" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-doresopolis-green bg-white">
+                            <input id="reg-telefone" type="tel" autocomplete="tel" inputmode="tel" placeholder="Telefone (opcional)" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-doresopolis-green bg-white">
+                            <input id="reg-senha" type="password" autocomplete="new-password" placeholder="Senha (mín. 6 caracteres)" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-doresopolis-green bg-white">
+                            <input id="reg-senha2" type="password" autocomplete="new-password" placeholder="Confirmar senha" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-doresopolis-green bg-white">
+                            <button onclick="criarConta()" class="w-full bg-doresopolis-green text-white font-bold py-3 rounded-xl text-sm hover:brightness-105 active:scale-95 transition-all">Criar Conta</button>
+                        </div>
+
+                        <!-- Form: Redefinir Senha -->
+                        <div id="form-reset" class="hidden">
+                            <div class="bg-blue-50 border border-blue-100 rounded-xl p-3 mb-4">
+                                <p class="text-xs text-blue-700 leading-relaxed">Digite seu e-mail para receber um link de redefinição de senha.</p>
+                            </div>
+                            <div class="space-y-3">
+                                <input id="reset-email" type="email" autocomplete="email" inputmode="email" placeholder="Seu e-mail" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-doresopolis-green bg-white">
+                                <button onclick="enviarResetSenha()" class="w-full bg-doresopolis-green text-white font-bold py-3 rounded-xl text-sm hover:brightness-105 active:scale-95 transition-all">Enviar Link</button>
+                                <button onclick="toggleAuthTab('entrar')" class="w-full border border-gray-200 text-gray-600 font-medium py-3 rounded-xl text-sm active:bg-gray-50 transition-all">Voltar</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- LOGADO -->
+                    <div id="usuario-logado" class="hidden">
+                        <!-- Avatar + info -->
+                        <div class="flex flex-col items-center mb-5 pt-2">
+                            <div id="usuario-avatar" class="w-20 h-20 rounded-full bg-doresopolis-green flex items-center justify-center text-white text-3xl font-bold mb-3 shadow-md overflow-hidden">
+                                <i class="fa-solid fa-user"></i>
+                            </div>
+                            <h2 id="usuario-nome-display" class="text-base font-bold text-gray-800 text-center"></h2>
+                            <p id="usuario-email-display" class="text-xs text-gray-500 mt-0.5"></p>
+                            <span id="usuario-provider-badge" class="mt-1.5 text-[10px] font-medium text-gray-400 flex items-center gap-1"></span>
+                        </div>
+
+                        <!-- Editar Perfil -->
+                        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
+                            <h3 class="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+                                <i class="fa-solid fa-pen text-doresopolis-green text-xs"></i> Editar Perfil
+                            </h3>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Nome</label>
+                                    <input id="edit-nome" type="text" autocomplete="name" placeholder="Nome completo" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-doresopolis-green">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">E-mail</label>
+                                    <input id="edit-email" type="email" autocomplete="email" inputmode="email" placeholder="E-mail" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-doresopolis-green">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Telefone</label>
+                                    <input id="edit-telefone" type="tel" autocomplete="tel" inputmode="tel" placeholder="(00) 00000-0000" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-doresopolis-green">
+                                </div>
+                                <button onclick="salvarPerfil()" class="w-full bg-doresopolis-green text-white font-bold py-3 rounded-xl text-sm hover:brightness-105 active:scale-95 transition-all">Salvar Alterações</button>
+                            </div>
+                        </div>
+
+                        <!-- Alterar Senha (só e-mail/senha) -->
+                        <div id="secao-alterar-senha" class="hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
+                            <h3 class="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+                                <i class="fa-solid fa-lock text-doresopolis-green text-xs"></i> Alterar Senha
+                            </h3>
+                            <div class="space-y-3">
+                                <input id="senha-atual" type="password" autocomplete="current-password" placeholder="Senha atual" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-doresopolis-green">
+                                <input id="senha-nova" type="password" autocomplete="new-password" placeholder="Nova senha (mín. 6 caracteres)" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-doresopolis-green">
+                                <input id="senha-nova2" type="password" autocomplete="new-password" placeholder="Confirmar nova senha" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-doresopolis-green">
+                                <button onclick="alterarSenha()" class="w-full bg-doresopolis-green text-white font-bold py-3 rounded-xl text-sm hover:brightness-105 active:scale-95 transition-all">Alterar Senha</button>
+                            </div>
+                        </div>
+
+                        <!-- Sair + Excluir -->
+                        <button onclick="sairConta()" class="w-full flex items-center justify-center gap-2 border border-gray-200 text-gray-600 font-semibold py-3 rounded-xl text-sm mb-3 hover:bg-gray-50 active:scale-95 transition-all">
+                            <i class="fa-solid fa-right-from-bracket"></i> Sair da Conta
+                        </button>
+                        <button onclick="confirmarExcluirConta()" class="w-full flex items-center justify-center gap-2 border border-red-200 text-red-500 font-semibold py-3 rounded-xl text-sm hover:bg-red-50 active:scale-95 transition-all">
+                            <i class="fa-solid fa-trash-can"></i> Excluir Conta
+                        </button>
+                    </div>
+
+                </div>
+
             </main>
+
+            <!-- MODAL: CONFIRMAR EXCLUSÃO DE CONTA -->
+            <div id="modal-excluir-conta" class="hidden fixed inset-0 z-[200] flex items-end justify-center p-4">
+                <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="document.getElementById('modal-excluir-conta').classList.add('hidden')"></div>
+                <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-sm p-5 z-10 mb-4">
+                    <div class="text-center mb-4">
+                        <div class="w-14 h-14 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-3">
+                            <i class="fa-solid fa-triangle-exclamation text-red-500 text-xl"></i>
+                        </div>
+                        <h3 class="font-bold text-gray-800 text-base">Excluir Conta</h3>
+                        <p class="text-xs text-gray-500 mt-1">Esta ação é irreversível. Todos os seus dados serão apagados.</p>
+                    </div>
+                    <div id="modal-excluir-senha-wrap" class="mb-3">
+                        <input id="excluir-confirmar-senha" type="password" placeholder="Digite sua senha para confirmar" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-400">
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="document.getElementById('modal-excluir-conta').classList.add('hidden')" class="flex-1 border border-gray-200 text-gray-600 font-semibold py-3 rounded-xl text-sm">Cancelar</button>
+                        <button onclick="excluirConta()" class="flex-1 bg-red-500 text-white font-bold py-3 rounded-xl text-sm active:scale-95 transition-all">Excluir</button>
+                    </div>
+                </div>
+            </div>
 
             <!-- BANNER DE INSTALAÇÃO PWA -->
             <div id="pwa-banner" class="hidden absolute bottom-[5.5rem] left-4 right-4 z-[70] bg-white rounded-xl shadow-lg border border-gray-200 p-3 flex items-center gap-3">
@@ -403,6 +553,9 @@
                         <i class="fa-solid fa-list-check text-lg mb-1"></i><span class="text-[10px] font-medium">Solicitações</span>
                     </a>
 
+                    <a href="#" onclick="event.preventDefault(); mudarAbaPrincipal('usuario');" id="nav-usuario" class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-doresopolis-green transition-colors">
+                        <i class="fa-solid fa-user text-lg mb-1"></i><span class="text-[10px] font-medium">Usuário</span>
+                    </a>
 
                 </div>
             </nav>
@@ -412,7 +565,8 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getFirestore, collection, query, where, getDocs, orderBy, limit, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        import { getFirestore, collection, query, where, getDocs, orderBy, limit, doc, onSnapshot, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, updatePassword, deleteUser, onAuthStateChanged, signOut, updateProfile, EmailAuthProvider, reauthenticateWithCredential, updateEmail } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCpaNuC1IUkteO4fHzFPiNS7s580EyTleU",
@@ -426,6 +580,8 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const auth = getAuth(app);
+        const googleProvider = new GoogleAuthProvider();
 
         // ======================================================
         // ACESSIBILIDADE — TAMANHO DA FONTE (3 níveis, persistido)
@@ -753,6 +909,301 @@
                 container.innerHTML = '<p class="text-xs text-red-400 w-full text-center my-4">Não foi possível carregar os avisos.</p>';
             }
         };
+
+        // ======================================================
+        // NAVEGAÇÃO ENTRE ABAS PRINCIPAIS
+        // ======================================================
+        window.mudarAbaPrincipal = function(aba) {
+            ['inicio', 'usuario'].forEach(id => {
+                const el  = document.getElementById(`aba-${id}`);
+                const nav = document.getElementById(`nav-${id}`);
+                if (el)  el.classList.add('hidden');
+                if (nav) { nav.classList.remove('text-doresopolis-green'); nav.classList.add('text-gray-400'); }
+            });
+            const target    = document.getElementById(`aba-${aba}`);
+            const navTarget = document.getElementById(`nav-${aba}`);
+            if (target)    target.classList.remove('hidden');
+            if (navTarget) { navTarget.classList.remove('text-gray-400'); navTarget.classList.add('text-doresopolis-green'); }
+        };
+
+        // ======================================================
+        // AUTENTICAÇÃO — CONTA DO CIDADÃO
+        // ======================================================
+
+        // Toggle entre formulários (entrar / registro / reset)
+        window.toggleAuthTab = function(tab) {
+            ['form-entrar', 'form-registro', 'form-reset'].forEach(id =>
+                document.getElementById(id).classList.add('hidden')
+            );
+            document.getElementById('tab-entrar-btn').className   = 'flex-1 text-sm font-semibold py-2 rounded-lg text-gray-500 transition-all';
+            document.getElementById('tab-registro-btn').className = 'flex-1 text-sm font-semibold py-2 rounded-lg text-gray-500 transition-all';
+
+            if (tab === 'entrar') {
+                document.getElementById('form-entrar').classList.remove('hidden');
+                document.getElementById('tab-entrar-btn').className = 'flex-1 text-sm font-semibold py-2 rounded-lg bg-white shadow-sm text-gray-800 transition-all';
+            } else if (tab === 'registro') {
+                document.getElementById('form-registro').classList.remove('hidden');
+                document.getElementById('tab-registro-btn').className = 'flex-1 text-sm font-semibold py-2 rounded-lg bg-white shadow-sm text-gray-800 transition-all';
+            } else {
+                document.getElementById('form-reset').classList.remove('hidden');
+            }
+        };
+
+        // Atualiza a UI com base no estado de autenticação
+        function mostrarEstadoAuth(user) {
+            const logado    = document.getElementById('usuario-logado');
+            const naoLogado = document.getElementById('usuario-nao-logado');
+            if (!logado || !naoLogado) return;
+
+            if (user) {
+                logado.classList.remove('hidden');
+                naoLogado.classList.add('hidden');
+
+                const avatar = document.getElementById('usuario-avatar');
+                if (user.photoURL) {
+                    avatar.innerHTML = `<img src="${user.photoURL}" class="w-full h-full object-cover" alt="">`;
+                } else {
+                    avatar.innerHTML = (user.displayName || user.email || 'U')[0].toUpperCase();
+                }
+
+                document.getElementById('usuario-nome-display').innerText  = user.displayName || 'Usuário';
+                document.getElementById('usuario-email-display').innerText = user.email || '';
+
+                const isGoogle = (user.providerData || []).some(p => p.providerId === 'google.com');
+                const badge    = document.getElementById('usuario-provider-badge');
+                if (isGoogle) {
+                    badge.innerHTML = '<svg class="w-3 h-3 shrink-0" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg> Conta Google';
+                    document.getElementById('secao-alterar-senha').classList.add('hidden');
+                    document.getElementById('modal-excluir-senha-wrap').classList.add('hidden');
+                } else {
+                    badge.innerHTML = '<i class="fa-solid fa-envelope text-[10px]"></i> Conta por e-mail';
+                    document.getElementById('secao-alterar-senha').classList.remove('hidden');
+                    document.getElementById('modal-excluir-senha-wrap').classList.remove('hidden');
+                }
+
+                document.getElementById('edit-nome').value  = user.displayName || '';
+                document.getElementById('edit-email').value = user.email || '';
+                carregarTelefoneDoUsuario(user.uid);
+
+            } else {
+                logado.classList.add('hidden');
+                naoLogado.classList.remove('hidden');
+                toggleAuthTab('entrar');
+            }
+        }
+
+        // Carrega telefone do Firestore e preenche o campo
+        async function carregarTelefoneDoUsuario(uid) {
+            try {
+                const snap = await getDocs(query(collection(db, 'usuarios'), where('uid', '==', uid)));
+                if (!snap.empty) {
+                    const data = snap.docs[0].data();
+                    document.getElementById('edit-telefone').value = data.telefone || '';
+                    if (data.telefone) localStorage.setItem('userTelefone', data.telefone);
+                }
+            } catch (e) {
+                console.error('Erro ao carregar perfil Firestore:', e);
+            }
+        }
+
+        // ---- Entrar com Google ----
+        window.entrarComGoogle = async function() {
+            try {
+                await signInWithPopup(auth, googleProvider);
+            } catch (e) {
+                if (e.code !== 'auth/popup-closed-by-user' && e.code !== 'auth/cancelled-popup-request') {
+                    mostrarAviso('Erro ao entrar com Google. Tente novamente.');
+                }
+            }
+        };
+
+        // ---- Entrar com e-mail/senha ----
+        window.entrarComEmail = async function() {
+            const email = document.getElementById('login-email').value.trim();
+            const senha = document.getElementById('login-senha').value;
+            if (!email || !senha) { mostrarAviso('Preencha e-mail e senha.'); return; }
+            try {
+                await signInWithEmailAndPassword(auth, email, senha);
+            } catch (e) {
+                const msgs = {
+                    'auth/user-not-found':    'Usuário não encontrado.',
+                    'auth/wrong-password':    'Senha incorreta.',
+                    'auth/invalid-email':     'E-mail inválido.',
+                    'auth/invalid-credential':'E-mail ou senha incorretos.',
+                    'auth/too-many-requests': 'Muitas tentativas. Tente mais tarde.',
+                };
+                mostrarAviso(msgs[e.code] || 'Erro ao entrar. Tente novamente.');
+            }
+        };
+
+        // ---- Criar conta com e-mail/senha ----
+        window.criarConta = async function() {
+            const nome   = document.getElementById('reg-nome').value.trim();
+            const email  = document.getElementById('reg-email').value.trim();
+            const tel    = document.getElementById('reg-telefone').value.trim();
+            const senha  = document.getElementById('reg-senha').value;
+            const senha2 = document.getElementById('reg-senha2').value;
+
+            if (!nome)           { mostrarAviso('Informe seu nome completo.'); return; }
+            if (!email)          { mostrarAviso('Informe um e-mail válido.'); return; }
+            if (senha.length < 6){ mostrarAviso('A senha deve ter pelo menos 6 caracteres.'); return; }
+            if (senha !== senha2){ mostrarAviso('As senhas não coincidem.'); return; }
+
+            try {
+                const cred = await createUserWithEmailAndPassword(auth, email, senha);
+                await updateProfile(cred.user, { displayName: nome });
+                await setDoc(doc(db, 'usuarios', cred.user.uid), {
+                    uid: cred.user.uid, nome, email,
+                    telefone: tel || '',
+                    dataCriacao: new Date().toISOString(),
+                    acesso: 'Cidadão'
+                });
+                mostrarAviso('Conta criada com sucesso!', 'sucesso');
+            } catch (e) {
+                const msgs = {
+                    'auth/email-already-in-use': 'Este e-mail já está cadastrado.',
+                    'auth/invalid-email':         'E-mail inválido.',
+                    'auth/weak-password':         'Senha muito fraca.',
+                };
+                mostrarAviso(msgs[e.code] || 'Erro ao criar conta. Tente novamente.');
+            }
+        };
+
+        // ---- Redefinir senha por e-mail ----
+        window.enviarResetSenha = async function() {
+            const email = document.getElementById('reset-email').value.trim();
+            if (!email) { mostrarAviso('Informe seu e-mail.'); return; }
+            try {
+                await sendPasswordResetEmail(auth, email);
+                mostrarAviso('Link enviado! Verifique seu e-mail.', 'sucesso');
+                toggleAuthTab('entrar');
+            } catch (e) {
+                const msgs = {
+                    'auth/user-not-found': 'Nenhuma conta com este e-mail.',
+                    'auth/invalid-email':  'E-mail inválido.',
+                };
+                mostrarAviso(msgs[e.code] || 'Erro ao enviar link. Tente novamente.');
+            }
+        };
+
+        // ---- Salvar perfil ----
+        window.salvarPerfil = async function() {
+            const user = auth.currentUser;
+            if (!user) return;
+            const nome  = document.getElementById('edit-nome').value.trim();
+            const email = document.getElementById('edit-email').value.trim();
+            const tel   = document.getElementById('edit-telefone').value.trim();
+            if (!nome) { mostrarAviso('O nome não pode ficar vazio.'); return; }
+            try {
+                const promises = [];
+                if (nome !== user.displayName) promises.push(updateProfile(user, { displayName: nome }));
+                if (email && email !== user.email) promises.push(updateEmail(user, email));
+                promises.push(setDoc(doc(db, 'usuarios', user.uid),
+                    { uid: user.uid, nome, email: email || user.email, telefone: tel }, { merge: true }));
+                await Promise.all(promises);
+
+                localStorage.setItem('usuarioDoresopolis', nome.split(' ')[0]);
+                if (tel) localStorage.setItem('userTelefone', tel);
+                else     localStorage.removeItem('userTelefone');
+
+                document.getElementById('usuario-nome-display').innerText  = nome;
+                document.getElementById('usuario-email-display').innerText = email || user.email;
+                const headerNome = document.getElementById('nome-usuario-logado');
+                if (headerNome) headerNome.innerText = nome.split(' ')[0];
+                mostrarAviso('Perfil atualizado!', 'sucesso');
+            } catch (e) {
+                if (e.code === 'auth/requires-recent-login')
+                    mostrarAviso('Por segurança, faça login novamente para alterar o e-mail.');
+                else
+                    mostrarAviso('Erro ao salvar: ' + (e.message || ''));
+            }
+        };
+
+        // ---- Alterar senha ----
+        window.alterarSenha = async function() {
+            const user = auth.currentUser;
+            if (!user) return;
+            const atual  = document.getElementById('senha-atual').value;
+            const nova   = document.getElementById('senha-nova').value;
+            const nova2  = document.getElementById('senha-nova2').value;
+            if (!atual)          { mostrarAviso('Informe a senha atual.'); return; }
+            if (nova.length < 6) { mostrarAviso('A nova senha deve ter pelo menos 6 caracteres.'); return; }
+            if (nova !== nova2)  { mostrarAviso('As senhas não coincidem.'); return; }
+            try {
+                await reauthenticateWithCredential(user, EmailAuthProvider.credential(user.email, atual));
+                await updatePassword(user, nova);
+                ['senha-atual','senha-nova','senha-nova2'].forEach(id => document.getElementById(id).value = '');
+                mostrarAviso('Senha alterada com sucesso!', 'sucesso');
+            } catch (e) {
+                const msgs = {
+                    'auth/wrong-password':       'Senha atual incorreta.',
+                    'auth/weak-password':        'Nova senha muito fraca.',
+                    'auth/requires-recent-login':'Faça login novamente para alterar a senha.',
+                };
+                mostrarAviso(msgs[e.code] || 'Erro ao alterar senha.');
+            }
+        };
+
+        // ---- Sair da conta ----
+        window.sairConta = async function() {
+            try {
+                await signOut(auth);
+                localStorage.removeItem('usuarioDoresopolis');
+                localStorage.removeItem('userTelefone');
+                const headerNome = document.getElementById('nome-usuario-logado');
+                if (headerNome) headerNome.innerText = 'Cidadão';
+                mudarAbaPrincipal('inicio');
+                mostrarAviso('Você saiu da sua conta.', 'info');
+            } catch(e) { mostrarAviso('Erro ao sair.'); }
+        };
+
+        // ---- Confirmar exclusão ----
+        window.confirmarExcluirConta = function() {
+            document.getElementById('excluir-confirmar-senha').value = '';
+            document.getElementById('modal-excluir-conta').classList.remove('hidden');
+        };
+
+        // ---- Excluir conta ----
+        window.excluirConta = async function() {
+            const user = auth.currentUser;
+            if (!user) return;
+            const isGoogle = (user.providerData || []).some(p => p.providerId === 'google.com');
+            try {
+                if (!isGoogle) {
+                    const senhaInput = document.getElementById('excluir-confirmar-senha').value;
+                    if (!senhaInput) { mostrarAviso('Informe a senha para confirmar.'); return; }
+                    await reauthenticateWithCredential(user, EmailAuthProvider.credential(user.email, senhaInput));
+                } else {
+                    await signInWithPopup(auth, googleProvider);
+                }
+                try { await deleteDoc(doc(db, 'usuarios', user.uid)); } catch(_) {}
+                await deleteUser(user);
+                document.getElementById('modal-excluir-conta').classList.add('hidden');
+                localStorage.removeItem('usuarioDoresopolis');
+                localStorage.removeItem('userTelefone');
+                const headerNome = document.getElementById('nome-usuario-logado');
+                if (headerNome) headerNome.innerText = 'Cidadão';
+                mudarAbaPrincipal('inicio');
+                mostrarAviso('Conta excluída com sucesso.', 'info');
+            } catch (e) {
+                const msgs = {
+                    'auth/wrong-password':       'Senha incorreta.',
+                    'auth/requires-recent-login':'Por segurança, faça login novamente.',
+                };
+                mostrarAviso(msgs[e.code] || 'Erro ao excluir conta.');
+            }
+        };
+
+        // Observador de autenticação — atualiza UI em tempo real
+        onAuthStateChanged(auth, (user) => {
+            mostrarEstadoAuth(user);
+            if (user) {
+                const nome = user.displayName || 'Usuário';
+                localStorage.setItem('usuarioDoresopolis', nome.split(' ')[0]);
+                const headerNome = document.getElementById('nome-usuario-logado');
+                if (headerNome) headerNome.innerText = nome.split(' ')[0];
+            }
+        });
 
         document.addEventListener('DOMContentLoaded', () => {
             const sessaoSalva = localStorage.getItem('usuarioDoresopolis') || 'Cidadão';
