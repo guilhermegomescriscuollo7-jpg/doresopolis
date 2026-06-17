@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0b5c3b">
@@ -315,7 +315,7 @@ tailwind.config = {
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, query, orderBy, limit, onSnapshot, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, query, orderBy, limit, onSnapshot, where, getDocs, getDoc, setDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCpaNuC1IUkteO4fHzFPiNS7s580EyTleU",
@@ -329,18 +329,43 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db  = getFirestore(app);
 
-// ─── SENHA ────────────────────────────────────────────────
-const SENHA = "prefeito2025";
+// ─── HELPERS ─────────────────────────────────────────────
+async function hashSenha(senha) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(senha));
+  return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2,'0')).join('');
+}
 
-window.fazerLogin = function() {
+function esc(s) {
+  return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+const authRef = doc(db, 'config', 'auth');
+
+// ─── LOGIN ────────────────────────────────────────────────
+window.fazerLogin = async function() {
   const s = document.getElementById('login-senha').value;
-  if (s === SENHA) {
-    sessionStorage.setItem('prefeito_auth', '1');
-    document.getElementById('tela-login').classList.add('hidden');
-    document.getElementById('app').classList.remove('hidden');
-    document.getElementById('app').classList.add('flex', 'flex-col');
-    iniciar();
-  } else {
+  if (!s) return;
+  document.getElementById('login-erro').classList.add('hidden');
+  try {
+    const snap = await getDoc(authRef);
+    let hashEsperado;
+    if (snap.exists() && snap.data().hashPrefeito) {
+      hashEsperado = snap.data().hashPrefeito;
+    } else {
+      hashEsperado = await hashSenha('prefeito2025');
+      await setDoc(authRef, { hashPrefeito: hashEsperado }, { merge: true });
+    }
+    if (await hashSenha(s) === hashEsperado) {
+      sessionStorage.setItem('prefeito_auth', '1');
+      document.getElementById('tela-login').classList.add('hidden');
+      document.getElementById('app').classList.remove('hidden');
+      document.getElementById('app').classList.add('flex', 'flex-col');
+      iniciar();
+    } else {
+      document.getElementById('login-erro').classList.remove('hidden');
+    }
+  } catch(e) {
+    console.error(e);
     document.getElementById('login-erro').classList.remove('hidden');
   }
 };
@@ -449,20 +474,11 @@ function corStatus(status) {
   return 'text-gray-500 bg-gray-50 border-gray-200';
 }
 
-async function carregarFeed() {
+const feedPorSecretaria = {};
+
+function renderFeed() {
   const feed = document.getElementById('feed-demandas');
-  const todasDemandas = [];
-
-  for (const sec of secretarias) {
-    const q = query(collection(db, sec.colecao), orderBy('dataRegistro', 'desc'), limit(5));
-    const snap = await getDocs(q);
-    snap.forEach(d => {
-      const data = d.data();
-      const chave = sec.colecao.replace('solicitacoes_', '');
-      todasDemandas.push({ ...data, _secretaria: chave, _id: d.id });
-    });
-  }
-
+  const todasDemandas = Object.values(feedPorSecretaria).flat();
   todasDemandas.sort((a, b) => new Date(b.dataRegistro) - new Date(a.dataRegistro));
   const recentes = todasDemandas.slice(0, 15);
 
@@ -473,11 +489,13 @@ async function carregarFeed() {
 
   feed.innerHTML = '';
   recentes.forEach(d => {
-    const sec  = corSecretaria[d._secretaria] || { bg:'bg-gray-50', text:'text-gray-500', icon:'fa-circle', label: d._secretaria };
+    const sec  = corSecretaria[d._secretaria] || { bg:'bg-gray-50', text:'text-gray-500', icon:'fa-circle', label: esc(d._secretaria) };
     const data = new Date(d.dataRegistro).toLocaleDateString('pt-BR');
     const hora = new Date(d.dataRegistro).toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
-    const nome = d.nomeAluno || d.nomeCidadao || d.nome || 'Cidadão';
-    const tipo = d.tipoLabel || d.tipoServico || d.tipo || 'Solicitação';
+    const nome = esc(d.nomeAluno || d.nomeCidadao || d.nome || 'Cidadão');
+    const tipo = esc(d.tipoLabel || d.tipoServico || d.tipo || 'Solicitação');
+    const status = esc(d.status || 'EM ANÁLISE');
+    const protocolo = d.protocolo ? esc(String(d.protocolo)) : null;
 
     feed.innerHTML += `
       <div class="bg-white rounded-xl border border-gray-100 p-3 shadow-sm">
@@ -492,19 +510,27 @@ async function carregarFeed() {
                 <p class="font-bold text-gray-800 text-xs leading-tight truncate">${nome}</p>
                 <p class="text-[10px] text-gray-500 mt-0.5">${tipo}</p>
               </div>
-              <span class="text-[9px] font-bold border rounded-full px-2 py-0.5 shrink-0 ${corStatus(d.status)}">${d.status || 'EM ANÁLISE'}</span>
+              <span class="text-[9px] font-bold border rounded-full px-2 py-0.5 shrink-0 ${corStatus(d.status)}">${status}</span>
             </div>
             <div class="flex items-center gap-2 mt-1.5">
               <span class="text-[9px] text-gray-400"><i class="fa-regular fa-calendar mr-0.5"></i>${data} às ${hora}</span>
-              ${d.protocolo ? `<span class="text-[9px] text-gray-400"><i class="fa-solid fa-hashtag mr-0.5"></i>${d.protocolo}</span>` : ''}
+              ${protocolo ? `<span class="text-[9px] text-gray-400"><i class="fa-solid fa-hashtag mr-0.5"></i>${protocolo}</span>` : ''}
             </div>
           </div>
         </div>
       </div>`;
   });
+}
 
-  // Atualiza o feed a cada 60 segundos
-  setTimeout(carregarFeed, 60000);
+function carregarFeed() {
+  secretarias.forEach(sec => {
+    const chave = sec.colecao.replace('solicitacoes_', '');
+    const q = query(collection(db, sec.colecao), orderBy('dataRegistro', 'desc'), limit(5));
+    onSnapshot(q, snap => {
+      feedPorSecretaria[sec.id] = snap.docs.map(d => ({ ...d.data(), _secretaria: chave, _id: d.id }));
+      renderFeed();
+    });
+  });
 }
 
 // ─── AVISOS ──────────────────────────────────────────────
@@ -524,9 +550,9 @@ function ouvirAvisos() {
         <div class="bg-white rounded-xl border border-gray-100 p-3 shadow-sm">
           <div class="flex justify-between items-start">
             <div>
-              <span class="text-[9px] font-bold text-white bg-doresopolis-green px-2 py-0.5 rounded-full">${aviso.secretaria || 'GERAL'}</span>
-              <p class="font-bold text-gray-800 text-xs mt-1.5">${aviso.titulo}</p>
-              <p class="text-[10px] text-gray-500 mt-0.5 line-clamp-2">${aviso.descricao}</p>
+              <span class="text-[9px] font-bold text-white bg-doresopolis-green px-2 py-0.5 rounded-full">${esc(aviso.secretaria || 'GERAL')}</span>
+              <p class="font-bold text-gray-800 text-xs mt-1.5">${esc(aviso.titulo)}</p>
+              <p class="text-[10px] text-gray-500 mt-0.5 line-clamp-2">${esc(aviso.descricao)}</p>
             </div>
           </div>
           <p class="text-[9px] text-gray-400 mt-1.5"><i class="fa-regular fa-clock mr-0.5"></i>${data}</p>

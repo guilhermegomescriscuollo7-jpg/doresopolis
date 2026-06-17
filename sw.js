@@ -14,7 +14,9 @@ const ASSETS = [
   './solicitacoes.html',
   './seguranca-infantil.html',
   './politica-privacidade.html',
-  './manifest.json'
+  './manifest.json',
+  './icon-192.png',
+  './icon-512.png'
 ];
 
 self.addEventListener('install', (event) => {

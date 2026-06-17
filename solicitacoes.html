@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -59,12 +59,12 @@
                 <p class="text-gray-500 mt-1 text-xs leading-snug">Acompanhe todos os pedidos e requerimentos que você fez nas diversas secretarias da prefeitura.</p>
             </div>
 
-            <!-- FILTRO RÁPIDO (Apenas visual por enquanto) -->
+            <!-- FILTRO RÁPIDO -->
             <div class="flex gap-2 overflow-x-auto pb-2 mb-4 hide-scrollbar">
-                <button class="bg-doresopolis-dark text-white px-4 py-1.5 rounded-full text-[10px] font-bold shrink-0 shadow-sm">Todos</button>
-                <button class="bg-white border border-gray-200 text-gray-600 px-4 py-1.5 rounded-full text-[10px] font-bold shrink-0 shadow-sm">Pendente</button>
-                <button class="bg-white border border-gray-200 text-gray-600 px-4 py-1.5 rounded-full text-[10px] font-bold shrink-0 shadow-sm">Em Andamento</button>
-                <button class="bg-white border border-gray-200 text-gray-600 px-4 py-1.5 rounded-full text-[10px] font-bold shrink-0 shadow-sm">Concluído</button>
+                <button id="filtro-todos" onclick="filtrar('todos')" class="bg-doresopolis-dark text-white px-4 py-1.5 rounded-full text-[10px] font-bold shrink-0 shadow-sm">Todos</button>
+                <button id="filtro-pendente" onclick="filtrar('PENDENTE')" class="bg-white border border-gray-200 text-gray-600 px-4 py-1.5 rounded-full text-[10px] font-bold shrink-0 shadow-sm">Pendente</button>
+                <button id="filtro-andamento" onclick="filtrar('EM ANDAMENTO')" class="bg-white border border-gray-200 text-gray-600 px-4 py-1.5 rounded-full text-[10px] font-bold shrink-0 shadow-sm">Em Andamento</button>
+                <button id="filtro-concluido" onclick="filtrar('CONCLUÍDO')" class="bg-white border border-gray-200 text-gray-600 px-4 py-1.5 rounded-full text-[10px] font-bold shrink-0 shadow-sm">Concluído</button>
             </div>
 
             <!-- LISTA DE SOLICITAÇÕES -->
@@ -89,9 +89,6 @@
                     <i class="fa-solid fa-list-check text-lg mb-1"></i><span class="text-[10px] font-medium">Solicitações</span>
                 </a>
 
-                <a href="index.html" onclick="alert('Para acessar o Perfil, clique na aba Perfil na página de Início.');" class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-doresopolis-green transition-colors">
-                    <i class="fa-solid fa-user text-lg mb-1"></i><span class="text-[10px] font-medium">Perfil</span>
-                </a>
 
             </div>
         </nav>
@@ -191,6 +188,20 @@
 
         // Memória para guardar os dados e exibir rapidamente no Modal
         window.dadosHistorico = {};
+        window.filtroAtivo = 'todos';
+
+        window.filtrar = function(valor) {
+            window.filtroAtivo = valor;
+            const ids = ['filtro-todos','filtro-pendente','filtro-andamento','filtro-concluido'];
+            ids.forEach(id => {
+                const btn = document.getElementById(id);
+                btn.className = 'bg-white border border-gray-200 text-gray-600 px-4 py-1.5 rounded-full text-[10px] font-bold shrink-0 shadow-sm';
+            });
+            const mapa = { 'todos':'filtro-todos','PENDENTE':'filtro-pendente','EM ANDAMENTO':'filtro-andamento','CONCLUÍDO':'filtro-concluido' };
+            const ativo = document.getElementById(mapa[valor]);
+            if (ativo) ativo.className = 'bg-doresopolis-dark text-white px-4 py-1.5 rounded-full text-[10px] font-bold shrink-0 shadow-sm';
+            if (window._renderizar) window._renderizar();
+        };
         
         let usuarioNomePrimeiro = "";
         let usuarioNomeCompleto = "";
@@ -250,9 +261,14 @@
             onSnapshot(query(collection(db, "solicitacoes_educacao"), orderBy("dataRegistro", "desc")), snap => registrarEatualizar(snap, 'Educação'));
             onSnapshot(query(collection(db, "solicitacoes_tributos"), orderBy("dataRegistro", "desc")), snap => registrarEatualizar(snap, 'Tributos'));
 
+            window._renderizar = renderizarTodasSolicitacoes;
             function renderizarTodasSolicitacoes() {
-                const todas = Object.entries(window.dadosHistorico).map(([id, data]) => ({id, ...data}))
+                let todas = Object.entries(window.dadosHistorico).map(([id, data]) => ({id, ...data}))
                     .sort((a, b) => new Date(b.dataRegistro) - new Date(a.dataRegistro));
+
+                if (window.filtroAtivo && window.filtroAtivo !== 'todos') {
+                    todas = todas.filter(d => (d.status || 'PENDENTE').toUpperCase() === window.filtroAtivo);
+                }
 
                 if (todas.length === 0) {
                     container.innerHTML = `

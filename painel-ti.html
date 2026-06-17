@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -41,6 +41,51 @@
 </head>
 
 <body class="bg-slate-900 font-sans text-gray-800 flex justify-center items-center min-h-screen">
+
+    <!-- TELA DE LOGIN TI -->
+    <div id="tela-login-ti" class="hidden fixed inset-0 z-[300] bg-slate-900 flex-col items-center justify-center px-6">
+        <div class="w-full max-w-xs">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 bg-slate-800 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-slate-700">
+                    <i class="fa-solid fa-terminal text-blue-400 text-3xl"></i>
+                </div>
+                <h1 class="text-white text-2xl font-black tracking-tight">Painel TI</h1>
+                <p class="text-slate-400 text-xs mt-1">Acesso restrito</p>
+            </div>
+            <div class="space-y-3">
+                <input id="ti-senha" type="password" placeholder="Senha de acesso"
+                    class="w-full px-4 py-3 rounded-xl bg-slate-800 text-white placeholder-slate-500 border border-slate-700 focus:outline-none focus:border-blue-500 text-sm">
+                <button onclick="fazerLoginTI()"
+                    class="w-full bg-blue-600 text-white font-black py-3 rounded-xl text-sm hover:bg-blue-700 active:scale-[0.98] transition-all">
+                    Entrar
+                </button>
+            </div>
+            <p id="ti-login-erro" class="text-red-400 text-xs text-center mt-3 hidden">Senha incorreta.</p>
+        </div>
+    </div>
+
+    <!-- MODAL DE CONFIRMAÇÃO -->
+    <div id="modal-confirm" class="fixed inset-0 z-[400] hidden items-center justify-center bg-black bg-opacity-60 px-6">
+        <div class="bg-white rounded-2xl p-6 w-full max-w-xs shadow-2xl">
+            <p id="confirm-msg" class="text-sm font-bold text-slate-800 text-center mb-5 leading-snug"></p>
+            <div class="flex gap-3">
+                <button id="confirm-cancel" class="flex-1 bg-slate-100 text-slate-700 font-bold py-2.5 rounded-xl text-sm">Cancelar</button>
+                <button id="confirm-ok" class="flex-1 bg-red-600 text-white font-bold py-2.5 rounded-xl text-sm">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE INPUT (substitui prompt) -->
+    <div id="modal-prompt" class="fixed inset-0 z-[400] hidden items-center justify-center bg-black bg-opacity-60 px-6">
+        <div class="bg-white rounded-2xl p-6 w-full max-w-xs shadow-2xl">
+            <p id="prompt-msg" class="text-sm font-bold text-slate-800 text-center mb-3 leading-snug"></p>
+            <input id="prompt-input" type="text" class="w-full px-3 py-2.5 border border-slate-200 rounded-lg text-sm mb-4 outline-none focus:border-blue-500">
+            <div class="flex gap-3">
+                <button id="prompt-cancel" class="flex-1 bg-slate-100 text-slate-700 font-bold py-2.5 rounded-xl text-sm">Cancelar</button>
+                <button id="prompt-ok" class="flex-1 bg-blue-600 text-white font-bold py-2.5 rounded-xl text-sm">Confirmar</button>
+            </div>
+        </div>
+    </div>
 
     <div id="toast-aviso" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-[100] bg-green-600 text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-3 transition-all duration-300 opacity-0 pointer-events-none translate-y-[-20px] w-11/12 max-w-sm">
         <i id="toast-icone" class="fa-solid fa-circle-check text-lg"></i>
@@ -325,6 +370,38 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, query, orderBy, onSnapshot, getDoc, setDoc, arrayUnion, arrayRemove, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
+        async function hashSenha(senha) {
+            const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(senha));
+            return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2,'0')).join('');
+        }
+
+        function esc(s) {
+            return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        }
+
+        function confirmar(msg) {
+            return new Promise(resolve => {
+                const modal = document.getElementById('modal-confirm');
+                document.getElementById('confirm-msg').textContent = msg;
+                modal.classList.remove('hidden'); modal.classList.add('flex');
+                document.getElementById('confirm-ok').onclick = () => { modal.classList.add('hidden'); modal.classList.remove('flex'); resolve(true); };
+                document.getElementById('confirm-cancel').onclick = () => { modal.classList.add('hidden'); modal.classList.remove('flex'); resolve(false); };
+            });
+        }
+
+        function pergunta(msg, valorInicial = '') {
+            return new Promise(resolve => {
+                const modal = document.getElementById('modal-prompt');
+                const input = document.getElementById('prompt-input');
+                document.getElementById('prompt-msg').textContent = msg;
+                input.value = valorInicial;
+                modal.classList.remove('hidden'); modal.classList.add('flex');
+                input.focus();
+                document.getElementById('prompt-ok').onclick = () => { modal.classList.add('hidden'); modal.classList.remove('flex'); resolve(input.value || null); };
+                document.getElementById('prompt-cancel').onclick = () => { modal.classList.add('hidden'); modal.classList.remove('flex'); resolve(null); };
+            });
+        }
+
         const firebaseConfig = {
             apiKey: "AIzaSyCpaNuC1IUkteO4fHzFPiNS7s580EyTleU",
             authDomain: "doresopolis.firebaseapp.com",
@@ -336,7 +413,45 @@
         };
 
         const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app); 
+        const db = getFirestore(app);
+
+        const authRef = doc(db, 'config', 'auth');
+
+        window.fazerLoginTI = async function() {
+            const s = document.getElementById('ti-senha').value;
+            if (!s) return;
+            document.getElementById('ti-login-erro').classList.add('hidden');
+            try {
+                const snap = await getDoc(authRef);
+                let hashEsperado;
+                if (snap.exists() && snap.data().hashTI) {
+                    hashEsperado = snap.data().hashTI;
+                } else {
+                    hashEsperado = await hashSenha('ti2025');
+                    await setDoc(authRef, { hashTI: hashEsperado }, { merge: true });
+                }
+                if (await hashSenha(s) === hashEsperado) {
+                    sessionStorage.setItem('ti_auth', '1');
+                    document.getElementById('tela-login-ti').classList.add('hidden');
+                    document.getElementById('tela-login-ti').classList.remove('flex');
+                } else {
+                    document.getElementById('ti-login-erro').classList.remove('hidden');
+                }
+            } catch(e) {
+                console.error(e);
+                document.getElementById('ti-login-erro').classList.remove('hidden');
+            }
+        };
+
+        document.getElementById('ti-senha').addEventListener('keydown', e => {
+            if (e.key === 'Enter') window.fazerLoginTI();
+        });
+
+        if (sessionStorage.getItem('ti_auth') !== '1') {
+            const loginEl = document.getElementById('tela-login-ti');
+            loginEl.classList.remove('hidden');
+            loginEl.classList.add('flex');
+        }
 
         window.todosUsuarios = [];
         window.ruasAtuais = [];
@@ -416,10 +531,10 @@
                         </div>
                         <div class="w-[calc(100%-3rem)] bg-slate-800 p-3 rounded-xl border border-slate-700 shadow-sm ml-2">
                             <div class="flex items-center justify-between mb-1">
-                                <span class="font-bold text-blue-400 text-xs">${data.admin}</span>
+                                <span class="font-bold text-blue-400 text-xs">${esc(data.admin)}</span>
                                 <time class="font-mono text-[9px] text-slate-500">${stringData}</time>
                             </div>
-                            <div class="text-slate-300 text-[11px] leading-snug">${data.acao}</div>
+                            <div class="text-slate-300 text-[11px] leading-snug">${esc(data.acao)}</div>
                         </div>
                     </div>
                 `;
@@ -508,14 +623,13 @@
                     badgeAcesso = `<span class="bg-amber-100 text-amber-700 border border-amber-200 px-2 py-0.5 rounded text-[9px] font-black uppercase"><i class="fa-solid fa-user-tie mr-1"></i> ${user.acesso}</span>`;
                 }
 
-                const nomeEscapado = user.nome.replace(/'/g, "\\'");
                 const iconeLado = user.bloqueado ? 'text-red-300' : 'text-slate-300';
 
                 const card = `
                     <div onclick="abrirModal('${user.id}')" class="bg-white rounded-xl shadow-sm border ${user.bloqueado ? 'border-red-200' : 'border-slate-200'} p-3 flex justify-between items-center hover:border-blue-300 cursor-pointer transition-all active:scale-[0.99]">
                         <div class="flex flex-col w-5/6 pr-2">
-                            <h4 class="font-bold ${user.bloqueado ? 'text-red-700 line-through' : 'text-slate-800'} text-sm truncate">${user.nome}</h4>
-                            <p class="text-[11px] text-slate-500 mt-0.5 mb-1.5 font-medium tracking-wide"><i class="fa-solid fa-phone text-slate-400 text-[9px] mr-1"></i> ${user.telefone}</p>
+                            <h4 class="font-bold ${user.bloqueado ? 'text-red-700 line-through' : 'text-slate-800'} text-sm truncate">${esc(user.nome)}</h4>
+                            <p class="text-[11px] text-slate-500 mt-0.5 mb-1.5 font-medium tracking-wide"><i class="fa-solid fa-phone text-slate-400 text-[9px] mr-1"></i> ${esc(user.telefone)}</p>
                             <div>${badgeAcesso}</div>
                         </div>
                         <i class="fa-solid fa-chevron-right ${iconeLado} text-sm"></i>
@@ -612,8 +726,7 @@
             if(!userSendoEditado) return;
             const novoEstado = !userSendoEditado.bloqueado;
             const verbo = novoEstado ? "suspender" : "liberar";
-            
-            if(confirm(`Tem certeza que deseja ${verbo} o acesso de ${userSendoEditado.nome}?`)) {
+            if(await confirmar(`Deseja ${verbo} o acesso de ${userSendoEditado.nome}?`)) {
                 try {
                     await updateDoc(doc(db, "usuarios", userSendoEditado.id), { bloqueado: novoEstado });
                     registrarLog(`Acesso de '${userSendoEditado.nome}' foi ${novoEstado ? 'suspenso' : 'liberado'}`);
@@ -625,11 +738,12 @@
 
         window.resetarSenha = async function() {
             if(!userSendoEditado) return;
-            if(confirm(`Tem certeza que deseja redefinir a senha de ${userSendoEditado.nome} para '123456'?`)) {
+            if(await confirmar(`Redefinir a senha de ${userSendoEditado.nome} para '123456'?`)) {
                 try {
-                    await updateDoc(doc(db, "usuarios", userSendoEditado.id), { senha: "123456" });
+                    const hashTemp = await hashSenha('123456');
+                    await updateDoc(doc(db, "usuarios", userSendoEditado.id), { senha: hashTemp });
                     registrarLog(`Senha provisória gerada para '${userSendoEditado.nome}'`);
-                    mostrarAviso("Senha alterada para 123456.");
+                    mostrarAviso("Senha redefinida para 123456.");
                     fecharModal();
                 } catch(e) { mostrarAviso("Erro ao redefinir", "erro"); }
             }
@@ -637,7 +751,7 @@
 
         window.excluirUsuario = async function() {
             if(!userSendoEditado) return;
-            const digitado = prompt(`Atenção: Isso é irreversível. Digite EXCLUIR para apagar ${userSendoEditado.nome}:`);
+            const digitado = await pergunta(`Ação irreversível. Digite EXCLUIR para apagar ${userSendoEditado.nome}:`);
             if(digitado === 'EXCLUIR') {
                 try {
                     await deleteDoc(doc(db, "usuarios", userSendoEditado.id));
@@ -646,7 +760,7 @@
                     fecharModal();
                 } catch(e) { mostrarAviso("Erro ao excluir", "erro"); }
             } else if (digitado !== null) {
-                alert("Ação cancelada. Palavra de segurança incorreta.");
+                mostrarAviso("Palavra de segurança incorreta. Ação cancelada.", "erro");
             }
         };
 
@@ -679,14 +793,13 @@
                 if(window.ruasAtuais.length === 0) {
                     listaRuas.innerHTML = `<div class="text-center py-2 text-xs text-slate-400 border border-dashed border-slate-200 rounded">Nenhuma via cadastrada.</div>`;
                 } else {
-                    listaRuas.innerHTML = [...window.ruasAtuais].sort().map(rua => {
-                        const ruaFormatada = rua.replace(/'/g, "\\'"); 
+                    listaRuas.innerHTML = [...window.ruasAtuais].sort().map((rua, idx) => {
                         return `
                         <div class="flex justify-between items-center bg-white border border-slate-200 p-2 rounded text-xs font-medium text-slate-700">
-                            <span class="truncate pr-2">${rua}</span>
+                            <span class="truncate pr-2">${esc(rua)}</span>
                             <div class="shrink-0 flex gap-2">
-                                <button onclick="editarRua('${ruaFormatada}')" class="text-blue-500 hover:text-blue-700" title="Editar"><i class="fa-solid fa-pen"></i></button>
-                                <button onclick="removerRua('${ruaFormatada}')" class="text-red-400 hover:text-red-600" title="Excluir"><i class="fa-solid fa-trash"></i></button>
+                                <button onclick="editarRua(${idx})" class="text-blue-500 hover:text-blue-700" title="Editar"><i class="fa-solid fa-pen"></i></button>
+                                <button onclick="removerRua(${idx})" class="text-red-400 hover:text-red-600" title="Excluir"><i class="fa-solid fa-trash"></i></button>
                             </div>
                         </div>
                     `}).join('');
@@ -727,37 +840,41 @@
         window.adicionarRua = async function() {
             const input = document.getElementById('sys-nova-rua');
             const nomeRua = input.value.trim();
-            if(nomeRua.length < 3) return alert("Digite um nome de rua válido.");
-            
+            if(nomeRua.length < 3) return mostrarAviso("Digite um nome de rua válido.", "erro");
             try {
                 await updateDoc(configRef, { ruas: arrayUnion(nomeRua) });
                 input.value = '';
                 registrarLog(`Adicionou a rua '${nomeRua}' no sistema.`);
-            } catch(e) { alert("Erro ao adicionar via."); }
+                mostrarAviso("Rua adicionada!");
+            } catch(e) { mostrarAviso("Erro ao adicionar via.", "erro"); }
         };
 
-        window.editarRua = async function(nomeAntigo) {
-            const novoNome = prompt("Editar nome da rua:", nomeAntigo);
-            if(novoNome && novoNome.trim() !== "" && novoNome !== nomeAntigo) {
+        window.editarRua = async function(idx) {
+            const ruasOrdenadas = [...window.ruasAtuais].sort();
+            const nomeAntigo = ruasOrdenadas[idx];
+            if (!nomeAntigo) return;
+            const novoNome = await pergunta("Editar nome da rua:", nomeAntigo);
+            if(novoNome && novoNome.trim() !== "" && novoNome.trim() !== nomeAntigo) {
                 try {
                     const novoArray = window.ruasAtuais.filter(r => r !== nomeAntigo);
                     novoArray.push(novoNome.trim());
-                    
                     await updateDoc(configRef, { ruas: novoArray });
                     registrarLog(`Editou a rua '${nomeAntigo}' para '${novoNome.trim()}'.`);
                     mostrarAviso("Rua editada com sucesso!");
-                } catch(e) { 
-                    alert("Erro ao editar via."); 
-                }
+                } catch(e) { mostrarAviso("Erro ao editar via.", "erro"); }
             }
         };
 
-        window.removerRua = async function(nomeRua) {
-            if(confirm(`Excluir a via ${nomeRua} do cadastro?`)) {
+        window.removerRua = async function(idx) {
+            const ruasOrdenadas = [...window.ruasAtuais].sort();
+            const nomeRua = ruasOrdenadas[idx];
+            if (!nomeRua) return;
+            if(await confirmar(`Excluir a via "${nomeRua}" do cadastro?`)) {
                 try {
                     await updateDoc(configRef, { ruas: arrayRemove(nomeRua) });
                     registrarLog(`Removeu a rua '${nomeRua}' do sistema.`);
-                } catch(e) { alert("Erro ao remover via."); }
+                    mostrarAviso("Via removida.");
+                } catch(e) { mostrarAviso("Erro ao remover via.", "erro"); }
             }
         };
 
