@@ -133,7 +133,6 @@
 import { initializeApp }    from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js';
 
 const firebaseConfig = {
   apiKey: "AIzaSyAskgM5cxiR4DI2PXrccBxOvPZzMPDKdCo",
@@ -144,11 +143,12 @@ const firebaseConfig = {
   appId: "1:158833761867:web:f9db6cb6dc6b5785cfb7ce"
 };
 
-const app     = initializeApp(firebaseConfig);
-const auth    = getAuth(app);
-const db      = getFirestore(app);
-const storage = getStorage(app);
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
 let currentUser = null;
+
+const authTimeout = setTimeout(() => mostrar('e-nao-logado'), 6000);
 
 function mostrar(id) {
   ['e-loading','e-nao-logado','e-ja-inscrito','e-form'].forEach(s => {
@@ -182,6 +182,7 @@ window.previewFoto = (input) => {
 };
 
 onAuthStateChanged(auth, async (user) => {
+  clearTimeout(authTimeout);
   if (!user) { mostrar('e-nao-logado'); return; }
   currentUser = user;
   const snap = await getDoc(doc(db, 'inscricoes_transporte', user.uid + '_escolar'));
@@ -215,7 +216,10 @@ document.getElementById('form-inscricao').addEventListener('submit', async (e) =
   document.getElementById('msg-erro').classList.add('hidden');
 
   try {
-    // Upload foto
+    // Upload foto (Storage importado lazy para não bloquear auth)
+    const { getStorage, ref: storageRef, uploadBytes, getDownloadURL } =
+      await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js');
+    const storage = getStorage(app);
     const fotoRef = storageRef(storage, `fotos_transporte/${currentUser.uid}_escolar`);
     await uploadBytes(fotoRef, fotoInput.files[0]);
     const fotoURL = await getDownloadURL(fotoRef);
