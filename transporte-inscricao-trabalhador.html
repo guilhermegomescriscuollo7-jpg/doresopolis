@@ -9,7 +9,10 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <script>tailwind.config={theme:{extend:{colors:{doresopolis:{green:'#0b5c3b'}}}}}</script>
-<style>input,select,textarea{outline:none;}input:focus,select:focus,textarea:focus{box-shadow:0 0 0 2px #ea580c;}</style>
+<style>
+  input,select{outline:none;}
+  input:focus,select:focus{box-shadow:0 0 0 2px #ea580c;}
+</style>
 </head>
 <body class="bg-gray-200 font-sans text-gray-800 flex justify-center items-center min-h-screen">
 <div class="bg-gray-50 w-full max-w-md h-[100dvh] flex flex-col shadow-2xl overflow-hidden sm:rounded-xl sm:h-[95vh] sm:border sm:border-gray-300">
@@ -32,113 +35,105 @@
     </div>
   </header>
 
-  <div id="estado-carregando" class="flex-grow flex flex-col items-center justify-center gap-3">
+  <!-- Carregando -->
+  <div id="e-loading" class="flex-grow flex flex-col items-center justify-center gap-3">
     <div class="w-10 h-10 border-4 border-orange-200 border-t-orange-500 rounded-full animate-spin"></div>
     <p class="text-sm text-gray-400">Verificando acesso...</p>
   </div>
 
-  <div id="estado-nao-logado" class="hidden flex-grow flex flex-col items-center justify-center px-8 text-center">
+  <!-- Não logado -->
+  <div id="e-nao-logado" class="hidden flex-grow flex flex-col items-center justify-center px-8 text-center">
     <div class="w-20 h-20 rounded-full bg-orange-50 border-2 border-orange-100 flex items-center justify-center mb-5">
       <i class="fa-solid fa-lock text-3xl text-orange-300"></i>
     </div>
     <h2 class="text-xl font-black text-gray-800 mb-2">Login Necessário</h2>
     <p class="text-sm text-gray-500 leading-relaxed mb-6">Faça login para realizar sua inscrição no transporte do trabalhador.</p>
-    <a href="index.html" class="flex items-center gap-2 bg-orange-500 text-white font-bold px-6 py-3 rounded-xl shadow-md active:scale-[0.98] transition-all text-sm">
+    <a href="index.html" class="flex items-center gap-2 bg-orange-500 text-white font-bold px-6 py-3 rounded-xl text-sm">
       <i class="fa-solid fa-right-to-bracket"></i> Ir para o Login
     </a>
   </div>
 
-  <div id="estado-ja-inscrito" class="hidden flex-grow flex flex-col items-center justify-center px-8 text-center">
+  <!-- Já inscrito -->
+  <div id="e-ja-inscrito" class="hidden flex-grow flex flex-col items-center justify-center px-8 text-center">
     <div class="w-20 h-20 rounded-full bg-green-50 border-2 border-green-100 flex items-center justify-center mb-5">
       <i class="fa-solid fa-circle-check text-3xl text-green-500"></i>
     </div>
     <h2 class="text-xl font-black text-gray-800 mb-2">Inscrição Enviada!</h2>
     <p id="msg-status" class="text-sm text-gray-500 leading-relaxed mb-6">Sua inscrição está sendo analisada pela Secretaria de Transporte.</p>
-    <a href="transporte-carteira.html" class="flex items-center gap-2 bg-purple-600 text-white font-bold px-6 py-3 rounded-xl shadow-md active:scale-[0.98] transition-all text-sm">
+    <a href="transporte-carteira.html" class="flex items-center gap-2 bg-purple-600 text-white font-bold px-6 py-3 rounded-xl text-sm">
       <i class="fa-solid fa-id-card"></i> Ver Minha Carteirinha
     </a>
   </div>
 
-  <main id="estado-form" class="hidden flex-grow overflow-y-auto px-4 py-4">
+  <!-- Formulário -->
+  <main id="e-form" class="hidden flex-grow overflow-y-auto px-4 py-4">
 
-    <div class="bg-orange-500 rounded-2xl p-4 mb-4 flex items-start gap-3">
+    <div class="bg-orange-500 rounded-2xl p-4 mb-5 flex items-start gap-3">
       <i class="fa-solid fa-circle-info text-white text-sm mt-0.5 shrink-0"></i>
       <p class="text-[11px] text-white leading-relaxed">Preencha os dados abaixo. Após análise da Secretaria de Transporte, sua carteirinha digital será liberada.</p>
     </div>
 
-    <form id="form-inscricao" class="space-y-3">
+    <form id="form-inscricao" class="space-y-4">
 
-      <div>
-        <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Nome completo *</label>
-        <input id="f-nome" type="text" placeholder="Seu nome completo" required
-          class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-300">
+      <!-- Foto 3x4 -->
+      <div class="flex flex-col items-center">
+        <p class="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-3 self-start">Foto 3×4 *</p>
+        <div class="relative">
+          <div id="foto-preview"
+            class="w-28 h-36 bg-gray-100 border-2 border-dashed border-gray-300 rounded-2xl flex flex-col items-center justify-center overflow-hidden cursor-pointer"
+            onclick="document.getElementById('f-foto').click()">
+            <i class="fa-solid fa-camera text-2xl text-gray-300 mb-1"></i>
+            <p class="text-[10px] text-gray-400 text-center px-2">Toque para adicionar foto</p>
+          </div>
+          <input id="f-foto" type="file" accept="image/*" capture="environment" class="hidden" onchange="previewFoto(this)">
+          <button type="button" onclick="document.getElementById('f-foto').click()"
+            class="absolute -bottom-2 -right-2 w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center shadow-md">
+            <i class="fa-solid fa-plus text-white text-sm"></i>
+          </button>
+        </div>
+        <p class="text-[10px] text-gray-400 mt-3">Foto recente com rosto visível</p>
       </div>
 
-      <div>
-        <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">CPF *</label>
-        <input id="f-cpf" type="text" placeholder="000.000.000-00" required maxlength="14"
-          class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-300">
-      </div>
+      <div class="border-t border-gray-100 pt-4 space-y-4">
 
-      <div>
-        <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Data de nascimento *</label>
-        <input id="f-nascimento" type="date" required
-          class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800">
-      </div>
+        <div>
+          <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Nome completo *</label>
+          <input id="f-nome" type="text" placeholder="Seu nome completo" required
+            class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-300">
+        </div>
 
-      <div>
-        <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Endereço / Ponto de embarque *</label>
-        <input id="f-endereco" type="text" placeholder="Rua, número, bairro" required
-          class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-300">
-      </div>
+        <div>
+          <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">CPF *</label>
+          <input id="f-cpf" type="text" placeholder="000.000.000-00" required maxlength="14"
+            class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-300">
+        </div>
 
-      <div>
-        <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Local de trabalho / Destino *</label>
-        <input id="f-trabalho" type="text" placeholder="Empresa ou local de destino" required
-          class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-300">
-      </div>
+        <div>
+          <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Data de nascimento *</label>
+          <input id="f-nascimento" type="date" required
+            class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800">
+        </div>
 
-      <div>
-        <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Horário necessário *</label>
-        <select id="f-turno" required class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800">
-          <option value="">Selecione o turno...</option>
-          <option value="Manhã (saída ~05h30)">Manhã (saída ~05h30)</option>
-          <option value="Tarde (saída ~11h30)">Tarde (saída ~11h30)</option>
-          <option value="Noite (saída ~16h00)">Noite (saída ~16h00)</option>
-        </select>
-      </div>
-
-      <div>
-        <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Telefone de contato *</label>
-        <input id="f-telefone" type="tel" placeholder="(37) 99999-9999" required
-          class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-300">
-      </div>
-
-      <div>
-        <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Observações</label>
-        <textarea id="f-obs" rows="2" placeholder="Informações adicionais..."
-          class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-300 resize-none"></textarea>
       </div>
 
       <div id="msg-erro" class="hidden bg-red-50 border border-red-100 rounded-xl px-4 py-3 text-sm text-red-600"></div>
 
       <button type="submit" id="btn-enviar"
-        class="w-full bg-orange-500 text-white font-black py-4 rounded-2xl shadow-md active:scale-[0.98] transition-all text-sm uppercase tracking-wide mt-2">
+        class="w-full bg-orange-500 text-white font-black py-4 rounded-2xl shadow-md active:scale-[0.98] transition-all text-sm uppercase tracking-wide">
         <span id="btn-texto"><i class="fa-solid fa-paper-plane mr-2"></i>Enviar Inscrição</span>
         <span id="btn-loading" class="hidden"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Enviando...</span>
       </button>
 
       <p class="text-center text-[10px] text-gray-400 pb-4">Ao enviar, você concorda com os termos do serviço municipal de transporte.</p>
-
     </form>
   </main>
-
 </div>
 
 <script type="module">
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { initializeApp }    from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js';
 
 const firebaseConfig = {
   apiKey: "AIzaSyAskgM5cxiR4DI2PXrccBxOvPZzMPDKdCo",
@@ -149,69 +144,96 @@ const firebaseConfig = {
   appId: "1:158833761867:web:f9db6cb6dc6b5785cfb7ce"
 };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+const app     = initializeApp(firebaseConfig);
+const auth    = getAuth(app);
+const db      = getFirestore(app);
+const storage = getStorage(app);
 let currentUser = null;
 
 function mostrar(id) {
-  ['estado-carregando','estado-nao-logado','estado-ja-inscrito','estado-form']
-    .forEach(s => { const el = document.getElementById(s); el.classList.add('hidden'); el.classList.remove('flex'); });
+  ['e-loading','e-nao-logado','e-ja-inscrito','e-form'].forEach(s => {
+    const el = document.getElementById(s);
+    el.classList.add('hidden');
+    el.classList.remove('flex');
+  });
   const t = document.getElementById(id);
   t.classList.remove('hidden');
-  if (id !== 'estado-form') t.classList.add('flex');
+  if (id !== 'e-form') t.classList.add('flex');
 }
 
 // Máscara CPF
-document.getElementById('f-cpf').addEventListener('input', function() {
+document.getElementById('f-cpf').addEventListener('input', function () {
   let v = this.value.replace(/\D/g,'').slice(0,11);
-  if (v.length > 9) v = v.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2})/,'$1.$2.$3-$4');
+  if (v.length > 9)      v = v.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2})/,'$1.$2.$3-$4');
   else if (v.length > 6) v = v.replace(/(\d{3})(\d{3})(\d{1,3})/,'$1.$2.$3');
   else if (v.length > 3) v = v.replace(/(\d{3})(\d{1,3})/,'$1.$2');
   this.value = v;
 });
 
+// Preview da foto
+window.previewFoto = (input) => {
+  if (!input.files || !input.files[0]) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    document.getElementById('foto-preview').innerHTML =
+      `<img src="${e.target.result}" class="w-full h-full object-cover">`;
+  };
+  reader.readAsDataURL(input.files[0]);
+};
+
 onAuthStateChanged(auth, async (user) => {
-  if (!user) { mostrar('estado-nao-logado'); return; }
+  if (!user) { mostrar('e-nao-logado'); return; }
   currentUser = user;
   const snap = await getDoc(doc(db, 'inscricoes_transporte', user.uid + '_trabalhador'));
   if (snap.exists()) {
-    const d = snap.data();
     const msgs = {
       pendente: 'Sua inscrição está sendo analisada pela Secretaria de Transporte.',
       aprovado: 'Sua inscrição foi aprovada! Acesse sua carteirinha digital.',
-      negado: 'Sua inscrição foi negada. Entre em contato com a Secretaria de Transporte.'
+      negado:   'Sua inscrição foi negada. Entre em contato com a Secretaria de Transporte.'
     };
-    document.getElementById('msg-status').textContent = msgs[d.status] || msgs.pendente;
-    mostrar('estado-ja-inscrito');
+    document.getElementById('msg-status').textContent = msgs[snap.data().status] || msgs.pendente;
+    mostrar('e-ja-inscrito');
     return;
   }
-  mostrar('estado-form');
+  mostrar('e-form');
 });
 
 document.getElementById('form-inscricao').addEventListener('submit', async (e) => {
   e.preventDefault();
+
+  const fotoInput = document.getElementById('f-foto');
+  if (!fotoInput.files || !fotoInput.files[0]) {
+    const el = document.getElementById('msg-erro');
+    el.textContent = 'Adicione uma foto 3×4 para continuar.';
+    el.classList.remove('hidden');
+    return;
+  }
+
   document.getElementById('btn-texto').classList.add('hidden');
   document.getElementById('btn-loading').classList.remove('hidden');
   document.getElementById('btn-enviar').disabled = true;
   document.getElementById('msg-erro').classList.add('hidden');
+
   try {
+    // Upload foto
+    const fotoRef = storageRef(storage, `fotos_transporte/${currentUser.uid}_trabalhador`);
+    await uploadBytes(fotoRef, fotoInput.files[0]);
+    const fotoURL = await getDownloadURL(fotoRef);
+
+    // Salva inscrição
     await setDoc(doc(db, 'inscricoes_transporte', currentUser.uid + '_trabalhador'), {
-      tipo: 'trabalhador',
-      uid: currentUser.uid,
-      email: currentUser.email || '',
-      nome: document.getElementById('f-nome').value.trim(),
-      cpf: document.getElementById('f-cpf').value.trim(),
+      tipo:           'trabalhador',
+      uid:            currentUser.uid,
+      email:          currentUser.email || '',
+      nome:           document.getElementById('f-nome').value.trim(),
+      cpf:            document.getElementById('f-cpf').value.trim(),
       dataNascimento: document.getElementById('f-nascimento').value,
-      endereco: document.getElementById('f-endereco').value.trim(),
-      localTrabalho: document.getElementById('f-trabalho').value.trim(),
-      turno: document.getElementById('f-turno').value,
-      telefone: document.getElementById('f-telefone').value.trim(),
-      observacoes: document.getElementById('f-obs').value.trim(),
-      status: 'pendente',
-      dataCriacao: serverTimestamp()
+      fotoURL,
+      status:         'pendente',
+      dataCriacao:    serverTimestamp()
     });
-    mostrar('estado-ja-inscrito');
+
+    mostrar('e-ja-inscrito');
   } catch (err) {
     const el = document.getElementById('msg-erro');
     el.textContent = 'Erro ao enviar inscrição. Tente novamente.';
