@@ -196,10 +196,21 @@
 
                     <!-- TELEFONES ÚTEIS E EMERGÊNCIA -->
                     <div class="mb-4">
-                        <h3 class="font-bold text-gray-800 text-sm mb-3 border-l-4 border-red-500 pl-2">Emergências</h3>
-
+                        <button onclick="this.nextElementSibling.classList.toggle('hidden');this.querySelector('.chv').classList.toggle('rotate-180')" class="w-full flex items-center justify-between bg-red-50 border border-red-100 rounded-2xl px-4 py-3 active:scale-[0.98] transition-all">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-8 h-8 rounded-xl bg-red-500 flex items-center justify-center shrink-0">
+                                    <i class="fa-solid fa-phone text-white text-sm"></i>
+                                </div>
+                                <div class="text-left">
+                                    <p class="font-black text-red-700 text-sm leading-none">Emergências</p>
+                                    <p class="text-[10px] text-red-400 mt-0.5">190 · 192 · SAMU · Prefeitura</p>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-chevron-down chv text-red-300 text-xs transition-transform duration-200"></i>
+                        </button>
+                        <div class="hidden pt-3 space-y-2">
                         <!-- Destaque 190 / 192 -->
-                        <div class="grid grid-cols-2 gap-2 mb-3">
+                        <div class="grid grid-cols-2 gap-2">
                             <a href="tel:190" class="flex flex-col items-center justify-center p-4 bg-red-600 rounded-2xl active:scale-[0.97] transition-all">
                                 <i class="fa-solid fa-shield-halved text-white text-2xl mb-1"></i>
                                 <p class="font-black text-white text-lg leading-none">190</p>
@@ -211,7 +222,7 @@
                                 <p class="text-[10px] text-red-200 mt-0.5">SAMU</p>
                             </a>
                         </div>
-                        <a href="tel:37344110010" class="flex items-center p-3 bg-white rounded-xl border border-gray-100 active:bg-red-50 transition-all mb-4">
+                        <a href="tel:37344110010" class="flex items-center p-3 bg-white rounded-xl border border-gray-100 active:bg-red-50 transition-all">
                             <div class="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center mr-3 shrink-0">
                                 <i class="fa-solid fa-car-burst text-sm"></i>
                             </div>
@@ -220,13 +231,7 @@
                                 <p class="text-[9px] text-gray-500 font-medium">(37) 3441-0010</p>
                             </div>
                         </a>
-
-                        <!-- Outros contatos (expansível) -->
-                        <button onclick="this.nextElementSibling.classList.toggle('hidden');this.querySelector('i').classList.toggle('rotate-180')" class="w-full flex items-center justify-between text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-2 pl-1 active:opacity-70">
-                            <span>Outros contatos úteis</span>
-                            <i class="fa-solid fa-chevron-down text-gray-300 text-xs transition-transform duration-200"></i>
-                        </button>
-                        <div class="hidden">
+                        <div>
                             <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-2 pl-1">Prefeitura Municipal</p>
                             <div class="grid grid-cols-2 gap-2 mb-4">
                                 <a href="tel:3734410000" class="flex items-center p-3 bg-white rounded-xl border border-gray-100 active:bg-green-50 transition-all col-span-2">
@@ -351,6 +356,7 @@
                                 </a>
                             </div>
                         </div>
+                        </div><!-- fim colapsável emergências -->
                     </div>
                 </div>
 
@@ -553,7 +559,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getFirestore, collection, query, where, getDocs, orderBy, limit, doc, onSnapshot, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
         import { getAuth, signInWithPopup, signInWithRedirect, getRedirectResult, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, updatePassword, deleteUser, onAuthStateChanged, signOut, updateProfile, EmailAuthProvider, reauthenticateWithCredential, updateEmail } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-        import { getDatabase, ref as dbRef, get as dbGet } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+        import { getDatabase, ref as dbRef, get as dbGet, onValue as rtdbOnValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAskgM5cxiR4DI2PXrccBxOvPZzMPDKdCo",
@@ -836,19 +842,21 @@
             }
         });
 
-        const alertaRef = doc(db, "config", "alerta");
-        onSnapshot(alertaRef, (docSnap) => {
-            if (docSnap.exists()) {
-                const data = docSnap.data();
-                const containerAlerta = document.getElementById('alerta-global');
-
-                if (data.ativo === true) {
-                    document.getElementById('alerta-titulo').innerText = data.titulo || 'Aviso Urgente';
-                    document.getElementById('alerta-mensagem').innerText = data.mensagem || '';
+        // Alerta global lido do RTDB config/app.alertaGlobal
+        rtdbOnValue(dbRef(rtdb, 'config/app'), (snap) => {
+            const containerAlerta = document.getElementById('alerta-global');
+            if (snap.exists()) {
+                const d = snap.val();
+                const msg = d.alertaGlobal || '';
+                if (msg.trim()) {
+                    document.getElementById('alerta-titulo').innerText = 'Aviso da Prefeitura';
+                    document.getElementById('alerta-mensagem').innerText = msg;
                     containerAlerta.classList.remove('hidden');
                 } else {
                     containerAlerta.classList.add('hidden');
                 }
+            } else {
+                containerAlerta.classList.add('hidden');
             }
         });
 
