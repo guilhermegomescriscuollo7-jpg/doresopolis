@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Painel Secretaria | Doresópolis</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script>tailwind.config={theme:{extend:{colors:{doresopolis:{green:'#0b5c3b'}}}}}</script>
+<style>
+  input,select,textarea{outline:none;}
+  input:focus,select:focus,textarea:focus{box-shadow:0 0 0 2px var(--cor,#0b5c3b);}
+  .slide-up{animation:slideUp .18s ease;}
+  @keyframes slideUp{from{transform:translateY(6px);opacity:0}to{transform:translateY(0);opacity:1}}
+</style>
+</head>
+<body class="bg-gray-200 font-sans text-gray-800 flex justify-center items-center min-h-screen">
+
+<!-- TOAST -->
+<div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 z-[200] bg-green-600 text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-3 transition-all duration-300 opacity-0 pointer-events-none -translate-y-5 w-11/12 max-w-sm">
+  <i id="toast-ico" class="fa-solid fa-circle-check text-lg"></i>
+  <span id="toast-msg" class="text-sm font-medium leading-snug"></span>
+</div>
+
+<!-- LOADING -->
+<div id="loading" class="fixed inset-0 bg-white z-[300] flex flex-col items-center justify-center gap-3">
+  <div class="w-12 h-12 border-4 border-gray-200 border-t-doresopolis-green rounded-full animate-spin"></div>
+  <p class="text-sm text-gray-400">Verificando acesso...</p>
+</div>
+
+<!-- APP -->
+<div id="app" class="hidden bg-gray-50 w-full max-w-md h-[100dvh] flex flex-col shadow-2xl overflow-hidden sm:rounded-xl sm:h-[95vh] sm:border sm:border-gray-300">
+
+  <!-- HEADER -->
+  <header class="bg-white shadow-sm z-10 flex-shrink-0">
+    <div id="hdr-bar" class="h-1.5 w-full bg-doresopolis-green"></div>
+    <div class="px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div id="hdr-ico-wrap" class="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center shrink-0">
+          <i id="hdr-ico" class="fa-solid fa-building-columns text-lg text-doresopolis-green"></i>
+        </div>
+        <div>
+          <p class="text-[9px] tracking-widest text-gray-400 uppercase font-semibold">Painel de Gestão</p>
+          <h1 id="hdr-titulo" class="text-lg font-black text-gray-800 uppercase tracking-tight leading-none">Carregando...</h1>
+        </div>
+      </div>
+      <button onclick="fazerLogout()" class="text-gray-400 hover:text-red-500 p-2 transition-colors">
+        <i class="fa-solid fa-right-from-bracket text-lg"></i>
+      </button>
+    </div>
+    <div id="tab-nav" class="flex border-t border-gray-100 bg-gray-50"></div>
+  </header>
+
+  <!-- CONTENT AREA -->
+  <div id="content-area" class="flex-grow overflow-hidden flex flex-col relative">
+
+    <!-- ====== OBRAS ====== -->
+    <section id="sec-sol-obras" class="sec hidden flex-grow overflow-y-auto p-4 pb-6">
+      <div class="grid grid-cols-3 gap-2 mb-5">
+        <div class="bg-white p-3 rounded-xl border border-gray-100 shadow-sm text-center border-t-4 border-t-gray-400">
+          <p id="o-stat-pend" class="text-2xl font-black">0</p><p class="text-[9px] text-gray-400 font-bold uppercase mt-0.5">Pendentes</p>
+        </div>
+        <div class="bg-white p-3 rounded-xl border border-gray-100 shadow-sm text-center border-t-4 border-t-blue-400">
+          <p id="o-stat-and" class="text-2xl font-black">0</p><p class="text-[9px] text-gray-400 font-bold uppercase mt-0.5">Andamento</p>
+        </div>
+        <div class="bg-white p-3 rounded-xl border border-gray-100 shadow-sm text-center border-t-4 border-t-green-500">
+          <p id="o-stat-conc" class="text-2xl font-black">0</p><p class="text-[9px] text-gray-400 font-bold uppercase mt-0.5">Concluídos</p>
+        </div>
+      </div>
+      <div id="lista-obras" class="flex flex-col gap-3">
+        <div class="text-center py-10 text-gray-400 text-sm"><i class="fa-solid fa-spinner fa-spin text-2xl mb-2 block"></i>Carregando...</div>
+      </div>
+    </section>
+
+    <section id="sec-avi-obras" class="sec hidden flex-grow overflow-y-auto p-4 pb-6">
+      <div class="bg-white rounded-xl border border-amber-100 shadow-sm overflow-hidden mb-5">
+        <div class="bg-amber-500 px-4 py-3 flex items-center gap-2 text-white">
+          <i class="fa-solid fa-bullhorn"></i>
+          <h3 id="o-avi-form-titulo" class="font-bold text-sm">Publicar Aviso de Obras</h3>
+        </div>
+        <form onsubmit="salvarAviso(event,'Obras','o')" class="p-4 space-y-3">
+          <input type="hidden" id="o-aviso-id">
+          <div><label class="block text-xs font-bold text-gray-600 mb-1">Título</label>
+            <input type="text" id="o-aviso-titulo" required placeholder="Ex: Interdição de Rua" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm"></div>
+          <div><label class="block text-xs font-bold text-gray-600 mb-1">Descrição</label>
+            <textarea id="o-aviso-desc" required rows="3" placeholder="Detalhes do aviso..." class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm resize-none"></textarea></div>
+          <div class="flex gap-2">
+            <button type="button" id="o-btn-cancel-avi" onclick="cancelarAviso('o','Publicar Aviso de Obras')" class="hidden flex-1 bg-gray-100 text-gray-600 font-bold py-2.5 rounded-lg text-sm">Cancelar</button>
+            <button type="submit" class="flex-1 bg-amber-500 text-white font-bold py-2.5 rounded-lg text-sm flex justify-center items-center gap-2">
+              <i class="fa-solid fa-paper-plane"></i> <span id="o-btn-avi-txt">Publicar</span>
+            </button>
+          </div>
+        </form>
+      </div>
+      <h3 class="font-bold text-gray-700 text-xs uppercase tracking-wider mb-3 border-l-4 border-amber-500 pl-3">Avisos Publicados</h3>
+      <div id="lista-avi-obras" class="flex flex-col gap-3"><div class="text-center py-6 text-gray-400 text-sm"><i class="fa-solid fa-spinner fa-spin mb-2 block"></i>Carregando...</div></div>
+    </section>
+
+    <!-- ====== TRIBUTOS ====== -->
+    <section id="sec-sol-tributos" class="sec hidden flex-grow overflow-y-auto p-4 pb-6">
+      <div class="grid grid-cols-3 gap-2 mb-5">
+        <div class="bg-white p-3 rounded-xl border border-gray-100 shadow-sm text-center border-t-4 border-t-gray-400">
+          <p id="t-stat-pend" class="text-2xl font-black">0</p><p class="text-[9px] text-gray-400 font-bold uppercase mt-0.5">Pendentes</p>
+        </div>
+        <div class="bg-white p-3 rounded-xl border border-gray-100 shadow-sm text-center border-t-4 border-t-amber-400">
+          <p id="t-stat-anal" class="text-2xl font-black">0</p><p class="text-[9px] text-gray-400 font-bold uppercase mt-0.5">Em Análise</p>
+        </div>
+        <div class="bg-white p-3 rounded-xl border border-gray-100 shadow-sm text-center border-t-4 border-t-green-500">
+          <p id="t-stat-conc" class="text-2xl font-black">0</p><p class="text-[9px] text-gray-400 font-bold uppercase mt-0.5">Concluídos</p>
+        </div>
+      </div>
+      <div class="flex gap-2 overflow-x-auto pb-2 mb-4" id="t-sol-filters">
+        <button onclick="filtrar('t-sol','TODOS')" id="t-sol-fil-TODOS" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-gray-800 text-white">Todos</button>
+        <button onclick="filtrar('t-sol','PENDENTE')" id="t-sol-fil-PENDENTE" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">Pendentes</button>
+        <button onclick="filtrar('t-sol','EM ANÁLISE')" id="t-sol-fil-EM ANÁLISE" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">Em Análise</button>
+        <button onclick="filtrar('t-sol','CONCLUÍDO')" id="t-sol-fil-CONCLUÍDO" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">Concluídos</button>
+      </div>
+      <div id="lista-t-sol" class="flex flex-col gap-3"><div class="text-center py-10 text-gray-400 text-sm"><i class="fa-solid fa-spinner fa-spin text-2xl mb-2 block"></i>Carregando...</div></div>
+    </section>
+
+    <section id="sec-via-tributos" class="sec hidden flex-grow overflow-y-auto p-4 pb-6">
+      <div class="flex gap-2 overflow-x-auto pb-2 mb-4">
+        <button onclick="filtrar('t-via','TODOS')" id="t-via-fil-TODOS" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-emerald-700 text-white">Todas</button>
+        <button onclick="filtrar('t-via','PENDENTE')" id="t-via-fil-PENDENTE" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">Pendentes</button>
+        <button onclick="filtrar('t-via','EM ANÁLISE')" id="t-via-fil-EM ANÁLISE" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">Em Análise</button>
+        <button onclick="filtrar('t-via','CONCLUÍDO')" id="t-via-fil-CONCLUÍDO" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">Concluídas</button>
+      </div>
+      <div id="lista-t-via" class="flex flex-col gap-3"><div class="text-center py-10 text-gray-400 text-sm"><i class="fa-solid fa-spinner fa-spin text-2xl mb-2 block"></i>Carregando...</div></div>
+    </section>
+
+    <section id="sec-avi-tributos" class="sec hidden flex-grow overflow-y-auto p-4 pb-6">
+      <div class="bg-white rounded-xl border border-emerald-100 shadow-sm overflow-hidden mb-5">
+        <div class="bg-emerald-700 px-4 py-3 flex items-center gap-2 text-white">
+          <i class="fa-solid fa-bullhorn"></i>
+          <h3 id="t-avi-form-titulo" class="font-bold text-sm">Publicar Aviso de Tributos</h3>
+        </div>
+        <form onsubmit="salvarAviso(event,'Tributos','t')" class="p-4 space-y-3">
+          <input type="hidden" id="t-aviso-id">
+          <div><label class="block text-xs font-bold text-gray-600 mb-1">Título</label>
+            <input type="text" id="t-aviso-titulo" required placeholder="Ex: Prazo IPTU 2026" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm"></div>
+          <div><label class="block text-xs font-bold text-gray-600 mb-1">Descrição</label>
+            <textarea id="t-aviso-desc" required rows="3" placeholder="Detalhes do aviso..." class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm resize-none"></textarea></div>
+          <div class="flex gap-2">
+            <button type="button" id="t-btn-cancel-avi" onclick="cancelarAviso('t','Publicar Aviso de Tributos')" class="hidden flex-1 bg-gray-100 text-gray-600 font-bold py-2.5 rounded-lg text-sm">Cancelar</button>
+            <button type="submit" class="flex-1 bg-emerald-700 text-white font-bold py-2.5 rounded-lg text-sm flex justify-center items-center gap-2">
+              <i class="fa-solid fa-paper-plane"></i> <span id="t-btn-avi-txt">Publicar</span>
+            </button>
+          </div>
+        </form>
+      </div>
+      <div id="lista-avi-tributos" class="flex flex-col gap-3"><div class="text-center py-6 text-gray-400 text-sm"><i class="fa-solid fa-spinner fa-spin mb-2 block"></i>Carregando...</div></div>
+    </section>
+
+    <!-- ====== EDUCAÇÃO ====== -->
+    <section id="sec-sol-educacao" class="sec hidden flex-grow overflow-y-auto p-4 pb-6">
+      <div class="grid grid-cols-3 gap-2 mb-5">
+        <div class="bg-white p-3 rounded-xl border border-gray-100 shadow-sm text-center border-t-4 border-t-gray-400">
+          <p id="e-stat-pend" class="text-2xl font-black">0</p><p class="text-[9px] text-gray-400 font-bold uppercase mt-0.5">Pendentes</p>
+        </div>
+        <div class="bg-white p-3 rounded-xl border border-gray-100 shadow-sm text-center border-t-4 border-t-amber-400">
+          <p id="e-stat-anal" class="text-2xl font-black">0</p><p class="text-[9px] text-gray-400 font-bold uppercase mt-0.5">Em Análise</p>
+        </div>
+        <div class="bg-white p-3 rounded-xl border border-gray-100 shadow-sm text-center border-t-4 border-t-blue-500">
+          <p id="e-stat-conc" class="text-2xl font-black">0</p><p class="text-[9px] text-gray-400 font-bold uppercase mt-0.5">Concluídos</p>
+        </div>
+      </div>
+      <div class="flex gap-2 overflow-x-auto pb-2 mb-4">
+        <button onclick="filtrar('e-sol','TODOS')" id="e-sol-fil-TODOS" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-gray-800 text-white">Todos</button>
+        <button onclick="filtrar('e-sol','PENDENTE')" id="e-sol-fil-PENDENTE" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">Pendentes</button>
+        <button onclick="filtrar('e-sol','EM ANÁLISE')" id="e-sol-fil-EM ANÁLISE" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">Em Análise</button>
+        <button onclick="filtrar('e-sol','CONCLUÍDO')" id="e-sol-fil-CONCLUÍDO" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">Concluídos</button>
+      </div>
+      <div id="lista-e-sol" class="flex flex-col gap-3"><div class="text-center py-10 text-gray-400 text-sm"><i class="fa-solid fa-spinner fa-spin text-2xl mb-2 block"></i>Carregando...</div></div>
+    </section>
+
+    <section id="sec-mat-educacao" class="sec hidden flex-grow overflow-y-auto p-4 pb-6">
+      <div class="flex gap-2 overflow-x-auto pb-2 mb-4">
+        <button onclick="filtrar('e-mat','TODOS')" id="e-mat-fil-TODOS" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-blue-700 text-white">Todas</button>
+        <button onclick="filtrar('e-mat','PENDENTE')" id="e-mat-fil-PENDENTE" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">Pendentes</button>
+        <button onclick="filtrar('e-mat','EM ANÁLISE')" id="e-mat-fil-EM ANÁLISE" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">Em Análise</button>
+        <button onclick="filtrar('e-mat','CONCLUÍDO')" id="e-mat-fil-CONCLUÍDO" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">Concluídas</button>
+      </div>
+      <div id="lista-e-mat" class="flex flex-col gap-3"><div class="text-center py-10 text-gray-400 text-sm"><i class="fa-solid fa-spinner fa-spin text-2xl mb-2 block"></i>Carregando...</div></div>
+    </section>
+
+    <section id="sec-avi-educacao" class="sec hidden flex-grow overflow-y-auto p-4 pb-6">
+      <div class="bg-white rounded-xl border border-blue-100 shadow-sm overflow-hidden mb-5">
+        <div class="bg-blue-700 px-4 py-3 flex items-center gap-2 text-white">
+          <i class="fa-solid fa-bullhorn"></i>
+          <h3 id="e-avi-form-titulo" class="font-bold text-sm">Publicar Aviso de Educação</h3>
+        </div>
+        <form onsubmit="salvarAviso(event,'Educação','e')" class="p-4 space-y-3">
+          <input type="hidden" id="e-aviso-id">
+          <div><label class="block text-xs font-bold text-gray-600 mb-1">Título</label>
+            <input type="text" id="e-aviso-titulo" required placeholder="Ex: Calendário Escolar 2026" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm"></div>
+          <div><label class="block text-xs font-bold text-gray-600 mb-1">Descrição</label>
+            <textarea id="e-aviso-desc" required rows="3" placeholder="Detalhes do aviso..." class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm resize-none"></textarea></div>
+          <div class="flex gap-2">
+            <button type="button" id="e-btn-cancel-avi" onclick="cancelarAviso('e','Publicar Aviso de Educação')" class="hidden flex-1 bg-gray-100 text-gray-600 font-bold py-2.5 rounded-lg text-sm">Cancelar</button>
+            <button type="submit" class="flex-1 bg-blue-700 text-white font-bold py-2.5 rounded-lg text-sm flex justify-center items-center gap-2">
+              <i class="fa-solid fa-paper-plane"></i> <span id="e-btn-avi-txt">Publicar</span>
+            </button>
+          </div>
+        </form>
+      </div>
+      <div id="lista-avi-educacao" class="flex flex-col gap-3"><div class="text-center py-6 text-gray-400 text-sm"><i class="fa-solid fa-spinner fa-spin mb-2 block"></i>Carregando...</div></div>
+    </section>
+
+    <!-- ====== SAÚDE ====== -->
+    <section id="sec-agen-saude" class="sec hidden flex-grow overflow-y-auto p-4 pb-6">
+      <div class="grid grid-cols-3 gap-2 mb-5">
+        <div class="bg-white p-3 rounded-xl border border-gray-100 shadow-sm text-center border-t-4 border-t-amber-400">
+          <p id="s-stat-anal" class="text-2xl font-black">0</p><p class="text-[9px] text-gray-400 font-bold uppercase mt-0.5">Em Análise</p>
+        </div>
+        <div class="bg-white p-3 rounded-xl border border-gray-100 shadow-sm text-center border-t-4 border-t-green-500">
+          <p id="s-stat-conf" class="text-2xl font-black">0</p><p class="text-[9px] text-gray-400 font-bold uppercase mt-0.5">Confirmados</p>
+        </div>
+        <div class="bg-white p-3 rounded-xl border border-gray-100 shadow-sm text-center border-t-4 border-t-blue-500">
+          <p id="s-stat-real" class="text-2xl font-black">0</p><p class="text-[9px] text-gray-400 font-bold uppercase mt-0.5">Realizados</p>
+        </div>
+      </div>
+      <div class="flex gap-2 overflow-x-auto pb-2 mb-4">
+        <button onclick="filtrar('s-agen','TODOS')" id="s-agen-fil-TODOS" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-red-700 text-white">Todos</button>
+        <button onclick="filtrar('s-agen','EM ANÁLISE')" id="s-agen-fil-EM ANÁLISE" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">Análise</button>
+        <button onclick="filtrar('s-agen','CONFIRMADO')" id="s-agen-fil-CONFIRMADO" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">Confirmados</button>
+        <button onclick="filtrar('s-agen','REALIZADO')" id="s-agen-fil-REALIZADO" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">Realizados</button>
+        <button onclick="filtrar('s-agen','CANCELADO')" id="s-agen-fil-CANCELADO" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">Cancelados</button>
+      </div>
+      <div id="lista-s-agen" class="flex flex-col gap-3"><div class="text-center py-10 text-gray-400 text-sm"><i class="fa-solid fa-spinner fa-spin text-2xl mb-2 block"></i>Carregando...</div></div>
+    </section>
+
+    <section id="sec-hor-saude" class="sec hidden flex-grow overflow-y-auto p-4 pb-6">
+      <div class="bg-white rounded-xl border border-red-100 shadow-sm overflow-hidden mb-5">
+        <div class="bg-red-600 px-4 py-3 text-white font-bold text-sm flex items-center gap-2">
+          <i class="fa-solid fa-clock"></i> Cadastrar Horário
+        </div>
+        <form onsubmit="criarHorario(event)" class="p-4 space-y-3">
+          <div><label class="block text-xs font-bold text-gray-600 mb-1">Especialidade</label>
+            <select id="s-hor-esp" required class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm">
+              <option value="">Selecione...</option>
+            </select></div>
+          <div class="grid grid-cols-2 gap-3">
+            <div><label class="block text-xs font-bold text-gray-600 mb-1">Data</label>
+              <input type="date" id="s-hor-data" required class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm"></div>
+            <div><label class="block text-xs font-bold text-gray-600 mb-1">Hora</label>
+              <input type="time" id="s-hor-hora" required class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm"></div>
+          </div>
+          <div><label class="block text-xs font-bold text-gray-600 mb-1">Vagas</label>
+            <input type="number" id="s-hor-vagas" required min="1" max="50" value="1" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm"></div>
+          <div id="s-hor-erro" class="hidden bg-red-50 border border-red-100 rounded-lg px-3 py-2 text-xs text-red-600"></div>
+          <button type="submit" class="w-full bg-red-600 text-white font-bold py-2.5 rounded-lg text-sm flex justify-center items-center gap-2">
+            <i class="fa-solid fa-plus"></i> Cadastrar Horário
+          </button>
+        </form>
+      </div>
+      <h3 class="font-bold text-gray-700 text-xs uppercase tracking-wider mb-3 border-l-4 border-red-500 pl-3">Horários Cadastrados</h3>
+      <div id="lista-s-hor" class="flex flex-col gap-3"><div class="text-center py-6 text-gray-400 text-sm"><i class="fa-solid fa-spinner fa-spin mb-2 block"></i>Carregando...</div></div>
+    </section>
+
+    <section id="sec-esp-saude" class="sec hidden flex-grow overflow-y-auto p-4 pb-6">
+      <div class="bg-white rounded-xl border border-red-100 shadow-sm overflow-hidden mb-5">
+        <div class="bg-red-600 px-4 py-3 text-white font-bold text-sm flex items-center gap-2">
+          <i class="fa-solid fa-user-doctor"></i> Cadastrar Especialidade
+        </div>
+        <form onsubmit="criarEspecialidade(event)" class="p-4 space-y-3">
+          <div><label class="block text-xs font-bold text-gray-600 mb-1">Nome da Especialidade</label>
+            <input type="text" id="s-esp-nome" required placeholder="Ex: Cardiologia" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm"></div>
+          <div><label class="block text-xs font-bold text-gray-600 mb-1">Profissional</label>
+            <input type="text" id="s-esp-prof" required placeholder="Dr. Nome Sobrenome" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm"></div>
+          <div><label class="block text-xs font-bold text-gray-600 mb-1">Descrição (opcional)</label>
+            <input type="text" id="s-esp-desc" placeholder="Detalhes..." class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm"></div>
+          <button type="submit" class="w-full bg-red-600 text-white font-bold py-2.5 rounded-lg text-sm flex justify-center items-center gap-2">
+            <i class="fa-solid fa-plus"></i> Cadastrar
+          </button>
+        </form>
+      </div>
+      <h3 class="font-bold text-gray-700 text-xs uppercase tracking-wider mb-3 border-l-4 border-red-500 pl-3">Especialidades</h3>
+      <div id="lista-s-esp" class="flex flex-col gap-3"><div class="text-center py-6 text-gray-400 text-sm"><i class="fa-solid fa-spinner fa-spin mb-2 block"></i>Carregando...</div></div>
+    </section>
+
+    <section id="sec-avi-saude" class="sec hidden flex-grow overflow-y-auto p-4 pb-6">
+      <div class="bg-white rounded-xl border border-red-100 shadow-sm overflow-hidden mb-5">
+        <div class="bg-red-600 px-4 py-3 flex items-center gap-2 text-white">
+          <i class="fa-solid fa-bullhorn"></i>
+          <h3 id="s-avi-form-titulo" class="font-bold text-sm">Publicar Aviso de Saúde</h3>
+        </div>
+        <form onsubmit="salvarAviso(event,'Saúde','s')" class="p-4 space-y-3">
+          <input type="hidden" id="s-aviso-id">
+          <div><label class="block text-xs font-bold text-gray-600 mb-1">Título</label>
+            <input type="text" id="s-aviso-titulo" required placeholder="Ex: Campanha de Vacinação" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm"></div>
+          <div><label class="block text-xs font-bold text-gray-600 mb-1">Descrição</label>
+            <textarea id="s-aviso-desc" required rows="3" placeholder="Detalhes do aviso..." class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm resize-none"></textarea></div>
+          <div class="flex gap-2">
+            <button type="button" id="s-btn-cancel-avi" onclick="cancelarAviso('s','Publicar Aviso de Saúde')" class="hidden flex-1 bg-gray-100 text-gray-600 font-bold py-2.5 rounded-lg text-sm">Cancelar</button>
+            <button type="submit" class="flex-1 bg-red-600 text-white font-bold py-2.5 rounded-lg text-sm flex justify-center items-center gap-2">
+              <i class="fa-solid fa-paper-plane"></i> <span id="s-btn-avi-txt">Publicar</span>
+            </button>
+          </div>
+        </form>
+      </div>
+      <div id="lista-avi-saude" class="flex flex-col gap-3"><div class="text-center py-6 text-gray-400 text-sm"><i class="fa-solid fa-spinner fa-spin mb-2 block"></i>Carregando...</div></div>
+    </section>
+
+    <!-- ====== TI ====== -->
+    <section id="sec-con-ti" class="sec hidden flex-grow overflow-y-auto p-4 pb-6">
+      <div class="flex justify-end mb-4">
+        <button onclick="abrirModalConta()" class="flex items-center gap-1.5 bg-slate-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl">
+          <i class="fa-solid fa-plus"></i> Nova Conta
+        </button>
+      </div>
+      <div id="lista-ti-contas" class="flex flex-col gap-3"><div class="text-center py-10 text-gray-400 text-sm"><i class="fa-solid fa-spinner fa-spin text-2xl mb-2 block"></i>Carregando...</div></div>
+    </section>
+
+    <section id="sec-cfg-ti" class="sec hidden flex-grow overflow-y-auto p-4 pb-6">
+      <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4 space-y-4">
+        <h3 class="font-bold text-gray-800 text-sm border-l-4 border-slate-600 pl-3">Configurações do Sistema</h3>
+        <div class="flex items-center justify-between py-3 border-b border-gray-100">
+          <div>
+            <p class="font-bold text-sm text-gray-800">Modo Manutenção</p>
+            <p class="text-xs text-gray-500">Exibe aviso no app do cidadão</p>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" id="cfg-manutencao" class="sr-only peer" onchange="salvarConfig()">
+            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-slate-700"></div>
+          </label>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-600 mb-1">Mensagem de Alerta Global</label>
+          <textarea id="cfg-alerta" rows="3" placeholder="Mensagem exibida como banner no app (deixe em branco para desativar)" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm resize-none"></textarea>
+          <button onclick="salvarConfig()" class="mt-2 w-full bg-slate-700 text-white font-bold py-2.5 rounded-lg text-sm flex justify-center items-center gap-2">
+            <i class="fa-solid fa-floppy-disk"></i> Salvar Configurações
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- end content-area -->
+</div><!-- end app -->
+
+<!-- MODAL: Detalhes Solicitação (Tributos/Educação/Obras) -->
+<div id="modal-sol" class="fixed inset-0 z-[150] hidden flex-col justify-end" style="max-width:448px;margin:auto;">
+  <div id="modal-sol-ov" class="absolute inset-0 bg-black bg-opacity-0 transition-opacity duration-300" onclick="fecharModal('sol')"></div>
+  <div id="modal-sol-ct" class="bg-white rounded-t-3xl max-h-[92vh] overflow-y-auto w-full relative z-10 transform translate-y-full transition-transform duration-300 shadow-[0_-10px_40px_rgba(0,0,0,0.2)]">
+    <div class="sticky top-0 bg-white px-5 py-4 border-b border-gray-100 flex justify-between items-center">
+      <h3 class="font-black text-gray-800 text-lg">Detalhes da Solicitação</h3>
+      <button onclick="fecharModal('sol')" class="w-8 h-8 bg-gray-100 text-gray-600 rounded-full flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="p-5 space-y-4 pb-10">
+      <div class="flex justify-between items-center bg-gray-50 p-3 rounded-xl border border-gray-200">
+        <span class="text-xs font-bold text-gray-500 uppercase">Protocolo</span>
+        <span id="ms-protocolo" class="font-black text-gray-700 text-sm"></span>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="bg-gray-50 p-3 rounded-xl border border-gray-100"><p class="text-[9px] text-gray-400 font-bold uppercase mb-1">Cidadão</p><p id="ms-cidadao" class="text-xs font-bold text-gray-800"></p></div>
+        <div class="bg-gray-50 p-3 rounded-xl border border-gray-100"><p class="text-[9px] text-gray-400 font-bold uppercase mb-1">Data</p><p id="ms-data" class="text-xs font-bold text-gray-800"></p></div>
+      </div>
+      <div class="bg-gray-50 p-3 rounded-xl border border-gray-100"><p class="text-[9px] text-gray-400 font-bold uppercase mb-1">Tipo de Solicitação</p><p id="ms-tipo" class="text-sm font-bold text-gray-800"></p></div>
+      <!-- Obras fields -->
+      <div id="ms-endereco-wrap" class="hidden bg-red-50 p-3 rounded-xl border border-red-100"><p class="text-[9px] text-red-500 font-bold uppercase mb-1">Endereço / Referência</p><p id="ms-endereco" class="text-sm font-bold text-red-700"></p></div>
+      <!-- Tributos fields -->
+      <div id="ms-cpf-wrap" class="hidden grid grid-cols-2 gap-3">
+        <div class="bg-gray-50 p-3 rounded-xl border border-gray-100"><p class="text-[9px] text-gray-400 font-bold uppercase mb-1">CPF / CNPJ</p><p id="ms-cpf" class="text-xs font-bold text-gray-800"></p></div>
+        <div class="bg-gray-50 p-3 rounded-xl border border-gray-100"><p class="text-[9px] text-gray-400 font-bold uppercase mb-1">Imóvel</p><p id="ms-imovel" class="text-xs font-bold text-gray-800"></p></div>
+      </div>
+      <div id="ms-ano-wrap" class="hidden bg-gray-50 p-3 rounded-xl border border-gray-100"><p class="text-[9px] text-gray-400 font-bold uppercase mb-1">Ano de Referência</p><p id="ms-ano" class="text-sm font-bold text-gray-800"></p></div>
+      <!-- Educação fields -->
+      <div id="ms-aluno-wrap" class="hidden grid grid-cols-2 gap-3">
+        <div class="bg-gray-50 p-3 rounded-xl border border-gray-100"><p class="text-[9px] text-gray-400 font-bold uppercase mb-1">Aluno</p><p id="ms-aluno" class="text-xs font-bold text-gray-800"></p></div>
+        <div class="bg-gray-50 p-3 rounded-xl border border-gray-100"><p class="text-[9px] text-gray-400 font-bold uppercase mb-1">Série / Turno</p><p id="ms-serie" class="text-xs font-bold text-gray-800"></p></div>
+      </div>
+      <!-- Obs -->
+      <div class="bg-amber-50 p-3 rounded-xl border border-amber-100"><p class="text-[9px] text-amber-600 font-bold uppercase mb-1">Observações</p><p id="ms-obs" class="text-xs text-amber-800 italic"></p></div>
+      <!-- Status -->
+      <div class="bg-white border border-gray-200 rounded-xl p-4 space-y-3">
+        <p class="text-xs font-bold text-gray-700 uppercase tracking-wider"><i class="fa-solid fa-pen-to-square mr-1"></i>Atualizar Status</p>
+        <input type="hidden" id="ms-id">
+        <input type="hidden" id="ms-colecao">
+        <select id="ms-status" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm font-bold">
+          <option value="PENDENTE">Pendente</option>
+          <option value="EM ANÁLISE">Em Análise</option>
+          <option value="CONCLUÍDO">Concluído</option>
+          <option value="CANCELADO">Cancelado</option>
+        </select>
+        <button onclick="salvarStatusSol()" class="w-full bg-gray-800 text-white font-bold py-2.5 rounded-lg text-sm flex justify-center items-center gap-2">
+          <i class="fa-solid fa-floppy-disk"></i> Salvar Status
+        </button>
+      </div>
+      <!-- Documento -->
+      <div id="ms-doc-wrap" class="hidden bg-white border border-gray-200 rounded-xl p-4 space-y-3">
+        <p class="text-xs font-bold text-gray-700 uppercase tracking-wider"><i class="fa-solid fa-paperclip mr-1"></i>Enviar Documento ao Cidadão</p>
+        <input type="url" id="ms-arquivo-url" placeholder="https://drive.google.com/..." class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm">
+        <textarea id="ms-arquivo-obs" rows="2" placeholder="Ex: Segue o boleto do IPTU 2026." class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm resize-none"></textarea>
+        <button onclick="enviarDocSol()" class="w-full bg-gray-700 text-white font-bold py-2.5 rounded-lg text-sm flex justify-center items-center gap-2">
+          <i class="fa-solid fa-share-from-square"></i> Enviar Documento
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Agendamento Saúde -->
+<div id="modal-agen" class="fixed inset-0 z-[150] hidden flex-col justify-end" style="max-width:448px;margin:auto;">
+  <div id="modal-agen-ov" class="absolute inset-0 bg-black bg-opacity-0 transition-opacity duration-300" onclick="fecharModal('agen')"></div>
+  <div id="modal-agen-ct" class="bg-white rounded-t-3xl max-h-[92vh] overflow-y-auto w-full relative z-10 transform translate-y-full transition-transform duration-300 shadow-[0_-10px_40px_rgba(0,0,0,0.2)]">
+    <div class="sticky top-0 bg-white px-5 py-4 border-b border-gray-100 flex justify-between items-center">
+      <h3 class="font-black text-gray-800 text-lg">Detalhes do Agendamento</h3>
+      <button onclick="fecharModal('agen')" class="w-8 h-8 bg-gray-100 text-gray-600 rounded-full flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="p-5 space-y-4 pb-10">
+      <div class="flex justify-between items-center bg-red-50 p-3 rounded-xl border border-red-100">
+        <span class="text-xs font-bold text-red-600 uppercase">Protocolo</span>
+        <span id="ma-protocolo" class="font-black text-red-600 text-sm"></span>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="bg-gray-50 p-3 rounded-xl border border-gray-100"><p class="text-[9px] text-gray-400 font-bold uppercase mb-1">Paciente</p><p id="ma-nome" class="text-xs font-bold text-gray-800"></p></div>
+        <div class="bg-gray-50 p-3 rounded-xl border border-gray-100"><p class="text-[9px] text-gray-400 font-bold uppercase mb-1">CPF / Registro</p><p id="ma-registro" class="text-xs font-bold text-gray-800"></p></div>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="bg-gray-50 p-3 rounded-xl border border-gray-100"><p class="text-[9px] text-gray-400 font-bold uppercase mb-1">Especialidade</p><p id="ma-especialidade" class="text-xs font-bold text-gray-800"></p></div>
+        <div class="bg-gray-50 p-3 rounded-xl border border-gray-100"><p class="text-[9px] text-gray-400 font-bold uppercase mb-1">Profissional</p><p id="ma-profissional" class="text-xs font-bold text-gray-800"></p></div>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="bg-gray-50 p-3 rounded-xl border border-gray-100"><p class="text-[9px] text-gray-400 font-bold uppercase mb-1">Data</p><p id="ma-data" class="text-xs font-bold text-gray-800"></p></div>
+        <div class="bg-gray-50 p-3 rounded-xl border border-gray-100"><p class="text-[9px] text-gray-400 font-bold uppercase mb-1">Hora</p><p id="ma-hora" class="text-xs font-bold text-gray-800"></p></div>
+      </div>
+      <div class="bg-amber-50 p-3 rounded-xl border border-amber-100"><p class="text-[9px] text-amber-600 font-bold uppercase mb-1">Sintomas / Observações</p><p id="ma-sintomas" class="text-xs text-amber-800 italic"></p></div>
+      <div class="bg-white border border-gray-200 rounded-xl p-4 space-y-3">
+        <p class="text-xs font-bold text-gray-700 uppercase tracking-wider">Atualizar Status</p>
+        <input type="hidden" id="ma-id">
+        <input type="hidden" id="ma-agenda-id">
+        <select id="ma-status" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm font-bold">
+          <option value="EM ANÁLISE">Em Análise</option>
+          <option value="CONFIRMADO">Confirmado</option>
+          <option value="REALIZADO">Realizado</option>
+          <option value="CANCELADO">Cancelado</option>
+        </select>
+        <button onclick="salvarStatusAgen()" class="w-full bg-red-600 text-white font-bold py-2.5 rounded-lg text-sm flex justify-center items-center gap-2">
+          <i class="fa-solid fa-floppy-disk"></i> Salvar Status
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: TI Nova/Editar Conta -->
+<div id="modal-ti-conta" class="fixed inset-0 bg-black/50 z-[150] hidden flex items-end justify-center">
+  <div class="bg-white w-full max-w-md rounded-t-3xl p-5 space-y-3 max-h-[90vh] overflow-y-auto">
+    <div class="flex items-center justify-between mb-1">
+      <h3 id="ti-modal-titulo" class="font-black text-gray-800 text-base">Nova Conta</h3>
+      <button onclick="fecharModalTi()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center"><i class="fa-solid fa-xmark text-gray-500 text-sm"></i></button>
+    </div>
+    <div id="ti-aviso-vincular" class="hidden bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm text-amber-800">
+      <p class="font-bold mb-1"><i class="fa-solid fa-triangle-exclamation mr-1.5"></i>Conta já existe no Firebase</p>
+      <p>Digite a <strong>senha atual</strong> para vinculá-la ao painel.</p>
+    </div>
+    <input type="hidden" id="ti-conta-uid">
+    <input type="hidden" id="ti-vincular-modo" value="">
+    <div><label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Nome completo *</label>
+      <input id="ti-c-nome" type="text" placeholder="Nome do secretário(a)" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-300"></div>
+    <div><label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">E-mail *</label>
+      <input id="ti-c-email" type="email" placeholder="email@..." class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-300"></div>
+    <div>
+      <label id="ti-label-senha" class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Senha * <span id="ti-label-senha-edit" class="hidden normal-case font-normal text-gray-400">(deixe em branco para manter)</span></label>
+      <div class="relative">
+        <input id="ti-c-senha" type="password" placeholder="Mínimo 6 caracteres" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 pr-10 text-sm">
+        <button type="button" onclick="toggleSenhaTi()" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-300 text-sm"><i id="ti-ico-senha" class="fa-solid fa-eye"></i></button>
+      </div>
+    </div>
+    <div><label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Secretaria *</label>
+      <select id="ti-c-sec" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800">
+        <option value="">Selecione...</option>
+        <option value="transporte">Secretaria de Transporte</option>
+        <option value="saude">Secretaria de Saúde</option>
+        <option value="educacao">Secretaria de Educação</option>
+        <option value="tributos">Secretaria de Tributos</option>
+        <option value="obras">Secretaria de Obras</option>
+        <option value="ti">TI / Administrador</option>
+      </select></div>
+    <div id="ti-modal-erro" class="hidden bg-red-50 border border-red-100 rounded-xl px-4 py-3 text-sm text-red-600"></div>
+    <button onclick="salvarContaTi()" class="w-full bg-slate-700 text-white font-black py-4 rounded-2xl text-sm uppercase tracking-wide">
+      <span id="ti-modal-btn-txt"><i class="fa-solid fa-floppy-disk mr-2"></i>Salvar</span>
+      <span id="ti-modal-btn-load" class="hidden"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Salvando...</span>
+    </button>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getDatabase, ref, get, set, update, remove, push, onValue, query, orderByChild } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAskgM5cxiR4DI2PXrccBxOvPZzMPDKdCo",
+  authDomain: "gen-lang-client-0963611393.firebaseapp.com",
+  databaseURL: "https://gen-lang-client-0963611393-default-rtdb.firebaseio.com",
+  projectId: "gen-lang-client-0963611393",
+  storageBucket: "gen-lang-client-0963611393.firebasestorage.app",
+  messagingSenderId: "158833761867",
+  appId: "1:158833761867:web:f9db6cb6dc6b5785cfb7ce"
+};
+const API_KEY = "AIzaSyAskgM5cxiR4DI2PXrccBxOvPZzMPDKdCo";
+
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getDatabase(app);
+
+// ─── state ───
+let secretariaAtual = null;
+const cacheObras = {};
+const cacheTrib  = {};
+const cacheEdu   = {};
+const cacheSaude = {};
+let todasTSol = [], todasTVia = [], filtroTSol = 'TODOS', filtroTVia = 'TODOS';
+let todasESol = [], todasEMat = [], filtroESol = 'TODOS', filtroEMat = 'TODOS';
+let todasSAgen = [], filtroSAgen = 'TODOS';
+let tiContasCache = [], tiContaEditando = null;
+
+const PAINEL_CFG = {
+  obras:    { titulo:'Sec. Obras',     icone:'fa-helmet-safety',       cor:'#d97706', corBg:'#fef3c7', tabs:[{id:'sol',lbl:'Solicitações',ico:'fa-inbox'},{id:'avi',lbl:'Avisos',ico:'fa-bullhorn'}] },
+  tributos: { titulo:'Sec. Tributos',  icone:'fa-file-invoice-dollar', cor:'#059669', corBg:'#ecfdf5', tabs:[{id:'sol',lbl:'Pedidos',ico:'fa-inbox'},{id:'via',lbl:'2ª Via',ico:'fa-file-arrow-down'},{id:'avi',lbl:'Avisos',ico:'fa-bullhorn'}] },
+  educacao: { titulo:'Sec. Educação',  icone:'fa-graduation-cap',      cor:'#2563eb', corBg:'#eff6ff', tabs:[{id:'sol',lbl:'Solicitações',ico:'fa-inbox'},{id:'mat',lbl:'Matrículas',ico:'fa-user-plus'},{id:'avi',lbl:'Avisos',ico:'fa-bullhorn'}] },
+  saude:    { titulo:'Sec. Saúde',     icone:'fa-heart-pulse',         cor:'#dc2626', corBg:'#fef2f2', tabs:[{id:'agen',lbl:'Agendamentos',ico:'fa-calendar-check'},{id:'hor',lbl:'Horários',ico:'fa-clock'},{id:'esp',lbl:'Especialidades',ico:'fa-user-doctor'},{id:'avi',lbl:'Avisos',ico:'fa-bullhorn'}] },
+  ti:       { titulo:'TI / Admin',     icone:'fa-shield-halved',       cor:'#475569', corBg:'#f1f5f9', tabs:[{id:'con',lbl:'Contas',ico:'fa-users-gear'},{id:'cfg',lbl:'Config',ico:'fa-sliders'}] },
+};
+
+const secSuffix = { obras:'obras', tributos:'tributos', educacao:'educacao', saude:'saude', ti:'ti' };
+const tabToSec  = {
+  obras:    { sol:'sol', avi:'avi' },
+  tributos: { sol:'sol', via:'via', avi:'avi' },
+  educacao: { sol:'sol', mat:'mat', avi:'avi' },
+  saude:    { agen:'agen', hor:'hor', esp:'esp', avi:'avi' },
+  ti:       { con:'con', cfg:'cfg' },
+};
+
+// ─── toast ───
+window.toast = function(msg, tipo='sucesso') {
+  const t = document.getElementById('toast');
+  const i = document.getElementById('toast-ico');
+  document.getElementById('toast-msg').textContent = msg;
+  t.className = t.className.replace(/bg-\S+/g,'');
+  if (tipo==='sucesso') { t.classList.add('bg-green-600'); i.className='fa-solid fa-circle-check text-lg'; }
+  else if (tipo==='info') { t.classList.add('bg-blue-600'); i.className='fa-solid fa-circle-info text-lg'; }
+  else { t.classList.add('bg-red-600'); i.className='fa-solid fa-circle-exclamation text-lg'; }
+  t.classList.remove('opacity-0','pointer-events-none','-translate-y-5');
+  t.classList.add('opacity-100','translate-y-0');
+  setTimeout(()=>{ t.classList.add('opacity-0','pointer-events-none','-translate-y-5'); t.classList.remove('opacity-100','translate-y-0'); },3500);
+};
+window.mostrarAviso = window.toast;
+
+// ─── modals ───
+window.fecharModal = function(tipo) {
+  const ov = document.getElementById(`modal-${tipo}-ov`);
+  const ct = document.getElementById(`modal-${tipo}-ct`);
+  const el = document.getElementById(`modal-${tipo}`);
+  ov.classList.replace('bg-opacity-60','bg-opacity-0');
+  ct.classList.add('translate-y-full');
+  setTimeout(()=>{ el.classList.add('hidden'); el.classList.remove('flex'); },300);
+};
+function abrirModal(tipo) {
+  const el = document.getElementById(`modal-${tipo}`);
+  el.classList.remove('hidden'); el.classList.add('flex');
+  requestAnimationFrame(()=>{
+    document.getElementById(`modal-${tipo}-ov`).classList.replace('bg-opacity-0','bg-opacity-60');
+    document.getElementById(`modal-${tipo}-ct`).classList.remove('translate-y-full');
+  });
+}
+
+// ─── painel setup ───
+function setupPainel(sec) {
+  secretariaAtual = sec;
+  const cfg = PAINEL_CFG[sec];
+  document.getElementById('hdr-bar').style.backgroundColor = cfg.cor;
+  document.getElementById('hdr-ico-wrap').style.backgroundColor = cfg.corBg;
+  document.getElementById('hdr-ico').className = `fa-solid ${cfg.icone} text-lg`;
+  document.getElementById('hdr-ico').style.color = cfg.cor;
+  document.getElementById('hdr-titulo').textContent = cfg.titulo;
+  document.documentElement.style.setProperty('--cor', cfg.cor);
+
+  const nav = document.getElementById('tab-nav');
+  nav.innerHTML = cfg.tabs.map(t=>`
+    <button onclick="trocarAba('${t.id}')" id="tab-${sec}-${t.id}"
+      class="flex-1 py-2.5 text-[10px] font-bold uppercase flex flex-col items-center gap-0.5 transition-all border-b-2 border-transparent text-gray-400 bg-gray-50">
+      <i class="fa-solid ${t.ico} text-base"></i>${t.lbl}
+    </button>`).join('');
+
+  document.getElementById('loading').classList.add('hidden');
+  document.getElementById('app').classList.remove('hidden');
+
+  trocarAba(cfg.tabs[0].id);
+}
+
+window.trocarAba = function(abaId) {
+  const cfg = PAINEL_CFG[secretariaAtual];
+  document.querySelectorAll('.sec').forEach(el=>{ el.classList.add('hidden'); el.classList.remove('flex-grow'); });
+
+  const secId = `sec-${tabToSec[secretariaAtual][abaId]}-${secSuffix[secretariaAtual]}`;
+  const sec = document.getElementById(secId);
+  if (sec) { sec.classList.remove('hidden'); }
+
+  cfg.tabs.forEach(t=>{
+    const btn = document.getElementById(`tab-${secretariaAtual}-${t.id}`);
+    if (!btn) return;
+    if (t.id===abaId) {
+      btn.style.color = cfg.cor; btn.style.borderBottomColor = cfg.cor; btn.style.backgroundColor='white';
+    } else {
+      btn.style.color='#9ca3af'; btn.style.borderBottomColor='transparent'; btn.style.backgroundColor='#f9fafb';
+    }
+  });
+};
+
+// ─── logout ───
+window.fazerLogout = function() {
+  if (confirm('Deseja sair do painel?')) signOut(auth).then(()=>window.location.href='login-secretaria.html');
+};
+
+// ─── status helpers ───
+const statusCfg = {
+  'PENDENTE':   {cls:'bg-gray-100 text-gray-600 border-gray-200',   lbl:'Pendente'},
+  'EM ANÁLISE': {cls:'bg-amber-100 text-amber-700 border-amber-200', lbl:'Em Análise'},
+  'EM ANDAMENTO':{cls:'bg-blue-100 text-blue-700 border-blue-200',   lbl:'Andamento'},
+  'CONCLUÍDO':  {cls:'bg-green-100 text-green-700 border-green-200', lbl:'Concluído'},
+  'CONFIRMADO': {cls:'bg-green-100 text-green-700 border-green-200', lbl:'Confirmado'},
+  'REALIZADO':  {cls:'bg-blue-100 text-blue-700 border-blue-200',    lbl:'Realizado'},
+  'CANCELADO':  {cls:'bg-red-100 text-red-700 border-red-200',       lbl:'Cancelado'},
+};
+function sc(s){ return statusCfg[s]||statusCfg['PENDENTE']; }
+function datFmt(ts,hora){
+  if(!ts) return '—';
+  const d=new Date(ts);
+  const f=d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit'});
+  return hora ? f+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}) : f;
+}
+
+// ─── AVISOS (shared) ───
+window.salvarAviso = async function(event, secretaria, prefix) {
+  event.preventDefault();
+  const id = document.getElementById(`${prefix}-aviso-id`).value;
+  const titulo = document.getElementById(`${prefix}-aviso-titulo`).value;
+  const descricao = document.getElementById(`${prefix}-aviso-desc`).value;
+  try {
+    if (id) {
+      await update(ref(db,'avisos/'+id),{titulo,descricao});
+      toast('Aviso atualizado!');
+      cancelarAviso(prefix, `Publicar Aviso de ${secretaria}`);
+    } else {
+      await set(push(ref(db,'avisos')),{secretaria,titulo,descricao,dataPublicacao:new Date().toISOString()});
+      toast('Aviso publicado no app!');
+      document.getElementById(`${prefix}-aviso-titulo`).value='';
+      document.getElementById(`${prefix}-aviso-desc`).value='';
+    }
+  } catch(e){ toast('Erro ao salvar.','erro'); }
+};
+
+window.cancelarAviso = function(prefix, tituloOriginal) {
+  document.getElementById(`${prefix}-avi-form-titulo`).textContent=tituloOriginal;
+  document.getElementById(`${prefix}-aviso-id`).value='';
+  document.getElementById(`${prefix}-aviso-titulo`).value='';
+  document.getElementById(`${prefix}-aviso-desc`).value='';
+  document.getElementById(`${prefix}-btn-cancel-avi`).classList.add('hidden');
+  document.getElementById(`${prefix}-btn-avi-txt`).textContent='Publicar';
+};
+
+function renderAvisos(lista, containerId, prefix, tituloOriginal) {
+  const c = document.getElementById(containerId);
+  if (!lista.length) { c.innerHTML=`<p class="text-center text-xs text-gray-400 py-4">Nenhum aviso publicado.</p>`; return; }
+  c.innerHTML = lista.map(a=>`
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-3">
+      <div class="flex justify-between items-start mb-1">
+        <h4 class="font-bold text-gray-800 text-sm leading-tight pr-2">${a.titulo}</h4>
+        <span class="text-[9px] text-gray-400 whitespace-nowrap">${datFmt(a.dataPublicacao)}</span>
+      </div>
+      <p class="text-xs text-gray-500 mt-1 line-clamp-2">${a.descricao}</p>
+      <div class="flex justify-end gap-2 mt-3 pt-2 border-t border-gray-100">
+        <button onclick="prepararEdicaoAviso('${a.id}','${a.titulo.replace(/'/g,"\\'")}','${a.descricao.replace(/'/g,"\\'")}','${prefix}','${tituloOriginal}')"
+          class="text-blue-500 bg-blue-50 px-3 py-1 rounded-md text-[10px] font-bold"><i class="fa-solid fa-pen mr-1"></i> Editar</button>
+        <button onclick="excluirAviso('${a.id}')" class="text-red-500 bg-red-50 px-3 py-1 rounded-md text-[10px] font-bold"><i class="fa-solid fa-trash mr-1"></i> Excluir</button>
+      </div>
+    </div>`).join('');
+}
+
+window.prepararEdicaoAviso = function(id,titulo,descricao,prefix,tituloOriginal) {
+  document.getElementById(`${prefix}-avi-form-titulo`).textContent='Editar Aviso';
+  document.getElementById(`${prefix}-aviso-id`).value=id;
+  document.getElementById(`${prefix}-aviso-titulo`).value=titulo;
+  document.getElementById(`${prefix}-aviso-desc`).value=descricao;
+  document.getElementById(`${prefix}-btn-cancel-avi`).classList.remove('hidden');
+  document.getElementById(`${prefix}-btn-avi-txt`).textContent='Salvar Alteração';
+  document.getElementById(`sec-avi-${secSuffix[secretariaAtual]}`).scrollTo(0,0);
+};
+
+window.excluirAviso = async function(id) {
+  if (!confirm('Excluir este aviso do app?')) return;
+  try { await remove(ref(db,'avisos/'+id)); toast('Aviso excluído!'); }
+  catch(e){ toast('Erro ao excluir.','erro'); }
+};
+
+// ─── FILTER helper ───
+window.filtrar = function(grupo, f) {
+  if (grupo==='t-sol') filtroTSol=f;
+  else if (grupo==='t-via') filtroTVia=f;
+  else if (grupo==='e-sol') filtroESol=f;
+  else if (grupo==='e-mat') filtroEMat=f;
+  else if (grupo==='s-agen') filtroSAgen=f;
+  document.querySelectorAll(`[id^="${grupo}-fil-"]`).forEach(b=>{
+    b.className=b.className.replace(/bg-\S+\s|text-\S+\s/g,'');
+    b.classList.add('bg-gray-100','text-gray-500');
+  });
+  const btn=document.getElementById(`${grupo}-fil-${f}`);
+  if(btn){ btn.classList.remove('bg-gray-100','text-gray-500'); btn.classList.add('bg-gray-800','text-white'); }
+  if (grupo.startsWith('t-')) renderTributos();
+  else if (grupo.startsWith('e-')) renderEducacao();
+  else if (grupo==='s-agen') renderSAgen();
+};
+
+// ════════════════════════════════════
+//  OBRAS
+// ════════════════════════════════════
+function iniciarObras() {
+  onValue(query(ref(db,'solicitacoes_obras'),orderByChild('dataRegistro')),(snap)=>{
+    let pend=0,and=0,conc=0;
+    const itens=[];
+    if(snap.exists()){ snap.forEach(c=>{ cacheObras[c.key]=c.val(); itens.push({id:c.key,...c.val()}); }); itens.reverse(); }
+    itens.forEach(d=>{ if(d.status==='PENDENTE') pend++; else if(d.status==='EM ANDAMENTO') and++; else if(d.status==='CONCLUÍDO') conc++; });
+    document.getElementById('o-stat-pend').textContent=pend;
+    document.getElementById('o-stat-and').textContent=and;
+    document.getElementById('o-stat-conc').textContent=conc;
+    const c=document.getElementById('lista-obras');
+    if(!itens.length){ c.innerHTML=`<div class="text-center py-10 text-gray-400 text-sm">Nenhuma solicitação.</div>`; return; }
+    c.innerHTML=itens.map(d=>{
+      const cs=sc(d.status);
+      return `<div class="bg-white rounded-xl border border-gray-100 shadow-sm p-3 slide-up">
+        <div class="flex gap-3 items-start">
+          <div class="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0"><i class="fa-solid fa-helmet-safety text-lg"></i></div>
+          <div class="flex-grow min-w-0">
+            <div class="flex justify-between items-start gap-1 mb-0.5">
+              <span class="text-[9px] font-black text-amber-600 uppercase truncate">#${d.protocolo||'—'}</span>
+              <span class="text-[9px] font-bold px-2 py-0.5 rounded-full border shrink-0 ${cs.cls}">${cs.lbl}</span>
+            </div>
+            <h4 class="font-bold text-gray-800 text-sm leading-tight">${d.tipoServico||'Reparo Geral'}</h4>
+            <p class="text-xs text-gray-500 truncate"><i class="fa-regular fa-user mr-1"></i>${d.nomeCidadao||'—'}</p>
+          </div>
+        </div>
+        <div class="flex gap-2 mt-3 pt-2 border-t border-gray-50 items-center">
+          <span class="text-[10px] text-gray-400 flex-grow"><i class="fa-regular fa-calendar mr-1"></i>${datFmt(d.dataRegistro)}</span>
+          <select onchange="atualizarStatusObras('${d.id}',this.value)" class="text-[10px] font-bold border rounded-full px-2 py-1 outline-none cursor-pointer ${cs.cls}">
+            <option value="PENDENTE" ${d.status==='PENDENTE'?'selected':''}>PENDENTE</option>
+            <option value="EM ANDAMENTO" ${d.status==='EM ANDAMENTO'?'selected':''}>ANDAMENTO</option>
+            <option value="CONCLUÍDO" ${d.status==='CONCLUÍDO'?'selected':''}>CONCLUÍDO</option>
+          </select>
+          <button onclick="abrirDetalhesObras('${d.id}')" class="shrink-0 bg-amber-500 text-white text-[11px] font-bold px-3 py-1.5 rounded-lg"><i class="fa-solid fa-eye mr-1"></i>Ver</button>
+        </div>
+      </div>`;
+    }).join('');
+  });
+
+  onValue(query(ref(db,'avisos'),orderByChild('dataPublicacao')),(snap)=>{
+    const lista=[];
+    if(snap.exists()) snap.forEach(c=>{ if(c.val().secretaria==='Obras') lista.push({id:c.key,...c.val()}); });
+    lista.reverse();
+    renderAvisos(lista,'lista-avi-obras','o','Publicar Aviso de Obras');
+  });
+}
+
+window.atualizarStatusObras = async function(id,status) {
+  try { await update(ref(db,'solicitacoes_obras/'+id),{status}); toast('Status atualizado!'); }
+  catch(e){ toast('Erro.','erro'); }
+};
+
+window.abrirDetalhesObras = function(id) {
+  const d=cacheObras[id]; if(!d) return;
+  document.getElementById('ms-protocolo').textContent=`#${d.protocolo||'—'}`;
+  document.getElementById('ms-cidadao').textContent=d.nomeCidadao||'—';
+  document.getElementById('ms-data').textContent=datFmt(d.dataRegistro,true);
+  document.getElementById('ms-tipo').textContent=d.tipoServico||'—';
+  document.getElementById('ms-obs').textContent=d.descricao||'Sem descrição adicional.';
+  document.getElementById('ms-id').value=id;
+  document.getElementById('ms-colecao').value='solicitacoes_obras';
+  document.getElementById('ms-status').value=d.status||'PENDENTE';
+  document.getElementById('ms-endereco-wrap').classList.remove('hidden');
+  document.getElementById('ms-endereco').textContent=d.endereco||'—';
+  document.getElementById('ms-cpf-wrap').classList.add('hidden');
+  document.getElementById('ms-ano-wrap').classList.add('hidden');
+  document.getElementById('ms-aluno-wrap').classList.add('hidden');
+  document.getElementById('ms-doc-wrap').classList.add('hidden');
+  abrirModal('sol');
+};
+
+// ════════════════════════════════════
+//  TRIBUTOS
+// ════════════════════════════════════
+function iniciarTributos() {
+  onValue(query(ref(db,'solicitacoes_tributos'),orderByChild('dataRegistro')),(snap)=>{
+    const todos=[];
+    cacheTrib; Object.keys(cacheTrib).forEach(k=>delete cacheTrib[k]);
+    if(snap.exists()){ snap.forEach(c=>{ cacheTrib[c.key]=c.val(); todos.push({id:c.key,...c.val()}); }); todos.reverse(); }
+    todasTSol=todos.filter(d=>d.tipoChave!=='2via');
+    todasTVia=todos.filter(d=>d.tipoChave==='2via');
+    let pend=0,anal=0,conc=0;
+    todasTSol.forEach(s=>{ if(s.status==='PENDENTE') pend++; else if(s.status==='EM ANÁLISE') anal++; else if(s.status==='CONCLUÍDO') conc++; });
+    document.getElementById('t-stat-pend').textContent=pend;
+    document.getElementById('t-stat-anal').textContent=anal;
+    document.getElementById('t-stat-conc').textContent=conc;
+    renderTributos();
+  });
+  onValue(query(ref(db,'avisos'),orderByChild('dataPublicacao')),(snap)=>{
+    const lista=[];
+    if(snap.exists()) snap.forEach(c=>{ if(c.val().secretaria==='Tributos') lista.push({id:c.key,...c.val()}); });
+    lista.reverse();
+    renderAvisos(lista,'lista-avi-tributos','t','Publicar Aviso de Tributos');
+  });
+}
+
+function renderTributos() {
+  renderListaSol(filtroTSol==='TODOS'?todasTSol:todasTSol.filter(s=>s.status===filtroTSol),'lista-t-sol','tributos');
+  renderListaSol(filtroTVia==='TODOS'?todasTVia:todasTVia.filter(s=>s.status===filtroTVia),'lista-t-via','tributos');
+}
+
+function renderListaSol(lista,containerId,tipo) {
+  const c=document.getElementById(containerId);
+  if(!lista.length){ c.innerHTML=`<div class="text-center py-10 bg-white rounded-xl border border-gray-100 text-gray-400 text-sm">Nenhum registro.</div>`; return; }
+  const icoMap={obras:'fa-helmet-safety amber',tributos:'fa-file-invoice-dollar emerald',educacao:'fa-graduation-cap blue'};
+  const [ico,cor]=( icoMap[tipo]||'fa-file blue' ).split(' ');
+  c.innerHTML=lista.map(s=>{
+    const cs=sc(s.status);
+    const temArq=s.arquivoUrl&&s.arquivoUrl.trim()!=='';
+    return `<div class="bg-white rounded-xl border border-gray-100 shadow-sm p-3 slide-up">
+      <div class="flex gap-3 items-start">
+        <div class="w-11 h-11 rounded-xl bg-${cor}-50 text-${cor}-700 flex items-center justify-center shrink-0"><i class="fa-solid ${ico} text-lg"></i></div>
+        <div class="flex-grow min-w-0">
+          <div class="flex justify-between items-start gap-1 mb-0.5">
+            <span class="text-[9px] font-black text-${cor}-700 uppercase truncate">#${s.protocolo||'—'}</span>
+            <span class="text-[9px] font-bold px-2 py-0.5 rounded-full border shrink-0 ${cs.cls}">${cs.lbl}</span>
+          </div>
+          <h4 class="font-bold text-gray-800 text-sm leading-tight">${s.tipoSolicitacao||s.tipoServico||'—'}</h4>
+          <p class="text-xs text-gray-500 truncate"><i class="fa-regular fa-user mr-1"></i>${s.nomeCidadao||'—'}</p>
+          ${tipo==='tributos'?`<p class="text-[10px] text-gray-400 truncate"><i class="fa-regular fa-id-card mr-1"></i>${s.cpfCnpj||'—'}</p>`:''}
+          ${tipo==='educacao'?`<p class="text-[10px] text-gray-400 truncate"><i class="fa-solid fa-user-graduate mr-1"></i>${s.nomeAluno||'—'}</p>`:''}
+        </div>
+      </div>
+      <div class="flex gap-2 mt-3 pt-2 border-t border-gray-50 items-center">
+        <span class="text-[10px] text-gray-400 flex-grow"><i class="fa-regular fa-calendar mr-1"></i>${datFmt(s.dataRegistro)}</span>
+        ${temArq?`<span class="text-[9px] text-green-600 font-bold bg-green-50 px-2 py-1 rounded-md"><i class="fa-solid fa-paperclip mr-1"></i>Arq.</span>`:''}
+        <button onclick="abrirDetalhesGenericos('${s.id}','${tipo}')" class="shrink-0 bg-${cor}-700 text-white text-[11px] font-bold px-3 py-1.5 rounded-lg"><i class="fa-solid fa-eye mr-1"></i>Abrir</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+window.abrirDetalhesGenericos = function(id, tipo) {
+  const cache = tipo==='tributos' ? cacheTrib : cacheEdu;
+  const d=cache[id]; if(!d) return;
+  const col = tipo==='tributos' ? 'solicitacoes_tributos' : 'solicitacoes_educacao';
+  document.getElementById('ms-protocolo').textContent=`#${d.protocolo||'—'}`;
+  document.getElementById('ms-cidadao').textContent=d.nomeCidadao||'—';
+  document.getElementById('ms-data').textContent=datFmt(d.dataRegistro,true);
+  document.getElementById('ms-tipo').textContent=d.tipoSolicitacao||d.tipoServico||'—';
+  document.getElementById('ms-obs').textContent=d.observacoes?.trim()||d.descricao?.trim()||'Sem observações.';
+  document.getElementById('ms-id').value=id;
+  document.getElementById('ms-colecao').value=col;
+  document.getElementById('ms-status').value=d.status||'PENDENTE';
+  document.getElementById('ms-arquivo-url').value=d.arquivoUrl||'';
+  document.getElementById('ms-arquivo-obs').value=d.arquivoObs||'';
+  document.getElementById('ms-endereco-wrap').classList.add('hidden');
+  document.getElementById('ms-doc-wrap').classList.remove('hidden');
+
+  if (tipo==='tributos') {
+    document.getElementById('ms-cpf-wrap').classList.remove('hidden');
+    document.getElementById('ms-cpf').textContent=d.cpfCnpj||'—';
+    document.getElementById('ms-imovel').textContent=d.imovel||'—';
+    if(d.anoReferencia){ document.getElementById('ms-ano-wrap').classList.remove('hidden'); document.getElementById('ms-ano').textContent=d.anoReferencia; }
+    else document.getElementById('ms-ano-wrap').classList.add('hidden');
+    document.getElementById('ms-aluno-wrap').classList.add('hidden');
+  } else {
+    document.getElementById('ms-aluno-wrap').classList.remove('hidden');
+    document.getElementById('ms-aluno').textContent=d.nomeAluno||'—';
+    document.getElementById('ms-serie').textContent=d.serieAno||d.turno||'—';
+    document.getElementById('ms-cpf-wrap').classList.add('hidden');
+    document.getElementById('ms-ano-wrap').classList.add('hidden');
+  }
+  abrirModal('sol');
+};
+
+window.salvarStatusSol = async function() {
+  const id=document.getElementById('ms-id').value;
+  const col=document.getElementById('ms-colecao').value;
+  const status=document.getElementById('ms-status').value;
+  if(!id) return;
+  try { await update(ref(db,col+'/'+id),{status}); toast('Status atualizado!'); fecharModal('sol'); }
+  catch(e){ toast('Erro ao atualizar.','erro'); }
+};
+
+window.enviarDocSol = async function() {
+  const id=document.getElementById('ms-id').value;
+  const col=document.getElementById('ms-colecao').value;
+  const url=document.getElementById('ms-arquivo-url').value.trim();
+  const obs=document.getElementById('ms-arquivo-obs').value.trim();
+  if(!url){ toast('Informe o link do documento.','erro'); return; }
+  try { await update(ref(db,col+'/'+id),{arquivoUrl:url,arquivoObs:obs,status:'CONCLUÍDO'}); toast('Documento enviado!'); fecharModal('sol'); }
+  catch(e){ toast('Erro ao enviar.','erro'); }
+};
+
+// ════════════════════════════════════
+//  EDUCAÇÃO
+// ════════════════════════════════════
+function iniciarEducacao() {
+  onValue(query(ref(db,'solicitacoes_educacao'),orderByChild('dataRegistro')),(snap)=>{
+    const todos=[];
+    Object.keys(cacheEdu).forEach(k=>delete cacheEdu[k]);
+    if(snap.exists()){ snap.forEach(c=>{ cacheEdu[c.key]=c.val(); todos.push({id:c.key,...c.val()}); }); todos.reverse(); }
+    todasESol=todos.filter(d=>d.tipoChave!=='matricula');
+    todasEMat=todos.filter(d=>d.tipoChave==='matricula');
+    let pend=0,anal=0,conc=0;
+    todasESol.forEach(s=>{ if(s.status==='PENDENTE') pend++; else if(s.status==='EM ANÁLISE') anal++; else if(s.status==='CONCLUÍDO') conc++; });
+    document.getElementById('e-stat-pend').textContent=pend;
+    document.getElementById('e-stat-anal').textContent=anal;
+    document.getElementById('e-stat-conc').textContent=conc;
+    renderEducacao();
+  });
+  onValue(query(ref(db,'avisos'),orderByChild('dataPublicacao')),(snap)=>{
+    const lista=[];
+    if(snap.exists()) snap.forEach(c=>{ if(c.val().secretaria==='Educação') lista.push({id:c.key,...c.val()}); });
+    lista.reverse();
+    renderAvisos(lista,'lista-avi-educacao','e','Publicar Aviso de Educação');
+  });
+}
+
+function renderEducacao() {
+  renderListaSol(filtroESol==='TODOS'?todasESol:todasESol.filter(s=>s.status===filtroESol),'lista-e-sol','educacao');
+  renderListaSol(filtroEMat==='TODOS'?todasEMat:todasEMat.filter(s=>s.status===filtroEMat),'lista-e-mat','educacao');
+}
+
+// ════════════════════════════════════
+//  SAÚDE
+// ════════════════════════════════════
+let especialidadesCache = {};
+
+function iniciarSaude() {
+  onValue(ref(db,'especialidades_saude'),(snap)=>{
+    especialidadesCache={};
+    const sel=document.getElementById('s-hor-esp');
+    const curVal=sel.value;
+    sel.innerHTML='<option value="">Selecione...</option>';
+    if(snap.exists()){
+      snap.forEach(c=>{ especialidadesCache[c.key]=c.val(); });
+      Object.entries(especialidadesCache).forEach(([k,v])=>{
+        const opt=document.createElement('option'); opt.value=k; opt.textContent=`${v.nome} — ${v.profissional}`; sel.appendChild(opt);
+      });
+      sel.value=curVal;
+    }
+    renderEspecialidades();
+  });
+
+  onValue(query(ref(db,'solicitacoes_saude'),orderByChild('dataRegistro')),(snap)=>{
+    Object.keys(cacheSaude).forEach(k=>delete cacheSaude[k]);
+    todasSAgen=[];
+    if(snap.exists()){ snap.forEach(c=>{ cacheSaude[c.key]=c.val(); todasSAgen.push({id:c.key,...c.val()}); }); todasSAgen.reverse(); }
+    let anal=0,conf=0,real=0;
+    todasSAgen.forEach(s=>{ if(s.status==='EM ANÁLISE') anal++; else if(s.status==='CONFIRMADO') conf++; else if(s.status==='REALIZADO') real++; });
+    document.getElementById('s-stat-anal').textContent=anal;
+    document.getElementById('s-stat-conf').textContent=conf;
+    document.getElementById('s-stat-real').textContent=real;
+    renderSAgen();
+  });
+
+  onValue(query(ref(db,'agendas_saude'),orderByChild('dataISO')),(snap)=>{
+    const lista=[];
+    if(snap.exists()) snap.forEach(c=>lista.push({id:c.key,...c.val()}));
+    lista.reverse();
+    const c=document.getElementById('lista-s-hor');
+    if(!lista.length){ c.innerHTML=`<p class="text-center text-xs text-gray-400 py-4">Nenhum horário cadastrado.</p>`; return; }
+    c.innerHTML=lista.map(h=>{
+      const esp=especialidadesCache[h.especialidadeId]||{};
+      const vagasDisp=(h.vagas||0)-(h.agendados||0);
+      return `<div class="bg-white rounded-xl border border-gray-100 shadow-sm p-3">
+        <div class="flex justify-between items-start mb-1">
+          <div>
+            <p class="font-bold text-sm text-gray-800">${esp.nome||'—'}</p>
+            <p class="text-xs text-gray-500">${esp.profissional||'—'}</p>
+          </div>
+          <span class="text-[9px] font-bold px-2 py-0.5 rounded-full ${vagasDisp>0?'bg-green-100 text-green-700':'bg-red-100 text-red-600'}">${vagasDisp>0?vagasDisp+' vagas':'Lotado'}</span>
+        </div>
+        <p class="text-xs text-gray-600 mt-1"><i class="fa-regular fa-calendar mr-1"></i>${h.dataISO} <i class="fa-regular fa-clock ml-2 mr-1"></i>${h.hora}</p>
+        <button onclick="excluirHorario('${h.id}')" class="mt-2 text-red-500 bg-red-50 px-3 py-1 rounded-md text-[10px] font-bold w-full"><i class="fa-solid fa-trash mr-1"></i>Excluir Horário</button>
+      </div>`;
+    }).join('');
+  });
+
+  onValue(query(ref(db,'avisos'),orderByChild('dataPublicacao')),(snap)=>{
+    const lista=[];
+    if(snap.exists()) snap.forEach(c=>{ if(c.val().secretaria==='Saúde') lista.push({id:c.key,...c.val()}); });
+    lista.reverse();
+    renderAvisos(lista,'lista-avi-saude','s','Publicar Aviso de Saúde');
+  });
+}
+
+function renderEspecialidades() {
+  const c=document.getElementById('lista-s-esp');
+  const lista=Object.entries(especialidadesCache);
+  if(!lista.length){ c.innerHTML=`<p class="text-center text-xs text-gray-400 py-4">Nenhuma especialidade.</p>`; return; }
+  c.innerHTML=lista.map(([k,v])=>`
+    <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-3">
+      <div class="flex justify-between items-start">
+        <div>
+          <p class="font-bold text-sm text-gray-800">${v.nome}</p>
+          <p class="text-xs text-gray-500">${v.profissional}</p>
+          ${v.descricao?`<p class="text-[10px] text-gray-400 mt-0.5">${v.descricao}</p>`:''}
+        </div>
+        <button onclick="excluirEspecialidade('${k}')" class="text-red-500 bg-red-50 px-2 py-1 rounded-md text-[10px] font-bold shrink-0 ml-2"><i class="fa-solid fa-trash"></i></button>
+      </div>
+    </div>`).join('');
+}
+
+function renderSAgen() {
+  const lista=filtroSAgen==='TODOS'?todasSAgen:todasSAgen.filter(s=>s.status===filtroSAgen);
+  const c=document.getElementById('lista-s-agen');
+  if(!lista.length){ c.innerHTML=`<div class="text-center py-10 bg-white rounded-xl border border-gray-100 text-gray-400 text-sm">Nenhum agendamento.</div>`; return; }
+  c.innerHTML=lista.map(s=>{
+    const cs=sc(s.status);
+    return `<div class="bg-white rounded-xl border border-gray-100 shadow-sm p-3 slide-up">
+      <div class="flex justify-between items-start mb-1">
+        <div>
+          <span class="text-[9px] font-black text-red-600 uppercase">#${s.protocolo||'—'}</span>
+          <p class="font-bold text-sm text-gray-800 leading-tight">${s.nomePaciente||s.nomeCidadao||'—'}</p>
+          <p class="text-xs text-gray-500">${s.especialidade||'—'}</p>
+        </div>
+        <span class="text-[9px] font-bold px-2 py-0.5 rounded-full border shrink-0 ${cs.cls}">${cs.lbl}</span>
+      </div>
+      <div class="flex gap-2 mt-2 pt-2 border-t border-gray-50 items-center">
+        <span class="text-[10px] text-gray-400 flex-grow"><i class="fa-regular fa-calendar mr-1"></i>${s.dataConsulta||datFmt(s.dataRegistro)}</span>
+        <button onclick="abrirDetalhesAgen('${s.id}')" class="shrink-0 bg-red-600 text-white text-[11px] font-bold px-3 py-1.5 rounded-lg"><i class="fa-solid fa-eye mr-1"></i>Ver</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+window.abrirDetalhesAgen = function(id) {
+  const d=cacheSaude[id]; if(!d) return;
+  document.getElementById('ma-protocolo').textContent=`#${d.protocolo||'—'}`;
+  document.getElementById('ma-nome').textContent=d.nomePaciente||d.nomeCidadao||'—';
+  document.getElementById('ma-registro').textContent=d.cpf||d.registro||'—';
+  document.getElementById('ma-especialidade').textContent=d.especialidade||'—';
+  document.getElementById('ma-profissional').textContent=d.profissional||'—';
+  document.getElementById('ma-data').textContent=d.dataConsulta||datFmt(d.dataRegistro);
+  document.getElementById('ma-hora').textContent=d.hora||'—';
+  document.getElementById('ma-sintomas').textContent=d.sintomas||d.descricao||'Sem observações.';
+  document.getElementById('ma-id').value=id;
+  document.getElementById('ma-agenda-id').value=d.agendaId||'';
+  document.getElementById('ma-status').value=d.status||'EM ANÁLISE';
+  abrirModal('agen');
+};
+
+window.salvarStatusAgen = async function() {
+  const id=document.getElementById('ma-id').value;
+  const status=document.getElementById('ma-status').value;
+  if(!id) return;
+  try {
+    await update(ref(db,'solicitacoes_saude/'+id),{status});
+    if(status==='CANCELADO'){
+      const agId=document.getElementById('ma-agenda-id').value;
+      if(agId){
+        const agSnap=await get(ref(db,'agendas_saude/'+agId));
+        if(agSnap.exists()){
+          const agd=agSnap.val();
+          await update(ref(db,'agendas_saude/'+agId),{agendados:Math.max(0,(agd.agendados||1)-1)});
+        }
+      }
+    }
+    toast('Status atualizado!'); fecharModal('agen');
+  } catch(e){ toast('Erro ao atualizar.','erro'); }
+};
+
+window.criarHorario = async function(event) {
+  event.preventDefault();
+  const espId=document.getElementById('s-hor-esp').value;
+  const dataISO=document.getElementById('s-hor-data').value;
+  const hora=document.getElementById('s-hor-hora').value;
+  const vagas=parseInt(document.getElementById('s-hor-vagas').value);
+  const err=document.getElementById('s-hor-erro');
+  err.classList.add('hidden');
+  try {
+    const snapAll=await get(ref(db,'agendas_saude'));
+    if(snapAll.exists()){
+      let dup=false;
+      snapAll.forEach(c=>{ const v=c.val(); if(v.especialidadeId===espId&&v.dataISO===dataISO&&v.hora===hora) dup=true; });
+      if(dup){ err.textContent='Já existe um horário para essa especialidade nessa data e hora.'; err.classList.remove('hidden'); return; }
+    }
+    await set(push(ref(db,'agendas_saude')),{especialidadeId:espId,dataISO,hora,vagas,agendados:0,criado:Date.now()});
+    toast('Horário cadastrado!');
+    document.getElementById('s-hor-data').value='';
+    document.getElementById('s-hor-hora').value='';
+    document.getElementById('s-hor-vagas').value='1';
+  } catch(e){ err.textContent='Erro ao cadastrar horário.'; err.classList.remove('hidden'); }
+};
+
+window.excluirHorario = async function(id) {
+  if(!confirm('Excluir este horário?')) return;
+  try { await remove(ref(db,'agendas_saude/'+id)); toast('Horário excluído!'); }
+  catch(e){ toast('Erro.','erro'); }
+};
+
+window.criarEspecialidade = async function(event) {
+  event.preventDefault();
+  const nome=document.getElementById('s-esp-nome').value.trim();
+  const profissional=document.getElementById('s-esp-prof').value.trim();
+  const descricao=document.getElementById('s-esp-desc').value.trim();
+  try {
+    await set(push(ref(db,'especialidades_saude')),{nome,profissional,descricao,criado:Date.now()});
+    toast('Especialidade cadastrada!');
+    document.getElementById('s-esp-nome').value='';
+    document.getElementById('s-esp-prof').value='';
+    document.getElementById('s-esp-desc').value='';
+  } catch(e){ toast('Erro ao cadastrar.','erro'); }
+};
+
+window.excluirEspecialidade = async function(id) {
+  if(!confirm('Excluir esta especialidade?')) return;
+  try { await remove(ref(db,'especialidades_saude/'+id)); toast('Especialidade excluída!'); }
+  catch(e){ toast('Erro.','erro'); }
+};
+
+// ════════════════════════════════════
+//  TI
+// ════════════════════════════════════
+function iniciarTI() {
+  carregarContasTI();
+
+  get(ref(db,'config/app')).then(snap=>{
+    if(snap.exists()){
+      const d=snap.val();
+      document.getElementById('cfg-manutencao').checked=!!d.manutencao;
+      document.getElementById('cfg-alerta').value=d.alertaGlobal||'';
+    }
+  });
+}
+
+async function carregarContasTI() {
+  try {
+    const snap=await get(ref(db,'contas_secretaria'));
+    tiContasCache=[];
+    if(snap.exists()) snap.forEach(c=>tiContasCache.push({uid:c.key,...c.val()}));
+    renderContasTI();
+  } catch(e){ toast('Erro ao carregar contas.','erro'); }
+}
+
+const nomeSec={transporte:'Transporte',saude:'Saúde',educacao:'Educação',tributos:'Tributos',obras:'Obras',ti:'TI'};
+const corSec={transporte:'bg-purple-100 text-purple-700',saude:'bg-red-100 text-red-600',educacao:'bg-blue-100 text-blue-700',tributos:'bg-emerald-100 text-emerald-700',obras:'bg-amber-100 text-amber-700',ti:'bg-slate-800 text-white'};
+
+function renderContasTI() {
+  const c=document.getElementById('lista-ti-contas');
+  if(!tiContasCache.length){ c.innerHTML=`<div class="text-center py-10 text-gray-400 text-sm">Nenhuma conta cadastrada.</div>`; return; }
+  c.innerHTML=tiContasCache.map(conta=>`
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+      <div class="flex items-start justify-between mb-2">
+        <div class="flex items-center gap-2.5">
+          <div class="w-10 h-10 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center shrink-0 font-black text-base">${(conta.nome||'?')[0].toUpperCase()}</div>
+          <div>
+            <p class="font-bold text-gray-800 text-sm leading-tight">${conta.nome||'—'}</p>
+            <p class="text-[11px] text-gray-400 mt-0.5">${conta.email||'—'}</p>
+          </div>
+        </div>
+        <div class="flex flex-col items-end gap-1.5">
+          <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${corSec[conta.secretaria]||'bg-gray-100 text-gray-500'}">${nomeSec[conta.secretaria]||conta.secretaria||'—'}</span>
+          <span class="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full ${conta.ativo!==false?'bg-green-100 text-green-600':'bg-red-100 text-red-500'}">${conta.ativo!==false?'Ativo':'Inativo'}</span>
+        </div>
+      </div>
+      <div class="flex gap-2 mt-3">
+        <button onclick="editarContaTI('${conta.uid}')" class="flex-1 text-xs font-bold text-blue-700 border border-blue-100 bg-blue-50 py-2 rounded-xl"><i class="fa-solid fa-pen mr-1"></i>Editar</button>
+        <button onclick="toggleAtivoTI('${conta.uid}')" class="flex-1 text-xs font-bold ${conta.ativo!==false?'text-red-500 border-red-100 bg-red-50':'text-green-600 border-green-100 bg-green-50'} border py-2 rounded-xl">
+          <i class="fa-solid ${conta.ativo!==false?'fa-ban':'fa-circle-check'} mr-1"></i>${conta.ativo!==false?'Bloquear':'Ativar'}
+        </button>
+      </div>
+    </div>`).join('');
+}
+
+window.abrirModalConta = function() {
+  tiContaEditando=null;
+  document.getElementById('ti-modal-titulo').textContent='Nova Conta';
+  document.getElementById('ti-conta-uid').value='';
+  document.getElementById('ti-vincular-modo').value='';
+  ['ti-c-nome','ti-c-email','ti-c-senha'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('ti-c-email').readOnly=false;
+  document.getElementById('ti-c-sec').value='';
+  document.getElementById('ti-label-senha-edit').classList.add('hidden');
+  document.getElementById('ti-aviso-vincular').classList.add('hidden');
+  document.getElementById('ti-modal-erro').classList.add('hidden');
+  resetBtnTI();
+  document.getElementById('modal-ti-conta').classList.remove('hidden');
+};
+
+window.fecharModalTi = function() { document.getElementById('modal-ti-conta').classList.add('hidden'); };
+
+window.editarContaTI = function(uid) {
+  tiContaEditando=tiContasCache.find(c=>c.uid===uid);
+  if(!tiContaEditando) return;
+  document.getElementById('ti-modal-titulo').textContent='Editar Conta';
+  document.getElementById('ti-conta-uid').value=uid;
+  document.getElementById('ti-c-nome').value=tiContaEditando.nome||'';
+  document.getElementById('ti-c-email').value=tiContaEditando.email||'';
+  document.getElementById('ti-c-email').readOnly=true;
+  document.getElementById('ti-c-senha').value='';
+  document.getElementById('ti-c-sec').value=tiContaEditando.secretaria||'';
+  document.getElementById('ti-label-senha-edit').classList.remove('hidden');
+  document.getElementById('ti-aviso-vincular').classList.add('hidden');
+  document.getElementById('ti-modal-erro').classList.add('hidden');
+  resetBtnTI();
+  document.getElementById('modal-ti-conta').classList.remove('hidden');
+};
+
+window.salvarContaTi = async function() {
+  const nome=document.getElementById('ti-c-nome').value.trim();
+  const email=document.getElementById('ti-c-email').value.trim();
+  const senha=document.getElementById('ti-c-senha').value;
+  const sec=document.getElementById('ti-c-sec').value;
+  if(!nome||!sec){ mostrarErroTI('Preencha nome e secretaria.'); return; }
+  document.getElementById('ti-modal-btn-txt').classList.add('hidden');
+  document.getElementById('ti-modal-btn-load').classList.remove('hidden');
+  document.getElementById('ti-modal-erro').classList.add('hidden');
+  try {
+    let uid=document.getElementById('ti-conta-uid').value;
+    const modoVincular=document.getElementById('ti-vincular-modo').value==='1';
+    if(!uid){
+      if(!email||senha.length<6){ mostrarErroTI('E-mail e senha (mín. 6 chars) são obrigatórios.'); resetBtnTI(); return; }
+      if(modoVincular){
+        const r=await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${API_KEY}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password:senha,returnSecureToken:true})});
+        const d=await r.json();
+        if(d.error){ mostrarErroTI('Senha incorreta.'); resetBtnTI(); return; }
+        uid=d.localId;
+      } else {
+        const r=await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${API_KEY}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password:senha,returnSecureToken:false})});
+        const d=await r.json();
+        if(d.error){
+          if(d.error.message==='EMAIL_EXISTS'){
+            const r2=await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${API_KEY}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password:senha,returnSecureToken:true})});
+            const d2=await r2.json();
+            if(d2.error){ document.getElementById('ti-vincular-modo').value='1'; document.getElementById('ti-aviso-vincular').classList.remove('hidden'); document.getElementById('ti-c-senha').value=''; resetBtnTI(); return; }
+            uid=d2.localId;
+          } else { mostrarErroTI(d.error.message); resetBtnTI(); return; }
+        } else uid=d.localId;
+      }
+    }
+    await set(ref(db,'contas_secretaria/'+uid),{nome,email:email||tiContaEditando?.email||'',secretaria:sec,ativo:true,dataCriacao:Date.now()});
+    fecharModalTi();
+    await carregarContasTI();
+  } catch(e){ mostrarErroTI('Erro ao salvar.'); resetBtnTI(); }
+};
+
+window.toggleAtivoTI = async function(uid) {
+  const c=tiContasCache.find(x=>x.uid===uid); if(!c) return;
+  await update(ref(db,'contas_secretaria/'+uid),{ativo:c.ativo===false});
+  await carregarContasTI();
+};
+
+window.salvarConfig = async function() {
+  const manutencao=document.getElementById('cfg-manutencao').checked;
+  const alertaGlobal=document.getElementById('cfg-alerta').value.trim();
+  try { await update(ref(db,'config/app'),{manutencao,alertaGlobal}); toast('Configurações salvas!'); }
+  catch(e){ toast('Erro ao salvar.','erro'); }
+};
+
+window.toggleSenhaTi = function() {
+  const i=document.getElementById('ti-c-senha');
+  const ico=document.getElementById('ti-ico-senha');
+  i.type=i.type==='password'?'text':'password';
+  ico.className=i.type==='password'?'fa-solid fa-eye':'fa-solid fa-eye-slash';
+};
+
+function mostrarErroTI(msg){ document.getElementById('ti-modal-erro').textContent=msg; document.getElementById('ti-modal-erro').classList.remove('hidden'); }
+function resetBtnTI(){ document.getElementById('ti-modal-btn-txt').classList.remove('hidden'); document.getElementById('ti-modal-btn-load').classList.add('hidden'); }
+
+// ════════════════════════════════════
+//  AUTH
+// ════════════════════════════════════
+function iniciarListeners(sec) {
+  if (sec==='obras') iniciarObras();
+  else if (sec==='tributos') iniciarTributos();
+  else if (sec==='educacao') iniciarEducacao();
+  else if (sec==='saude') iniciarSaude();
+  else if (sec==='ti') iniciarTI();
+}
+
+let panelAtivo=false;
+const authTimeout=setTimeout(()=>{ if(!panelAtivo) window.location.href='login-secretaria.html'; },8000);
+
+onAuthStateChanged(auth, async(user)=>{
+  clearTimeout(authTimeout);
+  if(!user){ if(!panelAtivo) window.location.href='login-secretaria.html'; return; }
+  try {
+    const snap=await get(ref(db,'contas_secretaria/'+user.uid));
+    if(!snap.exists()||snap.val().ativo===false){ if(!panelAtivo) window.location.href='login-secretaria.html'; return; }
+    const sec=snap.val().secretaria;
+    if(!PAINEL_CFG[sec]){ if(!panelAtivo) window.location.href='login-secretaria.html'; return; }
+    panelAtivo=true;
+    setupPainel(sec);
+    iniciarListeners(sec);
+  } catch(e){
+    console.error(e);
+    if(!panelAtivo) window.location.href='login-secretaria.html';
+  }
+});
+</script>
+</body>
+</html>

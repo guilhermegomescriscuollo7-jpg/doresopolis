@@ -455,6 +455,14 @@
                                 <button onclick="toggleAuthTab('entrar')" class="w-full border border-gray-200 text-gray-600 font-medium py-3 rounded-xl text-sm active:bg-gray-50 transition-all">Voltar</button>
                             </div>
                         </div>
+
+                        <!-- Acesso servidores -->
+                        <div class="mt-6 pt-4 border-t border-gray-100 text-center">
+                            <p class="text-xs text-gray-400 mb-2">Servidor municipal?</p>
+                            <a href="login-secretaria.html" class="inline-flex items-center gap-1.5 text-xs font-bold text-doresopolis-green border border-doresopolis-green/30 bg-doresopolis-green/5 px-4 py-2 rounded-xl active:scale-95 transition-all">
+                                <i class="fa-solid fa-building-columns"></i> Acesso de Servidores
+                            </a>
+                        </div>
                     </div>
 
                     <!-- LOGADO -->
@@ -576,10 +584,12 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getFirestore, collection, query, where, getDocs, orderBy, limit, doc, onSnapshot, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
         import { getAuth, signInWithPopup, signInWithRedirect, getRedirectResult, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, updatePassword, deleteUser, onAuthStateChanged, signOut, updateProfile, EmailAuthProvider, reauthenticateWithCredential, updateEmail } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+        import { getDatabase, ref as dbRef, get as dbGet } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAskgM5cxiR4DI2PXrccBxOvPZzMPDKdCo",
             authDomain: "gen-lang-client-0963611393.firebaseapp.com",
+            databaseURL: "https://gen-lang-client-0963611393-default-rtdb.firebaseio.com",
             projectId: "gen-lang-client-0963611393",
             storageBucket: "gen-lang-client-0963611393.firebasestorage.app",
             messagingSenderId: "158833761867",
@@ -589,6 +599,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app, 'ai-studio-effa6aaf-05b1-45f1-96b5-43601bcc0a4');
         const auth = getAuth(app);
+        const rtdb = getDatabase(app);
         const googleProvider = new GoogleAuthProvider();
 
         // ======================================================
@@ -1220,38 +1231,31 @@
             }
         };
 
-        // Observador de autenticação — atualiza UI em tempo real
-        onAuthStateChanged(auth, (user) => {
-            mostrarEstadoAuth(user);
+        // Observador de autenticação — detecta secretaria e redireciona, senão atualiza UI cidadão
+        onAuthStateChanged(auth, async (user) => {
             if (user) {
+                try {
+                    const snap = await dbGet(dbRef(rtdb, 'contas_secretaria/' + user.uid));
+                    if (snap.exists() && snap.val().ativo !== false) {
+                        window.location.href = 'painel.html';
+                        return;
+                    }
+                } catch(e) { /* usuário não é servidor, segue fluxo cidadão */ }
                 const nome = user.displayName || 'Usuário';
                 localStorage.setItem('usuarioDoresopolis', nome.split(' ')[0]);
                 const headerNome = document.getElementById('nome-usuario-logado');
                 if (headerNome) headerNome.innerText = nome.split(' ')[0];
             }
+            mostrarEstadoAuth(user);
         });
 
         document.addEventListener('DOMContentLoaded', () => {
             const sessaoSalva = localStorage.getItem('usuarioDoresopolis') || 'Cidadão';
-            const acessoSalvo = localStorage.getItem('userAcesso');
-
-            if (acessoSalvo === 'Admin - Obras') {
-                window.location.href = 'painel-obras.html';
-            } else if (acessoSalvo === 'TI') {
-                window.location.href = 'painel-ti.html';
-            } else if (acessoSalvo === 'Admin - Saúde') {
-                window.location.href = 'painel-saude.html';
-            } else if (acessoSalvo === 'Admin - Educação') {
-                window.location.href = 'painel-educacao.html';
-            } else if (acessoSalvo === 'Admin - Tributos') {
-                window.location.href = 'painel-tributos.html';
-            } else {
-                document.getElementById('nome-usuario-logado').innerText = sessaoSalva;
-                definirSaudacaoEData();
-                carregarClima();
-                carregarMinhasSolicitacoes();
-                carregarAvisos();
-            }
+            document.getElementById('nome-usuario-logado').innerText = sessaoSalva;
+            definirSaudacaoEData();
+            carregarClima();
+            carregarMinhasSolicitacoes();
+            carregarAvisos();
         });
 
 
