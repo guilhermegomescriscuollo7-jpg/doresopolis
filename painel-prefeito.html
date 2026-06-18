@@ -261,6 +261,7 @@ tailwind.config = {
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getDatabase, ref, get, update, onValue, query, orderByChild, limitToLast } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 const firebaseConfig = {
@@ -274,6 +275,7 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 const db = getDatabase(app);
 
 // ─── HELPERS ─────────────────────────────────────────────
@@ -292,6 +294,8 @@ window.fazerLogin = async function() {
   if (!s) return;
   document.getElementById('login-erro').classList.add('hidden');
   try {
+    // Login anônimo apenas para satisfazer auth != null nas regras do RTDB
+    await signInAnonymously(auth);
     const snap = await get(ref(db, 'config/auth'));
     let hashEsperado;
     if (snap.exists() && snap.val().hashPrefeito) {
@@ -321,6 +325,7 @@ document.getElementById('login-senha').addEventListener('keydown', e => {
 
 window.sair = function() {
   sessionStorage.removeItem('prefeito_auth');
+  auth.signOut?.();
   document.getElementById('tela-login').classList.remove('hidden');
   document.getElementById('app').classList.add('hidden');
 };
@@ -521,10 +526,14 @@ function iniciar() {
 
 // Auto-login se sessão ativa
 if (sessionStorage.getItem('prefeito_auth') === '1') {
-  document.getElementById('tela-login').classList.add('hidden');
-  document.getElementById('app').classList.remove('hidden');
-  document.getElementById('app').classList.add('flex', 'flex-col');
-  iniciar();
+  signInAnonymously(auth).then(() => {
+    document.getElementById('tela-login').classList.add('hidden');
+    document.getElementById('app').classList.remove('hidden');
+    document.getElementById('app').classList.add('flex', 'flex-col');
+    iniciar();
+  }).catch(() => {
+    sessionStorage.removeItem('prefeito_auth');
+  });
 }
 </script>
 </body>
