@@ -183,45 +183,14 @@
                         </div>
                     </div>
 
-                    <!-- SECRETARIAS — Grid 2×3 -->
+                    <!-- SECRETARIAS — Grid dinâmico -->
                     <div class="mb-6">
                         <h3 class="font-bold text-gray-800 text-sm mb-3 border-l-4 border-doresopolis-green pl-2">Serviços</h3>
-                        <div class="grid grid-cols-2 gap-3">
-                            <button onclick="window.location.href='saude.html'" class="flex flex-col p-4 bg-red-50 rounded-2xl border border-red-100 active:scale-[0.97] transition-all text-left">
-                                <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center mb-3 shadow-sm">
-                                    <i class="fa-solid fa-heart-pulse text-red-500 text-lg"></i>
-                                </div>
-                                <p class="font-bold text-gray-800 text-sm">Saúde</p>
-                                <p class="text-[10px] text-red-500 mt-0.5">Consultas e vacinas</p>
-                            </button>
-                            <button onclick="window.location.href='educacao.html'" class="flex flex-col p-4 bg-blue-50 rounded-2xl border border-blue-100 active:scale-[0.97] transition-all text-left">
-                                <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center mb-3 shadow-sm">
-                                    <i class="fa-solid fa-graduation-cap text-blue-500 text-lg"></i>
-                                </div>
-                                <p class="font-bold text-gray-800 text-sm">Educação</p>
-                                <p class="text-[10px] text-blue-500 mt-0.5">Matrículas e transporte</p>
-                            </button>
-                            <button onclick="window.location.href='tributos.html'" class="flex flex-col p-4 bg-emerald-50 rounded-2xl border border-emerald-100 active:scale-[0.97] transition-all text-left">
-                                <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center mb-3 shadow-sm">
-                                    <i class="fa-solid fa-file-invoice-dollar text-emerald-600 text-lg"></i>
-                                </div>
-                                <p class="font-bold text-gray-800 text-sm">Tributos</p>
-                                <p class="text-[10px] text-emerald-600 mt-0.5">IPTU e taxas</p>
-                            </button>
-                            <button onclick="window.location.href='obras.html'" class="flex flex-col p-4 bg-amber-50 rounded-2xl border border-amber-100 active:scale-[0.97] transition-all text-left">
-                                <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center mb-3 shadow-sm">
-                                    <i class="fa-solid fa-helmet-safety text-amber-500 text-lg"></i>
-                                </div>
-                                <p class="font-bold text-gray-800 text-sm">Obras</p>
-                                <p class="text-[10px] text-amber-500 mt-0.5">Iluminação e vias</p>
-                            </button>
-                            <button onclick="window.location.href='transporte.html'" class="flex flex-col p-4 bg-purple-50 rounded-2xl border border-purple-100 active:scale-[0.97] transition-all text-left">
-                                <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center mb-3 shadow-sm">
-                                    <i class="fa-solid fa-bus text-purple-500 text-lg"></i>
-                                </div>
-                                <p class="font-bold text-gray-800 text-sm">Transporte</p>
-                                <p class="text-[10px] text-purple-500 mt-0.5">Horários e estradas</p>
-                            </button>
+                        <div id="grid-servicos" class="grid grid-cols-2 gap-3">
+                            <!-- populado dinamicamente por carregarGridServicos() -->
+                            <div class="col-span-2 text-center py-6 text-gray-300 text-sm">
+                                <i class="fa-solid fa-spinner fa-spin text-xl mb-1 block"></i>Carregando...
+                            </div>
                         </div>
                     </div>
 
@@ -1249,6 +1218,55 @@
             mostrarEstadoAuth(user);
         });
 
+        const SECS_DEFAULT_INDEX = [
+            { nome:'Saúde',      descricao:'Consultas e vacinas',        icone:'fa-heart-pulse',         cor:'#dc2626', link:'saude.html',      ativo:true, ordem:1 },
+            { nome:'Educação',   descricao:'Matrículas e transporte',    icone:'fa-graduation-cap',      cor:'#2563eb', link:'educacao.html',   ativo:true, ordem:2 },
+            { nome:'Tributos',   descricao:'IPTU e taxas municipais',    icone:'fa-file-invoice-dollar', cor:'#059669', link:'tributos.html',   ativo:true, ordem:3 },
+            { nome:'Obras',      descricao:'Iluminação e vias públicas', icone:'fa-helmet-safety',       cor:'#d97706', link:'obras.html',      ativo:true, ordem:4 },
+            { nome:'Transporte', descricao:'Horários e estradas',        icone:'fa-bus',                 cor:'#7c3aed', link:'transporte.html', ativo:true, ordem:5 },
+        ];
+
+        function hexToRgba(hex, alpha) {
+            try {
+                const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+                return `rgba(${r},${g},${b},${alpha})`;
+            } catch(e){ return '#f1f5f9'; }
+        }
+
+        function renderGridServicos(lista) {
+            const grid = document.getElementById('grid-servicos');
+            const ativos = lista.filter(s=>s.ativo!==false).sort((a,b)=>(a.ordem||99)-(b.ordem||99));
+            if (!ativos.length) { grid.innerHTML='<p class="col-span-2 text-center text-xs text-gray-400 py-4">Nenhum serviço disponível.</p>'; return; }
+            grid.innerHTML = ativos.map(s => {
+                const bg = hexToRgba(s.cor||'#059669',0.08);
+                const border = hexToRgba(s.cor||'#059669',0.18);
+                return `<button onclick="window.location.href='${s.link||'#'}'"
+                    class="flex flex-col p-4 rounded-2xl border active:scale-[0.97] transition-all text-left"
+                    style="background:${bg};border-color:${border}">
+                    <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center mb-3 shadow-sm">
+                        <i class="fa-solid ${s.icone||'fa-building-columns'} text-lg" style="color:${s.cor||'#059669'}"></i>
+                    </div>
+                    <p class="font-bold text-gray-800 text-sm">${s.nome}</p>
+                    <p class="text-[10px] mt-0.5" style="color:${s.cor||'#059669'}">${s.descricao||''}</p>
+                </button>`;
+            }).join('');
+        }
+
+        async function carregarGridServicos() {
+            try {
+                const snap = await dbGet(dbRef(rtdb, 'config/secretarias'));
+                if (snap.exists()) {
+                    const lista = [];
+                    snap.forEach(child => lista.push({ id:child.key, ...child.val() }));
+                    renderGridServicos(lista);
+                } else {
+                    renderGridServicos(SECS_DEFAULT_INDEX);
+                }
+            } catch(e) {
+                renderGridServicos(SECS_DEFAULT_INDEX);
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             const sessaoSalva = localStorage.getItem('usuarioDoresopolis') || 'Cidadão';
             document.getElementById('nome-usuario-logado').innerText = sessaoSalva;
@@ -1256,6 +1274,7 @@
             carregarClima();
             carregarMinhasSolicitacoes();
             carregarAvisos();
+            carregarGridServicos();
         });
 
 

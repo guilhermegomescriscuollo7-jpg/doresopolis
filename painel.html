@@ -45,8 +45,8 @@
           <h1 id="hdr-titulo" class="text-lg font-black text-gray-800 uppercase tracking-tight leading-none">Carregando...</h1>
         </div>
       </div>
-      <button onclick="fazerLogout()" class="text-gray-400 hover:text-red-500 p-2 transition-colors">
-        <i class="fa-solid fa-right-from-bracket text-lg"></i>
+      <button onclick="fazerLogout()" class="flex items-center gap-1.5 text-xs font-bold text-red-400 hover:text-red-600 bg-red-50 hover:bg-red-100 border border-red-100 px-3 py-2 rounded-xl transition-all active:scale-95">
+        <i class="fa-solid fa-right-from-bracket"></i> Sair
       </button>
     </div>
     <div id="tab-nav" class="flex border-t border-gray-100 bg-gray-50"></div>
@@ -335,6 +335,77 @@
       </div>
     </section>
 
+    <!-- ====== GENÉRICO (secretarias customizadas) ====== -->
+    <section id="sec-sol-generic" class="sec hidden flex-grow overflow-y-auto p-4 pb-6">
+      <div class="flex gap-2 overflow-x-auto pb-2 mb-4">
+        <button onclick="filtrar('g-sol','TODOS')" id="g-sol-fil-TODOS" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-gray-800 text-white">Todos</button>
+        <button onclick="filtrar('g-sol','PENDENTE')" id="g-sol-fil-PENDENTE" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">Pendentes</button>
+        <button onclick="filtrar('g-sol','EM ANÁLISE')" id="g-sol-fil-EM ANÁLISE" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">Em Análise</button>
+        <button onclick="filtrar('g-sol','CONCLUÍDO')" id="g-sol-fil-CONCLUÍDO" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">Concluídos</button>
+      </div>
+      <div id="lista-g-sol" class="flex flex-col gap-3"><div class="text-center py-10 text-gray-400 text-sm"><i class="fa-solid fa-spinner fa-spin text-2xl mb-2 block"></i>Carregando...</div></div>
+    </section>
+
+    <section id="sec-avi-generic" class="sec hidden flex-grow overflow-y-auto p-4 pb-6">
+      <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden mb-5">
+        <div id="g-avi-header" class="px-4 py-3 flex items-center gap-2 text-white bg-gray-600">
+          <i class="fa-solid fa-bullhorn"></i>
+          <h3 id="g-avi-form-titulo" class="font-bold text-sm">Publicar Aviso</h3>
+        </div>
+        <form onsubmit="salvarAvisoGenerico(event)" class="p-4 space-y-3">
+          <input type="hidden" id="g-aviso-id">
+          <div><label class="block text-xs font-bold text-gray-600 mb-1">Título</label>
+            <input type="text" id="g-aviso-titulo" required class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm"></div>
+          <div><label class="block text-xs font-bold text-gray-600 mb-1">Descrição</label>
+            <textarea id="g-aviso-desc" required rows="3" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm resize-none"></textarea></div>
+          <div class="flex gap-2">
+            <button type="button" id="g-btn-cancel-avi" onclick="cancelarAvisoGenerico()" class="hidden flex-1 bg-gray-100 text-gray-600 font-bold py-2.5 rounded-lg text-sm">Cancelar</button>
+            <button type="submit" id="g-btn-submit-avi" class="flex-1 bg-gray-700 text-white font-bold py-2.5 rounded-lg text-sm flex justify-center items-center gap-2">
+              <i class="fa-solid fa-paper-plane"></i> <span id="g-btn-avi-txt">Publicar</span>
+            </button>
+          </div>
+        </form>
+      </div>
+      <div id="lista-avi-generic" class="flex flex-col gap-3"><div class="text-center py-6 text-gray-400 text-sm"><i class="fa-solid fa-spinner fa-spin mb-2 block"></i>Carregando...</div></div>
+    </section>
+
+    <!-- ====== TI: SECRETARIAS ====== -->
+    <section id="sec-sec-ti" class="sec hidden flex-grow overflow-y-auto p-4 pb-6">
+      <div class="flex justify-between items-center mb-4">
+        <p class="text-xs text-gray-500">Gerencie os cards de serviços na tela inicial.</p>
+        <button onclick="abrirModalSecretaria(null)" class="flex items-center gap-1.5 bg-slate-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shrink-0">
+          <i class="fa-solid fa-plus"></i> Nova
+        </button>
+      </div>
+      <div id="lista-ti-secs" class="flex flex-col gap-3"><div class="text-center py-10 text-gray-400 text-sm"><i class="fa-solid fa-spinner fa-spin text-2xl mb-2 block"></i>Carregando...</div></div>
+    </section>
+
+    <!-- ====== TI: MENUS ====== -->
+    <section id="sec-men-ti" class="sec hidden flex-grow overflow-y-auto p-4 pb-6">
+      <div class="mb-4">
+        <label class="block text-xs font-bold text-gray-600 mb-1.5">Selecionar secretaria</label>
+        <select id="men-select-sec" onchange="carregarMenusPainel(this.value)" class="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-bold text-gray-800">
+          <option value="">— escolha uma secretaria —</option>
+          <option value="obras">Obras</option>
+          <option value="tributos">Tributos</option>
+          <option value="educacao">Educação</option>
+          <option value="saude">Saúde</option>
+        </select>
+      </div>
+      <div id="men-info" class="bg-blue-50 border border-blue-100 rounded-xl p-3 mb-4 text-xs text-blue-700 leading-relaxed">
+        <i class="fa-solid fa-circle-info mr-1"></i>Selecione uma secretaria para editar seus menus. Você pode renomear abas, trocar ícones e ativar/desativar.
+      </div>
+      <div id="lista-menus" class="flex flex-col gap-3"></div>
+      <div id="men-actions" class="hidden mt-4 space-y-2">
+        <button onclick="salvarMenusPainel()" class="w-full bg-slate-700 text-white font-bold py-3 rounded-xl text-sm flex justify-center items-center gap-2">
+          <i class="fa-solid fa-floppy-disk"></i> Salvar Configuração de Menus
+        </button>
+        <button onclick="resetarMenusPainel()" class="w-full border border-gray-200 text-gray-500 font-bold py-2.5 rounded-xl text-sm">
+          <i class="fa-solid fa-rotate-left mr-1"></i> Restaurar Padrões
+        </button>
+      </div>
+    </section>
+
   </div><!-- end content-area -->
 </div><!-- end app -->
 
@@ -443,6 +514,84 @@
   </div>
 </div>
 
+<!-- MODAL: TI Nova/Editar Secretaria -->
+<div id="modal-secretaria" class="fixed inset-0 bg-black/50 z-[160] hidden flex items-end justify-center">
+  <div class="bg-white w-full max-w-md rounded-t-3xl p-5 space-y-3 max-h-[92vh] overflow-y-auto">
+    <div class="flex items-center justify-between mb-1">
+      <h3 id="sec-modal-titulo" class="font-black text-gray-800 text-base">Nova Secretaria</h3>
+      <button onclick="fecharModalSecretaria()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center"><i class="fa-solid fa-xmark text-gray-500 text-sm"></i></button>
+    </div>
+
+    <!-- Preview do card -->
+    <div id="sec-preview" class="rounded-2xl p-4 border flex flex-col bg-gray-50 border-gray-200 transition-all">
+      <div id="sec-prev-ico-wrap" class="w-10 h-10 bg-white rounded-xl flex items-center justify-center mb-3 shadow-sm">
+        <i id="sec-prev-ico" class="fa-solid fa-building-columns text-gray-400 text-lg"></i>
+      </div>
+      <p id="sec-prev-nome" class="font-bold text-gray-800 text-sm">Nome da Secretaria</p>
+      <p id="sec-prev-desc" class="text-[10px] text-gray-400 mt-0.5">Descrição curta</p>
+    </div>
+
+    <input type="hidden" id="sec-modal-id">
+
+    <div><label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Nome *</label>
+      <input id="sec-nome" type="text" placeholder="Ex: Meio Ambiente"
+        oninput="document.getElementById('sec-prev-nome').textContent=this.value||'Nome da Secretaria'"
+        class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-300"></div>
+
+    <div><label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Descrição (card cidadão)</label>
+      <input id="sec-desc" type="text" placeholder="Ex: Parques e licenciamento"
+        oninput="document.getElementById('sec-prev-desc').textContent=this.value||'Descrição curta'"
+        class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-300"></div>
+
+    <div class="grid grid-cols-2 gap-3">
+      <div><label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Ícone FontAwesome</label>
+        <input id="sec-icone" type="text" placeholder="fa-leaf" value="fa-building-columns"
+          oninput="atualizarPreviewSec()"
+          class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-300"></div>
+      <div><label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Cor</label>
+        <div class="flex gap-2 items-center">
+          <input id="sec-cor" type="color" value="#059669" oninput="atualizarPreviewSec()"
+            class="w-12 h-12 rounded-xl border border-gray-200 cursor-pointer bg-gray-50 p-1">
+          <input id="sec-cor-hex" type="text" placeholder="#059669" value="#059669"
+            oninput="document.getElementById('sec-cor').value=this.value;atualizarPreviewSec()"
+            class="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-3 py-3 text-sm text-gray-800"></div>
+        </div>
+      </div>
+    </div>
+
+    <div><label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Link cidadão (URL da página)</label>
+      <input id="sec-link" type="text" placeholder="Ex: meio-ambiente.html ou https://..."
+        class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-300"></div>
+
+    <div><label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Tipo de painel</label>
+      <select id="sec-painel-id" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800">
+        <option value="generic">Genérico (Solicitações + Avisos)</option>
+        <option value="obras">Igual Obras</option>
+        <option value="tributos">Igual Tributos</option>
+        <option value="educacao">Igual Educação</option>
+        <option value="saude">Igual Saúde</option>
+      </select></div>
+
+    <div><label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Ordem de exibição</label>
+      <input id="sec-ordem" type="number" min="0" max="99" value="99"
+        class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800"></div>
+
+    <div class="flex items-center justify-between bg-gray-50 rounded-xl px-4 py-3 border border-gray-200">
+      <span class="text-sm font-bold text-gray-700">Ativo (visível no app)</span>
+      <label class="relative inline-flex items-center cursor-pointer">
+        <input type="checkbox" id="sec-ativo" checked class="sr-only peer">
+        <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-slate-700"></div>
+      </label>
+    </div>
+
+    <div id="sec-modal-erro" class="hidden bg-red-50 border border-red-100 rounded-xl px-4 py-3 text-sm text-red-600"></div>
+    <button onclick="salvarSecretaria()" class="w-full bg-slate-700 text-white font-black py-4 rounded-2xl text-sm uppercase tracking-wide">
+      <span id="sec-modal-btn-txt"><i class="fa-solid fa-floppy-disk mr-2"></i>Salvar Secretaria</span>
+      <span id="sec-modal-btn-load" class="hidden"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Salvando...</span>
+    </button>
+  </div>
+</div>
+
 <!-- MODAL: TI Nova/Editar Conta -->
 <div id="modal-ti-conta" class="fixed inset-0 bg-black/50 z-[150] hidden flex items-end justify-center">
   <div class="bg-white w-full max-w-md rounded-t-3xl p-5 space-y-3 max-h-[90vh] overflow-y-auto">
@@ -521,7 +670,7 @@ const PAINEL_CFG = {
   tributos: { titulo:'Sec. Tributos',  icone:'fa-file-invoice-dollar', cor:'#059669', corBg:'#ecfdf5', tabs:[{id:'sol',lbl:'Pedidos',ico:'fa-inbox'},{id:'via',lbl:'2ª Via',ico:'fa-file-arrow-down'},{id:'avi',lbl:'Avisos',ico:'fa-bullhorn'}] },
   educacao: { titulo:'Sec. Educação',  icone:'fa-graduation-cap',      cor:'#2563eb', corBg:'#eff6ff', tabs:[{id:'sol',lbl:'Solicitações',ico:'fa-inbox'},{id:'mat',lbl:'Matrículas',ico:'fa-user-plus'},{id:'avi',lbl:'Avisos',ico:'fa-bullhorn'}] },
   saude:    { titulo:'Sec. Saúde',     icone:'fa-heart-pulse',         cor:'#dc2626', corBg:'#fef2f2', tabs:[{id:'agen',lbl:'Agendamentos',ico:'fa-calendar-check'},{id:'hor',lbl:'Horários',ico:'fa-clock'},{id:'esp',lbl:'Especialidades',ico:'fa-user-doctor'},{id:'avi',lbl:'Avisos',ico:'fa-bullhorn'}] },
-  ti:       { titulo:'TI / Admin',     icone:'fa-shield-halved',       cor:'#475569', corBg:'#f1f5f9', tabs:[{id:'con',lbl:'Contas',ico:'fa-users-gear'},{id:'cfg',lbl:'Config',ico:'fa-sliders'}] },
+  ti:       { titulo:'TI / Admin',     icone:'fa-shield-halved',       cor:'#475569', corBg:'#f1f5f9', tabs:[{id:'con',lbl:'Contas',ico:'fa-users-gear'},{id:'sec',lbl:'Secretarias',ico:'fa-building-columns'},{id:'men',lbl:'Menus',ico:'fa-bars'},{id:'cfg',lbl:'Config',ico:'fa-sliders'}] },
 };
 
 const secSuffix = { obras:'obras', tributos:'tributos', educacao:'educacao', saude:'saude', ti:'ti' };
@@ -530,7 +679,7 @@ const tabToSec  = {
   tributos: { sol:'sol', via:'via', avi:'avi' },
   educacao: { sol:'sol', mat:'mat', avi:'avi' },
   saude:    { agen:'agen', hor:'hor', esp:'esp', avi:'avi' },
-  ti:       { con:'con', cfg:'cfg' },
+  ti:       { con:'con', sec:'sec', men:'men', cfg:'cfg' },
 };
 
 // ─── toast ───
@@ -594,7 +743,10 @@ window.trocarAba = function(abaId) {
   const cfg = PAINEL_CFG[secretariaAtual];
   document.querySelectorAll('.sec').forEach(el=>{ el.classList.add('hidden'); el.classList.remove('flex-grow'); });
 
-  const secId = `sec-${tabToSec[secretariaAtual][abaId]}-${secSuffix[secretariaAtual]}`;
+  const builtins = ['obras','tributos','educacao','saude','ti'];
+  const sufixo = builtins.includes(secretariaAtual) ? secretariaAtual : 'generic';
+  const tabId = (tabToSec[secretariaAtual]||{})[abaId] || abaId;
+  const secId = `sec-${tabId}-${sufixo}`;
   const sec = document.getElementById(secId);
   if (sec) { sec.classList.remove('hidden'); }
 
@@ -686,7 +838,9 @@ window.prepararEdicaoAviso = function(id,titulo,descricao,prefix,tituloOriginal)
   document.getElementById(`${prefix}-aviso-desc`).value=descricao;
   document.getElementById(`${prefix}-btn-cancel-avi`).classList.remove('hidden');
   document.getElementById(`${prefix}-btn-avi-txt`).textContent='Salvar Alteração';
-  document.getElementById(`sec-avi-${secSuffix[secretariaAtual]}`).scrollTo(0,0);
+  const builtins=['obras','tributos','educacao','saude','ti'];
+  const sufixo=builtins.includes(secretariaAtual)?secretariaAtual:'generic';
+  document.getElementById(`sec-avi-${sufixo}`)?.scrollTo(0,0);
 };
 
 window.excluirAviso = async function(id) {
@@ -1124,6 +1278,8 @@ window.excluirEspecialidade = async function(id) {
 // ════════════════════════════════════
 function iniciarTI() {
   carregarContasTI();
+  carregarSecretariasTI();
+  popularSelectMenus();
 
   get(ref(db,'config/app')).then(snap=>{
     if(snap.exists()){
@@ -1132,6 +1288,27 @@ function iniciarTI() {
       document.getElementById('cfg-alerta').value=d.alertaGlobal||'';
     }
   });
+}
+
+async function popularSelectMenus() {
+  const sel = document.getElementById('men-select-sec');
+  const opts = ['obras','tributos','educacao','saude'];
+  // Adiciona secretarias customizadas
+  try {
+    const snap = await get(ref(db,'config/secretarias'));
+    if (snap.exists()) {
+      snap.forEach(child => {
+        const d = child.val();
+        if (!opts.includes(child.key)) opts.push(child.key);
+      });
+    }
+  } catch(e) {}
+  const labels = { obras:'Obras', tributos:'Tributos', educacao:'Educação', saude:'Saúde' };
+  sel.innerHTML = `<option value="">— escolha uma secretaria —</option>` +
+    opts.map(id => {
+      const lbl = labels[id] || tiSecsCache.find(s=>s.id===id)?.nome || id;
+      return `<option value="${id}">${lbl}</option>`;
+    }).join('');
 }
 
 async function carregarContasTI() {
@@ -1269,6 +1446,373 @@ function mostrarErroTI(msg){ document.getElementById('ti-modal-erro').textConten
 function resetBtnTI(){ document.getElementById('ti-modal-btn-txt').classList.remove('hidden'); document.getElementById('ti-modal-btn-load').classList.add('hidden'); }
 
 // ════════════════════════════════════
+//  SECRETARIAS (TI)
+// ════════════════════════════════════
+const SECS_DEFAULT = [
+  { id:'saude',      nome:'Saúde',      descricao:'Consultas e vacinas',       icone:'fa-heart-pulse',          cor:'#dc2626', link:'saude.html',      painelId:'saude',    ordem:1, ativo:true },
+  { id:'educacao',   nome:'Educação',   descricao:'Matrículas e transporte',   icone:'fa-graduation-cap',       cor:'#2563eb', link:'educacao.html',   painelId:'educacao', ordem:2, ativo:true },
+  { id:'tributos',   nome:'Tributos',   descricao:'IPTU e taxas municipais',   icone:'fa-file-invoice-dollar',  cor:'#059669', link:'tributos.html',   painelId:'tributos', ordem:3, ativo:true },
+  { id:'obras',      nome:'Obras',      descricao:'Iluminação e vias públicas',icone:'fa-helmet-safety',        cor:'#d97706', link:'obras.html',      painelId:'obras',    ordem:4, ativo:true },
+  { id:'transporte', nome:'Transporte', descricao:'Horários e estradas',       icone:'fa-bus',                  cor:'#7c3aed', link:'transporte.html', painelId:'generic',  ordem:5, ativo:true },
+];
+
+let tiSecsCache = [];
+
+async function carregarSecretariasTI() {
+  const c = document.getElementById('lista-ti-secs');
+  c.innerHTML = `<div class="text-center py-10 text-gray-400 text-sm"><i class="fa-solid fa-spinner fa-spin text-2xl mb-2 block"></i>Carregando...</div>`;
+  try {
+    const snap = await get(ref(db,'config/secretarias'));
+    if (snap.exists()) {
+      tiSecsCache = [];
+      snap.forEach(child => tiSecsCache.push({ id:child.key, ...child.val() }));
+      tiSecsCache.sort((a,b)=>(a.ordem||99)-(b.ordem||99));
+    } else {
+      tiSecsCache = [...SECS_DEFAULT];
+    }
+    renderSecretariasTI();
+  } catch(e) { c.innerHTML=`<p class="text-center text-xs text-red-400 py-4">Erro ao carregar.</p>`; }
+}
+
+function renderSecretariasTI() {
+  const c = document.getElementById('lista-ti-secs');
+  if (!tiSecsCache.length) { c.innerHTML=`<p class="text-center text-xs text-gray-400 py-6">Nenhuma secretaria.</p>`; return; }
+  c.innerHTML = tiSecsCache.map(s => {
+    const corBg = hexToLightBg(s.cor||'#475569');
+    return `<div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+      <div class="flex items-start gap-3 mb-3">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background:${corBg}">
+          <i class="fa-solid ${s.icone||'fa-building-columns'} text-lg" style="color:${s.cor||'#475569'}"></i>
+        </div>
+        <div class="flex-grow min-w-0">
+          <div class="flex items-center gap-2 flex-wrap">
+            <p class="font-bold text-gray-800 text-sm">${s.nome||'—'}</p>
+            <span class="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full ${s.ativo!==false?'bg-green-100 text-green-600':'bg-red-100 text-red-500'}">${s.ativo!==false?'Ativo':'Inativo'}</span>
+          </div>
+          <p class="text-[11px] text-gray-400 truncate">${s.descricao||'—'}</p>
+          <p class="text-[10px] text-gray-300 mt-0.5 truncate"><i class="fa-solid fa-link mr-1"></i>${s.link||'—'}</p>
+        </div>
+      </div>
+      <div class="flex gap-2">
+        <button onclick="abrirModalSecretaria('${s.id}')" class="flex-1 text-xs font-bold text-blue-700 border border-blue-100 bg-blue-50 py-2 rounded-xl"><i class="fa-solid fa-pen mr-1"></i>Editar</button>
+        <button onclick="toggleAtivoSec('${s.id}')" class="flex-1 text-xs font-bold ${s.ativo!==false?'text-red-500 border-red-100 bg-red-50':'text-green-600 border-green-100 bg-green-50'} border py-2 rounded-xl">
+          <i class="fa-solid ${s.ativo!==false?'fa-eye-slash':'fa-eye'} mr-1"></i>${s.ativo!==false?'Desativar':'Ativar'}
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function hexToLightBg(hex) {
+  try {
+    const r=parseInt(hex.slice(1,3),16), g=parseInt(hex.slice(3,5),16), b=parseInt(hex.slice(5,7),16);
+    return `rgba(${r},${g},${b},0.12)`;
+  } catch(e) { return '#f1f5f9'; }
+}
+
+window.abrirModalSecretaria = function(id) {
+  const m = document.getElementById('modal-secretaria');
+  document.getElementById('sec-modal-erro').classList.add('hidden');
+  document.getElementById('sec-modal-btn-txt').classList.remove('hidden');
+  document.getElementById('sec-modal-btn-load').classList.add('hidden');
+  if (id) {
+    const s = tiSecsCache.find(x=>x.id===id);
+    if (!s) return;
+    document.getElementById('sec-modal-titulo').textContent = 'Editar Secretaria';
+    document.getElementById('sec-modal-id').value = id;
+    document.getElementById('sec-nome').value = s.nome||'';
+    document.getElementById('sec-desc').value = s.descricao||'';
+    document.getElementById('sec-icone').value = s.icone||'fa-building-columns';
+    document.getElementById('sec-cor').value = s.cor||'#059669';
+    document.getElementById('sec-cor-hex').value = s.cor||'#059669';
+    document.getElementById('sec-link').value = s.link||'';
+    document.getElementById('sec-painel-id').value = s.painelId||'generic';
+    document.getElementById('sec-ordem').value = s.ordem||99;
+    document.getElementById('sec-ativo').checked = s.ativo!==false;
+  } else {
+    document.getElementById('sec-modal-titulo').textContent = 'Nova Secretaria';
+    document.getElementById('sec-modal-id').value = '';
+    ['sec-nome','sec-desc','sec-link'].forEach(i=>document.getElementById(i).value='');
+    document.getElementById('sec-icone').value = 'fa-building-columns';
+    document.getElementById('sec-cor').value = '#059669';
+    document.getElementById('sec-cor-hex').value = '#059669';
+    document.getElementById('sec-painel-id').value = 'generic';
+    document.getElementById('sec-ordem').value = 99;
+    document.getElementById('sec-ativo').checked = true;
+  }
+  atualizarPreviewSec();
+  m.classList.remove('hidden');
+};
+
+window.fecharModalSecretaria = function() {
+  document.getElementById('modal-secretaria').classList.add('hidden');
+};
+
+window.atualizarPreviewSec = function() {
+  const ico = document.getElementById('sec-icone').value.trim() || 'fa-building-columns';
+  const cor = document.getElementById('sec-cor').value || '#059669';
+  const corBg = hexToLightBg(cor);
+  document.getElementById('sec-prev-ico').className = `fa-solid ${ico} text-lg`;
+  document.getElementById('sec-prev-ico').style.color = cor;
+  document.getElementById('sec-prev-ico-wrap').style.background = corBg;
+  document.getElementById('sec-cor-hex').value = cor;
+  const preview = document.getElementById('sec-preview');
+  preview.style.borderColor = cor+'33';
+  preview.style.background = corBg;
+};
+
+window.salvarSecretaria = async function() {
+  const nome = document.getElementById('sec-nome').value.trim();
+  if (!nome) { document.getElementById('sec-modal-erro').textContent='Nome é obrigatório.'; document.getElementById('sec-modal-erro').classList.remove('hidden'); return; }
+  let id = document.getElementById('sec-modal-id').value.trim();
+  if (!id) {
+    id = nome.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  }
+  const data = {
+    nome, descricao: document.getElementById('sec-desc').value.trim(),
+    icone: document.getElementById('sec-icone').value.trim()||'fa-building-columns',
+    cor: document.getElementById('sec-cor').value,
+    link: document.getElementById('sec-link').value.trim(),
+    painelId: document.getElementById('sec-painel-id').value,
+    ordem: parseInt(document.getElementById('sec-ordem').value)||99,
+    ativo: document.getElementById('sec-ativo').checked,
+  };
+  document.getElementById('sec-modal-btn-txt').classList.add('hidden');
+  document.getElementById('sec-modal-btn-load').classList.remove('hidden');
+  try {
+    await set(ref(db,'config/secretarias/'+id), data);
+    toast('Secretaria salva!');
+    fecharModalSecretaria();
+    await carregarSecretariasTI();
+  } catch(e) {
+    document.getElementById('sec-modal-erro').textContent='Erro ao salvar.';
+    document.getElementById('sec-modal-erro').classList.remove('hidden');
+    document.getElementById('sec-modal-btn-txt').classList.remove('hidden');
+    document.getElementById('sec-modal-btn-load').classList.add('hidden');
+  }
+};
+
+window.toggleAtivoSec = async function(id) {
+  const s = tiSecsCache.find(x=>x.id===id); if (!s) return;
+  try {
+    await update(ref(db,'config/secretarias/'+id),{ativo:s.ativo===false});
+    toast(s.ativo===false?'Secretaria ativada!':'Secretaria desativada!');
+    await carregarSecretariasTI();
+  } catch(e) { toast('Erro.','erro'); }
+};
+
+// ════════════════════════════════════
+//  MENUS / PAINÉIS (TI)
+// ════════════════════════════════════
+const TABS_DEFAULT = {
+  obras:    [{id:'sol',lbl:'Solicitações',ico:'fa-inbox'},{id:'avi',lbl:'Avisos',ico:'fa-bullhorn'}],
+  tributos: [{id:'sol',lbl:'Pedidos',ico:'fa-inbox'},{id:'via',lbl:'2ª Via',ico:'fa-file-arrow-down'},{id:'avi',lbl:'Avisos',ico:'fa-bullhorn'}],
+  educacao: [{id:'sol',lbl:'Solicitações',ico:'fa-inbox'},{id:'mat',lbl:'Matrículas',ico:'fa-user-plus'},{id:'avi',lbl:'Avisos',ico:'fa-bullhorn'}],
+  saude:    [{id:'agen',lbl:'Agendamentos',ico:'fa-calendar-check'},{id:'hor',lbl:'Horários',ico:'fa-clock'},{id:'esp',lbl:'Especialidades',ico:'fa-user-doctor'},{id:'avi',lbl:'Avisos',ico:'fa-bullhorn'}],
+};
+
+let menSecAtual = null;
+let menTabsAtual = [];
+
+window.carregarMenusPainel = async function(secId) {
+  menSecAtual = secId;
+  const c = document.getElementById('lista-menus');
+  const actions = document.getElementById('men-actions');
+  const info = document.getElementById('men-info');
+  if (!secId) { c.innerHTML=''; actions.classList.add('hidden'); info.classList.remove('hidden'); return; }
+  info.classList.add('hidden');
+  c.innerHTML = `<div class="text-center py-6 text-gray-400 text-sm"><i class="fa-solid fa-spinner fa-spin mb-2 block"></i>Carregando...</div>`;
+
+  const defaults = TABS_DEFAULT[secId] || [{id:'sol',lbl:'Solicitações',ico:'fa-inbox'},{id:'avi',lbl:'Avisos',ico:'fa-bullhorn'}];
+  menTabsAtual = defaults.map(t=>({...t, ativo:true}));
+
+  try {
+    const snap = await get(ref(db,`config/paineis/${secId}/tabs`));
+    if (snap.exists()) {
+      const saved = snap.val();
+      const savedArr = Array.isArray(saved) ? saved : Object.values(saved);
+      menTabsAtual = menTabsAtual.map(t => {
+        const ov = savedArr.find(s=>s.id===t.id);
+        return ov ? {...t, lbl:ov.label||ov.lbl||t.lbl, ico:ov.icone||ov.ico||t.ico, ativo:ov.ativo!==false} : t;
+      });
+    }
+  } catch(e) {}
+
+  renderMenusEditor();
+  actions.classList.remove('hidden');
+};
+
+function renderMenusEditor() {
+  const c = document.getElementById('lista-menus');
+  c.innerHTML = menTabsAtual.map((t,i) => `
+    <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-4 space-y-3">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center shrink-0">
+          <i id="men-ico-prev-${t.id}" class="fa-solid ${t.ico} text-slate-600"></i>
+        </div>
+        <span class="text-xs font-black text-gray-500 uppercase tracking-wider flex-grow">Aba: ${t.id}</span>
+        <label class="relative inline-flex items-center cursor-pointer">
+          <input type="checkbox" id="men-ativo-${t.id}" ${t.ativo!==false?'checked':''} class="sr-only peer">
+          <div class="w-10 h-5 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-slate-600"></div>
+        </label>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Label (nome)</label>
+          <input type="text" id="men-lbl-${t.id}" value="${t.lbl}"
+            class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-800">
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Ícone FA</label>
+          <input type="text" id="men-ico-${t.id}" value="${t.ico}"
+            oninput="document.getElementById('men-ico-prev-${t.id}').className='fa-solid '+this.value"
+            class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-800">
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+window.salvarMenusPainel = async function() {
+  if (!menSecAtual) return;
+  const tabs = menTabsAtual.map(t => ({
+    id: t.id,
+    label: document.getElementById(`men-lbl-${t.id}`)?.value || t.lbl,
+    icone: document.getElementById(`men-ico-${t.id}`)?.value || t.ico,
+    ativo: document.getElementById(`men-ativo-${t.id}`)?.checked !== false,
+  }));
+  try {
+    await set(ref(db,`config/paineis/${menSecAtual}/tabs`), tabs);
+    toast('Menus salvos! As mudanças aparecem no próximo login.');
+  } catch(e) { toast('Erro ao salvar menus.','erro'); }
+};
+
+window.resetarMenusPainel = async function() {
+  if (!menSecAtual || !confirm('Restaurar os menus padrões desta secretaria?')) return;
+  try {
+    await remove(ref(db,`config/paineis/${menSecAtual}/tabs`));
+    toast('Menus restaurados!');
+    await carregarMenusPainel(menSecAtual);
+  } catch(e) { toast('Erro.','erro'); }
+};
+
+// ════════════════════════════════════
+//  PAINEL GENÉRICO (secretarias custom)
+// ════════════════════════════════════
+let cacheGenerico = {};
+let todasGSol = [];
+let filtroGSol = 'TODOS';
+let secGenericaAtual = null;
+
+function iniciarGenerico(secId) {
+  secGenericaAtual = secId;
+  const colecao = `solicitacoes_${secId}`;
+
+  // Atualiza o header do aviso genérico com a cor da secretaria
+  const cfg = PAINEL_CFG[secId];
+  if (cfg) {
+    document.getElementById('g-avi-header').style.background = cfg.cor;
+    document.getElementById('g-avi-form-titulo').textContent = `Publicar Aviso — ${cfg.titulo}`;
+    document.getElementById('g-btn-submit-avi').style.background = cfg.cor;
+  }
+
+  onValue(query(ref(db,colecao),orderByChild('dataRegistro')),(snap)=>{
+    Object.keys(cacheGenerico).forEach(k=>delete cacheGenerico[k]);
+    todasGSol=[];
+    if(snap.exists()){
+      snap.forEach(c=>{ cacheGenerico[c.key]=c.val(); todasGSol.push({id:c.key,...c.val()}); });
+      todasGSol.reverse();
+    }
+    renderGenericoSol();
+  });
+
+  const nomeSecretaria = cfg?.titulo || secId;
+  onValue(query(ref(db,'avisos'),orderByChild('dataPublicacao')),(snap)=>{
+    const lista=[];
+    if(snap.exists()) snap.forEach(c=>{ if(c.val().secretaria===nomeSecretaria) lista.push({id:c.key,...c.val()}); });
+    lista.reverse();
+    renderAvisos(lista,'lista-avi-generic','g',`Publicar Aviso — ${nomeSecretaria}`);
+  });
+}
+
+function renderGenericoSol() {
+  const lista = filtroGSol==='TODOS' ? todasGSol : todasGSol.filter(s=>s.status===filtroGSol);
+  const c = document.getElementById('lista-g-sol');
+  if (!lista.length) { c.innerHTML=`<div class="text-center py-10 bg-white rounded-xl border border-gray-100 text-gray-400 text-sm">Nenhuma solicitação.</div>`; return; }
+  const cfg = PAINEL_CFG[secGenericaAtual];
+  c.innerHTML = lista.map(s=>{
+    const cs=sc(s.status);
+    return `<div class="bg-white rounded-xl border border-gray-100 shadow-sm p-3 slide-up">
+      <div class="flex gap-3 items-start">
+        <div class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0" style="background:${hexToLightBg(cfg?.cor||'#475569')}">
+          <i class="fa-solid ${cfg?.icone||'fa-building-columns'} text-lg" style="color:${cfg?.cor||'#475569'}"></i>
+        </div>
+        <div class="flex-grow min-w-0">
+          <div class="flex justify-between items-start gap-1 mb-0.5">
+            <span class="text-[9px] font-black uppercase truncate" style="color:${cfg?.cor||'#475569'}">#${s.protocolo||'—'}</span>
+            <span class="text-[9px] font-bold px-2 py-0.5 rounded-full border shrink-0 ${cs.cls}">${cs.lbl}</span>
+          </div>
+          <h4 class="font-bold text-gray-800 text-sm leading-tight">${s.tipoSolicitacao||s.tipoServico||'Solicitação'}</h4>
+          <p class="text-xs text-gray-500 truncate"><i class="fa-regular fa-user mr-1"></i>${s.nomeCidadao||'—'}</p>
+        </div>
+      </div>
+      <div class="flex gap-2 mt-3 pt-2 border-t border-gray-50 items-center">
+        <span class="text-[10px] text-gray-400 flex-grow"><i class="fa-regular fa-calendar mr-1"></i>${datFmt(s.dataRegistro)}</span>
+        <select onchange="atualizarStatusGenerico('${s.id}',this.value)" class="text-[10px] font-bold border rounded-full px-2 py-1 outline-none cursor-pointer ${cs.cls}">
+          <option value="PENDENTE" ${s.status==='PENDENTE'?'selected':''}>PENDENTE</option>
+          <option value="EM ANÁLISE" ${s.status==='EM ANÁLISE'?'selected':''}>EM ANÁLISE</option>
+          <option value="CONCLUÍDO" ${s.status==='CONCLUÍDO'?'selected':''}>CONCLUÍDO</option>
+          <option value="CANCELADO" ${s.status==='CANCELADO'?'selected':''}>CANCELADO</option>
+        </select>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+window.atualizarStatusGenerico = async function(id,status) {
+  try { await update(ref(db,`solicitacoes_${secGenericaAtual}/${id}`),{status}); toast('Status atualizado!'); }
+  catch(e){ toast('Erro.','erro'); }
+};
+
+window.salvarAvisoGenerico = async function(event) {
+  event.preventDefault();
+  const cfg = PAINEL_CFG[secGenericaAtual];
+  const secretaria = cfg?.titulo || secGenericaAtual;
+  await salvarAviso(event, secretaria, 'g');
+};
+
+window.cancelarAvisoGenerico = function() {
+  const cfg = PAINEL_CFG[secGenericaAtual];
+  cancelarAviso('g', `Publicar Aviso — ${cfg?.titulo||secGenericaAtual}`);
+};
+
+// ════════════════════════════════════
+//  CONFIGURAÇÃO RTDB DO PAINEL
+// ════════════════════════════════════
+async function carregarConfPainel(sec) {
+  try {
+    const snap = await get(ref(db,'config/paineis/'+sec));
+    if (!snap.exists()) return;
+    const conf = snap.val();
+    const cfg = PAINEL_CFG[sec];
+    if (!cfg) return;
+    if (conf.titulo) cfg.titulo = conf.titulo;
+    if (conf.icone) cfg.icone = conf.icone;
+    if (conf.cor) { cfg.cor = conf.cor; cfg.corBg = hexToLightBg(conf.cor); }
+    if (conf.tabs) {
+      const arr = Array.isArray(conf.tabs) ? conf.tabs : Object.values(conf.tabs);
+      const ativos = arr.filter(t=>t.ativo!==false).map(t=>({
+        id:t.id, lbl:t.label||t.lbl||t.id, ico:t.icone||t.ico||'fa-circle'
+      }));
+      if (ativos.length>0) {
+        cfg.tabs = ativos;
+        tabToSec[sec] = {};
+        ativos.forEach(t=>{ tabToSec[sec][t.id]=t.id; });
+      }
+    }
+  } catch(e) {}
+}
+
+// ════════════════════════════════════
 //  AUTH
 // ════════════════════════════════════
 function iniciarListeners(sec) {
@@ -1277,6 +1821,7 @@ function iniciarListeners(sec) {
   else if (sec==='educacao') iniciarEducacao();
   else if (sec==='saude') iniciarSaude();
   else if (sec==='ti') iniciarTI();
+  else iniciarGenerico(sec);
 }
 
 let panelAtivo=false;
@@ -1289,7 +1834,25 @@ onAuthStateChanged(auth, async(user)=>{
     const snap=await get(ref(db,'contas_secretaria/'+user.uid));
     if(!snap.exists()||snap.val().ativo===false){ if(!panelAtivo) window.location.href='login-secretaria.html'; return; }
     const sec=snap.val().secretaria;
-    if(!PAINEL_CFG[sec]){ if(!panelAtivo) window.location.href='login-secretaria.html'; return; }
+
+    if(!PAINEL_CFG[sec]) {
+      // Secretaria customizada — carrega config do RTDB
+      const secSnap = await get(ref(db,'config/secretarias/'+sec));
+      if(!secSnap.exists()){ if(!panelAtivo) window.location.href='login-secretaria.html'; return; }
+      const sd = secSnap.val();
+      PAINEL_CFG[sec] = {
+        titulo: sd.nome||sec,
+        icone:  sd.icone||'fa-building-columns',
+        cor:    sd.cor||'#475569',
+        corBg:  hexToLightBg(sd.cor||'#475569'),
+        tabs:   [{id:'sol',lbl:'Solicitações',ico:'fa-inbox'},{id:'avi',lbl:'Avisos',ico:'fa-bullhorn'}],
+      };
+      tabToSec[sec] = {sol:'sol', avi:'avi'};
+    }
+
+    // Aplica overrides de menus configurados pela TI
+    await carregarConfPainel(sec);
+
     panelAtivo=true;
     setupPainel(sec);
     iniciarListeners(sec);
