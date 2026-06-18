@@ -109,25 +109,23 @@
                         <p id="alerta-mensagem" class="text-xs text-amber-700 pl-1 leading-snug"></p>
                     </div>
 
-                    <!-- SAUDAÇÃO + DATA + CLIMA -->
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-6 mt-1 flex items-center justify-between gap-3">
+                    <!-- SAUDAÇÃO + DATA + CLIMA (compacto) -->
+                    <div class="flex items-center justify-between gap-3 mb-4 mt-1">
                         <div class="min-w-0">
-                            <h2 class="text-lg font-bold text-gray-800 leading-tight">
+                            <p id="data-extenso" class="text-[11px] text-gray-400 leading-none mb-0.5">Carregando...</p>
+                            <h2 class="text-base font-bold text-gray-800 leading-tight">
                                 <span id="saudacao-texto">Olá</span>, <span id="nome-usuario-logado" class="text-doresopolis-green">Cidadão</span>!
                             </h2>
-                            <p id="data-extenso" class="text-gray-500 mt-0.5 text-xs">Carregando...</p>
                         </div>
-
                         <!-- CLIMA (Open-Meteo) -->
                         <div id="clima-wrapper" class="shrink-0">
-                            <div id="clima-skeleton" class="w-[78px] h-14 rounded-xl bg-gray-100 animate-pulse"></div>
-                            <div id="clima-conteudo" class="hidden items-center gap-2 bg-sky-50 border border-sky-100 rounded-xl pl-2.5 pr-3 py-2">
-                                <i id="clima-icone" class="fa-solid fa-cloud-sun text-amber-400 text-2xl"></i>
-                                <div class="leading-none text-right">
-                                    <p class="font-black text-gray-800"><span id="clima-temp" class="text-lg">--</span><span class="text-xs">°C</span></p>
-                                    <p class="text-[9px] text-gray-500 font-semibold mt-0.5 whitespace-nowrap">
-                                        <i class="fa-solid fa-arrow-up text-[7px]"></i><span id="clima-max">--</span>°
-                                        <i class="fa-solid fa-arrow-down text-[7px] ml-1"></i><span id="clima-min">--</span>°
+                            <div id="clima-skeleton" class="w-[72px] h-10 rounded-xl bg-gray-100 animate-pulse"></div>
+                            <div id="clima-conteudo" class="hidden items-center gap-1.5 bg-sky-50 border border-sky-100 rounded-xl px-2.5 py-1.5">
+                                <i id="clima-icone" class="fa-solid fa-cloud-sun text-amber-400 text-lg"></i>
+                                <div class="leading-none">
+                                    <p class="font-black text-gray-800 text-sm"><span id="clima-temp">--</span><span class="text-[10px]">°C</span></p>
+                                    <p class="text-[9px] text-gray-400 mt-0.5 whitespace-nowrap">
+                                        <span id="clima-max">--</span>° / <span id="clima-min">--</span>°
                                     </p>
                                 </div>
                             </div>
@@ -148,8 +146,41 @@
                         <i class="fa-solid fa-chevron-right text-white/50 text-xs shrink-0"></i>
                     </a>
 
+                    <!-- SECRETARIAS — Grid dinâmico -->
+                    <div class="mb-5">
+                        <h2 class="font-black text-gray-800 text-base mb-3">Em que podemos ajudar?</h2>
+                        <div id="grid-servicos" class="grid grid-cols-3 gap-2">
+                            <!-- populado dinamicamente por carregarGridServicos() -->
+                            <div class="col-span-3 text-center py-6 text-gray-300 text-sm">
+                                <i class="fa-solid fa-spinner fa-spin text-xl mb-1 block"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CARDS DE DESTAQUE -->
+                    <div class="grid grid-cols-2 gap-3 mb-6">
+                        <a href="ouvidoria.html" class="flex items-center gap-3 bg-orange-500 rounded-2xl p-3.5 active:scale-[0.97] transition-all shadow-sm">
+                            <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-comment-dots text-white text-lg"></i>
+                            </div>
+                            <div>
+                                <p class="font-black text-white text-sm leading-tight">Ouvidoria</p>
+                                <p class="text-[10px] text-orange-100 mt-0.5">Fale com a prefeitura</p>
+                            </div>
+                        </a>
+                        <button onclick="document.getElementById('secao-avisos').scrollIntoView({behavior:'smooth'})" class="flex items-center gap-3 bg-blue-600 rounded-2xl p-3.5 active:scale-[0.97] transition-all shadow-sm text-left">
+                            <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-newspaper text-white text-lg"></i>
+                            </div>
+                            <div>
+                                <p class="font-black text-white text-sm leading-tight">Notícias</p>
+                                <p class="text-[10px] text-blue-200 mt-0.5">Avisos oficiais</p>
+                            </div>
+                        </button>
+                    </div>
+
                     <!-- MURAL DE AVISOS OFICIAIS DINÂMICO -->
-                    <div class="mb-6">
+                    <div class="mb-6" id="secao-avisos">
                         <div class="flex items-center justify-between mb-3">
                             <h3 class="font-bold text-gray-800 text-sm border-l-4 border-doresopolis-green pl-2">
                                 <i class="fa-solid fa-bullhorn text-doresopolis-green mr-1"></i> Mural de Avisos
@@ -179,17 +210,6 @@
                                 <div class="h-2.5 w-52 bg-gray-100 rounded mb-1.5"></div>
                                 <div class="h-2.5 w-32 bg-gray-100 rounded"></div>
                                 <div class="h-2 w-20 bg-gray-100 rounded mt-4"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- SECRETARIAS — Grid dinâmico -->
-                    <div class="mb-6">
-                        <h3 class="font-bold text-gray-800 text-sm mb-3 border-l-4 border-doresopolis-green pl-2">Serviços</h3>
-                        <div id="grid-servicos" class="grid grid-cols-2 gap-3">
-                            <!-- populado dinamicamente por carregarGridServicos() -->
-                            <div class="col-span-2 text-center py-6 text-gray-300 text-sm">
-                                <i class="fa-solid fa-spinner fa-spin text-xl mb-1 block"></i>Carregando...
                             </div>
                         </div>
                     </div>
@@ -534,19 +554,23 @@
                 <button onclick="fecharBannerPWA()" class="text-gray-400 hover:text-gray-600 px-1 shrink-0" aria-label="Fechar"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
-            <nav class="absolute bottom-0 w-full bg-white border-t border-gray-200 z-50 pb-safe">
+            <nav class="absolute bottom-0 w-full bg-white border-t border-gray-100 z-50 pb-safe shadow-[0_-1px_8px_rgba(0,0,0,0.06)]">
                 <div class="flex justify-around items-center h-16">
 
                     <a href="#" onclick="event.preventDefault(); mudarAbaPrincipal('inicio');" id="nav-inicio" class="flex flex-col items-center justify-center w-full h-full text-doresopolis-green transition-colors">
-                        <i class="fa-solid fa-house text-lg mb-1"></i><span class="text-[10px] font-medium">Início</span>
+                        <i class="fa-solid fa-house text-lg mb-1"></i><span class="text-[10px] font-semibold">Início</span>
+                    </a>
+
+                    <a href="#" onclick="event.preventDefault(); mudarAbaPrincipal('inicio'); setTimeout(()=>document.getElementById('secao-avisos').scrollIntoView({behavior:'smooth'}),100);" class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-doresopolis-green transition-colors">
+                        <i class="fa-solid fa-bell text-lg mb-1"></i><span class="text-[10px] font-semibold">Avisos</span>
                     </a>
 
                     <a href="solicitacoes.html" class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-doresopolis-green transition-colors">
-                        <i class="fa-solid fa-list-check text-lg mb-1"></i><span class="text-[10px] font-medium">Solicitações</span>
+                        <i class="fa-solid fa-list-check text-lg mb-1"></i><span class="text-[10px] font-semibold">Solicitações</span>
                     </a>
 
                     <a href="#" onclick="event.preventDefault(); mudarAbaPrincipal('usuario');" id="nav-usuario" class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-doresopolis-green transition-colors">
-                        <i class="fa-solid fa-user text-lg mb-1"></i><span class="text-[10px] font-medium">Usuário</span>
+                        <i class="fa-solid fa-user text-lg mb-1"></i><span class="text-[10px] font-semibold">Usuário</span>
                     </a>
 
                 </div>
@@ -1244,18 +1268,15 @@
         function renderGridServicos(lista) {
             const grid = document.getElementById('grid-servicos');
             const ativos = lista.filter(s=>s.ativo!==false).sort((a,b)=>(a.ordem||99)-(b.ordem||99));
-            if (!ativos.length) { grid.innerHTML='<p class="col-span-2 text-center text-xs text-gray-400 py-4">Nenhum serviço disponível.</p>'; return; }
+            if (!ativos.length) { grid.innerHTML='<p class="col-span-3 text-center text-xs text-gray-400 py-4">Nenhum serviço disponível.</p>'; return; }
             grid.innerHTML = ativos.map(s => {
-                const bg = hexToRgba(s.cor||'#059669',0.08);
-                const border = hexToRgba(s.cor||'#059669',0.18);
+                const bg = hexToRgba(s.cor||'#059669', 0.12);
                 return `<button onclick="window.location.href='${s.link||'#'}'"
-                    class="flex flex-col p-4 rounded-2xl border active:scale-[0.97] transition-all text-left"
-                    style="background:${bg};border-color:${border}">
-                    <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center mb-3 shadow-sm">
-                        <i class="fa-solid ${s.icone||'fa-building-columns'} text-lg" style="color:${s.cor||'#059669'}"></i>
+                    class="flex flex-col items-center justify-center gap-2 py-4 px-2 bg-white rounded-2xl border border-gray-100 shadow-sm active:scale-[0.97] transition-all">
+                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center" style="background:${bg}">
+                        <i class="fa-solid ${s.icone||'fa-building-columns'} text-xl" style="color:${s.cor||'#059669'}"></i>
                     </div>
-                    <p class="font-bold text-gray-800 text-sm">${s.nome}</p>
-                    <p class="text-[10px] mt-0.5" style="color:${s.cor||'#059669'}">${s.descricao||''}</p>
+                    <p class="font-bold text-gray-700 text-[11px] text-center leading-tight px-1">${s.nome}</p>
                 </button>`;
             }).join('');
         }
