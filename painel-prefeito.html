@@ -261,7 +261,7 @@ tailwind.config = {
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getDatabase, ref, get, update, onValue, query, orderByChild, limitToLast } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 const firebaseConfig = {
@@ -294,8 +294,8 @@ window.fazerLogin = async function() {
   if (!s) return;
   document.getElementById('login-erro').classList.add('hidden');
   try {
-    // Login anônimo apenas para satisfazer auth != null nas regras do RTDB
-    await signInAnonymously(auth);
+    // Login com conta de serviço para satisfazer auth != null nas regras do RTDB
+    await signInWithEmailAndPassword(auth, 'painel-prefeito@doresopolis.app', 'PainelSvc2025!');
     const snap = await get(ref(db, 'config/auth'));
     let hashEsperado;
     if (snap.exists() && snap.val().hashPrefeito) {
@@ -311,6 +311,7 @@ window.fazerLogin = async function() {
       document.getElementById('app').classList.add('flex', 'flex-col');
       iniciar();
     } else {
+      await signOut(auth);
       document.getElementById('login-erro').classList.remove('hidden');
     }
   } catch(e) {
@@ -325,7 +326,7 @@ document.getElementById('login-senha').addEventListener('keydown', e => {
 
 window.sair = function() {
   sessionStorage.removeItem('prefeito_auth');
-  auth.signOut?.();
+  signOut(auth);
   document.getElementById('tela-login').classList.remove('hidden');
   document.getElementById('app').classList.add('hidden');
 };
@@ -526,7 +527,7 @@ function iniciar() {
 
 // Auto-login se sessão ativa
 if (sessionStorage.getItem('prefeito_auth') === '1') {
-  signInAnonymously(auth).then(() => {
+  signInWithEmailAndPassword(auth, 'painel-prefeito@doresopolis.app', 'PainelSvc2025!').then(() => {
     document.getElementById('tela-login').classList.add('hidden');
     document.getElementById('app').classList.remove('hidden');
     document.getElementById('app').classList.add('flex', 'flex-col');
