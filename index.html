@@ -1255,13 +1255,13 @@
         async function carregarGridServicos() {
             try {
                 const snap = await dbGet(dbRef(rtdb, 'config/secretarias'));
+                // Mescla: começa com os padrões, RTDB adiciona/sobrescreve por id
+                const mapa = {};
+                SECS_DEFAULT_INDEX.forEach(s => { mapa[s.nome.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'-')] = s; });
                 if (snap.exists()) {
-                    const lista = [];
-                    snap.forEach(child => lista.push({ id:child.key, ...child.val() }));
-                    renderGridServicos(lista);
-                } else {
-                    renderGridServicos(SECS_DEFAULT_INDEX);
+                    snap.forEach(child => { mapa[child.key] = { id: child.key, ...child.val() }; });
                 }
+                renderGridServicos(Object.values(mapa));
             } catch(e) {
                 renderGridServicos(SECS_DEFAULT_INDEX);
             }
