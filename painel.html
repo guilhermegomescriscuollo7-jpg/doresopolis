@@ -207,6 +207,61 @@
       <div id="lista-avi-educacao" class="flex flex-col gap-3"><div class="text-center py-6 text-gray-400 text-sm"><i class="fa-solid fa-spinner fa-spin mb-2 block"></i>Carregando...</div></div>
     </section>
 
+    <!-- ====== TRANSPORTE ====== -->
+    <section id="sec-ins-transporte" class="sec hidden flex-grow overflow-y-auto p-4 pb-6">
+      <div class="grid grid-cols-3 gap-2 mb-5">
+        <div class="bg-white p-3 rounded-xl border border-gray-100 shadow-sm text-center border-t-4 border-t-yellow-400">
+          <p id="tr-stat-pend" class="text-2xl font-black">0</p><p class="text-[9px] text-gray-400 font-bold uppercase mt-0.5">Pendentes</p>
+        </div>
+        <div class="bg-white p-3 rounded-xl border border-gray-100 shadow-sm text-center border-t-4 border-t-green-500">
+          <p id="tr-stat-aprov" class="text-2xl font-black">0</p><p class="text-[9px] text-gray-400 font-bold uppercase mt-0.5">Aprovadas</p>
+        </div>
+        <div class="bg-white p-3 rounded-xl border border-gray-100 shadow-sm text-center border-t-4 border-t-red-400">
+          <p id="tr-stat-neg" class="text-2xl font-black">0</p><p class="text-[9px] text-gray-400 font-bold uppercase mt-0.5">Negadas</p>
+        </div>
+      </div>
+      <div class="flex gap-2 overflow-x-auto pb-2 mb-4">
+        <button onclick="filtrar('tr-ins','TODOS')" id="tr-ins-fil-TODOS" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-purple-700 text-white">Todos</button>
+        <button onclick="filtrar('tr-ins','PENDENTE')" id="tr-ins-fil-PENDENTE" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">Pendentes</button>
+        <button onclick="filtrar('tr-ins','APROVADO')" id="tr-ins-fil-APROVADO" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">Aprovados</button>
+        <button onclick="filtrar('tr-ins','NEGADO')" id="tr-ins-fil-NEGADO" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">Negados</button>
+      </div>
+      <div id="lista-tr-ins" class="flex flex-col gap-3"><div class="text-center py-6 text-gray-400 text-sm"><i class="fa-solid fa-spinner fa-spin mb-2 block"></i>Carregando...</div></div>
+    </section>
+
+    <section id="sec-hor-transporte" class="sec hidden flex-grow overflow-y-auto p-4 pb-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-bold text-gray-800 text-sm">Linhas e Horários</h3>
+        <button onclick="abrirModalLinhaTransporte(null)" class="flex items-center gap-1.5 text-xs font-bold text-white bg-purple-700 px-3 py-2 rounded-xl">
+          <i class="fa-solid fa-plus"></i> Nova Linha
+        </button>
+      </div>
+      <div id="lista-tr-linhas" class="flex flex-col gap-3"><div class="text-center py-6 text-gray-400 text-sm"><i class="fa-solid fa-spinner fa-spin mb-2 block"></i>Carregando...</div></div>
+    </section>
+
+    <section id="sec-avi-transporte" class="sec hidden flex-grow overflow-y-auto p-4 pb-6">
+      <div class="bg-white rounded-xl border border-purple-100 shadow-sm overflow-hidden mb-5">
+        <div class="bg-purple-700 px-4 py-3 flex items-center gap-2 text-white">
+          <i class="fa-solid fa-bullhorn"></i>
+          <h3 id="tr-avi-form-titulo" class="font-bold text-sm">Publicar Aviso de Transporte</h3>
+        </div>
+        <form onsubmit="salvarAviso(event,'Transporte','tr')" class="p-4 space-y-3">
+          <input type="hidden" id="tr-aviso-id">
+          <div><label class="block text-xs font-bold text-gray-600 mb-1">Título</label>
+            <input type="text" id="tr-aviso-titulo" required placeholder="Ex: Suspensão de linha" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm"></div>
+          <div><label class="block text-xs font-bold text-gray-600 mb-1">Descrição</label>
+            <textarea id="tr-aviso-desc" required rows="3" placeholder="Detalhes do aviso..." class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm resize-none"></textarea></div>
+          <div class="flex gap-2">
+            <button type="button" id="tr-btn-cancel-avi" onclick="cancelarAviso('tr','Publicar Aviso de Transporte')" class="hidden flex-1 bg-gray-100 text-gray-600 font-bold py-2.5 rounded-lg text-sm">Cancelar</button>
+            <button type="submit" class="flex-1 bg-purple-700 text-white font-bold py-2.5 rounded-lg text-sm flex justify-center items-center gap-2">
+              <i class="fa-solid fa-paper-plane"></i> <span id="tr-btn-avi-txt">Publicar</span>
+            </button>
+          </div>
+        </form>
+      </div>
+      <div id="lista-avi-transporte" class="flex flex-col gap-3"><div class="text-center py-6 text-gray-400 text-sm"><i class="fa-solid fa-spinner fa-spin mb-2 block"></i>Carregando...</div></div>
+    </section>
+
     <!-- ====== SAÚDE ====== -->
     <section id="sec-agen-saude" class="sec hidden flex-grow overflow-y-auto p-4 pb-6">
       <div class="grid grid-cols-3 gap-2 mb-5">
@@ -514,6 +569,41 @@
   </div>
 </div>
 
+<!-- MODAL: Transporte Nova/Editar Linha -->
+<div id="modal-tr-linha" class="fixed inset-0 bg-black/50 z-[160] hidden flex items-end justify-center">
+  <div class="bg-white w-full max-w-md rounded-t-3xl p-5 space-y-3 max-h-[90vh] overflow-y-auto">
+    <div class="flex items-center justify-between mb-1">
+      <h3 class="font-black text-gray-800">Linha de Transporte</h3>
+      <button onclick="fecharModalLinhaTransporte()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <input type="hidden" id="tr-linha-id">
+    <div>
+      <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Nome da linha *</label>
+      <input id="tr-linha-nome" type="text" placeholder="Ex: Linha 01 — Centro / Bairros" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm">
+    </div>
+    <div>
+      <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Tipo</label>
+      <select id="tr-linha-tipo" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-bold text-gray-700">
+        <option value="urbano">Urbano</option>
+        <option value="rural">Rural</option>
+        <option value="intermunicipal">Intermunicipal</option>
+        <option value="universitario">Universitário</option>
+      </select>
+    </div>
+    <div>
+      <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Horários (separados por vírgula)</label>
+      <input id="tr-linha-horarios" type="text" placeholder="Ex: 06h00, 12h00, 18h00" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm">
+    </div>
+    <div>
+      <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Observação</label>
+      <input id="tr-linha-obs" type="text" placeholder="Ex: Não circula em feriados" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm">
+    </div>
+    <button onclick="salvarLinhaTransporte()" class="w-full bg-purple-700 text-white font-black py-3.5 rounded-2xl text-sm">
+      <i class="fa-solid fa-floppy-disk mr-2"></i>Salvar Linha
+    </button>
+  </div>
+</div>
+
 <!-- MODAL: TI Nova/Editar Secretaria -->
 <div id="modal-secretaria" class="fixed inset-0 bg-black/50 z-[160] hidden flex items-end justify-center">
   <div class="bg-white w-full max-w-md rounded-t-3xl p-5 space-y-3 max-h-[92vh] overflow-y-auto">
@@ -666,20 +756,22 @@ let todasSAgen = [], filtroSAgen = 'TODOS';
 let tiContasCache = [], tiContaEditando = null;
 
 const PAINEL_CFG = {
-  obras:    { titulo:'Sec. Obras',     icone:'fa-helmet-safety',       cor:'#d97706', corBg:'#fef3c7', tabs:[{id:'sol',lbl:'Solicitações',ico:'fa-inbox'},{id:'avi',lbl:'Avisos',ico:'fa-bullhorn'}] },
-  tributos: { titulo:'Sec. Tributos',  icone:'fa-file-invoice-dollar', cor:'#059669', corBg:'#ecfdf5', tabs:[{id:'sol',lbl:'Pedidos',ico:'fa-inbox'},{id:'via',lbl:'2ª Via',ico:'fa-file-arrow-down'},{id:'avi',lbl:'Avisos',ico:'fa-bullhorn'}] },
-  educacao: { titulo:'Sec. Educação',  icone:'fa-graduation-cap',      cor:'#2563eb', corBg:'#eff6ff', tabs:[{id:'sol',lbl:'Solicitações',ico:'fa-inbox'},{id:'mat',lbl:'Matrículas',ico:'fa-user-plus'},{id:'avi',lbl:'Avisos',ico:'fa-bullhorn'}] },
-  saude:    { titulo:'Sec. Saúde',     icone:'fa-heart-pulse',         cor:'#dc2626', corBg:'#fef2f2', tabs:[{id:'agen',lbl:'Agendamentos',ico:'fa-calendar-check'},{id:'hor',lbl:'Horários',ico:'fa-clock'},{id:'esp',lbl:'Especialidades',ico:'fa-user-doctor'},{id:'avi',lbl:'Avisos',ico:'fa-bullhorn'}] },
-  ti:       { titulo:'TI / Admin',     icone:'fa-shield-halved',       cor:'#475569', corBg:'#f1f5f9', tabs:[{id:'con',lbl:'Contas',ico:'fa-users-gear'},{id:'sec',lbl:'Secretarias',ico:'fa-building-columns'},{id:'men',lbl:'Menus',ico:'fa-bars'},{id:'cfg',lbl:'Config',ico:'fa-sliders'}] },
+  obras:      { titulo:'Sec. Obras',      icone:'fa-helmet-safety',       cor:'#d97706', corBg:'#fef3c7', tabs:[{id:'sol',lbl:'Solicitações',ico:'fa-inbox'},{id:'avi',lbl:'Avisos',ico:'fa-bullhorn'}] },
+  tributos:   { titulo:'Sec. Tributos',   icone:'fa-file-invoice-dollar', cor:'#059669', corBg:'#ecfdf5', tabs:[{id:'sol',lbl:'Pedidos',ico:'fa-inbox'},{id:'via',lbl:'2ª Via',ico:'fa-file-arrow-down'},{id:'avi',lbl:'Avisos',ico:'fa-bullhorn'}] },
+  educacao:   { titulo:'Sec. Educação',   icone:'fa-graduation-cap',      cor:'#2563eb', corBg:'#eff6ff', tabs:[{id:'sol',lbl:'Solicitações',ico:'fa-inbox'},{id:'mat',lbl:'Matrículas',ico:'fa-user-plus'},{id:'avi',lbl:'Avisos',ico:'fa-bullhorn'}] },
+  saude:      { titulo:'Sec. Saúde',      icone:'fa-heart-pulse',         cor:'#dc2626', corBg:'#fef2f2', tabs:[{id:'agen',lbl:'Agendamentos',ico:'fa-calendar-check'},{id:'hor',lbl:'Horários',ico:'fa-clock'},{id:'esp',lbl:'Especialidades',ico:'fa-user-doctor'},{id:'avi',lbl:'Avisos',ico:'fa-bullhorn'}] },
+  transporte: { titulo:'Sec. Transporte', icone:'fa-bus',                 cor:'#7c3aed', corBg:'#f5f3ff', tabs:[{id:'ins',lbl:'Inscrições',ico:'fa-id-card'},{id:'hor',lbl:'Horários',ico:'fa-clock'},{id:'avi',lbl:'Avisos',ico:'fa-bullhorn'}] },
+  ti:         { titulo:'TI / Admin',      icone:'fa-shield-halved',       cor:'#475569', corBg:'#f1f5f9', tabs:[{id:'con',lbl:'Contas',ico:'fa-users-gear'},{id:'sec',lbl:'Secretarias',ico:'fa-building-columns'},{id:'men',lbl:'Menus',ico:'fa-bars'},{id:'cfg',lbl:'Config',ico:'fa-sliders'}] },
 };
 
-const secSuffix = { obras:'obras', tributos:'tributos', educacao:'educacao', saude:'saude', ti:'ti' };
+const secSuffix = { obras:'obras', tributos:'tributos', educacao:'educacao', saude:'saude', transporte:'transporte', ti:'ti' };
 const tabToSec  = {
-  obras:    { sol:'sol', avi:'avi' },
-  tributos: { sol:'sol', via:'via', avi:'avi' },
-  educacao: { sol:'sol', mat:'mat', avi:'avi' },
-  saude:    { agen:'agen', hor:'hor', esp:'esp', avi:'avi' },
-  ti:       { con:'con', sec:'sec', men:'men', cfg:'cfg' },
+  obras:      { sol:'sol', avi:'avi' },
+  tributos:   { sol:'sol', via:'via', avi:'avi' },
+  educacao:   { sol:'sol', mat:'mat', avi:'avi' },
+  saude:      { agen:'agen', hor:'hor', esp:'esp', avi:'avi' },
+  transporte: { ins:'ins', hor:'hor', avi:'avi' },
+  ti:         { con:'con', sec:'sec', men:'men', cfg:'cfg' },
 };
 
 // ─── toast ───
@@ -865,6 +957,7 @@ window.filtrar = function(grupo, f) {
   if (grupo.startsWith('t-')) renderTributos();
   else if (grupo.startsWith('e-')) renderEducacao();
   else if (grupo==='s-agen') renderSAgen();
+  else if (grupo==='tr-ins') renderInscricoesTransporte(f);
 };
 
 // ════════════════════════════════════
@@ -1820,9 +1913,130 @@ function iniciarListeners(sec) {
   else if (sec==='tributos') iniciarTributos();
   else if (sec==='educacao') iniciarEducacao();
   else if (sec==='saude') iniciarSaude();
+  else if (sec==='transporte') iniciarTransporte();
   else if (sec==='ti') iniciarTI();
   else iniciarGenerico(sec);
 }
+
+// ════════════════════════════════════
+//  TRANSPORTE
+// ════════════════════════════════════
+let trInsCache = [], trLinhasCache = [];
+
+function iniciarTransporte() {
+  carregarInscricoesTransporte();
+  carregarLinhasTransporte();
+  onValue(query(ref(db,'avisos'),orderByChild('dataPublicacao')),(snap)=>{
+    const lista=[];
+    if(snap.exists()) snap.forEach(c=>{ if(c.val().secretaria==='Transporte') lista.push({id:c.key,...c.val()}); });
+    lista.reverse();
+    renderAvisos(lista,'lista-avi-transporte','tr','Publicar Aviso de Transporte');
+  });
+}
+
+async function carregarInscricoesTransporte() {
+  try {
+    const snap = await get(ref(db,'inscricoes_transporte'));
+    trInsCache = [];
+    if (snap.exists()) snap.forEach(c => trInsCache.push({id:c.key,...c.val()}));
+    renderInscricoesTransporte('TODOS');
+  } catch(e) { toast('Erro ao carregar inscrições.','erro'); }
+}
+
+function renderInscricoesTransporte(filtro) {
+  const lista = document.getElementById('lista-tr-ins');
+  const itens = filtro==='TODOS' ? trInsCache : trInsCache.filter(i=>(i.status||'PENDENTE').toUpperCase()===filtro);
+  document.getElementById('tr-stat-pend').textContent  = trInsCache.filter(i=>!i.status||i.status==='PENDENTE').length;
+  document.getElementById('tr-stat-aprov').textContent = trInsCache.filter(i=>i.status==='APROVADO').length;
+  document.getElementById('tr-stat-neg').textContent   = trInsCache.filter(i=>i.status==='NEGADO').length;
+  if (!itens.length) { lista.innerHTML='<div class="text-center py-10 text-gray-400 text-sm">Nenhuma inscrição encontrada.</div>'; return; }
+  lista.innerHTML = itens.map(i => {
+    const st = (i.status||'PENDENTE').toUpperCase();
+    const stCls = st==='APROVADO'?'bg-green-100 text-green-700':st==='NEGADO'?'bg-red-100 text-red-600':'bg-yellow-100 text-yellow-700';
+    return `<div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+      <div class="flex items-start justify-between mb-1.5">
+        <p class="font-bold text-gray-800 text-sm">${i.nome||'—'}</p>
+        <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${stCls}">${st}</span>
+      </div>
+      <p class="text-xs text-gray-500 mb-3">${i.linha||''} · ${i.periodo||''}</p>
+      ${st==='PENDENTE'?`<div class="flex gap-2">
+        <button onclick="responderInscricaoTransporte('${i.id}','APROVADO')" class="flex-1 bg-green-600 text-white text-xs font-bold py-2 rounded-lg">Aprovar</button>
+        <button onclick="responderInscricaoTransporte('${i.id}','NEGADO')" class="flex-1 bg-red-500 text-white text-xs font-bold py-2 rounded-lg">Negar</button>
+      </div>`:''}
+    </div>`;
+  }).join('');
+}
+
+window.responderInscricaoTransporte = async function(id, status) {
+  if (!confirm(`${status==='APROVADO'?'Aprovar':'Negar'} esta inscrição?`)) return;
+  try {
+    await update(ref(db,'inscricoes_transporte/'+id), {status});
+    toast(status==='APROVADO'?'Inscrição aprovada!':'Inscrição negada.');
+    carregarInscricoesTransporte();
+  } catch(e){ toast('Erro ao responder.','erro'); }
+};
+
+async function carregarLinhasTransporte() {
+  try {
+    const snap = await get(ref(db,'horarios_transporte'));
+    trLinhasCache = [];
+    if (snap.exists()) snap.forEach(c=>trLinhasCache.push({id:c.key,...c.val()}));
+    renderLinhasTransporte();
+  } catch(e) { toast('Erro ao carregar linhas.','erro'); }
+}
+
+function renderLinhasTransporte() {
+  const lista = document.getElementById('lista-tr-linhas');
+  if (!trLinhasCache.length){ lista.innerHTML='<div class="text-center py-10 text-gray-400 text-sm">Nenhuma linha cadastrada.</div>'; return; }
+  lista.innerHTML = trLinhasCache.map(l=>`
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+      <div class="flex items-start justify-between mb-1">
+        <p class="font-bold text-gray-800 text-sm">${l.nome||'—'}</p>
+        <span class="text-[10px] font-bold bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full">${l.tipo||'urbano'}</span>
+      </div>
+      <p class="text-xs text-gray-400 mb-3">${(l.horarios||[]).join(' · ')||'Sem horários'}</p>
+      <div class="flex gap-2">
+        <button onclick="abrirModalLinhaTransporte('${l.id}')" class="flex-1 bg-gray-100 text-gray-600 text-xs font-bold py-2 rounded-lg">Editar</button>
+        <button onclick="excluirLinhaTransporte('${l.id}')" class="bg-red-50 text-red-500 text-xs font-bold py-2 px-3 rounded-lg">Excluir</button>
+      </div>
+    </div>`).join('');
+}
+
+window.excluirLinhaTransporte = async function(id) {
+  if (!confirm('Excluir esta linha?')) return;
+  try { await remove(ref(db,'horarios_transporte/'+id)); toast('Linha excluída!'); carregarLinhasTransporte(); }
+  catch(e){ toast('Erro ao excluir.','erro'); }
+};
+
+window.abrirModalLinhaTransporte = function(id) {
+  const l = id ? trLinhasCache.find(x=>x.id===id) : null;
+  document.getElementById('tr-linha-id').value = id||'';
+  document.getElementById('tr-linha-nome').value = l?.nome||'';
+  document.getElementById('tr-linha-tipo').value = l?.tipo||'urbano';
+  document.getElementById('tr-linha-horarios').value = (l?.horarios||[]).join(', ');
+  document.getElementById('tr-linha-obs').value = l?.obs||'';
+  document.getElementById('modal-tr-linha').classList.remove('hidden');
+};
+window.fecharModalLinhaTransporte = function() {
+  document.getElementById('modal-tr-linha').classList.add('hidden');
+};
+window.salvarLinhaTransporte = async function() {
+  const id = document.getElementById('tr-linha-id').value;
+  const dados = {
+    nome: document.getElementById('tr-linha-nome').value.trim(),
+    tipo: document.getElementById('tr-linha-tipo').value,
+    horarios: document.getElementById('tr-linha-horarios').value.split(',').map(h=>h.trim()).filter(Boolean),
+    obs: document.getElementById('tr-linha-obs').value.trim(),
+  };
+  if (!dados.nome){ toast('Informe o nome da linha.','erro'); return; }
+  try {
+    if (id) await update(ref(db,'horarios_transporte/'+id), dados);
+    else await set(push(ref(db,'horarios_transporte')), dados);
+    toast('Linha salva!');
+    fecharModalLinhaTransporte();
+    carregarLinhasTransporte();
+  } catch(e){ toast('Erro ao salvar.','erro'); }
+};
 
 let panelAtivo=false;
 const authTimeout=setTimeout(()=>{ if(!panelAtivo) window.location.href='login-secretaria.html'; },8000);
