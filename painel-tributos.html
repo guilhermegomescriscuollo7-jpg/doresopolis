@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -65,8 +65,6 @@ tailwind.config = {
 
   <!-- ===== ABA: SOLICITAÇÕES GERAIS ===== -->
   <main id="aba-solicitacoes" class="flex-grow overflow-y-auto p-4 pb-6 bg-gray-50 block">
-
-    <!-- Stats -->
     <div class="grid grid-cols-3 gap-2 mb-5">
       <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-3 text-center border-t-4 border-t-gray-400">
         <p id="stat-pendente" class="text-2xl font-black text-gray-800">0</p>
@@ -81,15 +79,12 @@ tailwind.config = {
         <p class="text-[9px] text-gray-400 font-bold uppercase mt-0.5">Concluídos</p>
       </div>
     </div>
-
-    <!-- Filtros -->
     <div class="flex gap-2 overflow-x-auto pb-2 mb-4">
       <button onclick="filtrar('sol','TODOS')" id="sol-fil-TODOS" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-gray-800 text-white">Todos</button>
       <button onclick="filtrar('sol','PENDENTE')" id="sol-fil-PENDENTE" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">Pendentes</button>
       <button onclick="filtrar('sol','EM ANÁLISE')" id="sol-fil-EM ANÁLISE" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">Em Análise</button>
       <button onclick="filtrar('sol','CONCLUÍDO')" id="sol-fil-CONCLUÍDO" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">Concluídos</button>
     </div>
-
     <div id="lista-solicitacoes" class="flex flex-col gap-3">
       <div class="text-center py-10 text-gray-400 text-sm"><i class="fa-solid fa-spinner fa-spin text-2xl mb-2 block"></i> Carregando...</div>
     </div>
@@ -97,15 +92,12 @@ tailwind.config = {
 
   <!-- ===== ABA: 2ª VIA ===== -->
   <main id="aba-segunda-via" class="flex-grow overflow-y-auto p-4 pb-6 bg-gray-50 hidden">
-
-    <!-- Filtros -->
     <div class="flex gap-2 overflow-x-auto pb-2 mb-4">
       <button onclick="filtrar('via','TODOS')" id="via-fil-TODOS" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-green-700 text-white">Todas</button>
       <button onclick="filtrar('via','PENDENTE')" id="via-fil-PENDENTE" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">Pendentes</button>
       <button onclick="filtrar('via','EM ANÁLISE')" id="via-fil-EM ANÁLISE" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">Em Análise</button>
       <button onclick="filtrar('via','CONCLUÍDO')" id="via-fil-CONCLUÍDO" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">Concluídas</button>
     </div>
-
     <div id="lista-segunda-via" class="flex flex-col gap-3">
       <div class="text-center py-10 text-gray-400 text-sm"><i class="fa-solid fa-spinner fa-spin text-2xl mb-2 block"></i> Carregando...</div>
     </div>
@@ -153,12 +145,10 @@ tailwind.config = {
       <button onclick="fecharModal()" class="w-8 h-8 bg-gray-100 text-gray-600 rounded-full flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
     </div>
     <div class="p-5 space-y-4 pb-10">
-
       <div class="flex justify-between items-center bg-green-50 p-3 rounded-xl border border-green-100">
         <span class="text-xs font-bold text-green-700 uppercase">Protocolo</span>
         <span id="d-protocolo" class="font-black text-green-700 text-sm"></span>
       </div>
-
       <div class="grid grid-cols-2 gap-3">
         <div class="bg-gray-50 p-3 rounded-xl border border-gray-100">
           <p class="text-[9px] text-gray-400 font-bold uppercase mb-1">Cidadão</p>
@@ -169,12 +159,10 @@ tailwind.config = {
           <p id="d-data" class="text-xs font-bold text-gray-800"></p>
         </div>
       </div>
-
       <div class="bg-gray-50 p-3 rounded-xl border border-gray-100">
         <p class="text-[9px] text-gray-400 font-bold uppercase mb-1">Tipo de Solicitação</p>
         <p id="d-tipo" class="text-sm font-bold text-gray-800"></p>
       </div>
-
       <div class="grid grid-cols-2 gap-3">
         <div class="bg-gray-50 p-3 rounded-xl border border-gray-100">
           <p class="text-[9px] text-gray-400 font-bold uppercase mb-1">CPF / CNPJ</p>
@@ -185,18 +173,14 @@ tailwind.config = {
           <p id="d-imovel" class="text-xs font-bold text-gray-800"></p>
         </div>
       </div>
-
       <div id="d-ano-container" class="hidden bg-gray-50 p-3 rounded-xl border border-gray-100">
         <p class="text-[9px] text-gray-400 font-bold uppercase mb-1">Ano de Referência</p>
         <p id="d-ano" class="text-sm font-bold text-gray-800"></p>
       </div>
-
       <div class="bg-amber-50 p-3 rounded-xl border border-amber-100">
         <p class="text-[9px] text-amber-600 font-bold uppercase mb-1">Observações</p>
         <p id="d-obs" class="text-xs text-amber-800 italic"></p>
       </div>
-
-      <!-- Atualizar status -->
       <div class="bg-white border border-gray-200 rounded-xl p-4 space-y-3">
         <p class="text-xs font-bold text-gray-700 uppercase tracking-wider"><i class="fa-solid fa-pen-to-square mr-1 text-green-600"></i> Atualizar Status</p>
         <input type="hidden" id="d-id">
@@ -210,8 +194,6 @@ tailwind.config = {
           <i class="fa-solid fa-floppy-disk"></i> Salvar Status
         </button>
       </div>
-
-      <!-- Enviar documento -->
       <div class="bg-white border border-gray-200 rounded-xl p-4 space-y-3">
         <p class="text-xs font-bold text-gray-700 uppercase tracking-wider"><i class="fa-solid fa-paperclip mr-1 text-green-600"></i> Enviar Documento ao Cidadão</p>
         <p class="text-[10px] text-gray-400 leading-relaxed">Cole o link do documento (boleto, certidão, alvará…) para que o cidadão possa baixar diretamente pelo app.</p>
@@ -221,25 +203,27 @@ tailwind.config = {
           <i class="fa-solid fa-share-from-square"></i> Enviar Documento
         </button>
       </div>
-
     </div>
   </div>
 </div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getDatabase, ref, get, set, update, remove, push, onValue, query, orderByChild } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAskgM5cxiR4DI2PXrccBxOvPZzMPDKdCo",
   authDomain: "gen-lang-client-0963611393.firebaseapp.com",
+  databaseURL: "https://gen-lang-client-0963611393-default-rtdb.firebaseio.com",
   projectId: "gen-lang-client-0963611393",
   storageBucket: "gen-lang-client-0963611393.firebasestorage.app",
   messagingSenderId: "158833761867",
   appId: "1:158833761867:web:f9db6cb6dc6b5785cfb7ce"
 };
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app, 'ai-studio-effa6aaf-05b1-45f1-96b5-43601bcc0a4');
+const auth = getAuth(app);
+const db = getDatabase(app);
 
 window.cacheTrib = {};
 let todasSolicitacoes = [];
@@ -247,7 +231,6 @@ let todasSegundaVia = [];
 let filtroSol = 'TODOS';
 let filtroVia = 'TODOS';
 
-// TOAST
 window.mostrarAviso = function(msg, tipo = 'sucesso') {
   const t = document.getElementById('toast-aviso');
   const i = document.getElementById('toast-icone');
@@ -261,7 +244,6 @@ window.mostrarAviso = function(msg, tipo = 'sucesso') {
   setTimeout(() => { t.classList.add('opacity-0','pointer-events-none','translate-y-[-20px]'); t.classList.remove('opacity-100','translate-y-0'); }, 3500);
 };
 
-// ABAS
 window.trocarAba = function(aba) {
   ['solicitacoes','segunda-via','avisos'].forEach(n => {
     document.getElementById(`aba-${n}`).classList.add('hidden');
@@ -274,37 +256,75 @@ window.trocarAba = function(aba) {
 };
 
 window.fazerLogout = function() {
-  if (confirm('Deseja sair do Painel de Tributos?')) window.location.href = 'index.html';
+  if (confirm('Deseja sair do Painel de Tributos?')) {
+    signOut(auth).then(() => window.location.href = 'login-secretaria.html');
+  }
 };
 
-// LISTENER
-const q = query(collection(db, "solicitacoes_tributos"), orderBy("dataRegistro", "desc"));
-onSnapshot(q, (snap) => {
-  snap.docs.forEach(d => { window.cacheTrib[d.id] = d.data(); });
-  const todos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+function iniciarListeners() {
+  onValue(query(ref(db, 'solicitacoes_tributos'), orderByChild('dataRegistro')), (snap) => {
+    window.cacheTrib = {};
+    const todos = [];
+    if (snap.exists()) {
+      snap.forEach(child => {
+        window.cacheTrib[child.key] = child.val();
+        todos.push({ id: child.key, ...child.val() });
+      });
+      todos.reverse();
+    }
 
-  todasSolicitacoes = todos.filter(d => d.tipoChave !== '2via');
-  todasSegundaVia   = todos.filter(d => d.tipoChave === '2via');
+    todasSolicitacoes = todos.filter(d => d.tipoChave !== '2via');
+    todasSegundaVia   = todos.filter(d => d.tipoChave === '2via');
 
-  let pendente = 0, analise = 0, concluido = 0;
-  todasSolicitacoes.forEach(s => {
-    if (s.status === 'PENDENTE') pendente++;
-    else if (s.status === 'EM ANÁLISE') analise++;
-    else if (s.status === 'CONCLUÍDO') concluido++;
+    let pendente = 0, analise = 0, concluido = 0;
+    todasSolicitacoes.forEach(s => {
+      if (s.status === 'PENDENTE') pendente++;
+      else if (s.status === 'EM ANÁLISE') analise++;
+      else if (s.status === 'CONCLUÍDO') concluido++;
+    });
+    document.getElementById('stat-pendente').innerText = pendente;
+    document.getElementById('stat-analise').innerText = analise;
+    document.getElementById('stat-concluido').innerText = concluido;
+
+    renderLista('sol');
+    renderLista('via');
   });
-  document.getElementById('stat-pendente').innerText = pendente;
-  document.getElementById('stat-analise').innerText = analise;
-  document.getElementById('stat-concluido').innerText = concluido;
 
-  renderLista('sol');
-  renderLista('via');
-});
+  onValue(query(ref(db, 'avisos'), orderByChild('dataPublicacao')), (snap) => {
+    const container = document.getElementById('lista-avisos');
+    const lista = [];
+    if (snap.exists()) {
+      snap.forEach(child => {
+        if (child.val().secretaria === 'Tributos') lista.push({ id: child.key, ...child.val() });
+      });
+      lista.reverse();
+    }
+    if (lista.length === 0) {
+      container.innerHTML = `<p class="text-center text-xs text-gray-400 py-4">Nenhum aviso publicado.</p>`;
+      return;
+    }
+    container.innerHTML = lista.map(aviso => {
+      const id = aviso.id;
+      const dataFmt = new Date(aviso.dataPublicacao).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit'});
+      return `
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-3">
+        <div class="flex justify-between items-start mb-1">
+          <h4 class="font-bold text-gray-800 text-sm leading-tight pr-2">${aviso.titulo}</h4>
+          <span class="text-[9px] text-gray-400 whitespace-nowrap">${dataFmt}</span>
+        </div>
+        <p class="text-xs text-gray-500 mt-1 line-clamp-2">${aviso.descricao}</p>
+        <div class="flex justify-end gap-2 mt-3 pt-2 border-t border-gray-100">
+          <button onclick="prepararEdicaoAviso('${id}','${aviso.titulo.replace(/'/g,"\\'")}','${aviso.descricao.replace(/'/g,"\\'")}')" class="text-blue-500 bg-blue-50 hover:bg-blue-100 px-3 py-1 rounded-md text-[10px] font-bold"><i class="fa-solid fa-pen mr-1"></i> Editar</button>
+          <button onclick="excluirAviso('${id}')" class="text-red-500 bg-red-50 hover:bg-red-100 px-3 py-1 rounded-md text-[10px] font-bold"><i class="fa-solid fa-trash mr-1"></i> Excluir</button>
+        </div>
+      </div>`;
+    }).join('');
+  });
+}
 
-// FILTROS
 window.filtrar = function(grupo, f) {
   if (grupo === 'sol') filtroSol = f;
   else filtroVia = f;
-
   const prefix = grupo === 'sol' ? 'sol-fil-' : 'via-fil-';
   const ativoCls = grupo === 'sol' ? ['bg-gray-800','text-white'] : ['bg-green-700','text-white'];
   document.querySelectorAll(`[id^="${prefix}"]`).forEach(b => {
@@ -316,33 +336,28 @@ window.filtrar = function(grupo, f) {
   renderLista(grupo);
 };
 
-// RENDER
 const statusConfig = {
-  'PENDENTE':   { color: 'bg-gray-100 text-gray-600 border-gray-200',   icon: 'fa-clock',            label: 'Pendente' },
-  'EM ANÁLISE': { color: 'bg-amber-100 text-amber-700 border-amber-200', icon: 'fa-magnifying-glass', label: 'Em Análise' },
-  'CONCLUÍDO':  { color: 'bg-green-100 text-green-700 border-green-200', icon: 'fa-check',            label: 'Concluído' },
-  'CANCELADO':  { color: 'bg-red-100 text-red-700 border-red-200',       icon: 'fa-ban',              label: 'Cancelado' },
+  'PENDENTE':   { color: 'bg-gray-100 text-gray-600 border-gray-200',   label: 'Pendente' },
+  'EM ANÁLISE': { color: 'bg-amber-100 text-amber-700 border-amber-200', label: 'Em Análise' },
+  'CONCLUÍDO':  { color: 'bg-green-100 text-green-700 border-green-200', label: 'Concluído' },
+  'CANCELADO':  { color: 'bg-red-100 text-red-700 border-red-200',       label: 'Cancelado' },
 };
 
 function renderLista(grupo) {
   const isSol = grupo === 'sol';
-  const lista = (isSol
+  const lista = isSol
     ? (filtroSol === 'TODOS' ? todasSolicitacoes : todasSolicitacoes.filter(s => s.status === filtroSol))
-    : (filtroVia === 'TODOS' ? todasSegundaVia   : todasSegundaVia.filter(s => s.status === filtroVia))
-  );
+    : (filtroVia === 'TODOS' ? todasSegundaVia   : todasSegundaVia.filter(s => s.status === filtroVia));
   const containerId = isSol ? 'lista-solicitacoes' : 'lista-segunda-via';
   const container = document.getElementById(containerId);
-
   if (lista.length === 0) {
     container.innerHTML = `<div class="text-center py-10 bg-white rounded-xl border border-gray-100 text-gray-400 text-sm">Nenhum registro nesta categoria.</div>`;
     return;
   }
-
   container.innerHTML = lista.map(s => {
     const dataFmt = new Date(s.dataRegistro).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit'});
     const sc = statusConfig[s.status] || statusConfig['PENDENTE'];
     const temArquivo = s.arquivoUrl && s.arquivoUrl.trim() !== '';
-
     return `
     <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-3 slide-up">
       <div class="flex gap-3 items-start">
@@ -370,7 +385,6 @@ function renderLista(grupo) {
   }).join('');
 }
 
-// MODAL
 window.abrirModal = function(id) {
   const data = window.cacheTrib[id];
   if (!data) return;
@@ -385,7 +399,6 @@ window.abrirModal = function(id) {
   document.getElementById('d-status-select').value = data.status || 'PENDENTE';
   document.getElementById('d-arquivo-url').value = data.arquivoUrl || '';
   document.getElementById('d-arquivo-obs').value = data.arquivoObs || '';
-
   const anoContainer = document.getElementById('d-ano-container');
   if (data.anoReferencia) {
     anoContainer.classList.remove('hidden');
@@ -393,7 +406,6 @@ window.abrirModal = function(id) {
   } else {
     anoContainer.classList.add('hidden');
   }
-
   const modal = document.getElementById('modal-det');
   modal.classList.remove('hidden'); modal.classList.add('flex');
   requestAnimationFrame(() => {
@@ -416,7 +428,7 @@ window.atualizarStatus = async function() {
   const novoStatus = document.getElementById('d-status-select').value;
   if (!id) return;
   try {
-    await updateDoc(doc(db, "solicitacoes_tributos", id), { status: novoStatus });
+    await update(ref(db, 'solicitacoes_tributos/' + id), { status: novoStatus });
     mostrarAviso('Status atualizado!');
     fecharModal();
   } catch(e) { mostrarAviso('Erro ao atualizar.', 'erro'); }
@@ -429,43 +441,11 @@ window.enviarDocumento = async function() {
   if (!id) return;
   if (!url) { mostrarAviso('Informe o link do documento.', 'erro'); return; }
   try {
-    await updateDoc(doc(db, "solicitacoes_tributos", id), {
-      arquivoUrl: url,
-      arquivoObs: obs,
-      status: 'CONCLUÍDO'
-    });
+    await update(ref(db, 'solicitacoes_tributos/' + id), { arquivoUrl: url, arquivoObs: obs, status: 'CONCLUÍDO' });
     mostrarAviso('Documento enviado ao cidadão!');
     fecharModal();
   } catch(e) { mostrarAviso('Erro ao enviar.', 'erro'); }
 };
-
-// AVISOS
-const qAvisos = query(collection(db, "avisos"), orderBy("dataPublicacao", "desc"));
-onSnapshot(qAvisos, (snap) => {
-  const container = document.getElementById('lista-avisos');
-  const lista = snap.docs.filter(d => d.data().secretaria === 'Tributos');
-  if (lista.length === 0) {
-    container.innerHTML = `<p class="text-center text-xs text-gray-400 py-4">Nenhum aviso publicado.</p>`;
-    return;
-  }
-  container.innerHTML = lista.map(docSnap => {
-    const aviso = docSnap.data();
-    const id = docSnap.id;
-    const dataFmt = new Date(aviso.dataPublicacao).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit'});
-    return `
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-3">
-      <div class="flex justify-between items-start mb-1">
-        <h4 class="font-bold text-gray-800 text-sm leading-tight pr-2">${aviso.titulo}</h4>
-        <span class="text-[9px] text-gray-400 whitespace-nowrap">${dataFmt}</span>
-      </div>
-      <p class="text-xs text-gray-500 mt-1 line-clamp-2">${aviso.descricao}</p>
-      <div class="flex justify-end gap-2 mt-3 pt-2 border-t border-gray-100">
-        <button onclick="prepararEdicaoAviso('${id}','${aviso.titulo.replace(/'/g,"\\'")}','${aviso.descricao.replace(/'/g,"\\'")}')" class="text-blue-500 bg-blue-50 hover:bg-blue-100 px-3 py-1 rounded-md text-[10px] font-bold"><i class="fa-solid fa-pen mr-1"></i> Editar</button>
-        <button onclick="excluirAviso('${id}')" class="text-red-500 bg-red-50 hover:bg-red-100 px-3 py-1 rounded-md text-[10px] font-bold"><i class="fa-solid fa-trash mr-1"></i> Excluir</button>
-      </div>
-    </div>`;
-  }).join('');
-});
 
 window.salvarAviso = async function(event) {
   event.preventDefault();
@@ -477,11 +457,11 @@ window.salvarAviso = async function(event) {
   const descricao = document.getElementById('aviso-descricao').value;
   try {
     if (id) {
-      await updateDoc(doc(db, "avisos", id), { titulo, descricao });
+      await update(ref(db, 'avisos/' + id), { titulo, descricao });
       mostrarAviso('Aviso atualizado!');
       cancelarEdicaoAviso();
     } else {
-      await addDoc(collection(db, "avisos"), { secretaria: 'Tributos', titulo, descricao, dataPublicacao: new Date().toISOString() });
+      await set(push(ref(db, 'avisos')), { secretaria: 'Tributos', titulo, descricao, dataPublicacao: new Date().toISOString() });
       mostrarAviso('Aviso publicado no app!');
       document.getElementById('aviso-titulo').value = '';
       document.getElementById('aviso-descricao').value = '';
@@ -514,9 +494,29 @@ window.cancelarEdicaoAviso = function() {
 
 window.excluirAviso = async function(id) {
   if (!confirm('Excluir este aviso do app?')) return;
-  try { await deleteDoc(doc(db, "avisos", id)); mostrarAviso('Aviso excluído!'); }
+  try { await remove(ref(db, 'avisos/' + id)); mostrarAviso('Aviso excluído!'); }
   catch(e) { mostrarAviso('Erro ao excluir.', 'erro'); }
 };
+
+let panelAtivo = false;
+const authTimeout = setTimeout(() => { if (!panelAtivo) window.location.href = 'login-secretaria.html'; }, 8000);
+
+onAuthStateChanged(auth, async (user) => {
+  clearTimeout(authTimeout);
+  if (!user) { if (!panelAtivo) window.location.href = 'login-secretaria.html'; return; }
+  try {
+    const snap = await get(ref(db, 'contas_secretaria/' + user.uid));
+    if (!snap.exists() || (snap.val().secretaria !== 'tributos' && snap.val().secretaria !== 'ti') || snap.val().ativo === false) {
+      if (!panelAtivo) window.location.href = 'login-secretaria.html';
+      return;
+    }
+    panelAtivo = true;
+    iniciarListeners();
+  } catch(e) {
+    console.error('Auth check error:', e);
+    if (!panelAtivo) window.location.href = 'login-secretaria.html';
+  }
+});
 </script>
 </body>
 </html>

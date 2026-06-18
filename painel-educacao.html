@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -12,13 +12,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <script>
 tailwind.config = {
-  theme: {
-    extend: {
-      colors: {
-        doresopolis: { green: '#0b5c3b' }
-      }
-    }
-  }
+  theme: { extend: { colors: { doresopolis: { green: '#0b5c3b' } } } }
 }
 </script>
 <style>
@@ -71,8 +65,6 @@ tailwind.config = {
 
   <!-- ===== ABA: SOLICITAÇÕES ===== -->
   <main id="aba-solicitacoes" class="flex-grow overflow-y-auto p-4 pb-6 bg-gray-50 block">
-
-    <!-- Estatísticas -->
     <div class="grid grid-cols-3 gap-2 mb-5">
       <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-3 text-center border-t-4 border-t-gray-400">
         <p id="stat-pendente" class="text-2xl font-black text-gray-800">0</p>
@@ -87,26 +79,19 @@ tailwind.config = {
         <p class="text-[9px] text-gray-400 font-bold uppercase mt-0.5">Concluídos</p>
       </div>
     </div>
-
-    <!-- Filtros -->
     <div class="flex gap-2 overflow-x-auto pb-2 mb-4">
       <button onclick="filtrarSolicitacoes('TODOS')" id="fil-TODOS" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-gray-800 text-white">Todos</button>
       <button onclick="filtrarSolicitacoes('PENDENTE')" id="fil-PENDENTE" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">Pendentes</button>
       <button onclick="filtrarSolicitacoes('EM ANÁLISE')" id="fil-EM ANÁLISE" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">Em Análise</button>
       <button onclick="filtrarSolicitacoes('CONCLUÍDO')" id="fil-CONCLUÍDO" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">Concluídos</button>
     </div>
-
     <div id="lista-solicitacoes" class="flex flex-col gap-3">
-      <div class="text-center py-10 text-gray-400 text-sm">
-        <i class="fa-solid fa-spinner fa-spin text-2xl mb-2 block"></i> Carregando...
-      </div>
+      <div class="text-center py-10 text-gray-400 text-sm"><i class="fa-solid fa-spinner fa-spin text-2xl mb-2 block"></i> Carregando...</div>
     </div>
   </main>
 
   <!-- ===== ABA: MATRÍCULAS ===== -->
   <main id="aba-matriculas" class="flex-grow overflow-y-auto p-4 pb-6 bg-gray-50 hidden">
-
-    <!-- Filtros matrícula -->
     <div class="flex gap-2 overflow-x-auto pb-2 mb-4">
       <button onclick="filtrarMatriculas('TODOS')" id="matfil-TODOS" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-blue-700 text-white">Todas</button>
       <button onclick="filtrarMatriculas('PENDENTE')" id="matfil-PENDENTE" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">Pendentes</button>
@@ -114,11 +99,8 @@ tailwind.config = {
       <button onclick="filtrarMatriculas('CONCLUÍDO')" id="matfil-CONCLUÍDO" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">Deferidas</button>
       <button onclick="filtrarMatriculas('CANCELADO')" id="matfil-CANCELADO" class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">Indeferidas</button>
     </div>
-
     <div id="lista-matriculas" class="flex flex-col gap-3">
-      <div class="text-center py-10 text-gray-400 text-sm">
-        <i class="fa-solid fa-spinner fa-spin text-2xl mb-2 block"></i> Carregando...
-      </div>
+      <div class="text-center py-10 text-gray-400 text-sm"><i class="fa-solid fa-spinner fa-spin text-2xl mb-2 block"></i> Carregando...</div>
     </div>
   </main>
 
@@ -187,12 +169,10 @@ tailwind.config = {
         <p id="d-aluno" class="text-sm font-bold text-gray-800"></p>
         <p id="d-serie" class="text-xs text-gray-500 mt-0.5"></p>
       </div>
-      <div id="d-obs-container" class="bg-amber-50 p-3 rounded-xl border border-amber-100">
+      <div class="bg-amber-50 p-3 rounded-xl border border-amber-100">
         <p class="text-[9px] text-amber-600 font-bold uppercase mb-1">Observações do Cidadão</p>
         <p id="d-obs" class="text-xs text-amber-800 italic"></p>
       </div>
-
-      <!-- ATUALIZAR STATUS -->
       <div class="bg-white border border-gray-200 rounded-xl p-4 space-y-3">
         <p class="text-xs font-bold text-gray-700 uppercase tracking-wider"><i class="fa-solid fa-pen-to-square mr-1 text-blue-600"></i> Atualizar Status</p>
         <input type="hidden" id="d-id">
@@ -206,8 +186,6 @@ tailwind.config = {
           <i class="fa-solid fa-floppy-disk"></i> Salvar Status
         </button>
       </div>
-
-      <!-- ENVIAR ARQUIVO -->
       <div class="bg-white border border-gray-200 rounded-xl p-4 space-y-3">
         <p class="text-xs font-bold text-gray-700 uppercase tracking-wider"><i class="fa-solid fa-paperclip mr-1 text-green-600"></i> Enviar Documento ao Cidadão</p>
         <p class="text-[10px] text-gray-400 leading-relaxed">Cole o link público do documento (Google Drive, Dropbox, etc.) e uma mensagem para o cidadão.</p>
@@ -217,25 +195,27 @@ tailwind.config = {
           <i class="fa-solid fa-share-from-square"></i> Enviar Documento
         </button>
       </div>
-
     </div>
   </div>
 </div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, query, orderBy, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getDatabase, ref, get, set, update, remove, push, onValue, query, orderByChild } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAskgM5cxiR4DI2PXrccBxOvPZzMPDKdCo",
   authDomain: "gen-lang-client-0963611393.firebaseapp.com",
+  databaseURL: "https://gen-lang-client-0963611393-default-rtdb.firebaseio.com",
   projectId: "gen-lang-client-0963611393",
   storageBucket: "gen-lang-client-0963611393.firebasestorage.app",
   messagingSenderId: "158833761867",
   appId: "1:158833761867:web:f9db6cb6dc6b5785cfb7ce"
 };
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app, 'ai-studio-effa6aaf-05b1-45f1-96b5-43601bcc0a4');
+const auth = getAuth(app);
+const db = getDatabase(app);
 
 window.cacheEdu = {};
 let todasSolicitacoes = [];
@@ -243,7 +223,6 @@ let todasMatriculas = [];
 let filtroSol = 'TODOS';
 let filtroMat = 'TODOS';
 
-// ===== TOAST =====
 window.mostrarAviso = function(msg, tipo = 'sucesso') {
   const t = document.getElementById('toast-aviso');
   const i = document.getElementById('toast-icone');
@@ -257,7 +236,6 @@ window.mostrarAviso = function(msg, tipo = 'sucesso') {
   setTimeout(() => { t.classList.add('opacity-0','pointer-events-none','translate-y-[-20px]'); t.classList.remove('opacity-100','translate-y-0'); }, 3500);
 };
 
-// ===== ABAS =====
 window.trocarAba = function(aba) {
   ['solicitacoes','matriculas','avisos'].forEach(n => {
     document.getElementById(`aba-${n}`).classList.add('hidden');
@@ -270,34 +248,71 @@ window.trocarAba = function(aba) {
 };
 
 window.fazerLogout = function() {
-  if (confirm('Deseja sair do Painel de Educação?')) window.location.href = 'index.html';
+  if (confirm('Deseja sair do Painel de Educação?')) {
+    signOut(auth).then(() => window.location.href = 'login-secretaria.html');
+  }
 };
 
-// ===== LISTENER PRINCIPAL =====
-const qEdu = query(collection(db, "solicitacoes_educacao"), orderBy("dataRegistro", "desc"));
-onSnapshot(qEdu, (snap) => {
-  snap.docs.forEach(d => { window.cacheEdu[d.id] = d.data(); });
-  const todos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+function iniciarListeners() {
+  onValue(query(ref(db, 'solicitacoes_educacao'), orderByChild('dataRegistro')), (snap) => {
+    window.cacheEdu = {};
+    const todos = [];
+    if (snap.exists()) {
+      snap.forEach(child => {
+        window.cacheEdu[child.key] = child.val();
+        todos.push({ id: child.key, ...child.val() });
+      });
+      todos.reverse();
+    }
 
-  todasSolicitacoes = todos.filter(d => d.tipoChave !== 'matricula');
-  todasMatriculas   = todos.filter(d => d.tipoChave === 'matricula');
+    todasSolicitacoes = todos.filter(d => d.tipoChave !== 'matricula');
+    todasMatriculas   = todos.filter(d => d.tipoChave === 'matricula');
 
-  // stats (apenas solicitações não-matrícula)
-  let pendente = 0, analise = 0, concluido = 0;
-  todasSolicitacoes.forEach(s => {
-    if (s.status === 'PENDENTE') pendente++;
-    else if (s.status === 'EM ANÁLISE') analise++;
-    else if (s.status === 'CONCLUÍDO') concluido++;
+    let pendente = 0, analise = 0, concluido = 0;
+    todasSolicitacoes.forEach(s => {
+      if (s.status === 'PENDENTE') pendente++;
+      else if (s.status === 'EM ANÁLISE') analise++;
+      else if (s.status === 'CONCLUÍDO') concluido++;
+    });
+    document.getElementById('stat-pendente').innerText = pendente;
+    document.getElementById('stat-analise').innerText = analise;
+    document.getElementById('stat-concluido').innerText = concluido;
+
+    renderSolicitacoes();
+    renderMatriculas();
   });
-  document.getElementById('stat-pendente').innerText = pendente;
-  document.getElementById('stat-analise').innerText = analise;
-  document.getElementById('stat-concluido').innerText = concluido;
 
-  renderSolicitacoes();
-  renderMatriculas();
-});
+  onValue(query(ref(db, 'avisos'), orderByChild('dataPublicacao')), (snap) => {
+    const container = document.getElementById('lista-avisos');
+    const lista = [];
+    if (snap.exists()) {
+      snap.forEach(child => {
+        if (child.val().secretaria === 'Educação') lista.push({ id: child.key, ...child.val() });
+      });
+      lista.reverse();
+    }
+    if (lista.length === 0) {
+      container.innerHTML = `<p class="text-center text-xs text-gray-400 py-4">Nenhum aviso publicado.</p>`;
+      return;
+    }
+    container.innerHTML = lista.map(aviso => {
+      const dataFmt = new Date(aviso.dataPublicacao).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit'});
+      return `
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-3">
+        <div class="flex justify-between items-start mb-1">
+          <h4 class="font-bold text-gray-800 text-sm leading-tight pr-2">${aviso.titulo}</h4>
+          <span class="text-[9px] text-gray-400 whitespace-nowrap">${dataFmt}</span>
+        </div>
+        <p class="text-xs text-gray-500 mt-1 line-clamp-2">${aviso.descricao}</p>
+        <div class="flex justify-end gap-2 mt-3 pt-2 border-t border-gray-100">
+          <button onclick="prepararEdicaoAviso('${aviso.id}','${aviso.titulo.replace(/'/g,"\\'")}','${aviso.descricao.replace(/'/g,"\\'")}')" class="text-blue-500 bg-blue-50 hover:bg-blue-100 px-3 py-1 rounded-md text-[10px] font-bold"><i class="fa-solid fa-pen mr-1"></i> Editar</button>
+          <button onclick="excluirAviso('${aviso.id}')" class="text-red-500 bg-red-50 hover:bg-red-100 px-3 py-1 rounded-md text-[10px] font-bold"><i class="fa-solid fa-trash mr-1"></i> Excluir</button>
+        </div>
+      </div>`;
+    }).join('');
+  });
+}
 
-// ===== FILTROS =====
 window.filtrarSolicitacoes = function(f) {
   filtroSol = f;
   document.querySelectorAll('[id^="fil-"]').forEach(b => { b.classList.remove('bg-gray-800','text-white'); b.classList.add('bg-gray-100','text-gray-500'); });
@@ -314,27 +329,24 @@ window.filtrarMatriculas = function(f) {
   renderMatriculas();
 };
 
-// ===== RENDER SOLICITAÇÕES =====
+const statusConfig = {
+  'PENDENTE':   { color: 'bg-gray-100 text-gray-600 border-gray-200' },
+  'EM ANÁLISE': { color: 'bg-amber-100 text-amber-700 border-amber-200' },
+  'CONCLUÍDO':  { color: 'bg-green-100 text-green-700 border-green-200' },
+  'CANCELADO':  { color: 'bg-red-100 text-red-700 border-red-200' },
+};
+
 function renderSolicitacoes() {
   const container = document.getElementById('lista-solicitacoes');
   const lista = filtroSol === 'TODOS' ? todasSolicitacoes : todasSolicitacoes.filter(s => s.status === filtroSol);
-
   if (lista.length === 0) {
     container.innerHTML = `<div class="text-center py-10 bg-white rounded-xl border border-gray-100 text-gray-400 text-sm">Nenhuma solicitação nesta categoria.</div>`;
     return;
   }
-
   container.innerHTML = lista.map(s => {
     const dataFmt = new Date(s.dataRegistro).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit'});
-    const statusColor = {
-      'PENDENTE': 'bg-gray-100 text-gray-600 border-gray-200',
-      'EM ANÁLISE': 'bg-amber-100 text-amber-700 border-amber-200',
-      'CONCLUÍDO': 'bg-green-100 text-green-700 border-green-200',
-      'CANCELADO': 'bg-red-100 text-red-700 border-red-200',
-    }[s.status] || 'bg-gray-100 text-gray-600 border-gray-200';
-
+    const sc = statusConfig[s.status] || statusConfig['PENDENTE'];
     const temArquivo = s.arquivoUrl && s.arquivoUrl.trim() !== '';
-
     return `
     <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-3 slide-up">
       <div class="flex gap-3 items-start">
@@ -344,7 +356,7 @@ function renderSolicitacoes() {
         <div class="flex-grow min-w-0">
           <div class="flex justify-between items-start gap-1 mb-0.5">
             <span class="text-[9px] font-black text-blue-400 uppercase truncate">#${s.protocolo}</span>
-            <span class="text-[9px] font-bold px-2 py-0.5 rounded-full border shrink-0 ${statusColor}">${s.status}</span>
+            <span class="text-[9px] font-bold px-2 py-0.5 rounded-full border shrink-0 ${sc.color}">${s.status}</span>
           </div>
           <h4 class="font-bold text-gray-800 text-sm truncate">${s.tipoSolicitacao}</h4>
           <p class="text-xs text-gray-500 truncate"><i class="fa-regular fa-user mr-1"></i>${s.nomeCidadao}</p>
@@ -362,28 +374,18 @@ function renderSolicitacoes() {
   }).join('');
 }
 
-// ===== RENDER MATRÍCULAS =====
 function renderMatriculas() {
   const container = document.getElementById('lista-matriculas');
   const lista = filtroMat === 'TODOS' ? todasMatriculas : todasMatriculas.filter(m => m.status === filtroMat);
-
   if (lista.length === 0) {
     container.innerHTML = `<div class="text-center py-10 bg-white rounded-xl border border-gray-100 text-gray-400 text-sm">Nenhuma matrícula nesta categoria.</div>`;
     return;
   }
-
   container.innerHTML = lista.map(m => {
     const dataFmt = new Date(m.dataRegistro).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit'});
-    const statusColor = {
-      'PENDENTE': 'bg-gray-100 text-gray-600 border-gray-200',
-      'EM ANÁLISE': 'bg-amber-100 text-amber-700 border-amber-200',
-      'CONCLUÍDO': 'bg-green-100 text-green-700 border-green-200',
-      'CANCELADO': 'bg-red-100 text-red-700 border-red-200',
-    }[m.status] || 'bg-gray-100 text-gray-600 border-gray-200';
-
+    const sc = statusConfig[m.status] || statusConfig['PENDENTE'];
     const nee = m.necessidadesEspeciais ? `<span class="text-[9px] bg-purple-50 text-purple-600 border border-purple-200 px-1.5 py-0.5 rounded-md font-bold ml-1">NEE</span>` : '';
     const transp = m.precisaTransporte ? `<span class="text-[9px] bg-amber-50 text-amber-600 border border-amber-200 px-1.5 py-0.5 rounded-md font-bold ml-1"><i class="fa-solid fa-bus-school mr-0.5"></i>Transp.</span>` : '';
-
     return `
     <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-3 slide-up">
       <div class="flex gap-3 items-start">
@@ -393,10 +395,10 @@ function renderMatriculas() {
         <div class="flex-grow min-w-0">
           <div class="flex justify-between items-start gap-1 mb-0.5">
             <span class="text-[9px] font-black text-blue-400 uppercase truncate">#${m.protocolo}</span>
-            <span class="text-[9px] font-bold px-2 py-0.5 rounded-full border shrink-0 ${statusColor}">${m.status}</span>
+            <span class="text-[9px] font-bold px-2 py-0.5 rounded-full border shrink-0 ${sc.color}">${m.status}</span>
           </div>
           <h4 class="font-bold text-gray-800 text-sm truncate">${m.nomeAluno}</h4>
-          <p class="text-xs text-gray-500">${m.serie}</p>
+          <p class="text-xs text-gray-500">${m.serie || '—'}</p>
           <div class="flex flex-wrap mt-0.5">${nee}${transp}</div>
         </div>
       </div>
@@ -410,33 +412,29 @@ function renderMatriculas() {
   }).join('');
 }
 
-// ===== MODAL =====
 window.abrirModal = function(id) {
   const data = window.cacheEdu[id];
   if (!data) return;
-
   document.getElementById('d-id').value = id;
   document.getElementById('d-protocolo').innerText = `#${data.protocolo}`;
   document.getElementById('d-cidadao').innerText = data.nomeCidadao || '—';
   document.getElementById('d-data').innerText = new Date(data.dataRegistro).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'});
   document.getElementById('d-tipo').innerText = data.tipoSolicitacao;
   document.getElementById('d-aluno').innerText = data.nomeAluno || '—';
-  document.getElementById('d-serie').innerText = [data.serie, data.escola].filter(Boolean).join(' · ');
-  document.getElementById('d-obs').innerText = data.observacoes?.trim() ? `"${data.observacoes}"` : 'Nenhuma observação.';
-  document.getElementById('d-status-select').value = data.status || 'PENDENTE';
-  document.getElementById('d-arquivo-url').value = data.arquivoUrl || '';
-  document.getElementById('d-arquivo-obs').value = data.arquivoObs || '';
-
-  // Dados extras de matrícula
-  if (data.tipoChave === 'matricula') {
+  let serieInfo = [data.serie, data.escola].filter(Boolean).join(' · ');
+  if (data.tipoChave === 'matricula' && data.nomeResponsavel) {
     const extra = [
       data.nomeResponsavel ? `Resp: ${data.nomeResponsavel}` : '',
       data.telefoneResponsavel ? `Tel: ${data.telefoneResponsavel}` : '',
       data.endereco ? `End: ${data.endereco}` : '',
     ].filter(Boolean).join(' | ');
-    document.getElementById('d-serie').innerText = [data.serie, extra].filter(Boolean).join('\n');
+    serieInfo = [data.serie, extra].filter(Boolean).join('\n');
   }
-
+  document.getElementById('d-serie').innerText = serieInfo;
+  document.getElementById('d-obs').innerText = data.observacoes?.trim() ? `"${data.observacoes}"` : 'Nenhuma observação.';
+  document.getElementById('d-status-select').value = data.status || 'PENDENTE';
+  document.getElementById('d-arquivo-url').value = data.arquivoUrl || '';
+  document.getElementById('d-arquivo-obs').value = data.arquivoObs || '';
   const modal = document.getElementById('modal-detalhes');
   modal.classList.remove('hidden'); modal.classList.add('flex');
   requestAnimationFrame(() => {
@@ -459,12 +457,10 @@ window.atualizarStatus = async function() {
   const novoStatus = document.getElementById('d-status-select').value;
   if (!id) return;
   try {
-    await updateDoc(doc(db, "solicitacoes_educacao", id), { status: novoStatus });
+    await update(ref(db, 'solicitacoes_educacao/' + id), { status: novoStatus });
     mostrarAviso('Status atualizado!', 'sucesso');
     fecharModal();
-  } catch(e) {
-    mostrarAviso('Erro ao atualizar status.', 'erro');
-  }
+  } catch(e) { mostrarAviso('Erro ao atualizar status.', 'erro'); }
 };
 
 window.enviarArquivo = async function() {
@@ -474,51 +470,11 @@ window.enviarArquivo = async function() {
   if (!id) return;
   if (!url) { mostrarAviso('Informe o link do documento.', 'erro'); return; }
   try {
-    await updateDoc(doc(db, "solicitacoes_educacao", id), {
-      arquivoUrl: url,
-      arquivoObs: obs,
-      status: 'CONCLUÍDO'
-    });
+    await update(ref(db, 'solicitacoes_educacao/' + id), { arquivoUrl: url, arquivoObs: obs, status: 'CONCLUÍDO' });
     mostrarAviso('Documento enviado ao cidadão!', 'sucesso');
     fecharModal();
-  } catch(e) {
-    mostrarAviso('Erro ao enviar documento.', 'erro');
-  }
+  } catch(e) { mostrarAviso('Erro ao enviar documento.', 'erro'); }
 };
-
-// ===== AVISOS =====
-const qAvisos = query(collection(db, "avisos"), orderBy("dataPublicacao", "desc"));
-onSnapshot(qAvisos, (snap) => {
-  const container = document.getElementById('lista-avisos');
-  const avisosDaEdu = snap.docs.filter(d => d.data().secretaria === 'Educação');
-
-  if (avisosDaEdu.length === 0) {
-    container.innerHTML = `<p class="text-center text-xs text-gray-400 py-4">Nenhum aviso publicado.</p>`;
-    return;
-  }
-
-  container.innerHTML = avisosDaEdu.map(docSnap => {
-    const aviso = docSnap.data();
-    const id = docSnap.id;
-    const dataFmt = new Date(aviso.dataPublicacao).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit'});
-    return `
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-3">
-      <div class="flex justify-between items-start mb-1">
-        <h4 class="font-bold text-gray-800 text-sm leading-tight pr-2">${aviso.titulo}</h4>
-        <span class="text-[9px] text-gray-400 whitespace-nowrap">${dataFmt}</span>
-      </div>
-      <p class="text-xs text-gray-500 mt-1 line-clamp-2">${aviso.descricao}</p>
-      <div class="flex justify-end gap-2 mt-3 pt-2 border-t border-gray-100">
-        <button onclick="prepararEdicaoAviso('${id}','${aviso.titulo.replace(/'/g,"\\'")}','${aviso.descricao.replace(/'/g,"\\'")}')" class="text-blue-500 bg-blue-50 hover:bg-blue-100 px-3 py-1 rounded-md text-[10px] font-bold">
-          <i class="fa-solid fa-pen mr-1"></i> Editar
-        </button>
-        <button onclick="excluirAviso('${id}')" class="text-red-500 bg-red-50 hover:bg-red-100 px-3 py-1 rounded-md text-[10px] font-bold">
-          <i class="fa-solid fa-trash mr-1"></i> Excluir
-        </button>
-      </div>
-    </div>`;
-  }).join('');
-});
 
 window.salvarAviso = async function(event) {
   event.preventDefault();
@@ -530,17 +486,20 @@ window.salvarAviso = async function(event) {
   const descricao = document.getElementById('aviso-descricao').value;
   try {
     if (id) {
-      await updateDoc(doc(db, "avisos", id), { titulo, descricao });
+      await update(ref(db, 'avisos/' + id), { titulo, descricao });
       mostrarAviso('Aviso atualizado!');
       cancelarEdicaoAviso();
     } else {
-      await addDoc(collection(db, "avisos"), { secretaria: 'Educação', titulo, descricao, dataPublicacao: new Date().toISOString() });
+      await set(push(ref(db, 'avisos')), { secretaria: 'Educação', titulo, descricao, dataPublicacao: new Date().toISOString() });
       mostrarAviso('Aviso publicado no app!');
       document.getElementById('aviso-titulo').value = '';
       document.getElementById('aviso-descricao').value = '';
     }
   } catch(e) { mostrarAviso('Erro ao salvar.', 'erro'); }
-  finally { btn.disabled = false; btn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> <span id="txt-btn-aviso">${id ? 'Salvar' : 'Publicar'}</span>`; }
+  finally {
+    btn.disabled = false;
+    btn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> <span id="txt-btn-aviso">${id ? 'Salvar' : 'Publicar'}</span>`;
+  }
 };
 
 window.prepararEdicaoAviso = function(id, titulo, descricao) {
@@ -564,11 +523,29 @@ window.cancelarEdicaoAviso = function() {
 
 window.excluirAviso = async function(id) {
   if (!confirm('Excluir este aviso do aplicativo?')) return;
-  try {
-    await deleteDoc(doc(db, "avisos", id));
-    mostrarAviso('Aviso excluído!');
-  } catch(e) { mostrarAviso('Erro ao excluir.', 'erro'); }
+  try { await remove(ref(db, 'avisos/' + id)); mostrarAviso('Aviso excluído!'); }
+  catch(e) { mostrarAviso('Erro ao excluir.', 'erro'); }
 };
+
+let panelAtivo = false;
+const authTimeout = setTimeout(() => { if (!panelAtivo) window.location.href = 'login-secretaria.html'; }, 8000);
+
+onAuthStateChanged(auth, async (user) => {
+  clearTimeout(authTimeout);
+  if (!user) { if (!panelAtivo) window.location.href = 'login-secretaria.html'; return; }
+  try {
+    const snap = await get(ref(db, 'contas_secretaria/' + user.uid));
+    if (!snap.exists() || (snap.val().secretaria !== 'educacao' && snap.val().secretaria !== 'ti') || snap.val().ativo === false) {
+      if (!panelAtivo) window.location.href = 'login-secretaria.html';
+      return;
+    }
+    panelAtivo = true;
+    iniciarListeners();
+  } catch(e) {
+    console.error('Auth check error:', e);
+    if (!panelAtivo) window.location.href = 'login-secretaria.html';
+  }
+});
 </script>
 </body>
 </html>

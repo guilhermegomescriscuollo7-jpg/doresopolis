@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -11,13 +11,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <script>
 tailwind.config = {
-  theme: {
-    extend: {
-      colors: {
-        doresopolis: { green: '#0b5c3b', dark: '#3f3f46', light: '#f8fafc' }
-      }
-    }
-  }
+  theme: { extend: { colors: { doresopolis: { green: '#0b5c3b', dark: '#3f3f46', light: '#f8fafc' } } } }
 }
 </script>
 <style>
@@ -88,7 +82,6 @@ tailwind.config = {
         </button>
       </div>
     </div>
-    <!-- DATA E HORA -->
     <div class="px-4 pb-3">
       <p id="data-hora" class="text-green-200 text-[11px]"></p>
     </div>
@@ -111,7 +104,6 @@ tailwind.config = {
             <p class="text-xs text-gray-500 leading-tight">em andamento</p>
           </div>
         </div>
-        <!-- BARRA DE PROGRESSO POR SECRETARIA -->
         <div id="barra-secretarias" class="flex gap-1 mt-3 h-2 rounded-full overflow-hidden">
           <div class="bg-gray-100 flex-1 rounded-full"></div>
         </div>
@@ -152,18 +144,9 @@ tailwind.config = {
           </div>
         </div>
         <div class="grid grid-cols-3 divide-x divide-gray-50">
-          <div class="p-2.5 text-center">
-            <p class="text-[10px] text-amber-500 font-bold" id="saude-analise-num">—</p>
-            <p class="text-[9px] text-gray-400 mt-0.5">Em análise</p>
-          </div>
-          <div class="p-2.5 text-center">
-            <p class="text-[10px] text-blue-500 font-bold" id="saude-andamento-num">—</p>
-            <p class="text-[9px] text-gray-400 mt-0.5">Andamento</p>
-          </div>
-          <div class="p-2.5 text-center">
-            <p class="text-[10px] text-green-500 font-bold" id="saude-concluida-num">—</p>
-            <p class="text-[9px] text-gray-400 mt-0.5">Concluídas</p>
-          </div>
+          <div class="p-2.5 text-center"><p class="text-[10px] text-amber-500 font-bold" id="saude-analise-num">—</p><p class="text-[9px] text-gray-400 mt-0.5">Em análise</p></div>
+          <div class="p-2.5 text-center"><p class="text-[10px] text-blue-500 font-bold" id="saude-andamento-num">—</p><p class="text-[9px] text-gray-400 mt-0.5">Andamento</p></div>
+          <div class="p-2.5 text-center"><p class="text-[10px] text-green-500 font-bold" id="saude-concluida-num">—</p><p class="text-[9px] text-gray-400 mt-0.5">Concluídas</p></div>
         </div>
       </div>
 
@@ -183,18 +166,9 @@ tailwind.config = {
           </div>
         </div>
         <div class="grid grid-cols-3 divide-x divide-gray-50">
-          <div class="p-2.5 text-center">
-            <p class="text-[10px] text-amber-500 font-bold" id="edu-analise-num">—</p>
-            <p class="text-[9px] text-gray-400 mt-0.5">Em análise</p>
-          </div>
-          <div class="p-2.5 text-center">
-            <p class="text-[10px] text-blue-500 font-bold" id="edu-andamento-num">—</p>
-            <p class="text-[9px] text-gray-400 mt-0.5">Andamento</p>
-          </div>
-          <div class="p-2.5 text-center">
-            <p class="text-[10px] text-green-500 font-bold" id="edu-concluida-num">—</p>
-            <p class="text-[9px] text-gray-400 mt-0.5">Concluídas</p>
-          </div>
+          <div class="p-2.5 text-center"><p class="text-[10px] text-amber-500 font-bold" id="edu-analise-num">—</p><p class="text-[9px] text-gray-400 mt-0.5">Em análise</p></div>
+          <div class="p-2.5 text-center"><p class="text-[10px] text-blue-500 font-bold" id="edu-andamento-num">—</p><p class="text-[9px] text-gray-400 mt-0.5">Andamento</p></div>
+          <div class="p-2.5 text-center"><p class="text-[10px] text-green-500 font-bold" id="edu-concluida-num">—</p><p class="text-[9px] text-gray-400 mt-0.5">Concluídas</p></div>
         </div>
       </div>
 
@@ -214,18 +188,9 @@ tailwind.config = {
           </div>
         </div>
         <div class="grid grid-cols-3 divide-x divide-gray-50">
-          <div class="p-2.5 text-center">
-            <p class="text-[10px] text-amber-500 font-bold" id="obras-analise-num">—</p>
-            <p class="text-[9px] text-gray-400 mt-0.5">Em análise</p>
-          </div>
-          <div class="p-2.5 text-center">
-            <p class="text-[10px] text-blue-500 font-bold" id="obras-andamento-num">—</p>
-            <p class="text-[9px] text-gray-400 mt-0.5">Andamento</p>
-          </div>
-          <div class="p-2.5 text-center">
-            <p class="text-[10px] text-green-500 font-bold" id="obras-concluida-num">—</p>
-            <p class="text-[9px] text-gray-400 mt-0.5">Concluídas</p>
-          </div>
+          <div class="p-2.5 text-center"><p class="text-[10px] text-amber-500 font-bold" id="obras-analise-num">—</p><p class="text-[9px] text-gray-400 mt-0.5">Em análise</p></div>
+          <div class="p-2.5 text-center"><p class="text-[10px] text-blue-500 font-bold" id="obras-andamento-num">—</p><p class="text-[9px] text-gray-400 mt-0.5">Andamento</p></div>
+          <div class="p-2.5 text-center"><p class="text-[10px] text-green-500 font-bold" id="obras-concluida-num">—</p><p class="text-[9px] text-gray-400 mt-0.5">Concluídas</p></div>
         </div>
       </div>
 
@@ -245,18 +210,9 @@ tailwind.config = {
           </div>
         </div>
         <div class="grid grid-cols-3 divide-x divide-gray-50">
-          <div class="p-2.5 text-center">
-            <p class="text-[10px] text-amber-500 font-bold" id="trib-analise-num">—</p>
-            <p class="text-[9px] text-gray-400 mt-0.5">Em análise</p>
-          </div>
-          <div class="p-2.5 text-center">
-            <p class="text-[10px] text-blue-500 font-bold" id="trib-andamento-num">—</p>
-            <p class="text-[9px] text-gray-400 mt-0.5">Andamento</p>
-          </div>
-          <div class="p-2.5 text-center">
-            <p class="text-[10px] text-green-500 font-bold" id="trib-concluida-num">—</p>
-            <p class="text-[9px] text-gray-400 mt-0.5">Concluídas</p>
-          </div>
+          <div class="p-2.5 text-center"><p class="text-[10px] text-amber-500 font-bold" id="trib-analise-num">—</p><p class="text-[9px] text-gray-400 mt-0.5">Em análise</p></div>
+          <div class="p-2.5 text-center"><p class="text-[10px] text-blue-500 font-bold" id="trib-andamento-num">—</p><p class="text-[9px] text-gray-400 mt-0.5">Andamento</p></div>
+          <div class="p-2.5 text-center"><p class="text-[10px] text-green-500 font-bold" id="trib-concluida-num">—</p><p class="text-[9px] text-gray-400 mt-0.5">Concluídas</p></div>
         </div>
       </div>
 
@@ -276,18 +232,9 @@ tailwind.config = {
           </div>
         </div>
         <div class="grid grid-cols-3 divide-x divide-gray-50">
-          <div class="p-2.5 text-center">
-            <p class="text-[10px] text-amber-500 font-bold" id="transp-analise-num">—</p>
-            <p class="text-[9px] text-gray-400 mt-0.5">Em análise</p>
-          </div>
-          <div class="p-2.5 text-center">
-            <p class="text-[10px] text-blue-500 font-bold" id="transp-andamento-num">—</p>
-            <p class="text-[9px] text-gray-400 mt-0.5">Andamento</p>
-          </div>
-          <div class="p-2.5 text-center">
-            <p class="text-[10px] text-green-500 font-bold" id="transp-concluida-num">—</p>
-            <p class="text-[9px] text-gray-400 mt-0.5">Concluídas</p>
-          </div>
+          <div class="p-2.5 text-center"><p class="text-[10px] text-amber-500 font-bold" id="transp-analise-num">—</p><p class="text-[9px] text-gray-400 mt-0.5">Em análise</p></div>
+          <div class="p-2.5 text-center"><p class="text-[10px] text-blue-500 font-bold" id="transp-andamento-num">—</p><p class="text-[9px] text-gray-400 mt-0.5">Andamento</p></div>
+          <div class="p-2.5 text-center"><p class="text-[10px] text-green-500 font-bold" id="transp-concluida-num">—</p><p class="text-[9px] text-gray-400 mt-0.5">Concluídas</p></div>
         </div>
       </div>
 
@@ -297,8 +244,7 @@ tailwind.config = {
     <h3 class="font-bold text-gray-700 text-sm mb-3 border-l-4 border-gray-300 pl-2">Últimas demandas recebidas</h3>
     <div id="feed-demandas" class="flex flex-col gap-2.5 mb-4">
       <div class="text-center py-6 text-gray-400 text-xs">
-        <i class="fa-solid fa-spinner fa-spin text-xl mb-2 block"></i>
-        Carregando demandas...
+        <i class="fa-solid fa-spinner fa-spin text-xl mb-2 block"></i> Carregando demandas...
       </div>
     </div>
 
@@ -314,12 +260,13 @@ tailwind.config = {
 </div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, query, orderBy, limit, onSnapshot, where, getDocs, getDoc, setDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, get, update, onValue, query, orderByChild, limitToLast } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAskgM5cxiR4DI2PXrccBxOvPZzMPDKdCo",
   authDomain: "gen-lang-client-0963611393.firebaseapp.com",
+  databaseURL: "https://gen-lang-client-0963611393-default-rtdb.firebaseio.com",
   projectId: "gen-lang-client-0963611393",
   storageBucket: "gen-lang-client-0963611393.firebasestorage.app",
   messagingSenderId: "158833761867",
@@ -327,7 +274,7 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const db  = getFirestore(app, 'ai-studio-effa6aaf-05b1-45f1-96b5-43601bcc0a4');
+const db = getDatabase(app);
 
 // ─── HELPERS ─────────────────────────────────────────────
 async function hashSenha(senha) {
@@ -339,21 +286,19 @@ function esc(s) {
   return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-const authRef = doc(db, 'config', 'auth');
-
 // ─── LOGIN ────────────────────────────────────────────────
 window.fazerLogin = async function() {
   const s = document.getElementById('login-senha').value;
   if (!s) return;
   document.getElementById('login-erro').classList.add('hidden');
   try {
-    const snap = await getDoc(authRef);
+    const snap = await get(ref(db, 'config/auth'));
     let hashEsperado;
-    if (snap.exists() && snap.data().hashPrefeito) {
-      hashEsperado = snap.data().hashPrefeito;
+    if (snap.exists() && snap.val().hashPrefeito) {
+      hashEsperado = snap.val().hashPrefeito;
     } else {
       hashEsperado = await hashSenha('prefeito2025');
-      await setDoc(authRef, { hashPrefeito: hashEsperado }, { merge: true });
+      await update(ref(db, 'config/auth'), { hashPrefeito: hashEsperado });
     }
     if (await hashSenha(s) === hashEsperado) {
       sessionStorage.setItem('prefeito_auth', '1');
@@ -391,14 +336,13 @@ setInterval(atualizarRelogio, 30000);
 
 // ─── SECRETARIAS CONFIG ───────────────────────────────────
 const secretarias = [
-  { id: 'saude',     colecao: 'solicitacoes_saude',     prefix: 'saude',  cor: '#ef4444', label: 'Saúde' },
-  { id: 'edu',       colecao: 'solicitacoes_educacao',  prefix: 'edu',    cor: '#3b82f6', label: 'Educação' },
-  { id: 'obras',     colecao: 'solicitacoes_obras',     prefix: 'obras',  cor: '#f59e0b', label: 'Obras' },
-  { id: 'trib',      colecao: 'solicitacoes_tributos',  prefix: 'trib',   cor: '#16a34a', label: 'Tributos' },
-  { id: 'transp',    colecao: 'solicitacoes_transporte',prefix: 'transp', cor: '#8b5cf6', label: 'Transporte' },
+  { id: 'saude',  colecao: 'solicitacoes_saude',    prefix: 'saude',  cor: '#ef4444', label: 'Saúde' },
+  { id: 'edu',    colecao: 'solicitacoes_educacao',  prefix: 'edu',    cor: '#3b82f6', label: 'Educação' },
+  { id: 'obras',  colecao: 'solicitacoes_obras',     prefix: 'obras',  cor: '#f59e0b', label: 'Obras' },
+  { id: 'trib',   colecao: 'solicitacoes_tributos',  prefix: 'trib',   cor: '#16a34a', label: 'Tributos' },
+  { id: 'transp', colecao: 'inscricoes_transporte',  prefix: 'transp', cor: '#8b5cf6', label: 'Transporte' },
 ];
 
-// Estado global dos contadores
 const contadores = {};
 secretarias.forEach(s => { contadores[s.id] = { analise: 0, andamento: 0, concluida: 0 }; });
 
@@ -413,7 +357,6 @@ function atualizarTotaisGerais() {
   document.getElementById('total-urgentes').textContent   =
     contadores['saude'].analise + contadores['obras'].analise;
 
-  // Barra proporcional
   const barra   = document.getElementById('barra-secretarias');
   const legenda = document.getElementById('legenda-barra');
   const total   = secretarias.reduce((a,s) =>
@@ -435,22 +378,23 @@ function atualizarTotaisGerais() {
 
 // ─── OUVIR CADA SECRETARIA ───────────────────────────────
 function ouvirSecretaria(sec) {
-  const q = query(collection(db, sec.colecao), orderBy('dataRegistro', 'desc'));
-  onSnapshot(q, snap => {
+  onValue(query(ref(db, sec.colecao), orderByChild('dataRegistro')), snap => {
     let analise = 0, andamento = 0, concluida = 0;
-    snap.forEach(d => {
-      const st = (d.data().status || '').toUpperCase();
-      if (st === 'EM ANÁLISE')    analise++;
-      if (st === 'EM ANDAMENTO')  andamento++;
-      if (st === 'CONCLUÍDO')     concluida++;
-    });
-    contadores[sec.prefix] = { analise, andamento, concluida };
+    if (snap.exists()) {
+      snap.forEach(child => {
+        const st = (child.val().status || '').toUpperCase();
+        if (st === 'EM ANÁLISE')    analise++;
+        if (st === 'EM ANDAMENTO')  andamento++;
+        if (st === 'CONCLUÍDO')     concluida++;
+      });
+    }
+    contadores[sec.id] = { analise, andamento, concluida };
 
     const total = analise + andamento;
-    document.getElementById(`${sec.prefix}-em-analise`).textContent   = total;
-    document.getElementById(`${sec.prefix}-analise-num`).textContent   = analise;
-    document.getElementById(`${sec.prefix}-andamento-num`).textContent = andamento;
-    document.getElementById(`${sec.prefix}-concluida-num`).textContent = concluida;
+    document.getElementById(`${sec.prefix}-em-analise`).textContent    = total;
+    document.getElementById(`${sec.prefix}-analise-num`).textContent    = analise;
+    document.getElementById(`${sec.prefix}-andamento-num`).textContent  = andamento;
+    document.getElementById(`${sec.prefix}-concluida-num`).textContent  = concluida;
 
     atualizarTotaisGerais();
   });
@@ -458,11 +402,11 @@ function ouvirSecretaria(sec) {
 
 // ─── FEED GLOBAL DE DEMANDAS ─────────────────────────────
 const corSecretaria = {
-  saude:     { bg: 'bg-red-50',    text: 'text-red-500',    icon: 'fa-heart-pulse',        label: 'Saúde' },
-  educacao:  { bg: 'bg-blue-50',   text: 'text-blue-500',   icon: 'fa-graduation-cap',     label: 'Educação' },
-  obras:     { bg: 'bg-amber-50',  text: 'text-amber-500',  icon: 'fa-helmet-safety',      label: 'Obras' },
-  tributos:  { bg: 'bg-green-50',  text: 'text-green-600',  icon: 'fa-file-invoice-dollar',label: 'Tributos' },
-  transporte:{ bg: 'bg-purple-50', text: 'text-purple-500', icon: 'fa-bus',                label: 'Transporte' },
+  saude:      { bg: 'bg-red-50',    text: 'text-red-500',    icon: 'fa-heart-pulse',         label: 'Saúde' },
+  educacao:   { bg: 'bg-blue-50',   text: 'text-blue-500',   icon: 'fa-graduation-cap',      label: 'Educação' },
+  obras:      { bg: 'bg-amber-50',  text: 'text-amber-500',  icon: 'fa-helmet-safety',       label: 'Obras' },
+  tributos:   { bg: 'bg-green-50',  text: 'text-green-600',  icon: 'fa-file-invoice-dollar', label: 'Tributos' },
+  transporte: { bg: 'bg-purple-50', text: 'text-purple-500', icon: 'fa-bus',                 label: 'Transporte' },
 };
 
 function corStatus(status) {
@@ -493,7 +437,7 @@ function renderFeed() {
     const data = new Date(d.dataRegistro).toLocaleDateString('pt-BR');
     const hora = new Date(d.dataRegistro).toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
     const nome = esc(d.nomeAluno || d.nomeCidadao || d.nome || 'Cidadão');
-    const tipo = esc(d.tipoLabel || d.tipoServico || d.tipo || 'Solicitação');
+    const tipo = esc(d.tipoLabel || d.tipoServico || d.tipoSolicitacao || d.tipo || 'Solicitação');
     const status = esc(d.status || 'EM ANÁLISE');
     const protocolo = d.protocolo ? esc(String(d.protocolo)) : null;
 
@@ -524,10 +468,15 @@ function renderFeed() {
 
 function carregarFeed() {
   secretarias.forEach(sec => {
-    const chave = sec.colecao.replace('solicitacoes_', '');
-    const q = query(collection(db, sec.colecao), orderBy('dataRegistro', 'desc'), limit(5));
-    onSnapshot(q, snap => {
-      feedPorSecretaria[sec.id] = snap.docs.map(d => ({ ...d.data(), _secretaria: chave, _id: d.id }));
+    // Chave para corSecretaria: extrai a parte após "solicitacoes_" ou "inscricoes_"
+    const chave = sec.colecao.replace('solicitacoes_', '').replace('inscricoes_', '');
+    onValue(query(ref(db, sec.colecao), orderByChild('dataRegistro'), limitToLast(5)), snap => {
+      const items = [];
+      if (snap.exists()) {
+        snap.forEach(child => items.push({ ...child.val(), _secretaria: chave, _id: child.key }));
+        items.reverse();
+      }
+      feedPorSecretaria[sec.id] = items;
       renderFeed();
     });
   });
@@ -535,17 +484,18 @@ function carregarFeed() {
 
 // ─── AVISOS ──────────────────────────────────────────────
 function ouvirAvisos() {
-  const q = query(collection(db, 'avisos'), orderBy('dataPublicacao', 'desc'), limit(5));
-  onSnapshot(q, snap => {
+  onValue(query(ref(db, 'avisos'), orderByChild('dataPublicacao'), limitToLast(5)), snap => {
     const container = document.getElementById('lista-avisos');
-    if (snap.empty) {
+    if (!snap.exists()) {
       container.innerHTML = '<p class="text-xs text-gray-400 text-center py-3">Nenhum aviso publicado.</p>';
       return;
     }
+    const lista = [];
+    snap.forEach(child => lista.push({ id: child.key, ...child.val() }));
+    lista.reverse();
     container.innerHTML = '';
-    snap.forEach(d => {
-      const aviso = d.data();
-      const data  = new Date(aviso.dataPublicacao).toLocaleDateString('pt-BR');
+    lista.forEach(aviso => {
+      const data = new Date(aviso.dataPublicacao).toLocaleDateString('pt-BR');
       container.innerHTML += `
         <div class="bg-white rounded-xl border border-gray-100 p-3 shadow-sm">
           <div class="flex justify-between items-start">
