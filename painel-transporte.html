@@ -19,19 +19,19 @@
 <div class="bg-gray-50 w-full max-w-md h-[100dvh] flex flex-col shadow-2xl overflow-hidden sm:rounded-xl sm:h-[95vh] sm:border sm:border-gray-300">
 
   <!-- HEADER -->
-  <header class="bg-doresopolis-green flex-shrink-0 px-4 py-3 flex items-center gap-3">
-    <a href="index.html" class="w-9 h-9 rounded-full bg-white/10 text-white flex items-center justify-center shrink-0">
-      <i class="fa-solid fa-arrow-left text-sm"></i>
-    </a>
-    <div class="flex items-center gap-3 flex-grow">
+  <header class="bg-doresopolis-green flex-shrink-0 px-4 py-3 flex items-center justify-between gap-3">
+    <div class="flex items-center gap-3">
       <div class="w-9 h-9 rounded-full bg-white/10 text-white flex items-center justify-center shrink-0">
-        <i class="fa-solid fa-shield-halved"></i>
+        <i class="fa-solid fa-bus"></i>
       </div>
       <div>
-        <p class="text-[9px] tracking-widest text-green-200 uppercase font-semibold leading-none">Secretaria · Administrativo</p>
+        <p class="text-[9px] tracking-widest text-green-200 uppercase font-semibold leading-none">Secretaria · Transporte</p>
         <h1 class="text-base font-black text-white uppercase tracking-tight leading-none">Painel Transporte</h1>
       </div>
     </div>
+    <button id="btn-logout-tr" class="flex items-center gap-2 text-sm font-bold text-white bg-white/20 hover:bg-white/30 px-3 py-2 rounded-xl transition-all active:scale-95">
+      <i class="fa-solid fa-right-from-bracket"></i> Sair
+    </button>
   </header>
 
   <!-- Acesso restrito / loading -->
@@ -211,7 +211,7 @@
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import {
   getDatabase, ref, get, set, update, remove, push, query, orderByChild
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
@@ -265,14 +265,20 @@ onAuthStateChanged(auth, async (user) => {
   clearTimeout(authTimeout);
   if (!user) { mostrarEstado('e-acesso-negado'); return; }
 
-  const snap = await get(ref(db, 'contas_secretaria/' + user.uid));
-  if (snap.exists() && snap.val().secretaria === 'transporte' && snap.val().ativo !== false) {
-    mostrarEstado('e-painel');
-    carregarInscricoes();
-    return;
-  }
+  try {
+    const snap = await get(ref(db, 'contas_secretaria/' + user.uid));
+    if (snap.exists() && snap.val().secretaria === 'transporte' && snap.val().ativo !== false) {
+      mostrarEstado('e-painel');
+      carregarInscricoes();
+      return;
+    }
+  } catch(e) {}
 
   mostrarEstado('e-acesso-negado');
+});
+
+document.getElementById('btn-logout-tr').addEventListener('click', () => {
+  signOut(auth).then(() => { window.location.href = 'login-secretaria.html'; });
 });
 
 // ── INSCRIÇÕES ──────────────────────────────────────────────────────────────
