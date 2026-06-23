@@ -59,6 +59,14 @@
                 <p class="text-gray-500 mt-1 text-xs leading-snug">Acompanhe todos os pedidos e requerimentos que você fez nas diversas secretarias da prefeitura.</p>
             </div>
 
+            <!-- BUSCA POR PROTOCOLO -->
+            <div class="relative mb-3">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                <input id="busca-protocolo" type="search" inputmode="search" placeholder="Buscar por protocolo, serviço ou secretaria"
+                    oninput="buscarSolicitacoes(this.value)"
+                    class="w-full bg-white border border-gray-200 rounded-xl pl-9 pr-3 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-doresopolis-dark">
+            </div>
+
             <!-- FILTRO RÁPIDO -->
             <div class="flex gap-2 overflow-x-auto pb-2 mb-4 hide-scrollbar">
                 <button id="filtro-todos" onclick="filtrar('todos')" class="bg-doresopolis-dark text-white px-4 py-1.5 rounded-full text-[10px] font-bold shrink-0 shadow-sm">Todos</button>
@@ -191,6 +199,12 @@
         // Memória para guardar os dados e exibir rapidamente no Modal
         window.dadosHistorico = {};
         window.filtroAtivo = 'todos';
+        window.buscaTermo = '';
+
+        window.buscarSolicitacoes = function(valor) {
+            window.buscaTermo = (valor || '').trim().toLowerCase();
+            if (window._renderizar) window._renderizar();
+        };
 
         window.filtrar = function(valor) {
             window.filtroAtivo = valor;
@@ -207,6 +221,7 @@
         
         let usuarioNomePrimeiro = "";
         let usuarioNomeCompleto = "";
+        let usuarioUid = "";
 
         document.addEventListener('DOMContentLoaded', () => {
             usuarioNomePrimeiro = localStorage.getItem('usuarioDoresopolis') || '';
@@ -216,6 +231,7 @@
                     window.location.href = "index.html";
                     return;
                 }
+                usuarioUid = user.uid;
                 usuarioNomeCompleto = user.displayName || usuarioNomePrimeiro;
                 if (!usuarioNomePrimeiro) usuarioNomePrimeiro = (usuarioNomeCompleto || '').split(' ')[0];
                 carregarHistoricoGeral();
@@ -225,8 +241,8 @@
         function carregarHistoricoGeral() {
             const container = document.getElementById("lista-todas-solicitacoes");
 
-            function isDoUsuario(nomeCidadao) {
-                return nomeCidadao === usuarioNomeCompleto || nomeCidadao === usuarioNomePrimeiro;
+            function isDoUsuario(data) {
+                return (data.uid && data.uid === usuarioUid) || data.nomeCidadao === usuarioNomeCompleto || data.nomeCidadao === usuarioNomePrimeiro;
             }
 
             function registrarEatualizar(snapshot, secretaria) {
@@ -238,7 +254,7 @@
                 });
                 snapshot.forEach((docSnap) => {
                     const data = docSnap.val();
-                    if (isDoUsuario(data.nomeCidadao)) {
+                    if (isDoUsuario(data)) {
                         window.dadosHistorico[docSnap.key] = { ...data, _secretaria: secretaria };
                     }
                 });
@@ -258,6 +274,13 @@
 
                 if (window.filtroAtivo && window.filtroAtivo !== 'todos') {
                     todas = todas.filter(d => (d.status || 'PENDENTE').toUpperCase() === window.filtroAtivo);
+                }
+
+                if (window.buscaTermo) {
+                    todas = todas.filter(d => {
+                        const alvo = `${d.protocolo || ''} ${d.tipoServico || d.tipoSolicitacao || d.especialidade || ''} ${d._secretaria || ''}`.toLowerCase();
+                        return alvo.includes(window.buscaTermo);
+                    });
                 }
 
                 if (todas.length === 0) {

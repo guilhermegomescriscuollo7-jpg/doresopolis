@@ -472,6 +472,11 @@
                             <span id="usuario-provider-badge" class="mt-1.5 text-[10px] font-medium text-gray-400 flex items-center gap-1"></span>
                         </div>
 
+                        <!-- Notificações push -->
+                        <button id="btn-notif" onclick="ativarNotificacoes()" class="w-full flex items-center justify-center gap-2 bg-doresopolis-green/10 text-doresopolis-green font-bold py-3 rounded-xl text-sm mb-4 active:scale-95 transition-all">
+                            <i class="fa-solid fa-bell"></i> Ativar notificações
+                        </button>
+
                         <!-- Editar Perfil -->
                         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
                             <h3 class="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
@@ -583,6 +588,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getAuth, signInWithPopup, signInWithRedirect, getRedirectResult, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, updatePassword, deleteUser, onAuthStateChanged, signOut, updateProfile, EmailAuthProvider, reauthenticateWithCredential, updateEmail } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
         import { getDatabase, ref as dbRef, get as dbGet, set as dbSet, update as dbUpdate, remove as dbRemove, onValue as rtdbOnValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+        import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAskgM5cxiR4DI2PXrccBxOvPZzMPDKdCo",
@@ -598,6 +604,58 @@
         const auth = getAuth(app);
         const rtdb = getDatabase(app);
         const googleProvider = new GoogleAuthProvider();
+
+        // ======================================================
+        // NOTIFICAÇÕES PUSH (Firebase Cloud Messaging)
+        // ======================================================
+        const VAPID_KEY = "BKAgZIbHy-21LEoCfStiJA1FNrXl3eHsJ2gSavmFT1QC7C8JUf-04CBKD4SfWNcdoTrP1q4dlCc4nV6J3Ul_m1s";
+        let _messaging = null;
+        function getMsg() {
+            if (_messaging) return _messaging;
+            try { _messaging = getMessaging(app); return _messaging; }
+            catch (e) { console.warn('Mensagens não suportadas neste navegador:', e); return null; }
+        }
+
+        function atualizarBotaoNotif() {
+            const b = document.getElementById('btn-notif');
+            if (!b) return;
+            if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+                b.innerHTML = '<i class="fa-solid fa-bell"></i> Notificações ativadas';
+                b.classList.add('opacity-60');
+            } else {
+                b.innerHTML = '<i class="fa-solid fa-bell"></i> Ativar notificações';
+                b.classList.remove('opacity-60');
+            }
+        }
+
+        window.ativarNotificacoes = async function() {
+            const user = auth.currentUser;
+            if (!user) { mostrarAviso('Entre na sua conta primeiro.'); return; }
+            if (typeof Notification === 'undefined') { mostrarAviso('Seu navegador não suporta notificações.'); return; }
+            const msg = getMsg();
+            if (!msg) { mostrarAviso('Notificações não suportadas neste navegador.'); return; }
+            try {
+                const permissao = await Notification.requestPermission();
+                if (permissao !== 'granted') { mostrarAviso('Permissão de notificações negada.', 'info'); return; }
+                const token = await getToken(msg, { vapidKey: VAPID_KEY });
+                if (!token) { mostrarAviso('Não foi possível ativar as notificações.'); return; }
+                await dbUpdate(dbRef(rtdb, 'usuarios/' + user.uid), { fcmToken: token, fcmTokenUpdatedAt: new Date().toISOString() });
+                mostrarAviso('Notificações ativadas!', 'sucesso');
+                atualizarBotaoNotif();
+            } catch (e) {
+                console.error('Erro ao ativar notificações:', e);
+                mostrarAviso('Erro ao ativar notificações.');
+            }
+        };
+
+        // Mensagem recebida com o app aberto (primeiro plano)
+        (function () {
+            const msg = getMsg();
+            if (msg) onMessage(msg, (payload) => {
+                const n = payload.notification || {};
+                mostrarAviso(`${n.title ? n.title + ': ' : ''}${n.body || 'Nova notificação'}`, 'info');
+            });
+        })();
 
         // ======================================================
         // ACESSIBILIDADE — TAMANHO DA FONTE (3 níveis, persistido)
@@ -739,6 +797,7 @@
 
             try {
                 // Nome do cidadão para vincular as solicitações (displayName do login)
+                const uid = auth.currentUser?.uid;
                 const nomeCompleto = (auth.currentUser?.displayName || '').trim();
                 const primeiroNome = (localStorage.getItem('usuarioDoresopolis') || nomeCompleto.split(' ')[0] || '').trim();
 
@@ -759,7 +818,7 @@
                     const secNome = ['Obras', 'Saúde', 'Educação', 'Tributos'][i];
                     snap.forEach(docSnap => {
                         const data = docSnap.val();
-                        if (!ehDoUsuario(data.nomeCidadao)) return;
+                        if (!(data.uid && data.uid === uid) && !ehDoUsuario(data.nomeCidadao)) return;
                         const status = (data.status || 'PENDENTE').toUpperCase();
                         if (status === 'CONCLUÍDO' || status === 'CANCELADO') return;
                         abertas.push({
@@ -993,6 +1052,7 @@
                 document.getElementById('edit-nome').value  = user.displayName || '';
                 document.getElementById('edit-email').value = user.email || '';
                 carregarTelefoneDoUsuario(user.uid);
+                atualizarBotaoNotif();
 
             } else {
                 logado.classList.add('hidden');

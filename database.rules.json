@@ -30,9 +30,15 @@
       }
     },
 
-    "solicitacoes_obras":    { ".indexOn": "dataRegistro" },
-    "solicitacoes_saude":    { ".indexOn": "dataRegistro" },
-    "solicitacoes_educacao": { ".indexOn": "dataRegistro" },
-    "solicitacoes_tributos": { ".indexOn": "dataRegistro" }
+    "inscricoes_transporte": {
+      "$id": {
+        ".validate": "newData.child('uid').val() === auth.uid || root.child('contas_secretaria').child(auth.uid).exists()"
+      }
+    },
+
+    "solicitacoes_obras":    { ".indexOn": ["dataRegistro", "uid"], "$id": { ".validate": "newData.child('uid').val() === auth.uid || root.child('contas_secretaria').child(auth.uid).exists()" } },
+    "solicitacoes_saude":    { ".indexOn": ["dataRegistro", "uid"], "$id": { ".validate": "newData.child('uid').val() === auth.uid || root.child('contas_secretaria').child(auth.uid).exists()" } },
+    "solicitacoes_educacao": { ".indexOn": ["dataRegistro", "uid"], "$id": { ".validate": "newData.child('uid').val() === auth.uid || root.child('contas_secretaria').child(auth.uid).exists()" } },
+    "solicitacoes_tributos": { ".indexOn": ["dataRegistro", "uid"], "$id": { ".validate": "newData.child('uid').val() === auth.uid || root.child('contas_secretaria').child(auth.uid).exists()" } }
   }
 }

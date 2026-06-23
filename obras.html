@@ -262,6 +262,7 @@
 
         let usuarioNomePrimeiro = "";
         let usuarioNomeCompleto = "";
+        let usuarioUid = "";
 
         // Inicialização Avançada: Busca o nome completo no banco para enviar o chamado perfeitamente
         document.addEventListener('DOMContentLoaded', () => {
@@ -273,6 +274,7 @@
                     window.location.href = "index.html";
                     return;
                 }
+                usuarioUid = user.uid;
                 usuarioNomeCompleto = user.displayName || usuarioNomePrimeiro;
                 if (!usuarioNomePrimeiro) usuarioNomePrimeiro = (usuarioNomeCompleto || '').split(' ')[0];
                 document.getElementById('solicitante-nome').value = usuarioNomeCompleto;
@@ -302,7 +304,7 @@
                 itens.forEach((data) => {
 
                     // Mostra solicitações se o nome bater com o nome completo ou o primeiro nome (retrocompatibilidade)
-                    if(data.nomeCidadao !== usuarioNomeCompleto && data.nomeCidadao !== usuarioNomePrimeiro) return;
+                    if(!(data.uid && data.uid === usuarioUid) && data.nomeCidadao !== usuarioNomeCompleto && data.nomeCidadao !== usuarioNomePrimeiro) return;
                     
                     encontrouChamados = true;
                     
@@ -421,15 +423,26 @@
             const numeroProtocolo = `OBR${ano}${mes}-${aleatorio}`;
 
             try {
+                // Envia a foto para o Firebase Storage (em vez de gravar base64 no RTDB)
+                let fotoUrl = '';
+                if (fotoBase64) {
+                    const { getStorage, ref: storageRef, uploadString, getDownloadURL } =
+                        await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js');
+                    const storage = getStorage(app);
+                    const fRef = storageRef(storage, `fotos_obras/${numeroProtocolo}`);
+                    await uploadString(fRef, fotoBase64, 'data_url');
+                    fotoUrl = await getDownloadURL(fRef);
+                }
                 await set(push(ref(db, "solicitacoes_obras")), {
                     protocolo: numeroProtocolo,
+                    uid: usuarioUid,
                     nomeCidadao: nome,
                     tipoServico: servico,
                     endereco: enderecoFinal,
                     urgencia: urgencia,
-                    fotoUrl: fotoBase64, 
+                    fotoUrl,
                     descricao: descricao,
-                    status: "PENDENTE", 
+                    status: "PENDENTE",
                     dataRegistro: dataAtual.toISOString()
                 });
                 

@@ -179,6 +179,7 @@ let selecao = {
 let vagasDisponiveis = []; // todos os slots abertos
 let usuarioNomeCompleto = '';
 let usuarioNomePrimeiro = '';
+let usuarioUid = '';
 
 // ===== TOAST =====
 window.mostrarAviso = function(msg, tipo = 'sucesso') {
@@ -218,6 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
       window.location.href = 'index.html';
       return;
     }
+    usuarioUid = user.uid;
     usuarioNomeCompleto = user.displayName || usuarioNomePrimeiro;
     if (!usuarioNomePrimeiro) usuarioNomePrimeiro = (usuarioNomeCompleto || '').split(' ')[0];
     carregarEspecialidades();
@@ -419,6 +421,7 @@ window.agendarConsulta = async function() {
     await update(agRef, { agendados: agendados + 1 });
     await set(push(ref(db, "solicitacoes_saude")), {
       protocolo,
+      uid: usuarioUid,
       nomeCidadao: usuarioNomeCompleto,
       nomePaciente: usuarioNomeCompleto,
       especialidade: selecao.especialidadeNome,
@@ -462,7 +465,7 @@ function carregarMinhasConsultas() {
     snap.forEach(d => { todas.push({ id: d.key, ...d.val() }); });
     todas.sort((a, b) => new Date(b.dataRegistro || 0) - new Date(a.dataRegistro || 0));
     const minhas = todas.filter(data =>
-      data.nomeCidadao === usuarioNomeCompleto || data.nomeCidadao === usuarioNomePrimeiro
+      (data.uid && data.uid === usuarioUid) || data.nomeCidadao === usuarioNomeCompleto || data.nomeCidadao === usuarioNomePrimeiro
     );
 
     if (minhas.length === 0) {
