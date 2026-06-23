@@ -171,11 +171,12 @@
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { getDatabase, ref as dbRef, get } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
 
 const firebaseConfig = {
   apiKey: "AIzaSyAskgM5cxiR4DI2PXrccBxOvPZzMPDKdCo",
   authDomain: "gen-lang-client-0963611393.firebaseapp.com",
+  databaseURL: "https://gen-lang-client-0963611393-default-rtdb.firebaseio.com",
   projectId: "gen-lang-client-0963611393",
   storageBucket: "gen-lang-client-0963611393.firebasestorage.app",
   messagingSenderId: "158833761867",
@@ -184,7 +185,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const db = getFirestore(app, 'ai-studio-effa6aaf-05b1-45f1-96b5-43601bcc0a4');
+const db = getDatabase(app);
 
 const estados = ['e-loading','e-nao-logado','e-pendente','e-sem-inscricao','e-carteira'];
 function mostrar(id) {
@@ -202,10 +203,19 @@ const temasPorTipo = {
 onAuthStateChanged(auth, async (user) => {
   if (!user) { mostrar('e-nao-logado'); return; }
 
-  // Busca carteirinha aprovada
-  const cartSnap = await getDoc(doc(db, 'carteirinhas_transporte', user.uid));
-  if (cartSnap.exists()) {
-    const d = cartSnap.data();
+  // Lê as inscrições do cidadão; a carteirinha é derivada da inscrição APROVADA
+  const [escSnap, trabSnap] = await Promise.all([
+    get(dbRef(db, 'inscricoes_transporte/' + user.uid + '_escolar')),
+    get(dbRef(db, 'inscricoes_transporte/' + user.uid + '_trabalhador'))
+  ]);
+
+  const aprovada = [escSnap, trabSnap]
+    .filter(s => s.exists())
+    .map(s => s.val())
+    .find(d => (d.status || '').toUpperCase() === 'APROVADO');
+
+  if (aprovada) {
+    const d = aprovada;
     const tema = temasPorTipo[d.tipo] || temasPorTipo.escolar;
 
     document.getElementById('card-carteirinha').className =
@@ -221,19 +231,17 @@ onAuthStateChanged(auth, async (user) => {
     document.getElementById('c-embarque').textContent = d.pontoEmbarque || d.endereco || '—';
     document.getElementById('c-id').textContent = 'ID: ' + user.uid.slice(0,8).toUpperCase();
 
-    if (user.photoURL) {
+    const foto = d.fotoURL || user.photoURL;
+    if (foto) {
       document.getElementById('c-foto').innerHTML =
-        `<img src="${user.photoURL}" class="w-full h-full object-cover" alt="Foto">`;
+        `<img src="${foto}" class="w-full h-full object-cover" alt="Foto">`;
     }
 
     mostrar('e-carteira');
     return;
   }
 
-  // Verifica se tem inscrição pendente
-  const escSnap  = await getDoc(doc(db, 'inscricoes_transporte', user.uid + '_escolar'));
-  const trabSnap = await getDoc(doc(db, 'inscricoes_transporte', user.uid + '_trabalhador'));
-
+  // Tem inscrição mas ainda não aprovada → pendente; senão, sem inscrição
   if (escSnap.exists() || trabSnap.exists()) {
     mostrar('e-pendente');
   } else {

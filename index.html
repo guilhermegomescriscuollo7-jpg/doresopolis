@@ -581,9 +581,8 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getFirestore, collection, query, where, getDocs, orderBy, limit, doc, onSnapshot, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
         import { getAuth, signInWithPopup, signInWithRedirect, getRedirectResult, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, updatePassword, deleteUser, onAuthStateChanged, signOut, updateProfile, EmailAuthProvider, reauthenticateWithCredential, updateEmail } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-        import { getDatabase, ref as dbRef, get as dbGet, onValue as rtdbOnValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+        import { getDatabase, ref as dbRef, get as dbGet, set as dbSet, update as dbUpdate, remove as dbRemove, onValue as rtdbOnValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAskgM5cxiR4DI2PXrccBxOvPZzMPDKdCo",
@@ -596,7 +595,6 @@
         };
 
         const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app, 'ai-studio-effa6aaf-05b1-45f1-96b5-43601bcc0a4');
         const auth = getAuth(app);
         const rtdb = getDatabase(app);
         const googleProvider = new GoogleAuthProvider();
@@ -1006,14 +1004,14 @@
         // Carrega telefone do Firestore e preenche o campo
         async function carregarTelefoneDoUsuario(uid) {
             try {
-                const snap = await getDocs(query(collection(db, 'usuarios'), where('uid', '==', uid)));
-                if (!snap.empty) {
-                    const data = snap.docs[0].data();
+                const snap = await dbGet(dbRef(rtdb, 'usuarios/' + uid));
+                if (snap.exists()) {
+                    const data = snap.val();
                     document.getElementById('edit-telefone').value = data.telefone || '';
                     if (data.telefone) localStorage.setItem('userTelefone', data.telefone);
                 }
             } catch (e) {
-                console.error('Erro ao carregar perfil Firestore:', e);
+                console.error('Erro ao carregar perfil:', e);
             }
         }
 
@@ -1081,7 +1079,7 @@
             try {
                 const cred = await createUserWithEmailAndPassword(auth, email, senha);
                 await updateProfile(cred.user, { displayName: nome });
-                await setDoc(doc(db, 'usuarios', cred.user.uid), {
+                await dbSet(dbRef(rtdb, 'usuarios/' + cred.user.uid), {
                     uid: cred.user.uid, nome, email,
                     telefone: tel || '',
                     dataCriacao: new Date().toISOString(),
@@ -1127,8 +1125,8 @@
                 const promises = [];
                 if (nome !== user.displayName) promises.push(updateProfile(user, { displayName: nome }));
                 if (email && email !== user.email) promises.push(updateEmail(user, email));
-                promises.push(setDoc(doc(db, 'usuarios', user.uid),
-                    { uid: user.uid, nome, email: email || user.email, telefone: tel }, { merge: true }));
+                promises.push(dbUpdate(dbRef(rtdb, 'usuarios/' + user.uid),
+                    { uid: user.uid, nome, email: email || user.email, telefone: tel }));
                 await Promise.all(promises);
 
                 localStorage.setItem('usuarioDoresopolis', nome.split(' ')[0]);
@@ -1205,7 +1203,7 @@
                 } else {
                     await signInWithPopup(auth, googleProvider);
                 }
-                try { await deleteDoc(doc(db, 'usuarios', user.uid)); } catch(_) {}
+                try { await dbRemove(dbRef(rtdb, 'usuarios/' + user.uid)); } catch(_) {}
                 await deleteUser(user);
                 document.getElementById('modal-excluir-conta').classList.add('hidden');
                 localStorage.removeItem('usuarioDoresopolis');

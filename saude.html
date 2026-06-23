@@ -150,19 +150,22 @@ tailwind.config = {
 </div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, addDoc, query, orderBy, where, onSnapshot, getDocs, doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, push, set, update, get, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAskgM5cxiR4DI2PXrccBxOvPZzMPDKdCo",
   authDomain: "gen-lang-client-0963611393.firebaseapp.com",
+  databaseURL: "https://gen-lang-client-0963611393-default-rtdb.firebaseio.com",
   projectId: "gen-lang-client-0963611393",
   storageBucket: "gen-lang-client-0963611393.firebasestorage.app",
   messagingSenderId: "158833761867",
   appId: "1:158833761867:web:f9db6cb6dc6b5785cfb7ce"
 };
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app, 'ai-studio-effa6aaf-05b1-45f1-96b5-43601bcc0a4');
+const db = getDatabase(app);
+const auth = getAuth(app);
 
 // Estado da seleção
 let selecao = {
@@ -207,35 +210,33 @@ window.trocarAba = function(aba) {
 };
 
 // ===== INICIALIZAÇÃO =====
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', () => {
   usuarioNomePrimeiro = localStorage.getItem('usuarioDoresopolis') || '';
-  const telefone = localStorage.getItem('userTelefone');
-  if (!usuarioNomePrimeiro || !telefone) {
-    alert('Você precisa estar logado.');
-    window.location.href = 'index.html';
-    return;
-  }
-  try {
-    const qUser = query(collection(db, "usuarios"), where("telefone", "==", telefone));
-    const snap = await getDocs(qUser);
-    usuarioNomeCompleto = !snap.empty ? snap.docs[0].data().nomeCompleto : usuarioNomePrimeiro;
-  } catch(e) { usuarioNomeCompleto = usuarioNomePrimeiro; }
-
-  carregarEspecialidades();
-  escutarVagas();
-  carregarMinhasConsultas();
+  onAuthStateChanged(auth, (user) => {
+    if (!user) {
+      alert('Você precisa estar logado.');
+      window.location.href = 'index.html';
+      return;
+    }
+    usuarioNomeCompleto = user.displayName || usuarioNomePrimeiro;
+    if (!usuarioNomePrimeiro) usuarioNomePrimeiro = (usuarioNomeCompleto || '').split(' ')[0];
+    carregarEspecialidades();
+    escutarVagas();
+    carregarMinhasConsultas();
+  });
 });
 
 // ===== ESPECIALIDADES DINÂMICAS =====
 function carregarEspecialidades() {
-  const qEsp = query(collection(db, "especialidades_saude"), orderBy("nome", "asc"));
-  onSnapshot(qEsp, (snap) => {
+  onValue(ref(db, "especialidades_saude"), (snap) => {
     const container = document.getElementById('lista-especialidades');
-    if (snap.empty) {
+    if (!snap.exists()) {
       container.innerHTML = `<div class="col-span-2 text-center py-6 text-gray-400 text-sm bg-white rounded-xl border border-gray-100">Nenhuma especialidade disponível no momento.</div>`;
       return;
     }
-    const especialidades = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const especialidades = [];
+    snap.forEach(d => { especialidades.push({ id: d.key, ...d.val() }); });
+    especialidades.sort((a, b) => (a.nome || '').localeCompare(b.nome || ''));
     container.innerHTML = especialidades.map(esp => `
       <div onclick="selecionarEspecialidade('${esp.id}','${esp.nome.replace(/'/g,"\\'")}','${(esp.profissional||'').replace(/'/g,"\\'")}')"
            id="esp-card-${esp.id}"
@@ -256,11 +257,13 @@ function carregarEspecialidades() {
 
 // ===== VAGAS EM TEMPO REAL =====
 function escutarVagas() {
-  const agendasRef = collection(db, "agendas_saude");
-  onSnapshot(agendasRef, (snap) => {
-    vagasDisponiveis = snap.docs
-      .filter(d => d.data().disponivel === true && (d.data().vagasOcupadas || 0) < (d.data().limiteVagas || 1))
-      .map(d => ({ id: d.id, ...d.data() }));
+  onValue(ref(db, "agendas_saude"), (snap) => {
+    vagasDisponiveis = [];
+    snap.forEach(d => {
+      const v = d.val();
+      const livres = (v.vagas || 0) - (v.agendados || 0);
+      if (livres > 0) vagasDisponiveis.push({ id: d.key, ...v });
+    });
     // Atualiza se já tiver especialidade selecionada
     if (selecao.especialidadeId) atualizarDias();
   });
@@ -344,7 +347,7 @@ function atualizarHorarios() {
 
   secao.classList.remove('hidden');
   container.innerHTML = vagasDoDia.map(vaga => {
-    const livres = (vaga.limiteVagas || 1) - (vaga.vagasOcupadas || 0);
+    const livres = (vaga.vagas || 0) - (vaga.agendados || 0);
     const isSelected = selecao.agendaId === vaga.id;
     return `
     <label class="cursor-pointer">
@@ -389,16 +392,16 @@ window.agendarConsulta = async function() {
   btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processando...';
 
   const sintomas = document.getElementById('form-sintomas').value.trim();
-  const agRef = doc(db, "agendas_saude", selecao.agendaId);
+  const agRef = ref(db, "agendas_saude/" + selecao.agendaId);
 
   try {
     // Verifica se ainda há vagas (prevenção de condição de corrida)
-    const agSnap = await getDoc(agRef);
+    const agSnap = await get(agRef);
     if (!agSnap.exists()) throw new Error('Vaga não encontrada.');
-    const agData = agSnap.data();
-    const ocupadas = agData.vagasOcupadas || 0;
-    const limite = agData.limiteVagas || 1;
-    if (ocupadas >= limite) {
+    const agData = agSnap.val();
+    const agendados = agData.agendados || 0;
+    const limite = agData.vagas || 0;
+    if (agendados >= limite) {
       mostrarAviso('Esta vaga acaba de ser preenchida. Escolha outro horário.', 'erro');
       btn.disabled = false;
       btn.innerHTML = '<i class="fa-regular fa-calendar-check"></i> Confirmar Agendamento';
@@ -408,22 +411,21 @@ window.agendarConsulta = async function() {
       return;
     }
 
-    const novasOcupadas = ocupadas + 1;
-    const novoDisponivel = novasOcupadas < limite;
-
     // Protocolo
     const now = new Date();
     const protocolo = `SAU${now.getFullYear().toString().slice(-2)}${String(now.getMonth()+1).padStart(2,'0')}-${Math.random().toString(36).substring(2,6).toUpperCase()}`;
 
-    // Transação: atualiza vaga e registra agendamento
-    await updateDoc(agRef, { vagasOcupadas: novasOcupadas, disponivel: novoDisponivel });
-    await addDoc(collection(db, "solicitacoes_saude"), {
+    // Reserva a vaga (incrementa agendados) e registra o agendamento
+    await update(agRef, { agendados: agendados + 1 });
+    await set(push(ref(db, "solicitacoes_saude")), {
       protocolo,
       nomeCidadao: usuarioNomeCompleto,
+      nomePaciente: usuarioNomeCompleto,
       especialidade: selecao.especialidadeNome,
       especialidadeId: selecao.especialidadeId,
       profissional: selecao.profissional || '',
       dataConsulta: selecao.dataISO,
+      hora: selecao.hora,
       horaConsulta: selecao.hora,
       agendaId: selecao.agendaId,
       sintomas,
@@ -454,13 +456,14 @@ window.agendarConsulta = async function() {
 
 // ===== MINHAS CONSULTAS =====
 function carregarMinhasConsultas() {
-  const qConsultas = query(collection(db, "solicitacoes_saude"), orderBy("dataRegistro", "desc"));
-  onSnapshot(qConsultas, (snap) => {
+  onValue(ref(db, "solicitacoes_saude"), (snap) => {
     const container = document.getElementById('lista-consultas');
-    const minhas = snap.docs.filter(d => {
-      const data = d.data();
-      return data.nomeCidadao === usuarioNomeCompleto || data.nomeCidadao === usuarioNomePrimeiro;
-    });
+    const todas = [];
+    snap.forEach(d => { todas.push({ id: d.key, ...d.val() }); });
+    todas.sort((a, b) => new Date(b.dataRegistro || 0) - new Date(a.dataRegistro || 0));
+    const minhas = todas.filter(data =>
+      data.nomeCidadao === usuarioNomeCompleto || data.nomeCidadao === usuarioNomePrimeiro
+    );
 
     if (minhas.length === 0) {
       container.innerHTML = `<div class="text-center py-12 text-gray-400 text-sm bg-white rounded-xl border border-gray-100">
@@ -470,8 +473,7 @@ function carregarMinhasConsultas() {
       return;
     }
 
-    container.innerHTML = minhas.map(docSnap => {
-      const data = docSnap.data();
+    container.innerHTML = minhas.map(data => {
       const [ano, mes, dia] = (data.dataConsulta||'---').split('-');
       const dataFmt = data.dataConsulta ? `${dia}/${mes}/${ano}` : '---';
 

@@ -1994,7 +1994,7 @@ function renderLinhasTransporte() {
         <p class="font-bold text-gray-800 text-sm">${l.nome||'—'}</p>
         <span class="text-[10px] font-bold bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full">${l.tipo||'urbano'}</span>
       </div>
-      <p class="text-xs text-gray-400 mb-3">${(l.horarios||[]).join(' · ')||'Sem horários'}</p>
+      <p class="text-xs text-gray-400 mb-3">${(l.horarios||[]).map(h=>typeof h==='object'?`${h.periodo?h.periodo+': ':''}${Array.isArray(h.saidas)?h.saidas.join('/'):''}`:h).join(' · ')||'Sem horários'}</p>
       <div class="flex gap-2">
         <button onclick="abrirModalLinhaTransporte('${l.id}')" class="flex-1 bg-gray-100 text-gray-600 text-xs font-bold py-2 rounded-lg">Editar</button>
         <button onclick="excluirLinhaTransporte('${l.id}')" class="bg-red-50 text-red-500 text-xs font-bold py-2 px-3 rounded-lg">Excluir</button>
@@ -2013,8 +2013,8 @@ window.abrirModalLinhaTransporte = function(id) {
   document.getElementById('tr-linha-id').value = id||'';
   document.getElementById('tr-linha-nome').value = l?.nome||'';
   document.getElementById('tr-linha-tipo').value = l?.tipo||'urbano';
-  document.getElementById('tr-linha-horarios').value = (l?.horarios||[]).join(', ');
-  document.getElementById('tr-linha-obs').value = l?.obs||'';
+  document.getElementById('tr-linha-horarios').value = (l?.horarios||[]).map(h=>typeof h==='object'?(Array.isArray(h.saidas)?h.saidas.join(', '):''):h).filter(Boolean).join(', ');
+  document.getElementById('tr-linha-obs').value = l?.obs||l?.observacao||'';
   document.getElementById('modal-tr-linha').classList.remove('hidden');
 };
 window.fecharModalLinhaTransporte = function() {

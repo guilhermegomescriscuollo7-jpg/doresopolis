@@ -53,11 +53,12 @@
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import { getFirestore, collection, getDocs, orderBy, query } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { getDatabase, ref, get } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
 
 const firebaseConfig = {
   apiKey: "AIzaSyAskgM5cxiR4DI2PXrccBxOvPZzMPDKdCo",
   authDomain: "gen-lang-client-0963611393.firebaseapp.com",
+  databaseURL: "https://gen-lang-client-0963611393-default-rtdb.firebaseio.com",
   projectId: "gen-lang-client-0963611393",
   storageBucket: "gen-lang-client-0963611393.firebasestorage.app",
   messagingSenderId: "158833761867",
@@ -65,7 +66,7 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app, 'ai-studio-effa6aaf-05b1-45f1-96b5-43601bcc0a4');
+const db = getDatabase(app);
 
 const cores = {
   urbano:        { bg: 'bg-blue-50',   border: 'border-blue-100',   header: 'bg-blue-50 border-blue-100',   icon: 'text-blue-500',   badge: 'bg-blue-100 text-blue-600' },
@@ -78,25 +79,38 @@ const labels = { urbano:'Urbano', rural:'Rural', intermunicipal:'Intermunicipal'
 
 async function carregar() {
   try {
-    const snap = await getDocs(query(collection(db, 'horarios_transporte'), orderBy('ordem')));
-    if (snap.empty) { mostrar('estado-vazio'); return; }
+    const snap = await get(ref(db, 'horarios_transporte'));
+    if (!snap.exists()) { mostrar('estado-vazio'); return; }
+
+    const linhas = [];
+    snap.forEach(c => linhas.push({ id: c.key, ...c.val() }));
+    linhas.sort((a, b) => (a.nome || '').localeCompare(b.nome || ''));
 
     const lista = document.getElementById('estado-lista');
     lista.innerHTML = '';
 
-    snap.forEach(docSnap => {
-      const d = docSnap.data();
+    linhas.forEach(d => {
       const c = cores[d.tipo] || cores.urbano;
       const lbl = labels[d.tipo] || d.tipo;
 
-      // Monta linhas de horário
-      const linhasHtml = (d.horarios || []).map(h => `
-        <div class="px-4 py-2.5 flex items-center justify-between">
-          <p class="text-xs text-gray-600">${h.periodo || '—'}</p>
-          <p class="text-xs font-bold text-gray-800">${(h.saidas || []).join(' · ') || '—'}</p>
-        </div>
-      `).join('<div class="border-t border-gray-50"></div>');
+      // horarios pode vir em dois formatos:
+      //  - rico:    [{ periodo, saidas:[...] }]  (painel de transporte)
+      //  - simples: ["06:00","12:00"]            (painel unificado)
+      const horarios = Array.isArray(d.horarios) ? d.horarios : [];
+      const horariosHtml = horarios.length
+        ? `<div class="divide-y divide-gray-50">${horarios.map(h => {
+            if (h && typeof h === 'object') {
+              const saidas = Array.isArray(h.saidas) ? h.saidas.join(' · ') : (h.saidas || '');
+              return `<div class="px-4 py-2.5 flex items-center justify-between gap-3">
+                <p class="text-xs text-gray-600">${h.periodo || '—'}</p>
+                <p class="text-xs font-bold text-gray-800 text-right">${saidas || '—'}</p>
+              </div>`;
+            }
+            return `<div class="px-4 py-2.5"><p class="text-xs font-bold text-gray-800">${h}</p></div>`;
+          }).join('')}</div>`
+        : `<div class="px-4 py-3 text-xs text-gray-400">Sem horários cadastrados.</div>`;
 
+      const obs = d.observacao || d.obs;
       lista.insertAdjacentHTML('beforeend', `
         <div class="bg-white rounded-2xl border ${c.border} shadow-sm overflow-hidden">
           <div class="px-4 py-3 ${c.header} border-b flex items-center justify-between">
@@ -106,10 +120,10 @@ async function carregar() {
             </div>
             <span class="text-[9px] font-black uppercase ${c.badge} px-2 py-0.5 rounded-full">${lbl}</span>
           </div>
-          <div class="divide-y divide-gray-50">${linhasHtml}</div>
-          ${d.observacao ? `<div class="px-4 py-2 bg-amber-50 border-t border-amber-100 flex items-start gap-2">
+          ${horariosHtml}
+          ${obs ? `<div class="px-4 py-2 bg-amber-50 border-t border-amber-100 flex items-start gap-2">
             <i class="fa-solid fa-triangle-exclamation text-amber-500 text-xs mt-0.5 shrink-0"></i>
-            <p class="text-[10px] text-amber-700">${d.observacao}</p>
+            <p class="text-[10px] text-amber-700">${obs}</p>
           </div>` : ''}
         </div>
       `);

@@ -14,9 +14,20 @@
       ".indexOn": "dataPublicacao"
     },
 
+    "horarios_transporte": {
+      ".read": true,
+      ".write": "auth != null && root.child('contas_secretaria').child(auth.uid).exists()"
+    },
+
     "contas_secretaria": {
       ".read": "auth != null",
       ".write": "!data.exists() || (auth != null && root.child('contas_secretaria').child(auth.uid).child('secretaria').val() === 'ti')"
+    },
+
+    "usuarios": {
+      "$uid": {
+        ".write": "auth != null && auth.uid === $uid"
+      }
     },
 
     "solicitacoes_obras":    { ".indexOn": "dataRegistro" },

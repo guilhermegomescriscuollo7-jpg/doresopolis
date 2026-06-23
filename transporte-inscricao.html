@@ -132,11 +132,12 @@
 <script type="module">
 import { initializeApp }    from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { getDatabase, ref as dbRef, get, set } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
 
 const firebaseConfig = {
   apiKey: "AIzaSyAskgM5cxiR4DI2PXrccBxOvPZzMPDKdCo",
   authDomain: "gen-lang-client-0963611393.firebaseapp.com",
+  databaseURL: "https://gen-lang-client-0963611393-default-rtdb.firebaseio.com",
   projectId: "gen-lang-client-0963611393",
   storageBucket: "gen-lang-client-0963611393.firebasestorage.app",
   messagingSenderId: "158833761867",
@@ -145,7 +146,7 @@ const firebaseConfig = {
 
 const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const db   = getFirestore(app, 'ai-studio-effa6aaf-05b1-45f1-96b5-43601bcc0a4');
+const db   = getDatabase(app);
 let currentUser = null;
 
 const authTimeout = setTimeout(() => mostrar('e-nao-logado'), 6000);
@@ -185,14 +186,15 @@ onAuthStateChanged(auth, async (user) => {
   clearTimeout(authTimeout);
   if (!user) { mostrar('e-nao-logado'); return; }
   currentUser = user;
-  const snap = await getDoc(doc(db, 'inscricoes_transporte', user.uid + '_escolar'));
+  const snap = await get(dbRef(db, 'inscricoes_transporte/' + user.uid + '_escolar'));
   if (snap.exists()) {
     const msgs = {
-      pendente: 'Sua inscrição está sendo analisada pela Secretaria de Transporte.',
-      aprovado: 'Sua inscrição foi aprovada! Acesse sua carteirinha digital.',
-      negado:   'Sua inscrição foi negada. Entre em contato com a Secretaria de Transporte.'
+      PENDENTE: 'Sua inscrição está sendo analisada pela Secretaria de Transporte.',
+      APROVADO: 'Sua inscrição foi aprovada! Acesse sua carteirinha digital.',
+      NEGADO:   'Sua inscrição foi negada. Entre em contato com a Secretaria de Transporte.'
     };
-    document.getElementById('msg-status').textContent = msgs[snap.data().status] || msgs.pendente;
+    const st = (snap.val().status || 'PENDENTE').toUpperCase();
+    document.getElementById('msg-status').textContent = msgs[st] || msgs.PENDENTE;
     mostrar('e-ja-inscrito');
     return;
   }
@@ -225,7 +227,7 @@ document.getElementById('form-inscricao').addEventListener('submit', async (e) =
     const fotoURL = await getDownloadURL(fotoRef);
 
     // Salva inscrição
-    await setDoc(doc(db, 'inscricoes_transporte', currentUser.uid + '_escolar'), {
+    await set(dbRef(db, 'inscricoes_transporte/' + currentUser.uid + '_escolar'), {
       tipo:           'escolar',
       uid:            currentUser.uid,
       email:          currentUser.email || '',
@@ -233,8 +235,8 @@ document.getElementById('form-inscricao').addEventListener('submit', async (e) =
       cpf:            document.getElementById('f-cpf').value.trim(),
       dataNascimento: document.getElementById('f-nascimento').value,
       fotoURL,
-      status:         'pendente',
-      dataCriacao:    serverTimestamp()
+      status:         'PENDENTE',
+      dataCriacao:    Date.now()
     });
 
     mostrar('e-ja-inscrito');
