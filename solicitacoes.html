@@ -170,12 +170,14 @@
 
     <!-- SCRIPT DE LÓGICA E FIREBASE -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getFirestore, collection, query, orderBy, onSnapshot, getDocs, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getDatabase, ref, onValue, query, orderByChild } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAskgM5cxiR4DI2PXrccBxOvPZzMPDKdCo",
             authDomain: "gen-lang-client-0963611393.firebaseapp.com",
+            databaseURL: "https://gen-lang-client-0963611393-default-rtdb.firebaseio.com",
             projectId: "gen-lang-client-0963611393",
             storageBucket: "gen-lang-client-0963611393.firebasestorage.app",
             messagingSenderId: "158833761867",
@@ -183,7 +185,8 @@
         };
 
         const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app, 'ai-studio-effa6aaf-05b1-45f1-96b5-43601bcc0a4'); 
+        const db = getDatabase(app);
+        const auth = getAuth(app);
 
         // Memória para guardar os dados e exibir rapidamente no Modal
         window.dadosHistorico = {};
@@ -205,30 +208,18 @@
         let usuarioNomePrimeiro = "";
         let usuarioNomeCompleto = "";
 
-        document.addEventListener('DOMContentLoaded', async () => {
-            usuarioNomePrimeiro = localStorage.getItem('usuarioDoresopolis');
-            const telefoneSalvo = localStorage.getItem('userTelefone');
-
-            if (usuarioNomePrimeiro && telefoneSalvo) {
-                try {
-                    const qUser = query(collection(db, "usuarios"), where("telefone", "==", telefoneSalvo));
-                    const snapUser = await getDocs(qUser);
-                    
-                    if(!snapUser.empty) {
-                        usuarioNomeCompleto = snapUser.docs[0].data().nomeCompleto;
-                    } else {
-                        usuarioNomeCompleto = usuarioNomePrimeiro;
-                    }
-                } catch(e) {
-                    console.error(e);
-                    usuarioNomeCompleto = usuarioNomePrimeiro;
+        document.addEventListener('DOMContentLoaded', () => {
+            usuarioNomePrimeiro = localStorage.getItem('usuarioDoresopolis') || '';
+            onAuthStateChanged(auth, (user) => {
+                if (!user) {
+                    alert("Você precisa estar logado para ver suas solicitações.");
+                    window.location.href = "index.html";
+                    return;
                 }
-
-                carregarHistoricoGeral(); 
-            } else {
-                alert("Você precisa estar logado para ver suas solicitações.");
-                window.location.href = "index.html";
-            }
+                usuarioNomeCompleto = user.displayName || usuarioNomePrimeiro;
+                if (!usuarioNomePrimeiro) usuarioNomePrimeiro = (usuarioNomeCompleto || '').split(' ')[0];
+                carregarHistoricoGeral();
+            });
         });
 
         function carregarHistoricoGeral() {
@@ -246,19 +237,19 @@
                     }
                 });
                 snapshot.forEach((docSnap) => {
-                    const data = docSnap.data();
+                    const data = docSnap.val();
                     if (isDoUsuario(data.nomeCidadao)) {
-                        window.dadosHistorico[docSnap.id] = { ...data, _secretaria: secretaria };
+                        window.dadosHistorico[docSnap.key] = { ...data, _secretaria: secretaria };
                     }
                 });
                 renderizarTodasSolicitacoes();
             }
 
-            // Listeners para cada coleção
-            onSnapshot(query(collection(db, "solicitacoes_obras"),    orderBy("dataRegistro", "desc")), snap => registrarEatualizar(snap, 'Obras'));
-            onSnapshot(query(collection(db, "solicitacoes_saude"),    orderBy("dataRegistro", "desc")), snap => registrarEatualizar(snap, 'Saúde'));
-            onSnapshot(query(collection(db, "solicitacoes_educacao"), orderBy("dataRegistro", "desc")), snap => registrarEatualizar(snap, 'Educação'));
-            onSnapshot(query(collection(db, "solicitacoes_tributos"), orderBy("dataRegistro", "desc")), snap => registrarEatualizar(snap, 'Tributos'));
+            // Listeners para cada nó do RTDB
+            onValue(query(ref(db, "solicitacoes_obras"),    orderByChild("dataRegistro")), snap => registrarEatualizar(snap, 'Obras'));
+            onValue(query(ref(db, "solicitacoes_saude"),    orderByChild("dataRegistro")), snap => registrarEatualizar(snap, 'Saúde'));
+            onValue(query(ref(db, "solicitacoes_educacao"), orderByChild("dataRegistro")), snap => registrarEatualizar(snap, 'Educação'));
+            onValue(query(ref(db, "solicitacoes_tributos"), orderByChild("dataRegistro")), snap => registrarEatualizar(snap, 'Tributos'));
 
             window._renderizar = renderizarTodasSolicitacoes;
             function renderizarTodasSolicitacoes() {

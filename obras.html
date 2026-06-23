@@ -187,13 +187,14 @@
 
     <!-- SCRIPT DE LÓGICA E FIREBASE -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        // Importadas as funções getDocs e where para buscar o nome completo
-        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, getDocs, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getDatabase, ref, push, set, onValue, query, orderByChild } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAskgM5cxiR4DI2PXrccBxOvPZzMPDKdCo",
             authDomain: "gen-lang-client-0963611393.firebaseapp.com",
+            databaseURL: "https://gen-lang-client-0963611393-default-rtdb.firebaseio.com",
             projectId: "gen-lang-client-0963611393",
             storageBucket: "gen-lang-client-0963611393.firebasestorage.app",
             messagingSenderId: "158833761867",
@@ -201,7 +202,8 @@
         };
 
         const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app, 'ai-studio-effa6aaf-05b1-45f1-96b5-43601bcc0a4'); 
+        const db = getDatabase(app);
+        const auth = getAuth(app);
 
         window.mostrarAviso = function(mensagem, tipo = 'sucesso') {
             const toast = document.getElementById('toast-aviso');
@@ -262,53 +264,43 @@
         let usuarioNomeCompleto = "";
 
         // Inicialização Avançada: Busca o nome completo no banco para enviar o chamado perfeitamente
-        document.addEventListener('DOMContentLoaded', async () => {
-            usuarioNomePrimeiro = localStorage.getItem('usuarioDoresopolis');
-            const telefoneSalvo = localStorage.getItem('userTelefone');
-
-            if (usuarioNomePrimeiro && telefoneSalvo) {
-                try {
-                    // Consulta o banco para pegar o nome completo vinculado a este telefone
-                    const qUser = query(collection(db, "usuarios"), where("telefone", "==", telefoneSalvo));
-                    const snapUser = await getDocs(qUser);
-                    
-                    if(!snapUser.empty) {
-                        usuarioNomeCompleto = snapUser.docs[0].data().nomeCompleto;
-                    } else {
-                        usuarioNomeCompleto = usuarioNomePrimeiro; // Fallback de segurança
-                    }
-                } catch(e) {
-                    console.error(e);
-                    usuarioNomeCompleto = usuarioNomePrimeiro;
+        document.addEventListener('DOMContentLoaded', () => {
+            usuarioNomePrimeiro = localStorage.getItem('usuarioDoresopolis') || '';
+            // Aguarda a sessão do Firebase (persistida do login no index.html)
+            onAuthStateChanged(auth, (user) => {
+                if (!user) {
+                    alert("Você precisa estar logado para abrir um chamado.");
+                    window.location.href = "index.html";
+                    return;
                 }
-
-                // Salva o NOME COMPLETO no input escondido para enviar junto com a solicitação
+                usuarioNomeCompleto = user.displayName || usuarioNomePrimeiro;
+                if (!usuarioNomePrimeiro) usuarioNomePrimeiro = (usuarioNomeCompleto || '').split(' ')[0];
                 document.getElementById('solicitante-nome').value = usuarioNomeCompleto;
-                carregarMeusChamados(); 
-            } else {
-                alert("Você precisa estar logado para abrir um chamado.");
-                window.location.href = "index.html";
-            }
+                carregarMeusChamados();
+            });
         });
 
         function carregarMeusChamados() {
-            const solicitacoesRef = collection(db, "solicitacoes_obras");
-            const qSolicitacoes = query(solicitacoesRef, orderBy("dataRegistro", "desc"));
+            const qSolicitacoes = query(ref(db, "solicitacoes_obras"), orderByChild("dataRegistro"));
 
-            onSnapshot(qSolicitacoes, (snapshot) => {
+            onValue(qSolicitacoes, (snapshot) => {
                 const container = document.getElementById("lista-meus-chamados");
-                
-                if (snapshot.empty) {
+
+                if (!snapshot.exists()) {
                     container.innerHTML = `<div class="text-center py-8 text-gray-500 text-sm bg-white rounded-xl shadow-sm border border-gray-200">Você ainda não possui solicitações abertas.</div>`;
                     return;
                 }
 
+                // RTDB orderByChild retorna em ordem crescente; invertemos para mais recentes primeiro
+                const itens = [];
+                snapshot.forEach((docSnap) => { itens.push(docSnap.val()); });
+                itens.reverse();
+
                 container.innerHTML = "";
                 let encontrouChamados = false;
 
-                snapshot.forEach((docSnap) => {
-                    const data = docSnap.data();
-                    
+                itens.forEach((data) => {
+
                     // Mostra solicitações se o nome bater com o nome completo ou o primeiro nome (retrocompatibilidade)
                     if(data.nomeCidadao !== usuarioNomeCompleto && data.nomeCidadao !== usuarioNomePrimeiro) return;
                     
@@ -429,9 +421,9 @@
             const numeroProtocolo = `OBR${ano}${mes}-${aleatorio}`;
 
             try {
-                await addDoc(collection(db, "solicitacoes_obras"), {
-                    protocolo: numeroProtocolo, 
-                    nomeCidadao: nome, // Agora vai salvar o nome completo perfeitamente
+                await set(push(ref(db, "solicitacoes_obras")), {
+                    protocolo: numeroProtocolo,
+                    nomeCidadao: nome,
                     tipoServico: servico,
                     endereco: enderecoFinal,
                     urgencia: urgencia,

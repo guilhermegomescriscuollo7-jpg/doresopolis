@@ -2,7 +2,7 @@
 // Estratégia: network-first com fallback para cache (não cacheia respostas de
 // outras origens, como Firebase e Open-Meteo, para não atrapalhar dados em tempo real).
 
-const CACHE = 'dores-v1';
+const CACHE = 'dores-v2';
 const ASSETS = [
   './',
   './index.html',
@@ -12,6 +12,7 @@ const ASSETS = [
   './obras.html',
   './transporte.html',
   './solicitacoes.html',
+  './login-secretaria.html',
   './seguranca-infantil.html',
   './politica-privacidade.html',
   './manifest.json',

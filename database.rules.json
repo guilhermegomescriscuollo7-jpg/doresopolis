@@ -2,10 +2,26 @@
   "rules": {
     ".read": "auth != null",
     ".write": "auth != null",
+
     "config": {
-      "secretarias": {
-        ".read": true
-      }
-    }
+      ".read": true,
+      ".write": "auth != null && root.child('contas_secretaria').child(auth.uid).exists()"
+    },
+
+    "avisos": {
+      ".read": true,
+      ".write": "auth != null && root.child('contas_secretaria').child(auth.uid).exists()",
+      ".indexOn": "dataPublicacao"
+    },
+
+    "contas_secretaria": {
+      ".read": "auth != null",
+      ".write": "!data.exists() || (auth != null && root.child('contas_secretaria').child(auth.uid).child('secretaria').val() === 'ti')"
+    },
+
+    "solicitacoes_obras":    { ".indexOn": "dataRegistro" },
+    "solicitacoes_saude":    { ".indexOn": "dataRegistro" },
+    "solicitacoes_educacao": { ".indexOn": "dataRegistro" },
+    "solicitacoes_tributos": { ".indexOn": "dataRegistro" }
   }
 }

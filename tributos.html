@@ -339,19 +339,22 @@ tailwind.config = {
 </div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, addDoc, query, orderBy, where, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, push, set, onValue, query, orderByChild } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAskgM5cxiR4DI2PXrccBxOvPZzMPDKdCo",
   authDomain: "gen-lang-client-0963611393.firebaseapp.com",
+  databaseURL: "https://gen-lang-client-0963611393-default-rtdb.firebaseio.com",
   projectId: "gen-lang-client-0963611393",
   storageBucket: "gen-lang-client-0963611393.firebasestorage.app",
   messagingSenderId: "158833761867",
   appId: "1:158833761867:web:f9db6cb6dc6b5785cfb7ce"
 };
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app, 'ai-studio-effa6aaf-05b1-45f1-96b5-43601bcc0a4');
+const db = getDatabase(app);
+const auth = getAuth(app);
 
 let usuarioNomeCompleto = '';
 let usuarioNomePrimeiro = '';
@@ -394,20 +397,18 @@ window.trocarAba = function(aba) {
 };
 
 // INICIALIZAÇÃO
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', () => {
   usuarioNomePrimeiro = localStorage.getItem('usuarioDoresopolis') || '';
-  const telefone = localStorage.getItem('userTelefone');
-  if (!usuarioNomePrimeiro || !telefone) {
-    alert('Você precisa estar logado.');
-    window.location.href = 'index.html';
-    return;
-  }
-  try {
-    const qUser = query(collection(db, "usuarios"), where("telefone", "==", telefone));
-    const snap = await getDocs(qUser);
-    usuarioNomeCompleto = !snap.empty ? snap.docs[0].data().nomeCompleto : usuarioNomePrimeiro;
-  } catch(e) { usuarioNomeCompleto = usuarioNomePrimeiro; }
-  carregarMeusPedidos();
+  onAuthStateChanged(auth, (user) => {
+    if (!user) {
+      alert('Você precisa estar logado.');
+      window.location.href = 'index.html';
+      return;
+    }
+    usuarioNomeCompleto = user.displayName || usuarioNomePrimeiro;
+    if (!usuarioNomePrimeiro) usuarioNomePrimeiro = (usuarioNomeCompleto || '').split(' ')[0];
+    carregarMeusPedidos();
+  });
 });
 
 // ABRIR / FECHAR FORMULÁRIO
@@ -436,7 +437,7 @@ window.enviarSolicitacaoTrib = async function(event) {
   const now = new Date();
   const protocolo = `TRB${now.getFullYear().toString().slice(-2)}${String(now.getMonth()+1).padStart(2,'0')}-${Math.random().toString(36).substring(2,6).toUpperCase()}`;
   try {
-    await addDoc(collection(db, "solicitacoes_tributos"), {
+    await set(push(ref(db, "solicitacoes_tributos")), {
       protocolo,
       tipoSolicitacao: cfg.titulo,
       tipoChave: tipo,
@@ -475,7 +476,7 @@ window.enviarSegundaVia = async function(event) {
   const now = new Date();
   const protocolo = `TRB${now.getFullYear().toString().slice(-2)}${String(now.getMonth()+1).padStart(2,'0')}-${Math.random().toString(36).substring(2,6).toUpperCase()}`;
   try {
-    await addDoc(collection(db, "solicitacoes_tributos"), {
+    await set(push(ref(db, "solicitacoes_tributos")), {
       protocolo,
       tipoSolicitacao: tipoSelecionado.value,
       tipoChave: '2via',
@@ -503,14 +504,19 @@ window.enviarSegundaVia = async function(event) {
 
 // MEUS PEDIDOS
 function carregarMeusPedidos() {
-  const q = query(collection(db, "solicitacoes_tributos"), orderBy("dataRegistro", "desc"));
-  onSnapshot(q, (snap) => {
+  const q = query(ref(db, "solicitacoes_tributos"), orderByChild("dataRegistro"));
+  onValue(q, (snap) => {
     const container = document.getElementById('lista-pedidos-trib');
-    snap.docs.forEach(d => { window.cacheTrib[d.id] = d.data(); });
-    const meus = snap.docs.filter(d => {
-      const data = d.data();
-      return data.nomeCidadao === usuarioNomeCompleto || data.nomeCidadao === usuarioNomePrimeiro;
-    });
+
+    const todos = [];
+    snap.forEach(d => { todos.push({ id: d.key, ...d.val() }); });
+    todos.reverse(); // mais recentes primeiro
+
+    todos.forEach(d => { window.cacheTrib[d.id] = d; });
+
+    const meus = todos.filter(data =>
+      data.nomeCidadao === usuarioNomeCompleto || data.nomeCidadao === usuarioNomePrimeiro
+    );
 
     if (meus.length === 0) {
       container.innerHTML = `<div class="text-center py-12 text-gray-400 bg-white rounded-xl border border-gray-100">
@@ -527,9 +533,8 @@ function carregarMeusPedidos() {
       'CANCELADO':  { color: 'bg-red-100 text-red-700 border-red-200',       icon: 'fa-ban',              label: 'Cancelado' },
     };
 
-    container.innerHTML = meus.map(docSnap => {
-      const data = docSnap.data();
-      const id = docSnap.id;
+    container.innerHTML = meus.map(data => {
+      const id = data.id;
       const dataFmt = new Date(data.dataRegistro).toLocaleDateString('pt-BR', {day:'2-digit',month:'2-digit',year:'numeric'});
       const sc = statusConfig[data.status] || statusConfig['PENDENTE'];
       const temArquivo = data.arquivoUrl && data.arquivoUrl.trim() !== '';

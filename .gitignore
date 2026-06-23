@@ -1,0 +1,19 @@
+# Firebase
+firebase-debug.log
+.firebase/
+*.log
+
+# Dependências
+node_modules/
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Editores
+.vscode/
+.idea/
+
+# Ambiente
+.env
+.env.local

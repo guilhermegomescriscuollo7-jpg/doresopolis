@@ -159,12 +159,12 @@
 
                     <!-- CARDS DE DESTAQUE -->
                     <div class="grid grid-cols-2 gap-3 mb-6">
-                        <a href="ouvidoria.html" class="flex items-center gap-3 bg-orange-500 rounded-2xl p-3.5 active:scale-[0.97] transition-all shadow-sm">
+                        <a href="https://www.doresopolis.mg.gov.br/portal/ouvidoria" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 bg-orange-500 rounded-2xl p-3.5 active:scale-[0.97] transition-all shadow-sm">
                             <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
                                 <i class="fa-solid fa-comment-dots text-white text-lg"></i>
                             </div>
-                            <div>
-                                <p class="font-black text-white text-sm leading-tight">Ouvidoria</p>
+                            <div class="min-w-0">
+                                <p class="font-black text-white text-sm leading-tight flex items-center gap-1">Ouvidoria <i class="fa-solid fa-arrow-up-right-from-square text-[9px] text-orange-200"></i></p>
                                 <p class="text-[10px] text-orange-100 mt-0.5">Fale com a prefeitura</p>
                             </div>
                         </a>
@@ -740,10 +740,8 @@
             skeleton.classList.remove('hidden');
 
             try {
-                // Descobre o nome completo vinculado ao telefone
-                let nomeCompleto = '';
-                const snapUser = await getDocs(query(collection(db, 'usuarios'), where('telefone', '==', telefone)));
-                if (!snapUser.empty) nomeCompleto = (snapUser.docs[0].data().nomeCompleto || '').trim();
+                // Nome do cidadão para vincular as solicitações (displayName do login)
+                const nomeCompleto = (auth.currentUser?.displayName || '').trim();
                 const primeiroNome = (localStorage.getItem('usuarioDoresopolis') || nomeCompleto.split(' ')[0] || '').trim();
 
                 const ehDoUsuario = (n) => {
@@ -752,17 +750,17 @@
                     return (nomeCompleto && n === nomeCompleto) || (primeiroNome && n === primeiroNome);
                 };
 
-                // Busca as 4 coleções e filtra as que estão em aberto
+                // Busca os 4 nós do RTDB e filtra os que estão em aberto
                 const abertas = [];
                 const resultados = await Promise.all(
-                    COLECOES_SOL.map(col => getDocs(collection(db, col)).catch(() => null))
+                    COLECOES_SOL.map(col => dbGet(dbRef(rtdb, col)).catch(() => null))
                 );
 
                 resultados.forEach((snap, i) => {
                     if (!snap) return;
                     const secNome = ['Obras', 'Saúde', 'Educação', 'Tributos'][i];
                     snap.forEach(docSnap => {
-                        const data = docSnap.data();
+                        const data = docSnap.val();
                         if (!ehDoUsuario(data.nomeCidadao)) return;
                         const status = (data.status || 'PENDENTE').toUpperCase();
                         if (status === 'CONCLUÍDO' || status === 'CANCELADO') return;
@@ -848,37 +846,28 @@
         }
 
         // ======================================================
-        // CONFIG DO APP (manutenção + ruas)
+        // CONFIG DO APP (manutenção + alerta global) — RTDB config/app
         // ======================================================
-        const configAppRef = doc(db, "config", "app");
-        onSnapshot(configAppRef, (docSnap) => {
-            if (docSnap.exists()) {
-                const data = docSnap.data();
-
-                if (data.manutencao === true) {
-                    document.getElementById('tela-manutencao').classList.remove('hidden');
-                    document.getElementById('tela-manutencao').classList.add('flex');
-                } else {
-                    document.getElementById('tela-manutencao').classList.add('hidden');
-                    document.getElementById('tela-manutencao').classList.remove('flex');
-                }
-
-            }
-        });
-
-        // Alerta global lido do RTDB config/app.alertaGlobal
         rtdbOnValue(dbRef(rtdb, 'config/app'), (snap) => {
+            const d = snap.exists() ? snap.val() : {};
+
+            // Modo manutenção (acionado pela TI no painel)
+            const telaManutencao = document.getElementById('tela-manutencao');
+            if (d.manutencao === true) {
+                telaManutencao.classList.remove('hidden');
+                telaManutencao.classList.add('flex');
+            } else {
+                telaManutencao.classList.add('hidden');
+                telaManutencao.classList.remove('flex');
+            }
+
+            // Alerta global
             const containerAlerta = document.getElementById('alerta-global');
-            if (snap.exists()) {
-                const d = snap.val();
-                const msg = d.alertaGlobal || '';
-                if (msg.trim()) {
-                    document.getElementById('alerta-titulo').innerText = 'Aviso da Prefeitura';
-                    document.getElementById('alerta-mensagem').innerText = msg;
-                    containerAlerta.classList.remove('hidden');
-                } else {
-                    containerAlerta.classList.add('hidden');
-                }
+            const msg = (d.alertaGlobal || '').trim();
+            if (msg) {
+                document.getElementById('alerta-titulo').innerText = 'Aviso da Prefeitura';
+                document.getElementById('alerta-mensagem').innerText = msg;
+                containerAlerta.classList.remove('hidden');
             } else {
                 containerAlerta.classList.add('hidden');
             }
@@ -888,18 +877,20 @@
         window.carregarAvisos = async function() {
             const container = document.getElementById('mural-avisos-conteudo');
             try {
-                const q = query(collection(db, "avisos"), orderBy("dataPublicacao", "desc"), limit(5));
-                const snapshot = await getDocs(q);
+                const snap = await dbGet(dbRef(rtdb, "avisos"));
+                const lista = [];
+                if (snap.exists()) snap.forEach((c) => { lista.push(c.val()); });
+                lista.sort((a, b) => new Date(b.dataPublicacao || 0) - new Date(a.dataPublicacao || 0));
+                const top = lista.slice(0, 5);
 
-                if (snapshot.empty) {
+                if (top.length === 0) {
                     container.innerHTML = '<p class="text-xs text-gray-400 w-full text-center my-4">Nenhum aviso no momento.</p>';
                     return;
                 }
 
                 container.innerHTML = '';
 
-                snapshot.forEach((doc) => {
-                    const aviso = doc.data();
+                top.forEach((aviso) => {
                     let corBg = 'bg-gray-500';
                     const sec = (aviso.secretaria || '').toUpperCase();
                     if(sec === 'SAÚDE') corBg = 'bg-red-500';
