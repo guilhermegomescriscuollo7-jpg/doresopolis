@@ -448,7 +448,7 @@
         </select>
       </div>
       <div id="men-info" class="bg-blue-50 border border-blue-100 rounded-xl p-3 mb-4 text-xs text-blue-700 leading-relaxed">
-        <i class="fa-solid fa-circle-info mr-1"></i>Selecione uma secretaria para editar seus menus. Você pode renomear abas, trocar ícones e ativar/desativar.
+        <i class="fa-solid fa-circle-info mr-1"></i>Selecione uma secretaria para gerenciar seus menus: renomear, trocar ícone, reordenar (↑↓), excluir (🗑), adicionar abas e ativar/desativar. As mudanças aparecem no próximo login do painel da secretaria.
       </div>
       <div id="lista-menus" class="flex flex-col gap-3"></div>
       <div id="men-actions" class="hidden mt-4 space-y-2">
@@ -1707,6 +1707,48 @@ const TABS_DEFAULT = {
 let menSecAtual = null;
 let menTabsAtual = [];
 
+// Abas funcionais disponíveis para a secretaria (cada uma tem uma seção real no painel).
+// Usa o PAINEL_CFG (built-ins) ou as seções genéricas (sol/avi) para secretarias custom.
+function menusDisponiveis(secId) {
+  const cfg = PAINEL_CFG[secId];
+  if (cfg && Array.isArray(cfg.tabs) && cfg.tabs.length) return cfg.tabs.map(t=>({id:t.id,lbl:t.lbl,ico:t.ico}));
+  return [{id:'sol',lbl:'Solicitações',ico:'fa-inbox'},{id:'avi',lbl:'Avisos',ico:'fa-bullhorn'}];
+}
+
+// Lê os valores atuais dos inputs para não perdê-los ao re-renderizar
+function sincronizarMenuInputs() {
+  menTabsAtual.forEach(t => {
+    const lbl = document.getElementById(`men-lbl-${t.id}`); if (lbl) t.lbl = lbl.value;
+    const ico = document.getElementById(`men-ico-${t.id}`); if (ico) t.ico = ico.value;
+    const at  = document.getElementById(`men-ativo-${t.id}`); if (at) t.ativo = at.checked;
+  });
+}
+
+window.moverMenu = function(idx, dir) {
+  sincronizarMenuInputs();
+  const j = idx + dir;
+  if (j < 0 || j >= menTabsAtual.length) return;
+  const tmp = menTabsAtual[idx]; menTabsAtual[idx] = menTabsAtual[j]; menTabsAtual[j] = tmp;
+  renderMenusEditor();
+};
+
+window.removerMenu = function(idx) {
+  if (menTabsAtual.length <= 1) { toast('A secretaria precisa de pelo menos uma aba.','erro'); return; }
+  sincronizarMenuInputs();
+  menTabsAtual.splice(idx, 1);
+  renderMenusEditor();
+};
+
+window.adicionarMenu = function() {
+  const sel = document.getElementById('men-add-select');
+  if (!sel || !sel.value) return;
+  const base = menusDisponiveis(menSecAtual).find(d => d.id === sel.value);
+  if (!base || menTabsAtual.some(t => t.id === base.id)) return;
+  sincronizarMenuInputs();
+  menTabsAtual.push({ ...base, ativo: true });
+  renderMenusEditor();
+};
+
 window.carregarMenusPainel = async function(secId) {
   menSecAtual = secId;
   const c = document.getElementById('lista-menus');
@@ -1716,18 +1758,22 @@ window.carregarMenusPainel = async function(secId) {
   info.classList.add('hidden');
   c.innerHTML = `<div class="text-center py-6 text-gray-400 text-sm"><i class="fa-solid fa-spinner fa-spin mb-2 block"></i>Carregando...</div>`;
 
-  const defaults = TABS_DEFAULT[secId] || [{id:'sol',lbl:'Solicitações',ico:'fa-inbox'},{id:'avi',lbl:'Avisos',ico:'fa-bullhorn'}];
-  menTabsAtual = defaults.map(t=>({...t, ativo:true}));
+  const disp = menusDisponiveis(secId);
+  menTabsAtual = disp.map(t => ({ ...t, ativo: true }));
 
   try {
     const snap = await get(ref(db,`config/paineis/${secId}/tabs`));
     if (snap.exists()) {
       const saved = snap.val();
       const savedArr = Array.isArray(saved) ? saved : Object.values(saved);
-      menTabsAtual = menTabsAtual.map(t => {
-        const ov = savedArr.find(s=>s.id===t.id);
-        return ov ? {...t, lbl:ov.label||ov.lbl||t.lbl, ico:ov.icone||ov.ico||t.ico, ativo:ov.ativo!==false} : t;
-      });
+      // A config salva é a fonte da verdade (ordem + quais abas), limitada às abas funcionais
+      const reconstruido = savedArr
+        .filter(s => disp.some(d => d.id === s.id))
+        .map(s => {
+          const base = disp.find(d => d.id === s.id);
+          return { id: s.id, lbl: s.label||s.lbl||base.lbl, ico: s.icone||s.ico||base.ico, ativo: s.ativo!==false };
+        });
+      if (reconstruido.length) menTabsAtual = reconstruido;
     }
   } catch(e) {}
 
@@ -1737,14 +1783,21 @@ window.carregarMenusPainel = async function(secId) {
 
 function renderMenusEditor() {
   const c = document.getElementById('lista-menus');
-  c.innerHTML = menTabsAtual.map((t,i) => `
+  const total = menTabsAtual.length;
+  const cards = menTabsAtual.map((t,i) => `
     <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-4 space-y-3">
-      <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2">
         <div class="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center shrink-0">
           <i id="men-ico-prev-${t.id}" class="fa-solid ${t.ico} text-slate-600"></i>
         </div>
         <span class="text-xs font-black text-gray-500 uppercase tracking-wider flex-grow">Aba: ${t.id}</span>
-        <label class="relative inline-flex items-center cursor-pointer">
+        <button onclick="moverMenu(${i},-1)" ${i===0?'disabled':''} title="Mover para cima"
+          class="w-7 h-7 rounded-lg bg-gray-100 text-gray-500 disabled:opacity-30 flex items-center justify-center"><i class="fa-solid fa-chevron-up text-xs"></i></button>
+        <button onclick="moverMenu(${i},1)" ${i===total-1?'disabled':''} title="Mover para baixo"
+          class="w-7 h-7 rounded-lg bg-gray-100 text-gray-500 disabled:opacity-30 flex items-center justify-center"><i class="fa-solid fa-chevron-down text-xs"></i></button>
+        <button onclick="removerMenu(${i})" title="Excluir aba"
+          class="w-7 h-7 rounded-lg bg-red-50 text-red-500 flex items-center justify-center"><i class="fa-solid fa-trash-can text-xs"></i></button>
+        <label class="relative inline-flex items-center cursor-pointer ml-1" title="Ativar / ocultar">
           <input type="checkbox" id="men-ativo-${t.id}" ${t.ativo!==false?'checked':''} class="sr-only peer">
           <div class="w-10 h-5 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-slate-600"></div>
         </label>
@@ -1763,6 +1816,18 @@ function renderMenusEditor() {
         </div>
       </div>
     </div>`).join('');
+
+  // Abas funcionais ainda não adicionadas a esta secretaria
+  const restantes = menusDisponiveis(menSecAtual).filter(d => !menTabsAtual.some(t => t.id === d.id));
+  const addRow = restantes.length ? `
+    <div class="bg-slate-50 rounded-xl border border-dashed border-slate-300 p-3 flex items-center gap-2">
+      <select id="men-add-select" class="flex-grow bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700">
+        ${restantes.map(d=>`<option value="${d.id}">${d.lbl} (${d.id})</option>`).join('')}
+      </select>
+      <button onclick="adicionarMenu()" class="bg-slate-700 text-white text-xs font-bold px-3 py-2 rounded-lg flex items-center gap-1 shrink-0"><i class="fa-solid fa-plus"></i> Adicionar</button>
+    </div>` : `<p class="text-[11px] text-gray-400 text-center py-2">Todas as abas disponíveis já estão neste painel.</p>`;
+
+  c.innerHTML = cards + addRow;
 }
 
 window.salvarMenusPainel = async function() {
