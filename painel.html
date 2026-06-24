@@ -424,6 +424,13 @@
       <div id="lista-avi-generic" class="flex flex-col gap-3"><div class="text-center py-6 text-gray-400 text-sm"><i class="fa-solid fa-spinner fa-spin mb-2 block"></i>Carregando...</div></div>
     </section>
 
+    <!-- ====== ABA PERSONALIZADA: INFORMAÇÕES (genérica, reutilizável) ====== -->
+    <section id="sec-custom-info" class="sec hidden flex-grow overflow-y-auto p-4 pb-6">
+      <h2 id="custom-info-titulo" class="text-lg font-black text-gray-800 mb-3"></h2>
+      <img id="custom-info-img" class="hidden w-full rounded-xl border border-gray-100 mb-4" alt="">
+      <div id="custom-info-conteudo" class="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap"></div>
+    </section>
+
     <!-- ====== TI: SECRETARIAS ====== -->
     <section id="sec-sec-ti" class="sec hidden flex-grow overflow-y-auto p-4 pb-6">
       <div class="flex justify-between items-center mb-4">
@@ -828,19 +835,39 @@ function setupPainel(sec) {
   document.getElementById('loading').classList.add('hidden');
   document.getElementById('app').classList.remove('hidden');
 
-  trocarAba(cfg.tabs[0].id);
+  // Abre a primeira aba que não seja Link (evita popup ao carregar)
+  const primeira = cfg.tabs.find(t=>t.tipo!=='link') || cfg.tabs[0];
+  trocarAba(primeira.id);
 }
 
 window.trocarAba = function(abaId) {
   const cfg = PAINEL_CFG[secretariaAtual];
+  const tabInfo = (cfg.tabs||[]).find(t=>t.id===abaId);
+
+  // Aba personalizada do tipo Link: abre a URL externa e não troca de seção
+  if (tabInfo && tabInfo.tipo === 'link') {
+    if (tabInfo.url) window.open(tabInfo.url, '_blank', 'noopener');
+    return;
+  }
+
   document.querySelectorAll('.sec').forEach(el=>{ el.classList.add('hidden'); el.classList.remove('flex-grow'); });
 
-  const builtins = ['obras','tributos','educacao','saude','ti'];
-  const sufixo = builtins.includes(secretariaAtual) ? secretariaAtual : 'generic';
-  const tabId = (tabToSec[secretariaAtual]||{})[abaId] || abaId;
-  const secId = `sec-${tabId}-${sufixo}`;
-  const sec = document.getElementById(secId);
-  if (sec) { sec.classList.remove('hidden'); }
+  if (tabInfo && tabInfo.tipo === 'info') {
+    // Aba personalizada de Informações: usa a seção genérica reutilizável
+    document.getElementById('custom-info-titulo').textContent = tabInfo.lbl || 'Informações';
+    document.getElementById('custom-info-conteudo').textContent = tabInfo.conteudo || '';
+    const img = document.getElementById('custom-info-img');
+    if (tabInfo.imagem) { img.src = tabInfo.imagem; img.classList.remove('hidden'); }
+    else { img.classList.add('hidden'); img.removeAttribute('src'); }
+    document.getElementById('sec-custom-info').classList.remove('hidden');
+  } else {
+    const builtins = ['obras','tributos','educacao','saude','ti'];
+    const sufixo = builtins.includes(secretariaAtual) ? secretariaAtual : 'generic';
+    const tabId = (tabToSec[secretariaAtual]||{})[abaId] || abaId;
+    const secId = `sec-${tabId}-${sufixo}`;
+    const sec = document.getElementById(secId);
+    if (sec) { sec.classList.remove('hidden'); }
+  }
 
   cfg.tabs.forEach(t=>{
     const btn = document.getElementById(`tab-${secretariaAtual}-${t.id}`);
@@ -1721,8 +1748,36 @@ function sincronizarMenuInputs() {
     const lbl = document.getElementById(`men-lbl-${t.id}`); if (lbl) t.lbl = lbl.value;
     const ico = document.getElementById(`men-ico-${t.id}`); if (ico) t.ico = ico.value;
     const at  = document.getElementById(`men-ativo-${t.id}`); if (at) t.ativo = at.checked;
+    const url = document.getElementById(`men-url-${t.id}`); if (url) t.url = url.value;
+    const cont= document.getElementById(`men-cont-${t.id}`); if (cont) t.conteudo = cont.value;
+    const img = document.getElementById(`men-img-${t.id}`); if (img) t.imagem = img.value;
   });
 }
+
+window.toggleNovoTipo = function() {
+  const tipo = document.getElementById('men-novo-tipo')?.value;
+  document.getElementById('men-novo-url-wrap')?.classList.toggle('hidden', tipo!=='link');
+  document.getElementById('men-novo-cont-wrap')?.classList.toggle('hidden', tipo!=='info');
+};
+
+window.criarAbaPersonalizada = function() {
+  const tipo = document.getElementById('men-novo-tipo').value;
+  const lbl  = (document.getElementById('men-novo-lbl').value||'').trim();
+  const ico  = (document.getElementById('men-novo-ico').value||'').trim() || 'fa-circle-info';
+  if (!lbl) { toast('Informe o nome da aba.','erro'); return; }
+  let url='', conteudo='';
+  if (tipo==='link') {
+    url = (document.getElementById('men-novo-url').value||'').trim();
+    if (!url) { toast('Informe a URL do link.','erro'); return; }
+  } else {
+    conteudo = document.getElementById('men-novo-cont').value||'';
+  }
+  sincronizarMenuInputs();
+  const id = 'c_' + Math.random().toString(36).slice(2,8);
+  menTabsAtual.push({ id, tipo, lbl, ico, ativo:true, url, conteudo, imagem:'' });
+  renderMenusEditor();
+  toast('Aba criada! Clique em Salvar para aplicar.','info');
+};
 
 window.moverMenu = function(idx, dir) {
   sincronizarMenuInputs();
@@ -1759,19 +1814,24 @@ window.carregarMenusPainel = async function(secId) {
   c.innerHTML = `<div class="text-center py-6 text-gray-400 text-sm"><i class="fa-solid fa-spinner fa-spin mb-2 block"></i>Carregando...</div>`;
 
   const disp = menusDisponiveis(secId);
-  menTabsAtual = disp.map(t => ({ ...t, ativo: true }));
+  menTabsAtual = disp.map(t => ({ ...t, ativo: true, tipo: 'func' }));
 
   try {
     const snap = await get(ref(db,`config/paineis/${secId}/tabs`));
     if (snap.exists()) {
       const saved = snap.val();
       const savedArr = Array.isArray(saved) ? saved : Object.values(saved);
-      // A config salva é a fonte da verdade (ordem + quais abas), limitada às abas funcionais
+      // A config salva é a fonte da verdade (ordem + quais abas). Abas funcionais
+      // são validadas contra as disponíveis; abas personalizadas (info/link) são preservadas.
       const reconstruido = savedArr
-        .filter(s => disp.some(d => d.id === s.id))
+        .filter(s => (s.tipo === 'info' || s.tipo === 'link') || disp.some(d => d.id === s.id))
         .map(s => {
+          if (s.tipo === 'info' || s.tipo === 'link') {
+            return { id: s.id, lbl: s.label||s.lbl||'Aba', ico: s.icone||s.ico||'fa-circle', ativo: s.ativo!==false,
+                     tipo: s.tipo, conteudo: s.conteudo||'', url: s.url||'', imagem: s.imagem||'' };
+          }
           const base = disp.find(d => d.id === s.id);
-          return { id: s.id, lbl: s.label||s.lbl||base.lbl, ico: s.icone||s.ico||base.ico, ativo: s.ativo!==false };
+          return { id: s.id, lbl: s.label||s.lbl||base.lbl, ico: s.icone||s.ico||base.ico, ativo: s.ativo!==false, tipo: 'func' };
         });
       if (reconstruido.length) menTabsAtual = reconstruido;
     }
@@ -1781,16 +1841,44 @@ window.carregarMenusPainel = async function(secId) {
   actions.classList.remove('hidden');
 };
 
+function escAttr(s){ return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;'); }
+function escHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
 function renderMenusEditor() {
   const c = document.getElementById('lista-menus');
   const total = menTabsAtual.length;
-  const cards = menTabsAtual.map((t,i) => `
+  const cards = menTabsAtual.map((t,i) => {
+    const badge = t.tipo==='link'
+      ? `<span class="text-[9px] font-black bg-indigo-100 text-indigo-600 px-1.5 py-0.5 rounded">LINK</span>`
+      : t.tipo==='info'
+      ? `<span class="text-[9px] font-black bg-emerald-100 text-emerald-600 px-1.5 py-0.5 rounded">INFO</span>`
+      : '';
+    const extra = t.tipo==='link'
+      ? `<div>
+           <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">URL do link</label>
+           <input type="url" id="men-url-${t.id}" value="${escAttr(t.url)}" placeholder="https://..."
+             class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-800">
+         </div>`
+      : t.tipo==='info'
+      ? `<div class="space-y-2">
+           <div>
+             <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Conteúdo (texto)</label>
+             <textarea id="men-cont-${t.id}" rows="4" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-800 resize-none">${escHtml(t.conteudo)}</textarea>
+           </div>
+           <div>
+             <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Imagem (URL, opcional)</label>
+             <input type="url" id="men-img-${t.id}" value="${escAttr(t.imagem)}" placeholder="https://..."
+               class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-800">
+           </div>
+         </div>`
+      : '';
+    return `
     <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-4 space-y-3">
       <div class="flex items-center gap-2">
         <div class="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center shrink-0">
           <i id="men-ico-prev-${t.id}" class="fa-solid ${t.ico} text-slate-600"></i>
         </div>
-        <span class="text-xs font-black text-gray-500 uppercase tracking-wider flex-grow">Aba: ${t.id}</span>
+        <span class="text-xs font-black text-gray-500 uppercase tracking-wider flex-grow flex items-center gap-1.5">${t.tipo==='func'||!t.tipo?('Aba: '+t.id):'Aba'} ${badge}</span>
         <button onclick="moverMenu(${i},-1)" ${i===0?'disabled':''} title="Mover para cima"
           class="w-7 h-7 rounded-lg bg-gray-100 text-gray-500 disabled:opacity-30 flex items-center justify-center"><i class="fa-solid fa-chevron-up text-xs"></i></button>
         <button onclick="moverMenu(${i},1)" ${i===total-1?'disabled':''} title="Mover para baixo"
@@ -1805,17 +1893,19 @@ function renderMenusEditor() {
       <div class="grid grid-cols-2 gap-3">
         <div>
           <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Label (nome)</label>
-          <input type="text" id="men-lbl-${t.id}" value="${t.lbl}"
+          <input type="text" id="men-lbl-${t.id}" value="${escAttr(t.lbl)}"
             class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-800">
         </div>
         <div>
           <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Ícone FA</label>
-          <input type="text" id="men-ico-${t.id}" value="${t.ico}"
+          <input type="text" id="men-ico-${t.id}" value="${escAttr(t.ico)}"
             oninput="document.getElementById('men-ico-prev-${t.id}').className='fa-solid '+this.value"
             class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-800">
         </div>
       </div>
-    </div>`).join('');
+      ${extra}
+    </div>`;
+  }).join('');
 
   // Abas funcionais ainda não adicionadas a esta secretaria
   const restantes = menusDisponiveis(menSecAtual).filter(d => !menTabsAtual.some(t => t.id === d.id));
@@ -1825,19 +1915,52 @@ function renderMenusEditor() {
         ${restantes.map(d=>`<option value="${d.id}">${d.lbl} (${d.id})</option>`).join('')}
       </select>
       <button onclick="adicionarMenu()" class="bg-slate-700 text-white text-xs font-bold px-3 py-2 rounded-lg flex items-center gap-1 shrink-0"><i class="fa-solid fa-plus"></i> Adicionar</button>
-    </div>` : `<p class="text-[11px] text-gray-400 text-center py-2">Todas as abas disponíveis já estão neste painel.</p>`;
+    </div>` : `<p class="text-[11px] text-gray-400 text-center py-2">Todas as abas funcionais já estão neste painel.</p>`;
 
-  c.innerHTML = cards + addRow;
+  // Formulário: criar aba personalizada (Informações ou Link)
+  const criarForm = `
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4 space-y-3 mt-1">
+      <p class="text-xs font-black text-slate-600 uppercase tracking-wider"><i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Criar aba personalizada</p>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Tipo</label>
+          <select id="men-novo-tipo" onchange="toggleNovoTipo()" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-800">
+            <option value="info">Informações (texto)</option>
+            <option value="link">Link externo</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Ícone FA</label>
+          <input type="text" id="men-novo-ico" value="fa-circle-info" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-800">
+        </div>
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Nome da aba</label>
+        <input type="text" id="men-novo-lbl" placeholder="Ex.: Horário de funcionamento" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-800">
+      </div>
+      <div id="men-novo-cont-wrap">
+        <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Conteúdo (texto)</label>
+        <textarea id="men-novo-cont" rows="3" placeholder="Texto que aparecerá na aba" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-800 resize-none"></textarea>
+      </div>
+      <div id="men-novo-url-wrap" class="hidden">
+        <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">URL</label>
+        <input type="url" id="men-novo-url" placeholder="https://..." class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-800">
+      </div>
+      <button onclick="criarAbaPersonalizada()" class="w-full bg-slate-700 text-white font-bold py-2.5 rounded-lg text-sm flex justify-center items-center gap-2"><i class="fa-solid fa-plus"></i> Criar aba</button>
+    </div>`;
+
+  c.innerHTML = cards + addRow + criarForm;
 }
 
 window.salvarMenusPainel = async function() {
   if (!menSecAtual) return;
-  const tabs = menTabsAtual.map(t => ({
-    id: t.id,
-    label: document.getElementById(`men-lbl-${t.id}`)?.value || t.lbl,
-    icone: document.getElementById(`men-ico-${t.id}`)?.value || t.ico,
-    ativo: document.getElementById(`men-ativo-${t.id}`)?.checked !== false,
-  }));
+  sincronizarMenuInputs();
+  const tabs = menTabsAtual.map(t => {
+    const base = { id: t.id, label: t.lbl, icone: t.ico, ativo: t.ativo !== false };
+    if (t.tipo === 'info') return { ...base, tipo: 'info', conteudo: t.conteudo || '', imagem: t.imagem || '' };
+    if (t.tipo === 'link') return { ...base, tipo: 'link', url: t.url || '' };
+    return base;
+  });
   try {
     await set(ref(db,`config/paineis/${menSecAtual}/tabs`), tabs);
     toast('Menus salvos! As mudanças aparecem no próximo login.');
@@ -1959,7 +2082,8 @@ async function carregarConfPainel(sec) {
     if (conf.tabs) {
       const arr = Array.isArray(conf.tabs) ? conf.tabs : Object.values(conf.tabs);
       const ativos = arr.filter(t=>t.ativo!==false).map(t=>({
-        id:t.id, lbl:t.label||t.lbl||t.id, ico:t.icone||t.ico||'fa-circle'
+        id:t.id, lbl:t.label||t.lbl||t.id, ico:t.icone||t.ico||'fa-circle',
+        tipo:t.tipo||'func', conteudo:t.conteudo||'', url:t.url||'', imagem:t.imagem||''
       }));
       if (ativos.length>0) {
         cfg.tabs = ativos;
